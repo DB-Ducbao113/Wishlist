@@ -1,0 +1,116 @@
+/* ==========================================
+   Dream Vault V2 — Final UI Polish
+   No Firebase / CRUD changes
+========================================== */
+
+/* Hero — consistent finishing */
+.hero--v2 {
+  box-shadow:
+    0 24px 80px rgba(71, 52, 140, .075);
+}
+
+.hero--v2 .hero__title {
+  text-wrap: balance;
+}
+
+.hero--v2 .hero__description {
+  text-wrap: pretty;
+}
+
+/* Featured gallery: desktop only */
+@media (min-width: 1025px) {
+  #grid.gallery--v2
+  > .wishlist-card:first-child:not(:only-child) {
+    grid-column: span 2;
+  }
+}
+
+/* Card hover visual properties only.
+   Do not override card 3D transform. */
+@media (hover: hover) and (pointer: fine) {
+  #grid.gallery--v2 .wishlist-card__surface {
+    transition:
+      box-shadow var(--v2-motion-normal)
+        var(--v2-ease-out),
+      border-color var(--v2-motion-normal)
+        var(--v2-ease-out);
+  }
+
+  #grid.gallery--v2 .product-card__actions button,
+  #grid.gallery--v2 .product-card__actions a {
+    transition:
+      background-color var(--v2-motion-fast)
+        var(--v2-ease-standard),
+      border-color var(--v2-motion-fast)
+        var(--v2-ease-standard),
+      box-shadow var(--v2-motion-fast)
+        var(--v2-ease-standard);
+  }
+}
+
+/* Focus visibility */
+#grid.gallery--v2
+:is(button, a, .status-chip):focus-visible,
+.product-dialog button:focus-visible,
+.nav-actions :is(button, summary):focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Mobile tactile polish */
+@media (max-width: 640px) {
+  .hero.hero--v2 {
+    box-shadow:
+      0 12px 35px rgba(71, 52, 140, .055);
+  }
+
+  .dashboard-panel.dashboard-panel--v2 {
+    box-shadow:
+      0 12px 32px rgba(67, 52, 132, .055);
+  }
+
+  /* Reduce the cost of glass rendering */
+  .dashboard-panel--v2
+  .stats-dashboard > .stat-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, .88);
+  }
+
+  #grid.gallery--v2 .wishlist-card__surface {
+    box-shadow:
+      0 10px 28px rgba(57, 43, 122, .065);
+  }
+
+  /* Comfortable touch targets */
+  #grid.gallery--v2
+  .product-card__actions :is(button, a),
+  #grid.gallery--v2 .status-chip,
+  .wishlist-empty__action {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Graceful fallback for unsupported glass */
+@supports not (backdrop-filter: blur(1px)) {
+  .dashboard-panel--v2
+  .stats-dashboard > .stat-card {
+    background: rgba(255,255,255,.94);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #grid.gallery--v2 .wishlist-card__surface,
+  #grid.gallery--v2 .product-card__actions button,
+  #grid.gallery--v2 .product-card__actions a {
+    transition: none;
+  }
+
+  #grid.gallery--v2 .product-media__image {
+    transform: none !important;
+  }
+}

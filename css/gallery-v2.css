@@ -12,10 +12,9 @@
   align-items: stretch;
 }
 
-/* Featured: first visible product */
-#grid.gallery--v2 > .wishlist-card:first-child:not(:only-child) {
-  grid-column: span 2;
-}
+/* Featured placement lives in polish-v2.css (desktop only).
+   Keeping span rules out of this file avoids accidental
+   featured layouts on tablet and mobile. */
 
 /* Premium surfaces */
 #grid.gallery--v2 .wishlist-card__surface {
@@ -156,11 +155,6 @@
   #grid.grid.gallery--v2 {
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;
-  }
-
-  #grid.gallery--v2 >
-  .wishlist-card:first-child:not(:only-child) {
-    grid-column: auto;
   }
 
   #grid.gallery--v2 .wishlist-card__surface {
