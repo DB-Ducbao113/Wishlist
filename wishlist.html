@@ -221,6 +221,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/stats.css">
 <link rel="stylesheet" href="./css/controls.css">
 <link rel="stylesheet" href="./css/product-card.css">
+<link rel="stylesheet" href="./css/grid-entrance.css">
 
 </head>
 <body>
@@ -929,8 +930,76 @@ function render(){
   $("btnDeleteSample").classList.toggle("hidden", !hasSamples());
 
   const frag = document.createDocumentFragment();
-  list.forEach(it => frag.appendChild(card(it)));
+
+  list.forEach(it => {
+    frag.appendChild(card(it));
+  });
+
   grid.appendChild(frag);
+
+  // Run only for the first render.
+  // Subsequent search/filter calls will not replay it.
+  animateGridEntrance(grid);
+}
+
+/* ==========================================
+   Product Grid Entrance Animation
+========================================== */
+
+let initialGridAnimationPlayed = false;
+
+const GRID_ENTRANCE = {
+  duration: 420,
+  stagger: 45,
+  distance: 14,
+  maxItems: 12,
+  easing: "cubic-bezier(0.22, 1, 0.36, 1)"
+};
+
+function animateGridEntrance(grid) {
+  if (initialGridAnimationPlayed) return;
+
+  // Mark as played even if motion is disabled.
+  initialGridAnimationPlayed = true;
+
+  const reducedMotion = matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (reducedMotion || document.hidden) return;
+
+  if (typeof Element.prototype.animate !== "function") {
+    return;
+  }
+
+  const cards = Array.from(
+    grid.querySelectorAll(":scope > .wishlist-card")
+  ).slice(0, GRID_ENTRANCE.maxItems);
+
+  cards.forEach((card, index) => {
+    const animation = card.animate(
+      [
+        {
+          opacity: 0,
+          translate: `0 ${GRID_ENTRANCE.distance}px`
+        },
+        {
+          opacity: 1,
+          translate: "0 0"
+        }
+      ],
+      {
+        duration: GRID_ENTRANCE.duration,
+        delay: index * GRID_ENTRANCE.stagger,
+        easing: GRID_ENTRANCE.easing,
+        fill: "backwards"
+      }
+    );
+
+    // Discard the animation effect after completion.
+    // Native styles remain in their normal final state.
+    animation.finished.catch(() => {});
+  });
 }
 
 /* ==========================================

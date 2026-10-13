@@ -1,0 +1,28 @@
+/* ======================================
+   Grid Entrance — Apple Minimal
+====================================== */
+
+/*
+  The outer card is responsible for
+  entrance opacity/translate.
+
+  The inner surface owns 3D rotation.
+*/
+
+.wishlist-grid,
+#grid {
+  isolation: isolate;
+}
+
+#grid > .wishlist-card {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Motion capability */
+@media (prefers-reduced-motion: reduce) {
+  #grid > .wishlist-card {
+    opacity: 1;
+    translate: none;
+  }
+}
