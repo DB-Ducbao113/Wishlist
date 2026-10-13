@@ -69,12 +69,12 @@
       0 12px 32px rgba(67, 52, 132, .055);
   }
 
-  /* Reduce the cost of glass rendering */
-  .dashboard-panel--v2
-  .stats-dashboard > .stat-card {
+  /* Mobile: disable expensive backdrop blur */
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background: rgba(255, 255, 255, .88);
+    background: rgba(255, 255, 255, .94);
   }
 
   #grid.gallery--v2 .wishlist-card__surface {
