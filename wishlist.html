@@ -223,6 +223,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/product-card.css">
 <link rel="stylesheet" href="./css/grid-entrance.css">
 <link rel="stylesheet" href="./css/purchased-motion.css">
+<link rel="stylesheet" href="./css/gallery.css">
 
 </head>
 <body>
@@ -1268,18 +1269,30 @@ function card(it){
   // Anh: dung anh thay the khi thieu hoac khi tai loi
   const src = validImageSrc(it.image) || PLACEHOLDER;
   const img = document.createElement("img");
+  img.className = "product-media__image";
   img.src = src;
   img.alt = it.name || "Ảnh món đồ";
   img.loading = "lazy";
-  img.addEventListener("error", () => { img.src = PLACEHOLDER; }, { once: true });
+  img.decoding = "async";
+  img.width = 800;
+  img.height = 600;
+  img.addEventListener("error", () => {
+    img.src = PLACEHOLDER;
+  }, { once: true });
 
   const thumb = document.createElement("div");
-  thumb.className = "thumb"; thumb.appendChild(img);
+  thumb.className = "thumb product-media";
+
+  const imageFrame = document.createElement("div");
+  imageFrame.className = "product-media__frame";
+
+  imageFrame.appendChild(img);
+  thumb.appendChild(imageFrame);
 
   const body = document.createElement("div");
-  body.className = "card-body";
+  body.className = "card-body product-card__content";
   const badges = document.createElement("div");
-  badges.className = "badges";
+  badges.className = "badges product-card__badges";
   // Trang thai la nut bam duoc: 1 click chuyen sang buoc ke tiep
   const chip = badge(st.label, st.cls);
   if(nextStatus(it)){
@@ -1297,7 +1310,8 @@ function card(it){
   badges.appendChild(badge(pr.label, pr.cls));
 
   const h3 = document.createElement("h3"); h3.textContent = it.name;
-  const price = document.createElement("div"); price.className = "price";
+  h3.className = "product-card__title";
+  const price = document.createElement("div"); price.className = "price product-card__price";
   price.textContent = fmtMoney(it.price);
 
   body.append(badges, h3, price);
@@ -1315,7 +1329,7 @@ function card(it){
 
   // Hanh dong
   const actions = document.createElement("div");
-  actions.className = "card-actions";
+  actions.className = "card-actions product-card__actions";
   const link = safeUrl(it.link);
   if(link){
     const a = document.createElement("a");
