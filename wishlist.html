@@ -218,6 +218,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <!-- Lesson 02 -->
 <link rel="stylesheet" href="./css/navigation.css">
 <link rel="stylesheet" href="./css/hero.css">
+<link rel="stylesheet" href="./css/stats.css">
 
 </head>
 <body>
@@ -437,11 +438,65 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
         <button class="ghost" id="btnClearFilter" type="button">Xóa bộ lọc</button>
       </div>
     </div>
-    <div class="total">
-      <div>Còn phải chi: <b id="sumTotal">0</b></div>
-      <div>Đã chi: <b id="sumSpent">0</b></div>
-      <div class="stat" id="sumCount">0 món</div>
+    <!-- Dashboard Statistics -->
+<div class="total stats-dashboard"
+     aria-label="Thống kê wishlist">
+
+  <!-- Remaining budget -->
+  <div class="stat-card">
+    <div class="stat-card__header">
+      <span class="stat-card__label">
+        Còn phải chi
+      </span>
+      <span class="stat-card__icon" aria-hidden="true">
+        ◇
+      </span>
     </div>
+
+    <b class="stat-card__value" id="sumTotal">0</b>
+
+    <p class="stat-card__description">
+      Giá trị wishlist chưa mua
+    </p>
+  </div>
+
+  <!-- Purchased total -->
+  <div class="stat-card">
+    <div class="stat-card__header">
+      <span class="stat-card__label">
+        Đã chi
+      </span>
+      <span class="stat-card__icon" aria-hidden="true">
+        ✓
+      </span>
+    </div>
+
+    <b class="stat-card__value" id="sumSpent">0</b>
+
+    <p class="stat-card__description">
+      Tổng giá trị đã sở hữu
+    </p>
+  </div>
+
+  <!-- Items count -->
+  <div class="stat-card">
+    <div class="stat-card__header">
+      <span class="stat-card__label">
+        Bộ sưu tập
+      </span>
+      <span class="stat-card__icon" aria-hidden="true">
+        ✦
+      </span>
+    </div>
+
+    <b class="stat-card__value" id="sumCount">0 món</b>
+
+    <p class="stat-card__description">
+      Tổng số món trong wishlist
+    </p>
+  </div>
+
+</div>
   </section>
 
   <!-- ================= DANH SACH ================= -->

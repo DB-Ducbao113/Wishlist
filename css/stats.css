@@ -1,0 +1,118 @@
+/* ====================================
+   Dashboard — Apple Minimal
+==================================== */
+
+.panel .total.stats-dashboard {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 20px;
+
+  border-top: 1px solid var(--color-border);
+}
+
+.panel .total.stats-dashboard > .stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  min-width: 0;
+  padding: 22px;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-card);
+
+  color: var(--color-text);
+
+  transition:
+    transform var(--motion-normal) var(--ease-premium),
+    box-shadow var(--motion-normal) ease,
+    border-color var(--motion-normal) ease;
+}
+
+/* Header */
+.stat-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-card__label {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stat-card__icon {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  background: var(--color-accent-soft);
+  border-radius: 12px;
+
+  color: var(--color-accent);
+  font-size: 19px;
+}
+
+/* Value */
+.panel .total.stats-dashboard .stat-card__value {
+  display: block;
+  margin: 0;
+  color: var(--color-text);
+
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -.045em;
+
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-card__description {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Subtle premium hover */
+@media (hover: hover) and (pointer: fine) {
+  .panel .total.stats-dashboard > .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: #d6d0fa;
+  }
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+  .panel .total.stats-dashboard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .panel .total.stats-dashboard > .stat-card {
+    padding: 18px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .panel .total.stats-dashboard > .stat-card {
+    transition: none;
+    transform: none !important;
+  }
+}
