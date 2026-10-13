@@ -947,7 +947,41 @@ function visibleItems(){
 /* ===================================================================
    RENDER
    =================================================================== */
+
+/* ==========================================
+   Bài 12B — Search Render Scheduler
+   UI-only optimization
+========================================== */
+
+const SEARCH_DEBOUNCE_MS = 120;
+
+let searchRenderTimer = null;
+
+function cancelPendingSearchRender() {
+  if (searchRenderTimer !== null) {
+    clearTimeout(searchRenderTimer);
+    searchRenderTimer = null;
+  }
+}
+
+function scheduleSearchRender() {
+  cancelPendingSearchRender();
+
+  searchRenderTimer = setTimeout(() => {
+    searchRenderTimer = null;
+    render();
+  }, SEARCH_DEBOUNCE_MS);
+}
+
+function renderImmediately() {
+  cancelPendingSearchRender();
+  render();
+}
+
 function render(){
+  // A render is happening now: drop any debounced search render
+  // so it cannot replay stale results afterwards.
+  cancelPendingSearchRender();
   updateCategoryFilter();
   const list = visibleItems();
   const grid = $("grid");
@@ -1761,9 +1795,18 @@ function init(){
     toast(id ? "Đã cập nhật món." : "Đã thêm món.");
   });
 
-  // Loc / tim kiem / sap xep: search chi can input, select chi can change
-  $("q").addEventListener("input", render);
-  ["fStatus","fPriority","fCategoryFilter","fSort"].forEach(id => $(id).addEventListener("change", render));
+  // Loc / tim kiem / sap xep: search debounce, select phan hoi tuc thi
+  $("q").addEventListener(
+    "input",
+    scheduleSearchRender
+  );
+  ["fStatus","fPriority","fCategoryFilter","fSort"]
+    .forEach(id => {
+      $(id).addEventListener(
+        "change",
+        renderImmediately
+      );
+    });
 
   // Xoa toan bo du lieu mau (chi xoa cac mon co id "sample-*")
   $("btnDeleteSample").addEventListener("click", () => {
@@ -1779,7 +1822,7 @@ function init(){
   $("btnClearFilter").addEventListener("click", () => {
     $("q").value = ""; $("fStatus").value = ""; $("fPriority").value = "";
     $("fCategoryFilter").value = ""; $("fSort").value = "newest";
-    render();
+    renderImmediately();
   });
 
   $("btnExport").addEventListener("click", exportJson);
