@@ -1,0 +1,115 @@
+/* Dream Vault V3 — Homepage Art Direction */
+
+.hero.hero--v3 {
+  min-height: 680px;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+  gap: 24px;
+  padding: clamp(36px, 5.5vw, 76px);
+  border-radius: 36px;
+  background:
+    radial-gradient(
+      ellipse at 77% 48%,
+      rgba(160, 131, 245, .35),
+      transparent 53%
+    ),
+    linear-gradient(120deg, #faf9ff, #ede8ff);
+}
+
+.hero--v3 .hero__title {
+  font-size: clamp(3.8rem, 6.4vw, 6.8rem);
+  line-height: .96;
+  letter-spacing: -.075em;
+  max-width: 750px;
+}
+
+.hero--v3 .hero__title span {
+  color: #7861cf;
+}
+
+.hero--v3 .hero__description {
+  max-width: 460px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.hero-v3__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.hero-v3__actions > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.hero-v3__primary {
+  background: #7060c8;
+  border: 1px solid #7060c8;
+  color: white;
+  box-shadow: 0 12px 30px rgba(83, 62, 169, .20);
+}
+
+.hero-v3__secondary {
+  color: #53458f;
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(124, 105, 198, .24);
+}
+
+.hero--v3 .hero__visual {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 1024px) {
+  .hero.hero--v3 {
+    min-height: 540px;
+    gap: 12px;
+  }
+
+  .hero--v3 .hero__title {
+    font-size: clamp(3rem, 5.5vw, 4.8rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero.hero--v3 {
+    min-height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 40px 22px 24px;
+    gap: 20px;
+    border-radius: 26px;
+  }
+
+  .hero--v3 .hero__title {
+    font-size: clamp(3.1rem, 11vw, 4.5rem);
+  }
+
+  .hero-v3__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-v3__actions > * {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-v3__actions > * {
+    animation: none;
+    transition: none;
+  }
+}

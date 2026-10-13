@@ -97,6 +97,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/empty-state.css">
 <link rel="stylesheet" href="./css/toast.css">
 <link rel="stylesheet" href="./css/polish-v2.css">
+<link rel="stylesheet" href="./css/homepage-v3.css">
 
 </head>
 <body>
@@ -207,7 +208,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 </header>
 
 <!-- Apple Minimal Hero -->
-<section class="hero hero--v2" aria-labelledby="hero-title">
+<section class="hero hero--v2 hero--v3" aria-labelledby="hero-title">
 
   <div class="hero__content">
     <p class="hero__eyebrow">
@@ -224,6 +225,22 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       bạn yêu thích, những dự định và
       những điều đang chờ trở thành hiện thực.
     </p>
+
+    <div class="hero-v3__actions">
+      <button
+        type="button"
+        class="hero-v3__primary"
+        id="heroAddWish"
+      >
+        <span aria-hidden="true">＋</span>
+        Thêm món yêu thích
+      </button>
+
+      <a class="hero-v3__secondary" href="#grid">
+        Khám phá bộ sưu tập
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
 
     <div class="hero__footer">
       <span class="hero__indicator" aria-hidden="true"></span>
@@ -1708,6 +1725,10 @@ function init(){
   }
 
   $("btnAdd").addEventListener("click", () => openForm(null));
+  $("heroAddWish").addEventListener(
+    "click",
+    () => openForm(null)
+  );
   $("emptyAction").addEventListener("click", () => {
     if (items.length === 0) {
       openForm(null);
