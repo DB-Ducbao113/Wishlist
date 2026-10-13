@@ -1715,7 +1715,7 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=2");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=3");
     cloudSync = await initializeWishlistCloud({
       onStatus: (status, email = "") => {
         $("syncStatus").textContent = status;

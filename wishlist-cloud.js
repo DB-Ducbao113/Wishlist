@@ -2,8 +2,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import {
   GoogleAuthProvider,
   browserLocalPersistence,
+  browserSessionPersistence,
   getAuth,
   getRedirectResult,
+  inMemoryPersistence,
   onAuthStateChanged,
   setPersistence,
   signInWithPopup,
@@ -54,7 +56,17 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
   let remoteDocumentIds = new Set();
   let writeQueue = Promise.resolve();
 
-  await setPersistence(auth, browserLocalPersistence);
+  // Safari (notably non-private tabs with restricted storage)
+  // may reject local persistence with auth/internal-error.
+  // Fall back gracefully so sign-in still works for the session.
+  for (const persistence of [browserLocalPersistence, browserSessionPersistence, inMemoryPersistence]) {
+    try {
+      await setPersistence(auth, persistence);
+      break;
+    } catch (persistenceError) {
+      if (persistence === inMemoryPersistence) throw persistenceError;
+    }
+  }
   await getRedirectResult(auth);
 
   onAuthStateChanged(auth, nextUser => {
