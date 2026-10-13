@@ -224,6 +224,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/grid-entrance.css">
 <link rel="stylesheet" href="./css/purchased-motion.css">
 <link rel="stylesheet" href="./css/gallery.css">
+<link rel="stylesheet" href="./css/dialog.css">
 
 </head>
 <body>
@@ -592,69 +593,147 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 </div>
 
 <!-- ================= DIALOG THEM / SUA ================= -->
-<dialog id="dlg" aria-labelledby="dlgTitle">
+<dialog id="dlg" class="product-dialog"
+        aria-labelledby="dlgTitle">
+
   <form id="form" method="dialog" novalidate>
-    <div class="dlg-head" id="dlgTitle">Thêm món</div>
-    <div class="dlg-body">
+
+    <div class="dlg-head product-dialog__header">
+      <div>
+        <p class="product-dialog__eyebrow">
+          YOUR COLLECTION
+        </p>
+
+        <h2 id="dlgTitle" class="product-dialog__title">
+          Thêm món
+        </h2>
+
+        <p class="product-dialog__subtitle">
+          Lưu lại món đồ bạn đang yêu thích.
+        </p>
+      </div>
+
+      <button type="button"
+              id="btnCancel"
+              class="product-dialog__close"
+              aria-label="Đóng hộp thoại">
+        ×
+      </button>
+    </div>
+
+    <div class="dlg-body product-dialog__body">
+
       <input type="hidden" id="fId">
 
-      <div class="field">
-        <label for="fName">Tên món *</label>
-        <input id="fName" required maxlength="120" placeholder="Ví dụ: Tai nghe chống ồn">
-      </div>
+      <section class="product-dialog__section"
+               aria-label="Thông tin sản phẩm">
 
-      <div class="row">
+        <h3>Thông tin sản phẩm</h3>
+
         <div class="field">
-          <label for="fPrice">Giá (VND) *</label>
-          <input id="fPrice" type="number" min="0" step="1000" required placeholder="1500000">
+          <label for="fName">Tên món *</label>
+          <input id="fName" required maxlength="120"
+                 placeholder="Ví dụ: Tai nghe chống ồn">
         </div>
+
+        <div class="row product-dialog__row">
+          <div class="field">
+            <label for="fPrice">Giá (VND) *</label>
+            <input id="fPrice" type="number" min="0"
+                   step="1000" required
+                   placeholder="1500000">
+          </div>
+
+          <div class="field">
+            <label for="fCategory">Danh mục</label>
+            <input id="fCategory" maxlength="40"
+                   placeholder="Công nghệ, Nhà cửa...">
+          </div>
+        </div>
+
+        <div class="row product-dialog__row">
+          <div class="field">
+            <label for="fStatus2">Trạng thái</label>
+            <select id="fStatus2"></select>
+          </div>
+
+          <div class="field">
+            <label for="fPriority2">Mức độ ưu tiên</label>
+            <select id="fPriority2"></select>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="product-dialog__section"
+               aria-label="Hình ảnh và liên kết">
+
+        <h3>Hình ảnh & liên kết</h3>
+
         <div class="field">
-          <label for="fCategory">Danh mục</label>
-          <input id="fCategory" maxlength="40" placeholder="Công nghệ, Nhà cửa...">
+          <label for="fLink">Liên kết mua hàng</label>
+          <input id="fLink" type="url"
+                 placeholder="https://...">
         </div>
-      </div>
 
-      <div class="row">
         <div class="field">
-          <label for="fStatus2">Trạng thái</label>
-          <select id="fStatus2"></select>
+          <label for="fImageUrl">Đường dẫn ảnh</label>
+          <input id="fImageUrl" type="url"
+                 placeholder="https://.../anh.jpg">
         </div>
+
         <div class="field">
-          <label for="fPriority2">Mức độ ưu tiên</label>
-          <select id="fPriority2"></select>
+          <label for="fFile">Tải ảnh từ thiết bị</label>
+          <input id="fFile" type="file" accept="image/*">
+          <div class="err hidden" id="fileErr"
+               role="alert"></div>
         </div>
-      </div>
 
-      <div class="field">
-        <label for="fLink">Liên kết mua hàng</label>
-        <input id="fLink" type="url" placeholder="https://...">
-      </div>
+        <div class="product-dialog__preview-area">
+          <img id="fPreview"
+               class="preview hidden"
+               alt="Ảnh xem trước">
 
-      <div class="field">
-        <label for="fImageUrl">Đường dẫn ảnh</label>
-        <input id="fImageUrl" type="url" placeholder="https://.../anh.jpg">
-      </div>
+          <button type="button"
+                  class="mini ghost hidden"
+                  id="btnClearImg">
+            Gỡ ảnh
+          </button>
+        </div>
 
-      <div class="field">
-        <label for="fFile">Tải ảnh từ thiết bị</label>
-        <input id="fFile" type="file" accept="image/*">
-        <div class="err hidden" id="fileErr"></div>
-      </div>
+      </section>
 
-      <div class="field">
-        <img id="fPreview" class="preview hidden" alt="Ảnh xem trước">
-        <button type="button" class="mini ghost hidden" id="btnClearImg" style="margin-top:6px">Gỡ ảnh</button>
-      </div>
+      <section class="product-dialog__section"
+               aria-label="Ghi chú">
 
-      <div class="field">
-        <label for="fNote">Ghi chú</label>
-        <textarea id="fNote" rows="3" maxlength="500" placeholder="Kích cỡ, màu sắc, nơi mua..."></textarea>
+        <h3>Ghi chú</h3>
+
+        <div class="field">
+          <label for="fNote">Ghi chú của bạn</label>
+          <textarea id="fNote" rows="3" maxlength="500" placeholder="Kích cỡ, màu sắc, nơi mua..."></textarea>
+        </div>
+
+      </section>
+
+    </div>
+
+    <div class="dlg-foot product-dialog__footer">
+      <span class="product-dialog__hint">
+        * Thông tin bắt buộc
+      </span>
+
+      <div class="product-dialog__footer-actions">
+        <button type="button" class="ghost"
+                data-dialog-cancel>
+          Hủy
+        </button>
+
+        <button type="submit" class="primary">
+          Lưu món
+        </button>
       </div>
     </div>
-    <div class="dlg-foot">
-      <button type="button" class="ghost" id="btnCancel">Hủy</button>
-      <button type="submit" class="primary">Lưu món</button>
-    </div>
+
   </form>
 </dialog>
 
@@ -1479,6 +1558,7 @@ function openForm(item, draft = null){
   setFileError("");
   updatePreview();
   $("dlg").showModal();
+  $("fName").focus();
 }
 
 function currentImage(){
@@ -1616,6 +1696,11 @@ function init(){
 
   $("btnAdd").addEventListener("click", () => openForm(null));
   $("btnCancel").addEventListener("click", () => $("dlg").close());
+  document.querySelector(
+    "[data-dialog-cancel]"
+  ).addEventListener("click", () => {
+    $("dlg").close();
+  });
   $("btnClearImg").addEventListener("click", () => {
     pendingDataUrl = ""; $("fImageUrl").value = ""; updatePreview();
   });

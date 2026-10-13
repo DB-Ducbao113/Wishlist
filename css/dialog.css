@@ -1,0 +1,292 @@
+/* ======================================
+   Wishlist Product Dialog
+   Apple × Dream Vault Minimal
+====================================== */
+
+dialog.product-dialog {
+  width: min(680px, calc(100% - 32px));
+  max-width: 680px;
+  max-height: min(90dvh, 900px);
+  padding: 0;
+  margin: auto;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  box-shadow: 0 32px 90px rgba(24, 20, 52, .18);
+  overflow: hidden;
+}
+
+dialog.product-dialog::backdrop {
+  background: rgba(22, 22, 32, .40);
+  backdrop-filter: blur(8px);
+}
+
+.product-dialog #form {
+  display: flex;
+  flex-direction: column;
+  max-height: min(90dvh, 900px);
+  min-height: 0;
+}
+
+/* Header */
+.product-dialog .product-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 30px 22px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.product-dialog__eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .16em;
+}
+
+.product-dialog .product-dialog__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 750;
+  letter-spacing: -.05em;
+  line-height: 1.15;
+}
+
+.product-dialog__subtitle {
+  margin: 10px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.product-dialog__close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Scrollable body */
+.product-dialog .product-dialog__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 30px 24px;
+  max-height: none;
+}
+
+.product-dialog__section {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.product-dialog__section:last-child {
+  border-bottom: 0;
+}
+
+.product-dialog__section h3 {
+  margin: 0 0 20px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+
+.product-dialog .field {
+  margin-bottom: 16px;
+}
+
+.product-dialog .field:last-child {
+  margin-bottom: 0;
+}
+
+.product-dialog .field label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.product-dialog .product-dialog__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+.product-dialog .product-dialog__row .field {
+  min-width: 0;
+  margin: 0;
+}
+
+/* Form controls */
+.product-dialog input:not([type="hidden"]):not([type="file"]),
+.product-dialog select,
+.product-dialog textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  padding: 13px 14px;
+  box-shadow: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.product-dialog textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.product-dialog input:focus-visible,
+.product-dialog select:focus-visible,
+.product-dialog textarea:focus-visible,
+.product-dialog button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.product-dialog input:not([type="hidden"]):not([type="file"]):focus,
+.product-dialog select:focus,
+.product-dialog textarea:focus {
+  border-color: var(--color-accent);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(117, 101, 232, .10);
+}
+
+/* File upload */
+.product-dialog #fFile {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px dashed #cdc7e8;
+  border-radius: 14px;
+  background: #faf9ff;
+  font-size: 13px;
+}
+
+.product-dialog #fileErr {
+  margin-top: 8px;
+  color: var(--color-danger);
+}
+
+/* Preview */
+.product-dialog__preview-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.product-dialog #fPreview {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg);
+}
+
+.product-dialog #fPreview.hidden {
+  display: none;
+}
+
+/* Footer */
+.product-dialog .product-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 30px;
+  border-top: 1px solid var(--color-border);
+  background: #fff;
+}
+
+.product-dialog__hint {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.product-dialog__footer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.product-dialog__footer-actions button {
+  border-radius: 999px;
+  min-width: 100px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  dialog.product-dialog {
+    width: calc(100% - 16px);
+    max-height: 94dvh;
+    border-radius: 22px;
+  }
+
+  .product-dialog #form {
+    max-height: 94dvh;
+  }
+
+  .product-dialog .product-dialog__header {
+    padding: 20px;
+  }
+
+  .product-dialog .product-dialog__body {
+    padding: 4px 20px 16px;
+  }
+
+  .product-dialog .product-dialog__row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .product-dialog .product-dialog__footer {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+  }
+
+  .product-dialog__hint {
+    display: none;
+  }
+
+  .product-dialog__footer-actions {
+    width: 100%;
+  }
+
+  .product-dialog__footer-actions button {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-dialog input,
+  .product-dialog select,
+  .product-dialog textarea {
+    transition: none;
+  }
+}
