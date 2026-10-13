@@ -116,3 +116,15 @@
     transform: none !important;
   }
 }
+
+/* Dashboard standalone layout */
+
+.dashboard-panel {
+  margin-bottom: 24px;
+}
+
+.panel.dashboard-panel .total.stats-dashboard {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}

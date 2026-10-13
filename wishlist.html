@@ -219,6 +219,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/navigation.css">
 <link rel="stylesheet" href="./css/hero.css">
 <link rel="stylesheet" href="./css/stats.css">
+<link rel="stylesheet" href="./css/controls.css">
 
 </head>
 <body>
@@ -404,41 +405,11 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 
 </section>
 
-  <!-- ================= TOOLBAR: tim kiem / loc / sap xep / tong tien ================= -->
-  <section class="panel" aria-label="Bộ lọc">
-    <div class="toolbar">
-      <div class="field search" style="margin:0">
-        <label for="q">Tìm kiếm</label>
-        <input id="q" type="search" placeholder="Tên món, danh mục hoặc ghi chú...">
-      </div>
-      <div class="field" style="margin:0">
-        <label for="fStatus">Trạng thái</label>
-        <select id="fStatus"><option value="">Tất cả</option></select>
-      </div>
-      <div class="field" style="margin:0">
-        <label for="fPriority">Ưu tiên</label>
-        <select id="fPriority"><option value="">Tất cả</option></select>
-      </div>
-      <div class="field" style="margin:0">
-        <label for="fCategoryFilter">Danh mục</label>
-        <select id="fCategoryFilter"><option value="">Tất cả</option></select>
-      </div>
-      <div class="field" style="margin:0">
-        <label for="fSort">Sắp xếp</label>
-        <select id="fSort">
-          <option value="newest">Mới thêm trước</option>
-          <option value="oldest">Cũ nhất trước</option>
-          <option value="price-asc">Giá tăng dần</option>
-          <option value="price-desc">Giá giảm dần</option>
-          <option value="priority-desc">Ưu tiên cao trước</option>
-          <option value="priority-asc">Ưu tiên thấp trước</option>
-        </select>
-      </div>
-      <div class="btns">
-        <button class="ghost" id="btnClearFilter" type="button">Xóa bộ lọc</button>
-      </div>
-    </div>
-    <!-- Dashboard Statistics -->
+  <!-- Statistics: independent section -->
+<section class="panel dashboard-panel"
+         aria-label="Tổng quan wishlist">
+
+  <!-- Dashboard Statistics -->
 <div class="total stats-dashboard"
      aria-label="Thống kê wishlist">
 
@@ -497,6 +468,114 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
   </div>
 
 </div>
+
+</section>
+
+<!-- Search and filters: independent section -->
+<section class="panel collection-panel"
+         aria-labelledby="collection-controls-title">
+
+  <div class="collection-panel__heading">
+    <div>
+      <p class="collection-panel__eyebrow">
+        YOUR COLLECTION
+      </p>
+
+      <h2 id="collection-controls-title">
+        Find something you love.
+      </h2>
+
+      <p class="collection-panel__description">
+        Tìm kiếm, khám phá và sắp xếp wishlist.
+      </p>
+    </div>
+  </div>
+
+<div class="toolbar collection-toolbar">
+
+  <!-- Search -->
+  <div class="field search collection-search">
+    <label for="q">Tìm kiếm</label>
+
+    <div class="collection-search__input-wrap">
+      <svg
+        class="collection-search__icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </svg>
+
+      <input
+        id="q"
+        type="search"
+        placeholder="Tên món, danh mục hoặc ghi chú..."
+        autocomplete="off"
+      >
+    </div>
+  </div>
+
+  <!-- Filter Group -->
+  <div class="collection-filters">
+
+    <div class="field">
+      <label for="fStatus">Trạng thái</label>
+      <select id="fStatus">
+        <option value="">Tất cả</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="fPriority">Ưu tiên</label>
+      <select id="fPriority">
+        <option value="">Tất cả</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="fCategoryFilter">Danh mục</label>
+      <select id="fCategoryFilter">
+        <option value="">Tất cả</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="fSort">Sắp xếp</label>
+      <select id="fSort">
+        <option value="newest">Mới thêm trước</option>
+        <option value="oldest">Cũ nhất trước</option>
+        <option value="price-asc">Giá tăng dần</option>
+        <option value="price-desc">Giá giảm dần</option>
+        <option value="priority-desc">Ưu tiên cao trước</option>
+        <option value="priority-asc">Ưu tiên thấp trước</option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- Reset -->
+  <div class="collection-toolbar__footer">
+    <span class="collection-toolbar__hint">
+      Refine your collection
+    </span>
+
+    <button
+      class="ghost collection-clear"
+      id="btnClearFilter"
+      type="button"
+    >
+      Xóa bộ lọc
+    </button>
+  </div>
+
+</div>
+
   </section>
 
   <!-- ================= DANH SACH ================= -->

@@ -1,0 +1,199 @@
+/* =======================================
+   Wishlist Collection Controls
+   Apple Minimal — Light Theme
+======================================= */
+
+/* Section layout */
+.collection-panel {
+  padding: 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.collection-panel__heading {
+  margin-bottom: 26px;
+}
+
+.collection-panel__eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .16em;
+}
+
+.collection-panel__heading h2 {
+  margin: 0;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 750;
+  letter-spacing: -.045em;
+  line-height: 1.2;
+}
+
+.collection-panel__description {
+  margin: 10px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Override original toolbar layout */
+.collection-panel .collection-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.collection-panel .collection-toolbar .field {
+  min-width: 0;
+  margin: 0;
+}
+
+/* Search */
+.collection-search__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  height: 54px;
+  padding: 0 16px;
+
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  transition:
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    background var(--motion-fast) ease;
+}
+
+.collection-search__icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.collection-panel .collection-search input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+
+  font-size: 15px;
+}
+
+.collection-search__input-wrap:focus-within {
+  background: white;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px
+    rgba(117, 101, 232, .10);
+}
+
+/* Filters */
+.collection-filters {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.collection-panel .collection-filters select {
+  width: 100%;
+  height: 46px;
+
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  font-size: 13px;
+
+  transition:
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease;
+}
+
+.collection-panel .collection-filters select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px
+    rgba(117, 101, 232, .10);
+}
+
+/* Bottom actions */
+.collection-toolbar__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.collection-toolbar__hint {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.collection-clear {
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .collection-filters {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .collection-panel {
+    padding: 18px;
+    border-radius: var(--radius-lg);
+  }
+
+  .collection-panel__heading {
+    margin-bottom: 20px;
+  }
+
+  .collection-panel .collection-toolbar {
+    gap: 16px;
+  }
+
+  .collection-filters {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .collection-search__input-wrap {
+    height: 50px;
+  }
+
+  .collection-toolbar__footer {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .collection-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .collection-search__input-wrap,
+  .collection-panel .collection-filters select {
+    transition: none;
+  }
+}
