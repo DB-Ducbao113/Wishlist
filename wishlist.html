@@ -208,36 +208,200 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
   *,*::before,*::after{scroll-behavior:auto !important;transition:none !important}
 }
 </style>
+
+<!-- Apple × Dream Vault — Design Foundation -->
+<link rel="stylesheet" href="./css/tokens.css">
+<link rel="stylesheet" href="./css/base.css">
+<link rel="stylesheet" href="./css/layout.css">
+<link rel="stylesheet" href="./css/motion.css">
+
+<!-- Lesson 02 -->
+<link rel="stylesheet" href="./css/navigation.css">
+<link rel="stylesheet" href="./css/hero.css">
+
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div>
-      <p class="eyebrow">Danh sách cá nhân</p>
-      <h1>Danh sách yêu thích</h1>
+<header class="top site-header">
+
+  <nav class="site-nav" aria-label="Điều hướng Wishlist">
+
+    <!-- Brand -->
+    <div class="nav-brand">
+      <span class="nav-brand__mark" aria-hidden="true">
+        ✦
+      </span>
+
+      <span class="nav-brand__name">
+        Wishlist<span>.</span>
+      </span>
     </div>
-    <div class="header-tools">
-      <section class="sync-panel" aria-label="Đồng bộ thiết bị">
-        <div class="sync-copy">
-          <span id="syncStatus" class="sync-status" role="status" aria-live="polite">Đang lưu trên thiết bị này</span>
-          <span id="syncEmail" class="sync-email"></span>
+
+    <!-- Primary actions -->
+    <div class="nav-actions">
+
+      <button
+        type="button"
+        class="primary nav-add"
+        id="btnAdd"
+      >
+        <span aria-hidden="true">+</span>
+        Thêm món
+      </button>
+
+      <details class="nav-more">
+        <summary aria-label="Công cụ wishlist">
+          Công cụ
+          <span aria-hidden="true">⌄</span>
+        </summary>
+
+        <div class="nav-more__menu">
+          <button type="button" id="btnExport">
+            Xuất JSON
+          </button>
+
+          <button type="button" id="btnImport">
+            Nhập JSON
+          </button>
+
+          <button type="button" id="btnDeleteSample">
+            Xóa dữ liệu mẫu
+          </button>
         </div>
-        <div class="btns">
-          <button id="btnSignIn" type="button">Đăng nhập để đồng bộ</button>
-          <button id="btnSignOut" type="button" class="hidden">Đăng xuất</button>
-        </div>
-        <p class="sync-email">URL ảnh công khai sẽ đồng bộ. Ảnh tải trực tiếp từ thiết bị chỉ lưu trên thiết bị này.</p>
-        <p id="syncError" class="sync-error hidden" role="alert"></p>
-      </section>
-      <div class="btns top-actions">
-        <button class="primary" id="btnAdd">+ Thêm món</button>
-        <button class="ghost" id="btnDeleteSample">Xóa dữ liệu mẫu</button>
-        <button class="ghost" id="btnExport">Xuất JSON</button>
-        <button class="ghost" id="btnImport">Nhập JSON</button>
-        <input type="file" id="importFile" accept="application/json,.json" class="hidden">
+      </details>
+
+      <input
+        type="file"
+        id="importFile"
+        accept="application/json,.json"
+        class="hidden"
+      >
+
+    </div>
+  </nav>
+
+  <!-- Existing Firebase synchronization -->
+  <div class="nav-account">
+    <section class="sync-panel" aria-label="Đồng bộ thiết bị">
+
+      <div class="sync-copy">
+        <span
+          id="syncStatus"
+          class="sync-status"
+          role="status"
+          aria-live="polite"
+        >
+          Đang lưu trên thiết bị này
+        </span>
+
+        <span id="syncEmail" class="sync-email"></span>
       </div>
+
+      <div class="btns">
+        <button id="btnSignIn" type="button">
+          Đăng nhập để đồng bộ
+        </button>
+
+        <button
+          id="btnSignOut"
+          type="button"
+          class="hidden"
+        >
+          Đăng xuất
+        </button>
+      </div>
+
+      <p class="sync-email nav-account__notice">
+        URL ảnh công khai sẽ đồng bộ.
+        Ảnh tải từ thiết bị chỉ lưu tại thiết bị này.
+      </p>
+
+      <p
+        id="syncError"
+        class="sync-error hidden"
+        role="alert"
+      ></p>
+
+    </section>
+  </div>
+
+</header>
+
+<!-- Apple Minimal Hero -->
+<section class="hero" aria-labelledby="hero-title">
+
+  <div class="hero__content">
+    <p class="hero__eyebrow">
+      YOUR PERSONAL COLLECTION
+    </p>
+
+    <h1 class="hero__title" id="hero-title">
+      Everything
+      <span>you wish for.</span>
+    </h1>
+
+    <p class="hero__description">
+      Một nơi nhỏ dành cho những món đồ
+      bạn yêu thích, những dự định và
+      những điều đang chờ trở thành hiện thực.
+    </p>
+
+    <div class="hero__footer">
+      <span class="hero__indicator" aria-hidden="true"></span>
+      Curated by you. Made for your dreams.
     </div>
-  </header>
+  </div>
+
+  <!-- Decorative 3D scene -->
+  <div class="hero__visual" aria-hidden="true">
+    <div class="hero-scene">
+
+      <div class="hero-scene__glow"></div>
+
+      <div class="hero-scene__card hero-scene__card--back">
+        <div class="hero-scene__icon">✧</div>
+        <div class="hero-scene__line"></div>
+        <div class="hero-scene__line hero-scene__line--short"></div>
+      </div>
+
+      <div class="hero-scene__card hero-scene__card--middle">
+        <div class="hero-scene__icon">◇</div>
+        <div class="hero-scene__line"></div>
+        <div class="hero-scene__line hero-scene__line--short"></div>
+      </div>
+
+      <div class="hero-scene__card hero-scene__card--front">
+        <div class="hero-scene__sparkle">✦</div>
+
+        <div class="hero-scene__product">
+          <svg viewBox="0 0 100 100" fill="none"
+               xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M22 56V42C22 4 78 4 78 42V56"
+              stroke="#A99BE7"
+              stroke-width="11"
+              stroke-linecap="round"
+            />
+            <rect x="12" y="46" width="25" height="39"
+                  rx="12" fill="#8273CA"/>
+            <rect x="63" y="46" width="25" height="39"
+                  rx="12" fill="#8273CA"/>
+            <rect x="18" y="51" width="13" height="28"
+                  rx="6" fill="#C7BEF2"/>
+            <rect x="69" y="51" width="13" height="28"
+                  rx="6" fill="#C7BEF2"/>
+          </svg>
+        </div>
+
+        <div class="hero-scene__product-label">
+          Your next favorite.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
 
   <!-- ================= TOOLBAR: tim kiem / loc / sap xep / tong tien ================= -->
   <section class="panel" aria-label="Bộ lọc">
