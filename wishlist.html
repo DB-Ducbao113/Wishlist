@@ -907,6 +907,7 @@ function render(){
 
   // Stop old animations and remove listeners
   // before replacing product cards.
+  cleanupEntranceAnimations();
   cleanupCardMotions();
 
   grid.innerHTML = "";
@@ -957,25 +958,46 @@ const GRID_ENTRANCE = {
   easing: "cubic-bezier(0.22, 1, 0.36, 1)"
 };
 
+const activeEntranceAnimations = new Set();
+
+function cleanupEntranceAnimations() {
+  for (const animation of activeEntranceAnimations) {
+    animation.cancel();
+  }
+
+  activeEntranceAnimations.clear();
+}
+
+const motionPreference = matchMedia(
+  "(prefers-reduced-motion: reduce)"
+);
+
+motionPreference.addEventListener("change", () => {
+  if (motionPreference.matches) {
+    cleanupEntranceAnimations();
+  }
+});
+
 function animateGridEntrance(grid) {
   if (initialGridAnimationPlayed) return;
-
-  // Mark as played even if motion is disabled.
-  initialGridAnimationPlayed = true;
-
-  const reducedMotion = matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
-  if (reducedMotion || document.hidden) return;
-
-  if (typeof Element.prototype.animate !== "function") {
-    return;
-  }
 
   const cards = Array.from(
     grid.querySelectorAll(":scope > .wishlist-card")
   ).slice(0, GRID_ENTRANCE.maxItems);
+
+  // Wait until there are actual cards.
+  if (!cards.length) return;
+
+  // The first non-empty render owns the entrance.
+  initialGridAnimationPlayed = true;
+
+  if (
+    motionPreference.matches ||
+    document.hidden ||
+    typeof Element.prototype.animate !== "function"
+  ) {
+    return;
+  }
 
   cards.forEach((card, index) => {
     const animation = card.animate(
@@ -997,9 +1019,12 @@ function animateGridEntrance(grid) {
       }
     );
 
-    // Discard the animation effect after completion.
-    // Native styles remain in their normal final state.
-    animation.finished.catch(() => {});
+    activeEntranceAnimations.add(animation);
+
+    animation.finished.then(
+      () => activeEntranceAnimations.delete(animation),
+      () => activeEntranceAnimations.delete(animation)
+    );
   });
 }
 
@@ -1025,6 +1050,10 @@ function setupCardTilt(cardEl, surfaceEl) {
   const motionQuery = matchMedia(
     "(prefers-reduced-motion: reduce)"
   );
+
+  if (!pointerQuery.matches) {
+    return () => {};
+  }
 
   let targetX = 0;
   let targetY = 0;
@@ -1352,20 +1381,36 @@ function animatePurchasedTransition(itemId) {
   // The card may disappear because of an active filter.
   if (!cardEl) return;
 
-  cardEl.classList.add("is-purchase-celebrating");
-
-  // Remove the transient class after the glow animation.
   const thumb = cardEl.querySelector(".thumb");
-
   if (!thumb) return;
 
-  thumb.addEventListener("animationend", event => {
-    if (event.animationName === "purchase-glow") {
-      cardEl.classList.remove(
-        "is-purchase-celebrating"
-      );
+  const celebrationClass = "is-purchase-celebrating";
+
+  function finishCelebration(event) {
+    if (
+      event &&
+      (
+        event.target !== thumb ||
+        event.animationName !== "purchase-glow"
+      )
+    ) {
+      return;
     }
-  });
+
+    thumb.removeEventListener(
+      "animationend",
+      finishCelebration
+    );
+
+    cardEl.classList.remove(celebrationClass);
+  }
+
+  thumb.addEventListener(
+    "animationend",
+    finishCelebration
+  );
+
+  cardEl.classList.add(celebrationClass);
 }
 
 // Chuyen nhanh trang thai sang buoc ke tiep (1 click)
