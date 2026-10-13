@@ -222,6 +222,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/controls.css">
 <link rel="stylesheet" href="./css/product-card.css">
 <link rel="stylesheet" href="./css/grid-entrance.css">
+<link rel="stylesheet" href="./css/purchased-motion.css">
 
 </head>
 <body>
@@ -1227,6 +1228,11 @@ function card(it){
   el.className = "card wishlist-card";
   el.dataset.id = it.id;
 
+  // Persistent visual state
+  if (it.status === "purchased") {
+    el.classList.add("is-purchased");
+  }
+
   const surface = document.createElement("div");
   surface.className = "wishlist-card__surface";
 
@@ -1324,16 +1330,76 @@ function removeItem(id){
   render(); toast("Đã xóa 1 món.");
 }
 
+/* ==========================================
+   Purchased State Celebration
+========================================== */
+
+function animatePurchasedTransition(itemId) {
+  const reducedMotion = matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  if (reducedMotion || document.hidden) return;
+
+  const grid = $("grid");
+
+  // Use dataset comparison, not a CSS selector
+  // built from an unescaped item ID.
+  const cardEl = Array.from(grid.children).find(
+    el => el.dataset.id === String(itemId)
+  );
+
+  // The card may disappear because of an active filter.
+  if (!cardEl) return;
+
+  cardEl.classList.add("is-purchase-celebrating");
+
+  // Remove the transient class after the glow animation.
+  const thumb = cardEl.querySelector(".thumb");
+
+  if (!thumb) return;
+
+  thumb.addEventListener("animationend", event => {
+    if (event.animationName === "purchase-glow") {
+      cardEl.classList.remove(
+        "is-purchase-celebrating"
+      );
+    }
+  });
+}
+
 // Chuyen nhanh trang thai sang buoc ke tiep (1 click)
-function cycleStatus(id){
+function cycleStatus(id) {
   const it = items.find(x => x.id === id);
-  if(!it) return;
+  if (!it) return;
+
   const nx = nextStatus(it);
-  if(!nx) return;
-  const backup = it.status;
+  if (!nx) return;
+
+  const previousStatus = it.status;
+
+  // Update application state
   it.status = nx.key;
-  if(!save()){ it.status = backup; resync(); return; }
-  render(); toast('Đã chuyển sang "' + nx.label + '".');
+
+  // Persist data before showing celebration
+  if (!save()) {
+    it.status = previousStatus;
+    resync();
+    return;
+  }
+
+  // Render the updated state
+  render();
+
+  // Only celebrate the transition into purchased.
+  if (
+    previousStatus !== "purchased" &&
+    nx.key === "purchased"
+  ) {
+    animatePurchasedTransition(it.id);
+  }
+
+  toast('Đã chuyển sang "' + nx.label + '".');
 }
 
 function openForm(item, draft = null){

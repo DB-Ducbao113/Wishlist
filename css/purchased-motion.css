@@ -1,0 +1,85 @@
+/* ========================================
+   Purchased State — Apple Minimal
+======================================== */
+
+/* Persistent purchased appearance */
+.wishlist-card.is-purchased
+.wishlist-card__surface {
+  border-color: #d5eadd;
+}
+
+.wishlist-card.is-purchased .thumb {
+  background: linear-gradient(
+    145deg,
+    #f7fbf8,
+    #eef8f1
+  );
+}
+
+/* Glow overlay on the media layer */
+.wishlist-card .thumb {
+  position: relative;
+}
+
+.wishlist-card .thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(117, 101, 232, .20),
+    transparent 70%
+  );
+}
+
+/* Celebration: only after successful local save */
+.wishlist-card.is-purchase-celebrating
+.thumb::after {
+  animation: purchase-glow 550ms ease-out both;
+}
+
+@keyframes purchase-glow {
+  0% {
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Purchased badge reveal */
+.wishlist-card.is-purchase-celebrating
+.badges .b-purchased {
+  animation: purchased-badge-in 320ms
+    cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes purchased-badge-in {
+  from {
+    opacity: .6;
+    transform: scale(.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-card.is-purchase-celebrating
+  .thumb::after,
+  .wishlist-card.is-purchase-celebrating
+  .badges .b-purchased {
+    animation: none;
+  }
+}
