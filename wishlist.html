@@ -902,6 +902,11 @@ function render(){
   updateCategoryFilter();
   const list = visibleItems();
   const grid = $("grid");
+
+  // Stop old animations and remove listeners
+  // before replacing product cards.
+  cleanupCardMotions();
+
   grid.innerHTML = "";
   const empty = $("empty");
   empty.classList.toggle("hidden", list.length > 0);
@@ -928,60 +933,115 @@ function render(){
   grid.appendChild(frag);
 }
 
+/* ==========================================
+   Card Motion Lifecycle Manager
+========================================== */
+
+const cardMotionCleanups = new Set();
+
+function cleanupCardMotions() {
+  for (const cleanup of cardMotionCleanups) {
+    cleanup();
+  }
+
+  cardMotionCleanups.clear();
+}
+
 function setupCardTilt(cardEl, surfaceEl) {
-  const pointerFine = window.matchMedia(
+  const pointerQuery = matchMedia(
     "(hover: hover) and (pointer: fine)"
   );
 
-  const reducedMotion = window.matchMedia(
+  const motionQuery = matchMedia(
     "(prefers-reduced-motion: reduce)"
   );
 
-  if (!pointerFine.matches || reducedMotion.matches) {
-    return;
-  }
-
-  const MAX_X = 5;
-  const MAX_Y = 7;
-  const SMOOTHING = 0.12;
-
   let targetX = 0;
   let targetY = 0;
-
   let currentX = 0;
   let currentY = 0;
 
-  let animationId = null;
+  let rafId = null;
+  let lastTime = null;
+  let disposed = false;
 
-  function animate() {
-    animationId = null;
+  // Higher value = faster response.
+  const DAMPING = 8;
 
-    // If render() removed this card, stop the animation.
-    if (!cardEl.isConnected) {
+  const MAX_X = 5;
+  const MAX_Y = 7;
+
+  function canAnimate() {
+    return (
+      !disposed &&
+      pointerQuery.matches &&
+      !motionQuery.matches &&
+      !document.hidden &&
+      cardEl.isConnected
+    );
+  }
+
+  function applyTransform() {
+    surfaceEl.style.setProperty(
+      "--rotate-x",
+      `${currentX.toFixed(3)}deg`
+    );
+
+    surfaceEl.style.setProperty(
+      "--rotate-y",
+      `${currentY.toFixed(3)}deg`
+    );
+  }
+
+  function stopFrame() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
+    lastTime = null;
+  }
+
+  function resetImmediately() {
+    stopFrame();
+
+    currentX = 0;
+    currentY = 0;
+    targetX = 0;
+    targetY = 0;
+
+    applyTransform();
+  }
+
+  function tick(timestamp) {
+    rafId = null;
+
+    if (!canAnimate()) {
+      resetImmediately();
       return;
     }
 
-    currentX += (targetX - currentX) * SMOOTHING;
-    currentY += (targetY - currentY) * SMOOTHING;
+    const dt = lastTime === null
+      ? 1 / 60
+      : Math.min((timestamp - lastTime) / 1000, 0.05);
 
-    // Stop when the card is sufficiently close to target.
+    lastTime = timestamp;
+
+    // Frame-rate-independent exponential damping.
+    const alpha = 1 - Math.exp(-DAMPING * dt);
+
+    currentX += (targetX - currentX) * alpha;
+    currentY += (targetY - currentY) * alpha;
+
     if (
-      Math.abs(targetX - currentX) < 0.01 &&
-      Math.abs(targetY - currentY) < 0.01
+      Math.abs(currentX - targetX) < 0.01 &&
+      Math.abs(currentY - targetY) < 0.01
     ) {
       currentX = targetX;
       currentY = targetY;
     }
 
-    surfaceEl.style.setProperty(
-      "--rotate-x",
-      currentX.toFixed(3) + "deg"
-    );
-
-    surfaceEl.style.setProperty(
-      "--rotate-y",
-      currentY.toFixed(3) + "deg"
-    );
+    applyTransform();
 
     if (
       currentX !== targetX ||
@@ -992,42 +1052,104 @@ function setupCardTilt(cardEl, surfaceEl) {
   }
 
   function requestFrame() {
-    if (animationId !== null) return;
+    if (!canAnimate() || rafId !== null) return;
 
-    animationId = requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(tick);
   }
 
-  function onPointerMove(event) {
+  function handlePointerMove(event) {
+    if (!canAnimate()) return;
     if (event.pointerType === "touch") return;
-    if (reducedMotion.matches) return;
 
     const rect = cardEl.getBoundingClientRect();
 
-    const normalizedX =
+    if (!rect.width || !rect.height) return;
+
+    const x =
       ((event.clientX - rect.left) / rect.width) * 2 - 1;
 
-    const normalizedY =
+    const y =
       ((event.clientY - rect.top) / rect.height) * 2 - 1;
 
-    const x = Math.max(-1, Math.min(1, normalizedX));
-    const y = Math.max(-1, Math.min(1, normalizedY));
+    const nx = Math.max(-1, Math.min(1, x));
+    const ny = Math.max(-1, Math.min(1, y));
 
-    targetX = -y * MAX_X;
-    targetY = x * MAX_Y;
+    targetX = -ny * MAX_X;
+    targetY = nx * MAX_Y;
 
     requestFrame();
   }
 
-  function resetTilt() {
+  function handlePointerLeave() {
     targetX = 0;
     targetY = 0;
 
     requestFrame();
   }
 
-  cardEl.addEventListener("pointermove", onPointerMove);
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      resetImmediately();
+    }
+  }
 
-  cardEl.addEventListener("pointerleave", resetTilt);
+  function handlePreferenceChange() {
+    // Reset on either capability or preference changes.
+    resetImmediately();
+  }
+
+  function cleanup() {
+    if (disposed) return;
+
+    disposed = true;
+    stopFrame();
+
+    cardEl.removeEventListener(
+      "pointermove", handlePointerMove
+    );
+
+    cardEl.removeEventListener(
+      "pointerleave", handlePointerLeave
+    );
+
+    document.removeEventListener(
+      "visibilitychange", handleVisibilityChange
+    );
+
+    motionQuery.removeEventListener(
+      "change", handlePreferenceChange
+    );
+
+    pointerQuery.removeEventListener(
+      "change", handlePreferenceChange
+    );
+
+    cardMotionCleanups.delete(cleanup);
+  }
+
+  cardEl.addEventListener(
+    "pointermove", handlePointerMove
+  );
+
+  cardEl.addEventListener(
+    "pointerleave", handlePointerLeave
+  );
+
+  document.addEventListener(
+    "visibilitychange", handleVisibilityChange
+  );
+
+  motionQuery.addEventListener(
+    "change", handlePreferenceChange
+  );
+
+  pointerQuery.addEventListener(
+    "change", handlePreferenceChange
+  );
+
+  cardMotionCleanups.add(cleanup);
+
+  return cleanup;
 }
 
 function card(it){

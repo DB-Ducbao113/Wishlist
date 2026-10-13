@@ -1,4 +1,6 @@
-/* Buttons */
+/* Buttons — the only motion owned by this file.
+   Card 3D transforms live in css/product-card.css
+   and are driven by requestAnimationFrame. */
 .motion-button {
   transition:
     transform var(--motion-fast) ease,
@@ -15,48 +17,8 @@
   transform: scale(0.98);
 }
 
-/* Card base */
-.wishlist-card {
-  perspective: var(--perspective-card);
-}
-
-.wishlist-card__surface {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-
-  transform-style: preserve-3d;
-
-  transition:
-    box-shadow var(--motion-normal) ease,
-    transform var(--motion-normal) var(--ease-premium);
-}
-
-/* 3D layers */
-.wishlist-card__image {
-  transform: translateZ(0);
-  transition:
-    transform var(--motion-normal) var(--ease-premium);
-}
-
-/* Progressive hover enhancement */
-@media (hover: hover) and (pointer: fine) {
-  .wishlist-card:hover .wishlist-card__surface {
-    box-shadow: var(--shadow-hover);
-  }
-}
-
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .motion-button,
-  .wishlist-card__surface,
-  .wishlist-card__image {
+  .motion-button {
     transition: none;
-  }
-
-  .wishlist-card__surface,
-  .wishlist-card__image {
-    transform: none !important;
   }
 }

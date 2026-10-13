@@ -113,3 +113,22 @@
     transition: none !important;
   }
 }
+
+/* The outer card never moves.
+   Only the inner surface rotates. */
+
+.grid > .card.wishlist-card,
+.grid > .card.wishlist-card:hover {
+  transform: none;
+}
+
+/* Keep the CSS 3D card static on touch devices. */
+@media (hover: none), (pointer: coarse) {
+  .card.wishlist-card > .wishlist-card__surface {
+    transform: none;
+  }
+
+  .wishlist-card .thumb img {
+    transform: none;
+  }
+}
