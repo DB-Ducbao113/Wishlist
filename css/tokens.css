@@ -14,6 +14,12 @@
   --color-success: #248a47;
   --color-danger: #d92d37;
 
+  /* Secondary metadata */
+  --color-text-tertiary: #86868b;
+
+  /* Semantic accents */
+  --color-accent-hover: #6252d1;
+
   /* 02 — Typography */
   --font-primary:
     Inter, -apple-system, BlinkMacSystemFont,

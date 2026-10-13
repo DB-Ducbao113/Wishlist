@@ -25,6 +25,7 @@
 
 .hero__title {
   margin: 0;
+  max-width: 720px;
   font-size: clamp(2.7rem, 5.2vw, 4.7rem);
   font-weight: 750;
   line-height: 1.06;

@@ -23,22 +23,6 @@ main {
   padding-block: 48px 96px;
 }
 
-/* Hero */
-.hero {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  gap: 48px;
-  min-height: 420px;
-}
-
-.hero__title {
-  max-width: 720px;
-  font-size: var(--font-hero);
-  line-height: 1.05;
-  letter-spacing: -0.055em;
-}
-
 /* Stats */
 .stats {
   display: grid;
@@ -57,10 +41,6 @@ main {
 
 /* Tablet */
 @media (max-width: 1024px) {
-  .hero {
-    gap: 24px;
-  }
-
   .wishlist-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -79,11 +59,6 @@ main {
 
   main {
     padding-block: 32px 64px;
-  }
-
-  .hero {
-    grid-template-columns: 1fr;
-    min-height: auto;
   }
 
   .stats {

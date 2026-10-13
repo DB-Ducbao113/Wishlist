@@ -141,7 +141,7 @@
 
 #grid .meta {
   font-size: .73rem;
-  color: #89958c;
+  color: var(--color-text-tertiary);
   margin-top: auto;
   padding-top: 2px;
 }
