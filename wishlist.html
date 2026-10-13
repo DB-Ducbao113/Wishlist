@@ -225,6 +225,8 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/purchased-motion.css">
 <link rel="stylesheet" href="./css/gallery.css">
 <link rel="stylesheet" href="./css/dialog.css">
+<link rel="stylesheet" href="./css/empty-state.css">
+<link rel="stylesheet" href="./css/toast.css">
 
 </head>
 <body>
@@ -588,7 +590,61 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
     <h2>Món bạn đang để ý</h2>
   </div>
   <section id="grid" class="grid"></section>
-  <div id="empty" class="empty hidden"></div>
+<section
+  id="empty"
+  class="empty wishlist-empty hidden"
+  aria-labelledby="emptyTitle"
+>
+  <div class="wishlist-empty__illustration"
+       aria-hidden="true">
+    <svg viewBox="0 0 120 120"
+         width="108"
+         height="108"
+         fill="none">
+      <rect x="18" y="28"
+            width="84" height="70"
+            rx="18"
+            fill="#EFEDFF"/>
+
+      <path d="M37 45H83V86H37V45Z"
+            fill="#FFFFFF"
+            stroke="#B5AAED"
+            stroke-width="2"/>
+
+      <path d="M46 46V39C46 31 52 25 60 25
+               C68 25 74 31 74 39V46"
+            stroke="#7565E8"
+            stroke-width="3"
+            stroke-linecap="round"/>
+
+      <path d="M60 60L63 66L70 67L65 72
+               L66 79L60 76L54 79L55 72
+               L50 67L57 66L60 60Z"
+            fill="#7565E8"/>
+    </svg>
+  </div>
+
+  <p class="wishlist-empty__eyebrow">
+    YOUR DREAM VAULT
+  </p>
+
+  <h3 id="emptyTitle"
+      class="wishlist-empty__title">
+    Your wishlist starts here.
+  </h3>
+
+  <p id="emptyDescription"
+     class="wishlist-empty__description">
+    Lưu lại những món đồ bạn yêu thích.
+  </p>
+
+  <button
+    type="button"
+    id="emptyAction"
+    class="primary wishlist-empty__action">
+    + Thêm món đầu tiên
+  </button>
+</section>
   <p id="resultStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 </div>
 
@@ -805,17 +861,54 @@ function daysAgo(ts){
   if(d === 1) return "1 ngày trước";
   return d + " ngày trước";
 }
-function toast(msg){
+let activeToast = null;
+let toastTimeout = null;
+
+function toast(msg, type = "info") {
+  if (toastTimeout !== null) {
+    clearTimeout(toastTimeout);
+    toastTimeout = null;
+  }
+
+  if (activeToast) {
+    activeToast.remove();
+  }
+
   const el = document.createElement("div");
-  el.className = "toast"; el.textContent = msg;
-  el.setAttribute("role", "status");
-  el.setAttribute("aria-live", "polite");
+
+  const allowedTypes = [
+    "info",
+    "success",
+    "error"
+  ];
+
+  const variant = allowedTypes.includes(type)
+    ? type
+    : "info";
+
+  el.className = "toast toast--" + variant;
+  el.setAttribute("role",
+    variant === "error" ? "alert" : "status"
+  );
+
   el.setAttribute("aria-atomic", "true");
-  // Dialog nam o top layer, backdrop de len moi z-index thuong -> gan toast vao
-  // chinh dialog khi no dang mo de toast khong bi che.
-  const host = $("dlg").open ? $("dlg") : document.body;
+  el.textContent = msg;
+
+  // Preserve original dialog top-layer behavior.
+  const host = $("dlg").open
+    ? $("dlg")
+    : document.body;
+
   host.appendChild(el);
-  setTimeout(() => el.remove(), 2600);
+  activeToast = el;
+
+  toastTimeout = setTimeout(() => {
+    if (activeToast === el) {
+      el.remove();
+      activeToast = null;
+    }
+    toastTimeout = null;
+  }, 3200);
 }
 // Chi chap nhan http/https de tranh javascript:/data:text khi gan vao href
 function safeUrl(u){
@@ -992,11 +1085,23 @@ function render(){
 
   grid.innerHTML = "";
   const empty = $("empty");
-  empty.classList.toggle("hidden", list.length > 0);
-  if(!list.length){
-    empty.textContent = items.length
-    ? "Không có món nào khớp bộ lọc. Hãy xóa bộ lọc hoặc thử từ khóa khác."
-    : "Danh sách đang trống. Nhấn + Thêm món để bắt đầu.";
+  const isEmpty = list.length === 0;
+  const hasItems = items.length > 0;
+
+  empty.classList.toggle("hidden", !isEmpty);
+
+  if (isEmpty) {
+    $("emptyTitle").textContent = hasItems
+      ? "Không tìm thấy món phù hợp"
+      : "Your wishlist starts here.";
+
+    $("emptyDescription").textContent = hasItems
+      ? "Thử đổi từ khóa hoặc xóa bộ lọc để xem lại các món đồ."
+      : "Lưu những món đồ bạn yêu thích và bắt đầu bộ sưu tập của riêng mình.";
+
+    $("emptyAction").textContent = hasItems
+      ? "Xóa bộ lọc"
+      : "+ Thêm món đầu tiên";
   }
   $("resultStatus").textContent = "Đang hiển thị " + list.length + " trên " + items.length + " món.";
 
@@ -1695,6 +1800,13 @@ function init(){
   }
 
   $("btnAdd").addEventListener("click", () => openForm(null));
+  $("emptyAction").addEventListener("click", () => {
+    if (items.length === 0) {
+      openForm(null);
+    } else {
+      $("btnClearFilter").click();
+    }
+  });
   $("btnCancel").addEventListener("click", () => $("dlg").close());
   document.querySelector(
     "[data-dialog-cancel]"
