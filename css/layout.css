@@ -3,6 +3,13 @@
   overflow-x: clip;
 }
 
+/* Legacy page container (migrated from inline styles) */
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(18px, 4vw, 48px) clamp(16px, 4vw, 40px);
+}
+
 .site-nav,
 main {
   width: min(
@@ -61,6 +68,10 @@ main {
 
 /* Mobile */
 @media (max-width: 640px) {
+  .wrap {
+    padding: 22px 15px 34px;
+  }
+
   .site-nav,
   main {
     width: min(calc(100% - 32px), var(--container-width));

@@ -29,6 +29,8 @@
   box-shadow: var(--shadow-card);
 
   color: var(--color-text);
+  font-size: .78rem;
+  font-weight: 650;
 
   transition:
     transform var(--motion-normal) var(--ease-premium),
@@ -97,6 +99,23 @@
   }
 }
 
+/* Dashboard standalone layout */
+
+.dashboard-panel {
+  background: rgba(255, 255, 255, .88);
+  border: 1px solid rgba(220, 228, 219, .9);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+
+.panel.dashboard-panel .total.stats-dashboard {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 /* Responsive */
 @media (max-width: 760px) {
   .panel .total.stats-dashboard {
@@ -109,22 +128,17 @@
   }
 }
 
+@media (max-width: 640px) {
+  .dashboard-panel {
+    padding: 15px;
+    border-radius: 18px;
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .panel .total.stats-dashboard > .stat-card {
     transition: none;
     transform: none !important;
   }
-}
-
-/* Dashboard standalone layout */
-
-.dashboard-panel {
-  margin-bottom: 24px;
-}
-
-.panel.dashboard-panel .total.stats-dashboard {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
 }

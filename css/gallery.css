@@ -2,6 +2,27 @@
    Wishlist — Product Gallery 2.0
 ===================================== */
 
+/* Section heading above the grid */
+.list-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 2px 14px;
+}
+
+.list-heading h2 {
+  font-size: 1.25rem;
+  letter-spacing: -.025em;
+  margin: 0;
+}
+
+.list-heading p {
+  color: var(--muted);
+  font-size: .85rem;
+  margin: 0;
+}
+
 /* Actual grid in wishlist.html is #grid.grid */
 #grid.grid {
   display: grid;
@@ -49,15 +70,20 @@
 
 /* Content hierarchy */
 #grid .product-card__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   padding: 20px 20px 16px;
   gap: 12px;
 }
 
 #grid .product-card__title {
+  margin: 0;
   font-size: 1.08rem;
   font-weight: 700;
   letter-spacing: -.035em;
   line-height: 1.4;
+  word-break: break-word;
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -84,9 +110,16 @@
 
 #grid .product-card__badges .badge {
   padding: 6px 10px;
+  border: 1px solid transparent;
   border-radius: 999px;
   font-size: .7rem;
   font-weight: 650;
+}
+
+/* Badges without their own status color inherit the legacy base. */
+#grid .product-card__badges .badge.b-wish,
+#grid .product-card__badges .badge.b-low {
+  color: #34433a;
 }
 
 /* Secondary details */
@@ -96,28 +129,49 @@
 }
 
 #grid .note {
+  font-size: .82rem;
+  padding: 8px 10px;
   border-radius: 12px;
   background: var(--color-surface-soft);
   color: var(--color-text-secondary);
   line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#grid .meta {
+  font-size: .73rem;
+  color: #89958c;
+  margin-top: auto;
+  padding-top: 2px;
 }
 
 /* Card actions */
 #grid .product-card__actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 16px 20px 20px;
   border-top: 1px solid var(--color-border);
 }
 
 #grid .product-card__actions .buy {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  padding: 9px 12px;
+  font-size: .86rem;
+  font-weight: 700;
+  transition: background .18s, transform .18s;
   border-radius: 999px;
   background: var(--color-accent);
 }
 
 #grid .product-card__actions .buy:hover {
   background: #6252d1;
+  transform: translateY(-1px);
 }
 
 #grid .product-card__actions .mini {
@@ -134,6 +188,12 @@
 }
 
 @media (max-width: 640px) {
+  .list-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
   #grid.grid {
     grid-template-columns: 1fr;
     gap: 18px;

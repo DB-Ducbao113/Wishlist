@@ -12,6 +12,7 @@
   min-height: 380px;
   padding: 48px 24px;
   text-align: center;
+  color: var(--color-text-secondary);
 
   background: linear-gradient(
     160deg,

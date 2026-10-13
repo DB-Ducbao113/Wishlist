@@ -5,6 +5,7 @@
 
 /* Section layout */
 .collection-panel {
+  margin-bottom: 26px;
   padding: 28px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -158,6 +159,7 @@
 /* Mobile */
 @media (max-width: 640px) {
   .collection-panel {
+    margin-bottom: 22px;
     padding: 18px;
     border-radius: var(--radius-lg);
   }
