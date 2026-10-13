@@ -1,0 +1,115 @@
+/* ========================================
+   Wishlist Product Card — Minimal 3D
+======================================== */
+
+/* Outer card: perspective context */
+.grid > .card.wishlist-card {
+  position: relative;
+  display: block;
+  overflow: visible;
+
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+
+  perspective: var(--perspective-card);
+}
+
+/* Disable old outer hover transform */
+@media (hover: hover) and (pointer: fine) {
+  .grid > .card.wishlist-card:hover {
+    transform: none;
+    border-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* Inner surface: actual rotating layer */
+.card.wishlist-card > .wishlist-card__surface {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  min-width: 0;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-card);
+
+  transform-style: preserve-3d;
+  transform:
+    rotateX(var(--rotate-x, 0deg))
+    rotateY(var(--rotate-y, 0deg));
+
+  transition:
+    box-shadow var(--motion-normal) ease,
+    border-color var(--motion-normal) ease;
+}
+
+/* Hover elevation */
+@media (hover: hover) and (pointer: fine) {
+  .wishlist-card:hover .wishlist-card__surface {
+    border-color: #d6d0fa;
+    box-shadow: var(--shadow-hover);
+  }
+}
+
+/* Image zone */
+.wishlist-card .thumb {
+  border-radius:
+    var(--radius-lg)
+    var(--radius-lg)
+    0 0;
+
+  background: linear-gradient(
+    145deg,
+    #faf9ff,
+    #f1f0f7
+  );
+}
+
+/* Image lift */
+.wishlist-card .thumb img {
+  transition:
+    transform var(--motion-normal)
+    var(--ease-premium);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wishlist-card:hover .thumb img {
+    transform: scale(1.035) translateY(-4px);
+  }
+}
+
+/* Content depth */
+.wishlist-card .card-body {
+  position: relative;
+  transform: translateZ(12px);
+}
+
+/* Actions */
+.wishlist-card .card-actions {
+  position: relative;
+  margin-top: auto;
+  transform: translateZ(8px);
+}
+
+/* Preserve rounded image clipping */
+.wishlist-card .thumb {
+  overflow: hidden;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .grid > .card.wishlist-card,
+  .card.wishlist-card > .wishlist-card__surface,
+  .wishlist-card .card-body,
+  .wishlist-card .card-actions,
+  .wishlist-card .thumb img {
+    transform: none !important;
+    transition: none !important;
+  }
+}

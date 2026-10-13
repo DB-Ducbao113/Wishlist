@@ -220,6 +220,7 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="./css/hero.css">
 <link rel="stylesheet" href="./css/stats.css">
 <link rel="stylesheet" href="./css/controls.css">
+<link rel="stylesheet" href="./css/product-card.css">
 
 </head>
 <body>
@@ -927,11 +928,116 @@ function render(){
   grid.appendChild(frag);
 }
 
+function setupCardTilt(cardEl, surfaceEl) {
+  const pointerFine = window.matchMedia(
+    "(hover: hover) and (pointer: fine)"
+  );
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  );
+
+  if (!pointerFine.matches || reducedMotion.matches) {
+    return;
+  }
+
+  const MAX_X = 5;
+  const MAX_Y = 7;
+  const SMOOTHING = 0.12;
+
+  let targetX = 0;
+  let targetY = 0;
+
+  let currentX = 0;
+  let currentY = 0;
+
+  let animationId = null;
+
+  function animate() {
+    animationId = null;
+
+    // If render() removed this card, stop the animation.
+    if (!cardEl.isConnected) {
+      return;
+    }
+
+    currentX += (targetX - currentX) * SMOOTHING;
+    currentY += (targetY - currentY) * SMOOTHING;
+
+    // Stop when the card is sufficiently close to target.
+    if (
+      Math.abs(targetX - currentX) < 0.01 &&
+      Math.abs(targetY - currentY) < 0.01
+    ) {
+      currentX = targetX;
+      currentY = targetY;
+    }
+
+    surfaceEl.style.setProperty(
+      "--rotate-x",
+      currentX.toFixed(3) + "deg"
+    );
+
+    surfaceEl.style.setProperty(
+      "--rotate-y",
+      currentY.toFixed(3) + "deg"
+    );
+
+    if (
+      currentX !== targetX ||
+      currentY !== targetY
+    ) {
+      requestFrame();
+    }
+  }
+
+  function requestFrame() {
+    if (animationId !== null) return;
+
+    animationId = requestAnimationFrame(animate);
+  }
+
+  function onPointerMove(event) {
+    if (event.pointerType === "touch") return;
+    if (reducedMotion.matches) return;
+
+    const rect = cardEl.getBoundingClientRect();
+
+    const normalizedX =
+      ((event.clientX - rect.left) / rect.width) * 2 - 1;
+
+    const normalizedY =
+      ((event.clientY - rect.top) / rect.height) * 2 - 1;
+
+    const x = Math.max(-1, Math.min(1, normalizedX));
+    const y = Math.max(-1, Math.min(1, normalizedY));
+
+    targetX = -y * MAX_X;
+    targetY = x * MAX_Y;
+
+    requestFrame();
+  }
+
+  function resetTilt() {
+    targetX = 0;
+    targetY = 0;
+
+    requestFrame();
+  }
+
+  cardEl.addEventListener("pointermove", onPointerMove);
+
+  cardEl.addEventListener("pointerleave", resetTilt);
+}
+
 function card(it){
   const st = findStatus(it.status), pr = findPriority(it.priority);
   const el = document.createElement("article");
-  el.className = "card";
+  el.className = "card wishlist-card";
   el.dataset.id = it.id;
+
+  const surface = document.createElement("div");
+  surface.className = "wishlist-card__surface";
 
   // Anh: dung anh thay the khi thieu hoac khi tai loi
   const src = validImageSrc(it.image) || PLACEHOLDER;
@@ -1002,7 +1108,11 @@ function card(it){
   bDel.addEventListener("click", () => removeItem(it.id));
   actions.append(bEdit, bDel);
 
-  el.append(thumb, body, actions);
+  surface.append(thumb, body, actions);
+  el.appendChild(surface);
+
+  setupCardTilt(el, surface);
+
   return el;
 }
 function badge(text, cls){
