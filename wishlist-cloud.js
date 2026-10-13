@@ -23,7 +23,7 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyB7NJKRMf1aDCmPtyurPiNkT4qayEZvERQ",
-  authDomain: "wishlist-787d2.firebaseapp.com",
+  authDomain: "wishlist-787d2.web.app",
   projectId: "wishlist-787d2",
   storageBucket: "wishlist-787d2.firebasestorage.app",
   appId: "1:444123301601:web:627db751e201ac50a619a0",
@@ -85,16 +85,55 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
 
     const itemsRef = collection(db, "users", user.uid, "items");
     onStatus("Đang tải danh sách đồng bộ…", user.email || "");
-    stopListening = onSnapshot(itemsRef, snapshot => {
-      remoteDocumentIds = new Set(snapshot.docs.map(itemDoc => itemDoc.id));
-      const remoteItems = snapshot.docs.map(itemDoc => itemDoc.data());
-      onRemoteItems(remoteItems, isFirstSnapshot);
-      isFirstSnapshot = false;
-      onStatus("Đã đồng bộ", user.email || "");
-    }, error => {
-      onError("Không đọc được dữ liệu Firebase: " + error.message);
-      onStatus("Đồng bộ bị gián đoạn", user.email || "");
-    });
+    stopListening = onSnapshot(
+      itemsRef,
+      { includeMetadataChanges: true },
+
+      snapshot => {
+        remoteDocumentIds = new Set(
+          snapshot.docs.map(itemDoc => itemDoc.id)
+        );
+
+        const remoteItems = snapshot.docs.map(
+          itemDoc => itemDoc.data()
+        );
+
+        // Không coi dữ liệu cache là xác nhận đã đồng bộ.
+        const fromCache = snapshot.metadata.fromCache;
+        const pending = snapshot.metadata.hasPendingWrites;
+
+        // Chỉ xử lý dữ liệu khi thực sự có thay đổi tài liệu
+        // hoặc khi đây là snapshot đầu tiên.
+        if (
+          isFirstSnapshot ||
+          snapshot.docChanges().length > 0
+        ) {
+          onRemoteItems(remoteItems, isFirstSnapshot);
+        }
+
+        isFirstSnapshot = false;
+
+        if (pending) {
+          onStatus("Đang gửi thay đổi…", user.email || "");
+        } else if (fromCache) {
+          onStatus("Đang chờ kết nối máy chủ…", user.email || "");
+        } else {
+          onStatus("Đã nhận dữ liệu từ máy chủ", user.email || "");
+        }
+      },
+
+      error => {
+        onError(
+          "Không đọc được dữ liệu Firebase: " +
+          error.message
+        );
+
+        onStatus(
+          "Đồng bộ bị gián đoạn",
+          user?.email || ""
+        );
+      }
+    );
   }, error => {
     onError("Lỗi xác thực Firebase: " + error.message);
   });

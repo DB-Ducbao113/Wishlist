@@ -1715,14 +1715,17 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=3");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=4");
     cloudSync = await initializeWishlistCloud({
       onStatus: (status, email = "") => {
         $("syncStatus").textContent = status;
         $("syncEmail").textContent = email;
         $("btnSignIn").classList.toggle("hidden", !!email);
         $("btnSignOut").classList.toggle("hidden", !email);
-        if(status.includes("đồng bộ")){
+        // Clear a stale sync error once the server
+        // confirms fresh data (new statuses no longer
+        // contain "đồng bộ" on success).
+        if(status.includes("máy chủ") || status.includes("đồng bộ")){
           $("syncError").textContent = "";
           $("syncError").classList.add("hidden");
         }
