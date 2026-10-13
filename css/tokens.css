@@ -67,3 +67,23 @@
   --tilt-max-y: 7deg;
   --depth-image: 24px;
 }
+
+/* Temporary compatibility aliases.
+   Remove after all legacy selectors are migrated. */
+
+:root {
+  --bg: var(--color-bg);
+  --panel: var(--color-surface);
+  --panel-2: var(--color-surface-soft);
+  --border: var(--color-border);
+
+  --text: var(--color-text);
+  --muted: var(--color-text-secondary);
+
+  --accent: var(--color-accent);
+  --accent-2: #6252d1;
+
+  --danger: var(--color-danger);
+  --radius: var(--radius-md);
+  --shadow: var(--shadow-card);
+}

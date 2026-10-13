@@ -1,5 +1,21 @@
 
-/* ================= THEME + LAYOUT ================= */
+/* =====================================================================
+   LEGACY — migration layer (extracted verbatim from wishlist.html).
+   Dead selectors (.header-tools, .top-actions, .toolbar .btns) removed
+   after zero-match verification against current HTML.
+   Ownership map (final owner -> legacy rules still in effect):
+   - base.css: body/button/input basics, .hidden, .sr-only
+   - layout.css: .wrap, .panel, .list-heading, .row, .field
+   - navigation.css: .sync-panel, header.top base
+   - stats.css: .total base (layout overridden per-component)
+   - controls.css: .toolbar base (layout overridden per-component)
+   - product-card.css + gallery.css: .card/.thumb/.badge/.price/.note
+     base (3D + gallery own their layers; do not delete these bases
+     without making the new files self-sufficient first)
+   - dialog.css: dialog/.dlg-* base (old dialog element rules)
+   - toast.css: .toast (new file wins by later order)
+   Intentional legacy status tints: --c-*, --p-*, .b-*, .status-chip.
+   ================= THEME + LAYOUT ================= */
 :root{
   color-scheme:light;
   --bg:#f5f6f2; --panel:#fff; --panel-2:#f6f8f5; --border:#e5e9e2;
@@ -20,13 +36,12 @@ h1{font-size:clamp(1.8rem,4vw,2.55rem);line-height:1.1;letter-spacing:-.045em;ma
 .wrap{max-width:1240px;margin:0 auto;padding:clamp(18px,4vw,48px) clamp(16px,4vw,40px)}
 header.top{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
 .eyebrow{color:var(--accent);font-size:.75rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;margin:0 0 10px}
-.header-tools{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 button{font:inherit;font-weight:650;cursor:pointer;border-radius:11px;border:1px solid var(--border);
   background:var(--panel);color:var(--text);padding:10px 14px;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s}
 button:hover{border-color:#b9c8bd;box-shadow:0 5px 14px rgba(35,53,40,.08);transform:translateY(-1px)}
 button:active{transform:translateY(0)}
-button:focus-visible,a:focus-visible{outline:3px solid #82b99a;outline-offset:3px}
-button.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(30,118,84,.18)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--color-accent);outline-offset:3px}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(117,101,232,.18)}
 button.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
 button.ghost{background:rgba(255,255,255,.68)}
 button.danger{color:#a6322d;background:#fff1ef;border-color:#f3d2ce}
@@ -34,7 +49,7 @@ button.danger:hover{background:#ffe4e0;border-color:#e9b4ae}
 button.mini{padding:7px 11px;font-size:.82rem}
 input,select,textarea{font:inherit;width:100%;padding:11px 12px;border-radius:11px;
   border:1px solid var(--border);background:#fff;color:var(--text);transition:border-color .18s,box-shadow .18s}
-input:focus,select:focus,textarea:focus{outline:0;border-color:#78a98a;box-shadow:0 0 0 3px rgba(30,118,84,.12)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(117,101,232,.12)}
 label{display:block;font-size:.76rem;font-weight:700;color:#506056;margin:0 0 6px}
 .field{margin-bottom:10px}
 .row{display:flex;gap:12px;flex-wrap:wrap}
@@ -50,10 +65,8 @@ label{display:block;font-size:.76rem;font-weight:700;color:#506056;margin:0 0 6p
 .sync-error{flex-basis:100%;margin:0;color:#a6322d;font-size:.82rem}
 .sync-panel>.btns{display:flex;gap:8px}
 .sync-panel button{padding:7px 10px;font-size:.8rem}
-.top-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
 .toolbar{display:grid;grid-template-columns:minmax(210px,2fr) repeat(4,minmax(120px,1fr)) auto;gap:12px;align-items:end}
 .toolbar .field{min-width:0}
-.toolbar .btns{display:flex;gap:8px}
 .total{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
 .total>div{background:#f7f9f6;border:1px solid #edf0ec;border-radius:14px;padding:12px 14px;color:var(--muted);font-size:.78rem;font-weight:650}
 .total b{display:block;font-size:clamp(1rem,2vw,1.35rem);color:var(--text);margin-top:4px;letter-spacing:-.025em}
@@ -110,19 +123,13 @@ dialog::backdrop{background:rgba(20,34,25,.38);backdrop-filter:blur(3px)}
 @media (max-width:980px){
   .toolbar{grid-template-columns:repeat(3,minmax(0,1fr))}
   .toolbar .search{grid-column:1 / -1}
-  .toolbar .btns{grid-column:auto}
 }
 @media (max-width:640px){
   .wrap{padding:22px 15px 34px}
   header.top{align-items:stretch;margin-bottom:20px}
-  .header-tools{align-items:stretch}
   .sync-panel{justify-content:space-between}
-  .top-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-  .top-actions button{padding:9px 7px;font-size:.82rem}
-  .top-actions #btnAdd{grid-column:1 / -1}
   .toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .toolbar .search,.toolbar .btns{grid-column:1 / -1}
-  .toolbar .btns button{flex:1}
+  .toolbar .search{grid-column:1 / -1}
   .panel{padding:15px;border-radius:18px;margin-bottom:22px}
   .total{gap:8px}
   .total>div{padding:10px;border-radius:11px}
