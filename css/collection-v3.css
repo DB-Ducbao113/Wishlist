@@ -1,0 +1,163 @@
+/* Dream Vault V3 — Collection Experience */
+
+/* Editorial collection section */
+.collection-panel.collection-panel--v3 {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(24px, 4vw, 48px);
+  border-radius: 32px;
+  border: 1px solid rgba(151, 130, 223, .2);
+  background:
+    radial-gradient(
+      ellipse at 100% 0,
+      rgba(160, 139, 242, .16),
+      transparent 46%
+    ),
+    linear-gradient(155deg, #fff, #faf9ff);
+  box-shadow: 0 20px 55px rgba(67, 52, 132, .055);
+}
+
+.collection-panel--v3 .collection-panel__heading h2 {
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -.065em;
+  text-wrap: balance;
+}
+
+.collection-panel--v3 .collection-panel__eyebrow {
+  letter-spacing: .22em;
+}
+
+.collection-panel--v3 .collection-panel__description {
+  max-width: 490px;
+  font-size: .95rem;
+  line-height: 1.75;
+}
+
+/* Search as the visual focus */
+.collection-panel--v3 .collection-search__input-wrap {
+  height: 64px;
+  padding-inline: 20px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.93);
+  border: 1px solid rgba(177,163,234,.45);
+  box-shadow: 0 12px 34px rgba(65,45,140,.045);
+}
+
+.collection-panel--v3 .collection-search__input-wrap:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(117,101,232,.12);
+}
+
+/* Filter row */
+.collection-panel--v3 .collection-filters {
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 14px;
+}
+
+.collection-panel--v3 .collection-filters .field {
+  min-width: 0;
+}
+
+.collection-panel--v3 .collection-filters select {
+  min-width: 0;
+  height: 50px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.85);
+  border-color: rgba(177,163,234,.32);
+}
+
+/* Toolbar footer */
+.collection-panel--v3 .collection-toolbar__footer {
+  padding-top: 16px;
+  border-top: 1px solid rgba(177,163,234,.2);
+}
+
+.collection-panel--v3 .collection-clear {
+  min-height: 44px;
+  padding-inline: 20px;
+}
+
+/* Gallery editorial title */
+.list-heading.list-heading--v3 {
+  align-items: center;
+  margin: 48px 2px 24px;
+}
+
+.list-heading--v3 .list-heading__eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .2em;
+}
+
+.list-heading--v3 h2 {
+  font-size: clamp(1.65rem, 3.3vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -.06em;
+}
+
+.list-heading--v3 .list-heading__decoration {
+  font-size: 38px;
+  color: #aa9ce8;
+}
+
+/* Respect existing V2 grid and Tilt */
+#grid.gallery--v2 {
+  row-gap: 26px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .collection-panel--v3 .collection-filters {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .collection-panel.collection-panel--v3 {
+    padding: 22px 18px;
+    border-radius: 24px;
+  }
+
+  .collection-panel--v3 .collection-panel__heading h2 {
+    font-size: clamp(1.9rem, 8vw, 2.7rem);
+  }
+
+  .collection-panel--v3 .collection-search__input-wrap {
+    height: 54px;
+    padding-inline: 14px;
+    border-radius: 16px;
+  }
+
+  .collection-panel--v3 .collection-filters {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px;
+  }
+
+  .collection-panel--v3 .collection-filters select {
+    width: 100%;
+  }
+
+  .list-heading.list-heading--v3 {
+    margin-top: 34px;
+  }
+}
+
+/* Narrow phones */
+@media (max-width: 380px) {
+  .collection-panel--v3 .collection-filters {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collection-panel--v3 *,
+  .collection-panel--v3 *::before,
+  .collection-panel--v3 *::after {
+    scroll-behavior: auto;
+  }
+}
