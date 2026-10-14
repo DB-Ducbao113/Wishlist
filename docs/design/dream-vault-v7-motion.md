@@ -202,14 +202,28 @@ Dataset 5 món giống hệt QA 16E (1 ảnh data-URI, 1 ảnh lỗi, 3 không �
 
 ## 9. Roadmap V7
 
-| Bài | Công việc | Ưu tiên |
-| --- | --- | --- |
-| 17A | Motion Art Direction & Baseline | P0 — tài liệu + baseline |
-| 17B | Cinematic Hero Motion | P0 |
-| 17C | Gallery Interactive Lighting | P1 |
-| 17D | Dashboard & Collection Transitions | P1 |
-| 17E | Desktop Motion QA & Freeze | P0 |
-| 17F | Mobile Motion Adaptation | P2 |
-| 17G | Final V7 Release Gate | P0 |
+| Bài | Công việc | Ưu tiên | Trạng thái |
+| --- | --- | --- | --- |
+| 17A | Motion Art Direction & Baseline | P0 — tài liệu + baseline | ✅ `611a2b7` |
+| 17B | Cinematic Hero Motion | P0 | ✅ `2077afe` + QA `21d400c` — Source PASS |
+| 17C | Gallery Interactive Lighting | P1 | ✅ `6367875` — PASS + fix `:has(:focus-visible)` ở 17D |
+| 17D | Dashboard & Collection Transitions | P1 | ✅ `be0f21b` — Source PASS |
+| 17E | Cinematic Visual Overhaul + Desktop QA/Freeze Gate (đổi scope theo chỉ đạo — xem §10) | P0 | ✅ `acd9c7a` — QA 78/78, chờ review |
+| 17F | Mobile Motion Adaptation | P2 | — |
+| 17G | Final V7 Release Gate (tạo tag `ui-v7.0.0`) | P0 | — |
 
 Desktop 1280/1440/1920 hoàn thiện và nghiệm thu trước (17A–17E). Không động đến mobile trước 17F.
+
+## 10. 17E — Cinematic Visual Overhaul (đổi hướng theo review 17D)
+
+17E ban đầu là "Desktop Motion QA & Freeze" thuần kiểm thử. Sau review 17D, scope được nâng cấp thành
+**Cinematic Visual Overhaul** (Light Lavender × Premium Editorial × Exhibition): Hero signature,
+Dashboard phân cấp (stat đầu gradient), Collection editorial, Featured Gallery dạng khung triển lãm —
+toàn bộ trong `css/cinematic-v7-visual-overhaul.css` (desktop-only) + pause animation theo viewport/tab.
+
+- Chi tiết thực hiện, ảnh before/after, QA 78/78, benchmark A/B baseline: **`docs/qa/dream-vault-v7/desktop-visual-review.md`**.
+- Cơ chế pause 17E: class `hero--v7-paused` (IntersectionObserver + `visibilitychange`, script presentation-only)
+  → `animation-play-state: paused` cho 4 animation 17B. Verified: offscreen/tab ẩn → 0 running; resume khi quay lại.
+- A/B perf 17E vs 17D @1440 headless: idle nghiêm ngặt parity (0.25s/6s cả hai, recalc 874 cả hai);
+  scroll 0.19s/9.2s với hero paused khi offscreen; 0 long task; CLS 0.
+- Mobile 320/375/430/768/1024: byte-identical trước/sau 17E (SHA256 trùng, 0 pixel diff).
