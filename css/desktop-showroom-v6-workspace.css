@@ -1,0 +1,197 @@
+/* ==============================================
+   Dream Vault V6 — Desktop Collection Workspace
+   Desktop only · CSS presentation only
+   Preserve V5 mobile / JS / Firebase / CRUD
+============================================== */
+
+@media (min-width: 1025px) {
+
+  /* Dashboard: showroom rhythm */
+  body.dreamscape-v5
+  .dashboard-panel.dashboard-panel--v2 {
+    margin-block: 36px 42px;
+    padding: clamp(28px, 3vw, 42px);
+    border-radius: var(--dream-radius-xl);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(18px, 2vw, 28px);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    min-height: 190px;
+    padding: clamp(24px, 2vw, 32px);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard .stat-card__value {
+    font-size: clamp(1.9rem, 2.35vw, 2.9rem);
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+
+  /* Collection: editorial left / controls right */
+  body.dreamscape-v5
+  #collection.collection-panel--v3 {
+    display: grid;
+    grid-template-columns:
+      minmax(0, .85fr)
+      minmax(0, 1.15fr);
+    align-items: start;
+    gap: clamp(28px, 3.2vw, 58px);
+    padding: clamp(32px, 3.2vw, 52px);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-panel__heading,
+  body.dreamscape-v5
+  #collection .collection-toolbar {
+    min-width: 0;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-panel__heading h2 {
+    max-width: 440px;
+    font-size: clamp(2.3rem, 3vw, 3.4rem);
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-panel__description {
+    max-width: 370px;
+    color: var(--dream-muted);
+  }
+
+  /* Right workspace */
+  body.dreamscape-v5
+  #collection .collection-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 100%;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search {
+    min-width: 0;
+    width: 100%;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap {
+    width: 100%;
+    min-width: 0;
+    height: 62px;
+    border-radius: var(--dream-radius-md);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters .field {
+    min-width: 0;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters select {
+    width: 100%;
+    min-width: 0;
+    min-height: 50px;
+    border-radius: var(--dream-radius-sm);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-toolbar__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 18px;
+    border-top: 1px solid var(--dream-border);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-clear {
+    min-height: 44px;
+    white-space: normal;
+  }
+
+  /* Exhibition heading alignment */
+  body.dreamscape-v5
+  .list-heading.list-heading--v3 {
+    margin: clamp(42px, 4vw, 64px) 4px 28px;
+    align-items: end;
+  }
+
+  body.dreamscape-v5
+  .list-heading--v3 h2 {
+    font-size: clamp(2rem, 3vw, 3.2rem);
+    color: var(--dream-ink);
+  }
+
+  body.dreamscape-v5
+  .list-heading--v3 .list-heading__decoration {
+    color: var(--dream-highlight);
+  }
+}
+
+/* Laptop desktop: more space for controls */
+@media (min-width: 1025px) and (max-width: 1350px) {
+  body.dreamscape-v5
+  #collection.collection-panel--v3 {
+    grid-template-columns:
+      minmax(0, .75fr)
+      minmax(0, 1.25fr);
+    gap: 24px;
+    padding: 32px;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters {
+    gap: 12px;
+  }
+}
+
+/* Ultrawide desktop */
+@media (min-width: 1800px) {
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    min-height: 210px;
+  }
+
+  body.dreamscape-v5
+  #collection.collection-panel--v3 {
+    gap: 64px;
+    padding: 56px;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters {
+    gap: 18px;
+  }
+}
+
+/* Accessibility */
+@media (min-width: 1025px) and
+       (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  #collection *,
+  body.dreamscape-v5
+  .dashboard-panel--v2 .stat-card {
+    transition: none !important;
+    animation: none !important;
+  }
+}

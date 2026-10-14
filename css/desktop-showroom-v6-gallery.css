@@ -89,7 +89,7 @@
   body.dreamscape-v5
   #grid.gallery--v6
   > .wishlist-card:first-child:not(:only-child)
-  .product-card__surface {
+  .wishlist-card__surface {
     min-height: 480px;
   }
 
