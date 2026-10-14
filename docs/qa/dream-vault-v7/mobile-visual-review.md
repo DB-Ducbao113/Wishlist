@@ -195,6 +195,7 @@ Vị trí CTA vs dock (I2 PASS — đo trực tiếp, after so với baseline đ
 
 - Primary CTA luôn nằm trên đường dock ở scroll 0 ✓ và **cao hơn baseline** ở cả 2 size.
 - Trung thực: secondary CTA **đã** nằm một phần sau dock ở scroll 0 trong baseline V5 (overlap 21px @375, 15px @320 — có sẵn từ trước 17F); after: 22px @375 (+1px do pill cao +2/+4px) và **14px @320 (cải thiện 1px)**. Đây là hành vi pre-existing của dock cố định V5, cuộn nhẹ là CTA ra khỏi dock — **không phải regression 17F**, giữ nguyên theo yêu cầu "giữ hotfix".
+  > **UPDATE 17G:** đã được sửa dứt điểm bằng hotfix cuối (`@media (max-width: 640px) and (max-height: 740px)` — nén nhịp dọc hero, cả hai CTA thông thoáng hoàn toàn: clearance +19.3px @320, +11.8px @375, overlap = 0). Xem [Final Release Report 17G](final-release-report.md).
 
 ---
 

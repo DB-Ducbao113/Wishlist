@@ -1226,3 +1226,44 @@
     animation: none !important;
   }
 }
+
+/* ==========================================================
+   17G — Final Release Hotfix: Hero CTA / Mobile Dock clearance
+   Short phones (same trigger as the V5 short-viewport hotfix:
+   max-width 640 + max-height 740) keep BOTH Hero CTAs fully
+   tappable above the fixed Dock at scroll 0 — verified at
+   320x700 and 375x667. 375x812 / 430x932 unaffected
+   (height > 740). Vertical rhythm only: same elements, same
+   order, pill targets stay 48px (>= 44px). Dock, z-index,
+   safe-area and desktop >= 1025 untouched.
+========================================================== */
+
+@media (max-width: 640px) and (max-height: 740px) {
+  body.dreamscape-v5
+  .hero.hero--v5 {
+    padding-top: 16px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow {
+    margin-bottom: 8px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__description {
+    margin-top: 6px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__actions {
+    margin-top: 8px;
+    gap: 6px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__primary,
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__secondary {
+    min-height: 48px;
+  }
+}
