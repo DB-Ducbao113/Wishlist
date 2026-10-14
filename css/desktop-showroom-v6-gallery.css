@@ -99,7 +99,8 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 1025px) and
+       (hover: hover) and (pointer: fine) {
   body.dreamscape-v5
   #grid.gallery--v6
   .wishlist-card:hover .wishlist-card__surface {
@@ -108,7 +109,8 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (min-width: 1025px) and
+       (prefers-reduced-motion: reduce) {
   body.dreamscape-v5
   #grid.gallery--v6 .wishlist-card__surface,
   body.dreamscape-v5

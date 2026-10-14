@@ -1,0 +1,99 @@
+/* =============================================
+   Dream Vault V6 — Mobile Adaptation
+   Preserve V5 interactions / CRUD / Firebase
+   Mobile-only visual refinement
+============================================= */
+
+@media (max-width: 640px) {
+
+  /* Calm, spacious mobile presentation */
+  body.dreamscape-v5 .hero.hero--v6 {
+    border-color: var(--dream-glass-border);
+    box-shadow: var(--dream-shadow-soft);
+  }
+
+  body.dreamscape-v5
+  .hero--v6 .hero__title {
+    text-wrap: balance;
+  }
+
+  /* Keep Hero action hit targets */
+  body.dreamscape-v5
+  .hero--v6 .hero-v3__actions > * {
+    min-height: 48px;
+  }
+
+  /* Mobile Dashboard, retain V5 single column */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    min-width: 0;
+    border-radius: var(--dream-radius-md);
+  }
+
+  /* Collection remains stacked */
+  body.dreamscape-v5
+  #collection.collection-panel--v3 {
+    display: block;
+    border-radius: var(--dream-radius-lg);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-toolbar {
+    min-width: 0;
+  }
+
+  /* Keep existing V5 filter breakpoints */
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap {
+    min-width: 0;
+    box-shadow: var(--dream-shadow-soft);
+  }
+
+  /* Gallery V6 visual coherence only */
+  body.dreamscape-v5
+  #grid.grid.gallery--v4.gallery--v6 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6 .wishlist-card__surface {
+    border-color: var(--dream-glass-border);
+    border-radius: 24px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6 .product-card__price {
+    color: var(--dream-accent);
+  }
+
+  /* Floating Dock; preserve V5 visibility behavior */
+  body.dreamscape-v5 .mobile-dock {
+    border-color: var(--dream-glass-border);
+  }
+}
+
+/* Narrow phones: preserve V5 safe layouts */
+@media (max-width: 380px) {
+  body.dreamscape-v5
+  #collection .collection-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Reduced motion */
+@media (max-width: 640px) and
+       (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  #grid.gallery--v6 .wishlist-card__surface {
+    transition: none;
+  }
+}
