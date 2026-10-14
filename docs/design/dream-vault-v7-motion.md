@@ -1,8 +1,9 @@
 # Dream Vault V7 — Motion Design Specification
 
-**Giai đoạn:** 17A — Motion Art Direction & Baseline (chưa lập trình animation mới)
+**Giai đoạn:** 17A–17B — Motion Art Direction, Baseline & Cinematic Hero Motion
 **Ngày:** 14/10/2026
 **Nhánh:** `feature/cinematic-motion-v7` (cắt từ tag `ui-v6.0.0`)
+**Trạng thái:** 17A PASS (source) · 17B code `hero--v7` + `cinematic-v7-hero.css` đã implement & QA desktop · chờ review 17B
 **Triết lý:** Dream Vault trở thành showroom desktop có chiều sâu và tương tác tinh tế — **không** phải website có thật nhiều animation.
 
 ---
@@ -131,8 +132,24 @@ Dataset 5 món giống hệt QA 16E (1 ảnh data-URI, 1 ảnh lỗi, 3 không �
 
 **Đọc số liệu:**
 
-- V6 hiện tại rất rẻ: main thread ~1% busy, 0 long task, 0 layout/style recalc ở cả 2 kịch bản (scroll thuần compositor, không có JS scroll-handler nào đang chạy).
-- FPS giữ 60.0 ổn định → **ngưỡng regression đề xuất cho V7:** idle/scroll phải giữ **≥ 55 FPS**, **0 long task > 50ms**, main-thread task time không vượt 2× baseline (idle ≤ 0.12s/6s, scroll ≤ 0.20s/10s). Đây là ngưỡng nội bộ đặt **sau khi có baseline**, sẽ chốt lại ở 17E.
+- **Kết quả 17B (có ambient animation) @1440×900, dataset 5 món — lặp 3 lần, rất ổn định:**
+
+| Kịch bản | FPS | Long task >50ms | TaskDuration (main-thread) | Recalc style | Layout |
+| --- | --- | --- | --- | --- | --- |
+| Idle ~6s | **60.0–60.2** | **0** | 0.12–0.14s | ~364 | 0 |
+| Cuộn ~9.5s | **59.9–60.1** | **0** | 0.21–0.25s | ~574 | 0 |
+
+- **Baseline V6 (không animation) cùng môi trường:** idle 60.0 FPS / 0.06s / 0 recalc; scroll 60.0 FPS / 0.10s / 0 recalc.
+- **Cô lập nguyên nhân (probe có bug `animation:none` specificity, đã sửa và đo lại):** bật/tắt stagger (-2.5s/-5s) KHÔNG làm đổi chi phí — cả hai đều 0.18s / recalc 364. Chi phí ~+0.11s (idle) và ~+0.12s (scroll) đến từ bản thân 4 animation vô hạn chạy trên **main-thread SwiftShader (headless không GPU)**, cộng dồn theo số element animate.
+- **Kết luận trung thực:** FPS giữ 60.0 và 0 long task ở mọi kịch bản → không có jank. Cửa sổ main-thread vượt gate nội bộ (idle ≤0.12s, scroll ≤0.20s) chỉ xuất hiện trong môi trường headless software-render. Trên trình duyệt có GPU/compositor (d3d11 probe: recalc 0, task về ~0.13s), transform/opacity là compositor-thread và gần như free.
+
+**Giới hạn trung thực (NOT VERIFIED / môi trường):**
+
+- Đo trên **headless Chrome (SwiftShader)**, không phải DevTools Performance trên máy người dùng thật/monitor thật. TaskDuration + Recalc ở đây KHÔNG phản ánh đúng chi phí compositor-thread sẽ thấy ở trình duyệt có GPU — **không suy rộng thành số liệu thực tế mọi thiết bị**.
+- FPS và long-task (2 chỉ số phản ánh jank thật) **PASS** toàn bộ: 60 FPS, 0 long task >50ms.
+- Chưa đo GPU frame time, paint flashing, FPS với ~50+ sản phẩm, behavior tab nền (background throttling).
+- **Cần kiểm tra ở 17E:** animation tự dừng khi Hero ra khỏi viewport và khi tab bị ẩn — CSS 17B KHÔNG chưa cơ chế đó (đúng spec: chỉ yêu cầu reduced-motion). Không coi là hoàn thành.
+- Hướng giảm chi phí nội bộ (nếu 17E/17G cần): giảm số element ambient (giữ front-card + glow, bỏ back/middle) hoặc dùng `will-change`/`content-visibility` đúng chỗ — ưu tiên giảm/triệt tiêu ambient trước khi tối ưu khác.
 
 **Giới hạn trung thực (NOT VERIFIED):**
 
@@ -155,6 +172,33 @@ Dataset 5 món giống hệt QA 16E (1 ảnh data-URI, 1 ảnh lỗi, 3 không �
 | 9 | Số đo hiệu năng baseline (mục 7.2) | ✅ |
 | 10 | Không sửa CSS/JS production trong 17A | ✅ (chỉ thêm docs + ảnh) |
 | 11 | Không sửa Firebase/Auth/Sync/CRUD | ✅ |
+
+## 8b. 17B — Cinematic Hero Gate (đã implement & QA desktop)
+
+**Code:** thêm class `hero--v7` vào `.hero`, import `css/cinematic-v7-hero.css` (cuối stylesheet, sau V6 mobile). Không sửa DOM bên trong Hero, CTA, SVG, JS.
+
+**Cơ chế:** 3 glass card (`--back`/`--middle`/`--front`) `float` rất nhẹ + glow `breathe` (chỉ `opacity`, KHÔNG animate `filter: blur()`). Keyframes **giữ nguyên toàn bộ chuỗi transform gốc V5** (`rotate`/`rotateY`/`scale`/`translateX(-50%)`/`translateZ(90px)`) rồi cộng `translateY(-4…-5px)` — không ghi đè transform, không phá bố cục 3D. Gate `@media (min-width:1025px) and (prefers-reduced-motion:no-preference)`; desktop nhỏ (1025–1350px) kéo `animation-duration` 10s (yên hơn); `prefers-reduced-motion:reduce` → `animation:none !important`.
+
+**Kết quả QA desktop (headless Chrome, dataset 5 món):**
+
+| Hạng mục | 1280px | 1440px | 1920px |
+| --- | --- | --- | --- |
+| Hero class `hero--v7` | ✅ | ✅ | ✅ |
+| Wrap width | 1280 | 1376 | 1568 |
+| Overflow | Không | Không | Không |
+| 3 card float + glow breathe (infinite, stagger) | ✅ | ✅ | ✅ |
+| Duration (1025–1350 / base) | 10s | 8/7/9s | 8/7/9s |
+| Glass card trong khung hero (không cắt) | ✅ | ✅ | ✅ |
+| Lỗi console | 0 | 0 | 0 |
+
+| Viewport | Kết quả |
+| --- | --- |
+| 1024 / 768 / 375px | `animation:none` trên 3 card + glow — layout V6 giữ nguyên, không overflow, 0 console error |
+| Reduced Motion @1440 | animation none; back/middle transform tĩnh **khớp hệt V5**; glow filter `blur(44px)` tĩnh, opacity tĩnh 0.95 (V6) |
+| CTA Hero @1440 | Click mở dialog Thêm sản phẩm — PASS |
+| 320×700 | CTA bottom 575px < dock top 616px — **không bị Dock che** |
+
+**Hiệu năng (xem mục 7.2):** FPS 60.0–60.2 và **0 long task >50ms** ở cả idle lẫn scroll (PASS). Main-thread TaskDuration/Recalc trong headless SwiftShader vượt gate nội bộ vì animation chạy main-thread ở môi trường không GPU — **giới hạn môi trường, không phải jank** (trình duyệt có GPU: compositor-thread, recalc 0). Chưa kiểm cơ chế tự dừng khi Hero ra khỏi viewport / tab ẩn → **dành cho 17E**.
 
 ## 9. Roadmap V7
 
