@@ -1,0 +1,236 @@
+/* ==========================================
+   Dream Vault V5 — Mobile & Interaction Polish
+   Scoped visual changes only · $0
+========================================== */
+
+/* Mobile Dock: Dreamscape material */
+
+@media (max-width: 640px) {
+  .dreamscape-v5 .mobile-dock {
+    background: rgba(255,255,255,.96);
+    border: 1px solid var(--dream-glass-border);
+    border-radius: 24px;
+    box-shadow: var(--dream-shadow-glass);
+  }
+
+  .dreamscape-v5 .mobile-dock__item {
+    color: var(--dream-muted);
+  }
+
+  .dreamscape-v5 .mobile-dock__item:focus-visible {
+    outline: 3px solid var(--dream-accent);
+    outline-offset: 2px;
+  }
+
+  .dreamscape-v5 .mobile-dock__add {
+    background: var(--dream-accent);
+    color: #fff;
+    box-shadow:
+      0 10px 26px rgba(83,62,169,.24);
+  }
+
+  .dreamscape-v5 .mobile-dock__add:focus-visible {
+    outline: 3px solid var(--dream-accent);
+    outline-offset: 3px;
+  }
+
+  /* Keep a safe touch area */
+  .dreamscape-v5 .mobile-dock__item {
+    min-height: 48px;
+  }
+
+  .dreamscape-v5 .mobile-dock__add {
+    min-width: 52px;
+    min-height: 52px;
+  }
+
+  /* Navigation still yields to input focus */
+  .dreamscape-v5:has(
+    input:focus,
+    textarea:focus,
+    select:focus,
+    [contenteditable="true"]:focus
+  ) .mobile-dock {
+    display: none;
+  }
+
+  /* Do not overlap active dialog */
+  .dreamscape-v5:has(
+    dialog.product-dialog[open]
+  ) .mobile-dock {
+    display: none;
+  }
+
+  /* Mobile header */
+  .dreamscape-v5 .site-header {
+    border-bottom-color: var(--dream-border);
+  }
+
+  .dreamscape-v5 .nav-actions .nav-add {
+    min-height: 44px;
+  }
+}
+
+/* Dialog Dreamscape surface */
+
+.dreamscape-v5
+dialog.product-dialog.product-dialog--v3 {
+  background: var(--dream-surface);
+  color: var(--dream-ink);
+  border-color: var(--dream-glass-border);
+  box-shadow:
+    0 34px 90px rgba(32,20,78,.23);
+}
+
+.dreamscape-v5
+.product-dialog--v3::backdrop {
+  background: rgba(25,21,44,.56);
+}
+
+.dreamscape-v5
+.product-dialog--v3 .product-dialog__header {
+  background:
+    radial-gradient(
+      ellipse at 95% 5%,
+      rgba(168,139,247,.23),
+      transparent 62%
+    ),
+    linear-gradient(145deg,#fff,#F8F6FF);
+
+  border-bottom-color: var(--dream-border);
+}
+
+.dreamscape-v5
+.product-dialog--v3 .product-dialog__eyebrow {
+  color: var(--dream-accent);
+}
+
+.dreamscape-v5
+.product-dialog--v3 .product-dialog__title {
+  color: var(--dream-ink);
+}
+
+.dreamscape-v5
+.product-dialog--v3
+:is(.product-dialog__subtitle,
+    .field label) {
+  color: var(--dream-muted);
+}
+
+.dreamscape-v5
+.product-dialog--v3 .product-dialog__close {
+  background: var(--dream-surface-soft);
+  color: var(--dream-ink);
+  border-color: var(--dream-border);
+}
+
+/* Fields: do not change validation logic */
+
+.dreamscape-v5
+.product-dialog--v3
+:is(
+  input:not([type="hidden"]):not([type="file"]),
+  select,
+  textarea
+) {
+  background: #FCFBFF;
+  color: var(--dream-ink);
+  border-color: var(--dream-border);
+}
+
+.dreamscape-v5
+.product-dialog--v3
+:is(
+  input:not([type="hidden"]):not([type="file"]),
+  select,
+  textarea
+):focus {
+  border-color: var(--dream-accent);
+  box-shadow:
+    0 0 0 4px rgba(104,80,188,.12);
+}
+
+.dreamscape-v5
+.product-dialog--v3
+:is(button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--dream-accent);
+  outline-offset: 2px;
+}
+
+/* Image controls */
+.dreamscape-v5
+.product-dialog--v3 #fFile {
+  background: #F8F6FF;
+  border-color: var(--dream-highlight);
+}
+
+.dreamscape-v5
+.product-dialog--v3 #fPreview {
+  background: var(--dream-surface-soft);
+  border-color: var(--dream-border);
+}
+
+/* Footer */
+.dreamscape-v5
+.product-dialog--v3 .product-dialog__footer {
+  background: #fff;
+  border-top-color: var(--dream-border);
+}
+
+.dreamscape-v5
+.product-dialog--v3
+.product-dialog__footer-actions .primary {
+  background: var(--dream-accent);
+  border-color: var(--dream-accent);
+  color: #fff;
+}
+
+/* Mobile Dialog: preserve scrollable body */
+
+@media (max-width: 640px) {
+  .dreamscape-v5
+  dialog.product-dialog.product-dialog--v3 {
+    width: calc(100% - 16px);
+    max-height: 94dvh;
+    border-radius: 24px;
+  }
+
+  .dreamscape-v5
+  .product-dialog--v3 #form {
+    max-height: 94dvh;
+    min-height: 0;
+  }
+
+  .dreamscape-v5
+  .product-dialog--v3 .product-dialog__body {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .dreamscape-v5
+  .product-dialog--v3 .product-dialog__footer {
+    flex-shrink: 0;
+    padding-bottom:
+      max(14px, env(safe-area-inset-bottom));
+  }
+
+  .dreamscape-v5
+  .product-dialog--v3
+  .product-dialog__footer-actions button {
+    min-height: 48px;
+  }
+}
+
+/* Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .dreamscape-v5 .mobile-dock,
+  .dreamscape-v5 .mobile-dock *,
+  .dreamscape-v5 .product-dialog--v3 *,
+  .dreamscape-v5 .product-dialog--v3 *::before,
+  .dreamscape-v5 .product-dialog--v3 *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
