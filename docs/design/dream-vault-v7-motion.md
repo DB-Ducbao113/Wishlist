@@ -209,7 +209,7 @@ Dataset 5 món giống hệt QA 16E (1 ảnh data-URI, 1 ảnh lỗi, 3 không �
 | 17C | Gallery Interactive Lighting | P1 | ✅ `6367875` — PASS + fix `:has(:focus-visible)` ở 17D |
 | 17D | Dashboard & Collection Transitions | P1 | ✅ `be0f21b` — Source PASS |
 | 17E | Cinematic Visual Overhaul + Desktop QA/Freeze Gate (đổi scope theo chỉ đạo — xem §10) | P0 | ✅ `acd9c7a` — QA 78/78, chờ review |
-| 17F | Mobile Motion Adaptation | P2 | — |
+| 17F | Mobile Premium Adaptation (nâng scope từ Mobile Motion theo spec 17F — xem `docs/qa/dream-vault-v7/mobile-visual-review.md`) | P2 | ✅ `69039bc` — QA 91/91 PASS, desktop 1280/1440/1920 byte-identical, chờ review |
 | 17G | Final V7 Release Gate (tạo tag `ui-v7.0.0`) | P0 | — |
 
 Desktop 1280/1440/1920 hoàn thiện và nghiệm thu trước (17A–17E). Không động đến mobile trước 17F.
