@@ -1,0 +1,162 @@
+[
+ {
+  "name": "CRUD: validation tên rỗng chặn thêm",
+  "pass": "PASS",
+  "detail": "{\"open\":true,\"nameValid\":false,\"n\":5}"
+ },
+ {
+  "name": "CRUD: Add",
+  "pass": "PASS",
+  "detail": "{\"n\":6,\"sums\":\"21.790.000 ₫|320.000 ₫|6 món\"}"
+ },
+ {
+  "name": "CRUD: Edit cập nhật dashboard",
+  "pass": "PASS",
+  "detail": "{\"n\":6,\"sums\":\"21.990.000 ₫|320.000 ₫|6 món\"}"
+ },
+ {
+  "name": "CRUD: Delete + confirm",
+  "pass": "PASS",
+  "detail": "{\"n\":5,\"sums\":\"21.090.000 ₫|320.000 ₫|5 món\",\"confirms\":1}"
+ },
+ {
+  "name": "Status chip cycle",
+  "pass": "PASS",
+  "detail": "Muốn mua -> Đang để dành"
+ },
+ {
+  "name": "Search: theo tên",
+  "pass": "PASS",
+  "detail": "kết quả=1"
+ },
+ {
+  "name": "Search: theo danh mục",
+  "pass": "PASS",
+  "detail": "kết quả=1"
+ },
+ {
+  "name": "Search: theo ghi chú",
+  "pass": "PASS",
+  "detail": "kết quả=1"
+ },
+ {
+  "name": "Filter: Status=purchased",
+  "pass": "PASS",
+  "detail": "kết quả=1"
+ },
+ {
+  "name": "Filter: Priority=high",
+  "pass": "PASS",
+  "detail": "kết quả=2"
+ },
+ {
+  "name": "Filter: Category=Công nghệ",
+  "pass": "PASS",
+  "detail": "kết quả=3"
+ },
+ {
+  "name": "Sort: giá tăng dần",
+  "pass": "PASS",
+  "detail": "Sách thiết k / Chuột không "
+ },
+ {
+  "name": "Sort: giá giảm dần",
+  "pass": "PASS",
+  "detail": "Bàn phím cơ / Tai nghe khô"
+ },
+ {
+  "name": "Sort: newest",
+  "pass": "PASS",
+  "detail": "Tai nghe khô / Sách thiết k"
+ },
+ {
+  "name": "Sort: ưu tiên cao trước",
+  "pass": "PASS",
+  "detail": "Tai nghe khô / Loa bluetoot"
+ },
+ {
+  "name": "Gallery: 1 món (no featured span)",
+  "pass": "PASS",
+  "detail": "{\"n\":1,\"cols\":3,\"firstSpan\":\"auto\"}"
+ },
+ {
+  "name": "Gallery: 2 món (featured span 2)",
+  "pass": "PASS",
+  "detail": "{\"n\":2,\"cols\":3,\"firstSpan\":\"span 2\"}"
+ },
+ {
+  "name": "Gallery: nhiều món",
+  "pass": "PASS",
+  "detail": "{\"n\":5,\"cols\":3,\"firstSpan\":\"span 2\"}"
+ },
+ {
+  "name": "Ảnh: có ảnh hiển thị, ảnh lỗi không vỡ layout",
+  "pass": "PASS",
+  "detail": "[true,true,true,true,true]"
+ },
+ {
+  "name": "Long text + giá lớn",
+  "pass": "PASS",
+  "detail": "{\"titleClipped\":false,\"overflow\":false,\"price\":\"999.999.999 ₫\"}"
+ },
+ {
+  "name": "Tilt: xoay khi hover + reset sau pointerleave",
+  "pass": "PASS",
+  "detail": "{\"on\":true,\"off\":true}"
+ },
+ {
+  "name": "Không bị layer che (elementFromPoint)",
+  "pass": "PASS",
+  "detail": "{\"#heroAddWish\":\"ok\",\"#grid .product-card__actions .buy\":\"ok\",\"#q\":\"ok\",\"#fSort\":\"ok\"}"
+ },
+ {
+  "name": "Focus-visible thấy được",
+  "pass": "PASS",
+  "detail": "{\"tag\":\"SPAN\",\"outline\":\"solid 3px rgb(117, 101, 232)\",\"boxShadow\":\"none\"}"
+ },
+ {
+  "name": "Reduced Motion: transition tắt",
+  "pass": "PASS",
+  "detail": "{\"surfaceTransition\":\"0s\",\"collectionAnim\":\"0s\"}"
+ },
+ {
+  "name": "Console không lỗi mới",
+  "pass": "PASS",
+  "detail": "none"
+ },
+ {
+  "name": "Layout 1280px: không overflow, 2 cột, filter 2×2, gallery 3 cột",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1280,\"overflow\":false,\"collectionCols\":2,\"filterCols\":2,\"selectWidths\":\"341,341,341,341\",\"galleryCols\":3,\"featuredSpan\":\"span 2\",\"titleClipped\":false}"
+ },
+ {
+  "name": "Layout 1440px: không overflow, 2 cột, filter 2×2, gallery 3 cột",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1376,\"overflow\":false,\"collectionCols\":2,\"filterCols\":2,\"selectWidths\":\"320,320,320,320\",\"galleryCols\":3,\"featuredSpan\":\"span 2\",\"titleClipped\":false}"
+ },
+ {
+  "name": "Layout 1920px: không overflow, 2 cột, filter 2×2, gallery 3 cột",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1568,\"overflow\":false,\"collectionCols\":2,\"filterCols\":2,\"selectWidths\":\"354,354,354,354\",\"galleryCols\":3,\"featuredSpan\":\"span 2\",\"titleClipped\":false}"
+ },
+ {
+  "name": "Regression 1024px: giữ V5, không overflow",
+  "pass": "PASS",
+  "detail": "{\"overflow\":false,\"collectionCols\":1,\"galleryCols\":2,\"gallery6Applied\":true}"
+ },
+ {
+  "name": "Regression 768px: giữ V5, không overflow",
+  "pass": "PASS",
+  "detail": "{\"overflow\":false,\"collectionCols\":1,\"galleryCols\":2,\"gallery6Applied\":true}"
+ },
+ {
+  "name": "Regression 375px: giữ V5, không overflow",
+  "pass": "PASS",
+  "detail": "{\"overflow\":false,\"collectionCols\":1,\"galleryCols\":1,\"gallery6Applied\":false}"
+ },
+ {
+  "name": "Regression 320px: giữ V5, không overflow",
+  "pass": "PASS",
+  "detail": "{\"overflow\":false,\"collectionCols\":1,\"galleryCols\":1,\"gallery6Applied\":false}"
+ }
+]
