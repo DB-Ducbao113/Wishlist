@@ -1,0 +1,150 @@
+/* Dream Vault V4 — Premium Card Interactions */
+/* Scope: visual only; preserve tilt and CRUD */
+
+#grid.gallery--v4 .product-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+#grid.gallery--v4 .product-card__badges .badge {
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+#grid.gallery--v4 .status-chip {
+  cursor: pointer;
+}
+
+#grid.gallery--v4 .status-chip:focus-visible {
+  outline: 3px solid #7565e8;
+  outline-offset: 3px;
+}
+
+/* Product hierarchy */
+
+#grid.gallery--v4 .product-card__title {
+  margin: 0;
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+#grid.gallery--v4 .product-card__price {
+  margin-block: 2px 6px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+#grid.gallery--v4 .product-card__content .note {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Action layout */
+
+#grid.gallery--v4 .product-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10px;
+}
+
+#grid.gallery--v4.gallery--v2 .product-card__actions > * {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 46px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+/* Primary action, only present with valid link */
+
+#grid.gallery--v4 .product-card__actions .buy {
+  flex: 1 1 100%;
+  background: #7060c8;
+  border-color: #7060c8;
+  color: white;
+}
+
+/* Edit and delete remain separate actions */
+
+#grid.gallery--v4 .product-card__actions .mini {
+  flex: 1 1 0;
+  padding: 12px 14px;
+  background: #f5f2ff;
+  border: 1px solid #ddd5f5;
+  color: #4f437c;
+}
+
+#grid.gallery--v4
+.product-card__actions .mini.danger {
+  background: #fff7f7;
+  border-color: #f1d9d9;
+  color: #9b4141;
+}
+
+/* Subtle feedback without touching Tilt transforms */
+
+@media (hover: hover) and (pointer: fine) {
+  #grid.gallery--v4
+  .product-card__actions .buy:hover {
+    background: #5e4daf;
+    border-color: #5e4daf;
+  }
+
+  #grid.gallery--v4
+  .product-card__actions .mini:hover {
+    background: #ebe5ff;
+  }
+
+  #grid.gallery--v4
+  .product-card__actions .mini.danger:hover {
+    background: #ffecec;
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 640px) {
+  #grid.gallery--v4 .product-card__actions {
+    gap: 10px;
+  }
+
+  #grid.gallery--v4.gallery--v2
+  .product-card__actions > * {
+    min-height: 48px;
+  }
+
+  #grid.gallery--v4 .product-card__price {
+    font-size: clamp(1.4rem, 6vw, 1.9rem);
+  }
+}
+
+@media (max-width: 360px) {
+  #grid.gallery--v4 .product-card__actions .mini {
+    padding-inline: 8px;
+  }
+}
+
+/* Respect Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+  #grid.gallery--v4
+  .product-card__actions > * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
