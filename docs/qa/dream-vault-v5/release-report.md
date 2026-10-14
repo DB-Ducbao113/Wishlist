@@ -61,6 +61,29 @@ fixed-dock behavior on short viewports.
 - Tilt proven via synthetic events; CDP-mouse hover could not trigger
   it in this harness (equal on V4/V5).
 
+## 15F.1 hotfix — short-viewport hero CTA overlap (2026-10-14)
+
+Problem: at 320x700 with the page at scroll-top, the fixed mobile dock
+covered the hero secondary CTA (`elementFromPoint` returned the dock's
+Collection anchor). Same overlap reproduced at 375x667, so the fix was
+generalized from the proposed `(max-width: 360px)` to
+`(max-width: 640px) and (max-height: 740px)` in
+`css/dreamscape-v5-hero.css` (compact hero spacing on short viewports).
+
+Verification (`elementFromPoint` at both CTA centers + functional clicks):
+
+| Viewport | Primary CTA | Secondary CTA | Overflow | Dialog opens |
+|----------|-------------|---------------|----------|--------------|
+| 320x700 | clickable | clickable | no | yes |
+| 375x667 | clickable | clickable | no | yes |
+| 375x812 | clickable | clickable | no | yes |
+| 430x932 | clickable | clickable | no | yes |
+| 768x1024 | clickable | clickable | no | yes |
+
+Dock/search/dialog behavior re-checked at 375x667: idle `grid`,
+search-focus `none`, dialog-open `none`. 0 console errors.
+Screenshot: ![fixed hero 320x700](screenshots/v5-hero-320x700-fixed.png)
+
 ## Decision input
 
 No P0/P1 found. UI freeze tag `ui-v5.0.0` decision is with review —

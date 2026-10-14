@@ -303,3 +303,35 @@
     transition: none !important;
   }
 }
+
+/* V5 15F.1 — Short mobile viewport refinement.
+   Applies to any narrow viewport short enough for the fixed
+   dock to overlap the hero CTAs (verified at 320x700, 375x667). */
+@media (max-width: 640px) and (max-height: 740px) {
+  .dreamscape-v5 .hero.hero--v5 {
+    padding-top: 24px;
+    gap: 10px;
+  }
+
+  .dreamscape-v5 .hero--v5 .hero__eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .dreamscape-v5 .hero--v5 .hero__title {
+    font-size: clamp(2.35rem, 9vw, 2.75rem);
+  }
+
+  .dreamscape-v5 .hero--v5 .hero__description {
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  .dreamscape-v5 .hero--v5 .hero-v3__actions {
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .dreamscape-v5 .hero--v5 .hero__footer {
+    margin-top: 12px;
+  }
+}
