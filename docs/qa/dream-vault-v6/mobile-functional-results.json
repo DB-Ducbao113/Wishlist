@@ -1,0 +1,142 @@
+[
+ {
+  "name": "Matrix 320×700 (mobile 1 cột)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":320,\"overflow\":false,\"collectionCols\":1,\"filterCols\":1,\"galleryCols\":1,\"dashCols\":1}"
+ },
+ {
+  "name": "Matrix 375×667 (mobile 1 cột)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":375,\"overflow\":false,\"collectionCols\":1,\"filterCols\":1,\"galleryCols\":1,\"dashCols\":1}"
+ },
+ {
+  "name": "Matrix 375×812 (mobile 1 cột)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":375,\"overflow\":false,\"collectionCols\":1,\"filterCols\":1,\"galleryCols\":1,\"dashCols\":1}"
+ },
+ {
+  "name": "Matrix 430×932 (mobile 1 cột)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":430,\"overflow\":false,\"collectionCols\":1,\"filterCols\":2,\"galleryCols\":1,\"dashCols\":1}"
+ },
+ {
+  "name": "Matrix 768×1024 (tablet V5)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":768,\"overflow\":false,\"collectionCols\":1,\"filterCols\":2,\"galleryCols\":2,\"dashCols\":3}"
+ },
+ {
+  "name": "Matrix 1024×800 (tablet V5)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1024,\"overflow\":false,\"collectionCols\":1,\"filterCols\":4,\"galleryCols\":2,\"dashCols\":3}"
+ },
+ {
+  "name": "Matrix 1280×900 (desktop V6 wrap=1280)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1280,\"overflow\":false,\"collectionCols\":2,\"filterCols\":2,\"galleryCols\":3,\"dashCols\":3}"
+ },
+ {
+  "name": "Matrix 1440×900 (desktop V6 wrap=1376)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1376,\"overflow\":false,\"collectionCols\":2,\"filterCols\":2,\"galleryCols\":3,\"dashCols\":3}"
+ },
+ {
+  "name": "Matrix 1920×1080 (desktop V6 wrap=1568)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1568,\"overflow\":false,\"collectionCols\":2,\"filterCols\":2,\"galleryCols\":3,\"dashCols\":3}"
+ },
+ {
+  "name": "320×700: CTA không bị Dock che, Dock vẫn hiển thị",
+  "pass": "PASS",
+  "detail": "{\"ctaReachable\":true,\"overlap\":false,\"dockVisible\":true,\"topEl\":\"heroAddWish\"}"
+ },
+ {
+  "name": "375×667: CTA không bị Dock che, Dock vẫn hiển thị",
+  "pass": "PASS",
+  "detail": "{\"ctaReachable\":true,\"overlap\":false,\"dockVisible\":true,\"topEl\":\"heroAddWish\"}"
+ },
+ {
+  "name": "Mobile: Dialog Add hoạt động",
+  "pass": "PASS",
+  "detail": "{\"dlgOpen\":true,\"n\":5,\"sums\":\"1.007.589.999 ₫|5 món\"}"
+ },
+ {
+  "name": "Mobile: Edit + dashboard",
+  "pass": "PASS",
+  "detail": "{\"n\":5,\"sums\":\"1.007.689.999 ₫|5 món\"}"
+ },
+ {
+  "name": "Mobile: Delete + confirm",
+  "pass": "PASS",
+  "detail": "{\"n\":4,\"sums\":\"1.007.089.999 ₫|4 món\",\"confirms\":1}"
+ },
+ {
+  "name": "Mobile: status chip cycle",
+  "pass": "PASS",
+  "detail": "Muốn mua -> Đang để dành"
+ },
+ {
+  "name": "Mobile: Search/Filter/Sort/Clear",
+  "pass": "PASS",
+  "detail": "{\"s1\":1,\"s2\":1,\"firstTop\":\"Tên sản ph\"}"
+ },
+ {
+  "name": "Mobile: Dock nhường khi input focus (V5 13D.1)",
+  "pass": "PASS",
+  "detail": "display none khi #q focus=true"
+ },
+ {
+  "name": "Mobile: ảnh lỗi 404/không ảnh/tên dài không vỡ layout",
+  "pass": "PASS",
+  "detail": "{\"overflow\":false,\"titleInside\":true,\"imgCount\":4,\"loadedOk\":4,\"brokenSwapped\":true,\"longPrice\":true}"
+ },
+ {
+  "name": "Mobile: Dock hiện lại sau blur + focus thấy được",
+  "pass": "PASS",
+  "detail": "{\"dockShown\":true,\"focused\":true,\"outline\":\"solid 3px rgb(104, 80, 188)\",\"boxShadow\":\"none\",\"inViewport\":true,\"box\":\"91x54\"}"
+ },
+ {
+  "name": "Mobile: keyboard focus vào Dock",
+  "pass": "PASS",
+  "detail": "{\"isActive\":true}"
+ },
+ {
+  "name": "Mobile: Reduced Motion",
+  "pass": "PASS",
+  "detail": "transition=0s"
+ },
+ {
+  "name": "Mobile: console không lỗi mới (404 cố ý: 6)",
+  "pass": "PASS",
+  "detail": "none"
+ },
+ {
+  "name": "Tablet 768px: hover V6 KHÔNG áp dụng (scope desktop)",
+  "pass": "PASS",
+  "detail": "{\"before\":\"rgba(181, 169, 216, 0.27)\",\"hovered\":true,\"borderColor\":\"rgba(145, 122, 230, 0.48)\",\"boxShadow\":\"rgba(63, 42, 140, 0.12) 0px 28px 68px 0px\",\"v6HoverBorder\":false}"
+ },
+ {
+  "name": "Tablet 1024px: hover V6 KHÔNG áp dụng (scope desktop)",
+  "pass": "PASS",
+  "detail": "{\"before\":\"rgba(181, 169, 216, 0.27)\",\"hovered\":true,\"borderColor\":\"rgba(145, 122, 230, 0.48)\",\"boxShadow\":\"rgba(63, 42, 140, 0.12) 0px 28px 68px 0px\",\"v6HoverBorder\":false}"
+ },
+ {
+  "name": "Desktop 1440px: hover V6 vẫn hoạt động",
+  "pass": "PASS",
+  "detail": "{\"before\":\"rgba(207, 194, 244, 0.6)\",\"hovered\":true,\"borderColor\":\"rgba(168, 139, 247, 0.55)\",\"boxShadow\":\"rgba(65, 43, 139, 0.14) 0px 28px 70px 0px\",\"v6HoverBorder\":true}"
+ },
+ {
+  "name": "Desktop 1280 không đổi (wrap=1280)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1280,\"collectionCols\":2,\"galleryCols\":3,\"filterCols\":2,\"overflow\":false}"
+ },
+ {
+  "name": "Desktop 1440 không đổi (wrap=1376)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1376,\"collectionCols\":2,\"galleryCols\":3,\"filterCols\":2,\"overflow\":false}"
+ },
+ {
+  "name": "Desktop 1920 không đổi (wrap=1568)",
+  "pass": "PASS",
+  "detail": "{\"wrap\":1568,\"collectionCols\":2,\"galleryCols\":3,\"filterCols\":2,\"overflow\":false}"
+ }
+]
