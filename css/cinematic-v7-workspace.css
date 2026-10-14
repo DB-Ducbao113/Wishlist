@@ -1,0 +1,101 @@
+/* ============================================
+   Dream Vault V7 — Desktop Workspace Motion
+   CSS-only · No Firebase / CRUD changes
+============================================ */
+
+@media (min-width: 1025px) {
+
+  /* Dashboard */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    transition:
+      transform 220ms var(--dream-ease),
+      box-shadow 220ms var(--dream-ease),
+      border-color 220ms ease;
+  }
+
+  /* Search */
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap {
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms var(--dream-ease);
+  }
+
+  /* Filter controls */
+  body.dreamscape-v5
+  #collection .collection-filters select {
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms var(--dream-ease);
+  }
+
+  /* Clear filter */
+  body.dreamscape-v5
+  #collection .collection-clear {
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
+  }
+}
+
+@media (min-width: 1025px) and
+       (hover: hover) and
+       (pointer: fine) and
+       (prefers-reduced-motion: no-preference) {
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(168,139,247,.6);
+    box-shadow:
+      0 24px 55px rgba(65,43,139,.13);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-clear:hover {
+    border-color: var(--dream-highlight);
+    background: var(--dream-surface-soft);
+  }
+}
+
+/* Search focus */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap:focus-within {
+    border-color: var(--dream-accent);
+    box-shadow: 0 0 0 4px rgba(104,80,188,.12);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters select:focus-visible {
+    border-color: var(--dream-accent);
+    outline: 3px solid var(--dream-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced Motion */
+@media (min-width: 1025px) and
+       (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card,
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap,
+  body.dreamscape-v5
+  #collection .collection-filters select,
+  body.dreamscape-v5
+  #collection .collection-clear {
+    transition: none !important;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:hover {
+    transform: none !important;
+  }
+}

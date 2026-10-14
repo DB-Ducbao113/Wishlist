@@ -56,8 +56,8 @@
 @media (min-width: 1025px) {
   body.dreamscape-v5
   #grid.gallery--v6
-  > .wishlist-card:first-child:not(:only-child)
-  :has(:focus-visible) .product-media {
+  > .wishlist-card:first-child:not(:only-child):has(:focus-visible)
+  .product-media {
     box-shadow:
       inset 0 0 55px rgba(168,139,247,.15);
   }
