@@ -231,3 +231,27 @@
     transition: none !important;
   }
 }
+
+/* 13D.1 — Mobile keyboard focus handling */
+
+@media (max-width: 640px) {
+  body:has(
+    input:focus,
+    textarea:focus,
+    select:focus,
+    [contenteditable="true"]:focus
+  ) .mobile-dock {
+    display: none;
+  }
+
+  .mobile-dock__item small {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 380px) {
+  .mobile-dock__item small {
+    font-size: 10px;
+    letter-spacing: -.02em;
+  }
+}

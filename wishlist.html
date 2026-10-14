@@ -1748,6 +1748,23 @@ function init(){
     "click",
     () => openForm(null)
   );
+  $("mobileSearchJump").addEventListener(
+    "click",
+    (event) => {
+      event.preventDefault();
+
+      const search = $("q");
+
+      search.scrollIntoView({
+        behavior: "instant",
+        block: "center"
+      });
+
+      search.focus({
+        preventScroll: true
+      });
+    }
+  );
   $("emptyAction").addEventListener("click", () => {
     if (items.length === 0) {
       openForm(null);
@@ -2043,6 +2060,7 @@ document.addEventListener("DOMContentLoaded", init);
   </button>
 
   <a href="#q"
+     id="mobileSearchJump"
      class="mobile-dock__item">
     <span aria-hidden="true">⌕</span>
     <small>Tìm kiếm</small>
