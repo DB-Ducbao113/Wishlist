@@ -1,0 +1,74 @@
+/* ==============================================
+   Dream Vault V7 — Gallery Interactive Lighting
+   Desktop-only / presentation only
+   Preserve Tilt and Purchased Celebration
+============================================== */
+
+@media (min-width: 1025px) {
+
+  /* Lighting transition on featured media only */
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    transition:
+      box-shadow 240ms cubic-bezier(.22, 1, .36, 1),
+      border-color 240ms ease;
+  }
+}
+
+/* Mouse hover, desktop only */
+@media (min-width: 1025px) and
+       (hover: hover) and
+       (pointer: fine) and
+       (prefers-reduced-motion: no-preference) {
+
+  /* Only featured card reacts to extra lighting */
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  :is(.product-media) {
+    box-shadow: inset 0 0 0 0
+      rgba(168,139,247,0);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child):hover
+  .product-media {
+    box-shadow:
+      inset 0 0 65px rgba(168,139,247,.16),
+      inset 0 0 1px rgba(255,255,255,.9);
+  }
+
+  /* Elevation without changing Tilt transform */
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child):not(.is-purchased):hover
+  .wishlist-card__surface {
+    border-color: rgba(168,139,247,.68);
+    box-shadow:
+      0 30px 76px rgba(65,43,139,.16);
+  }
+}
+
+/* Keyboard lighting also works without pointer hover */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  :has(:focus-visible) .product-media {
+    box-shadow:
+      inset 0 0 55px rgba(168,139,247,.15);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    transition: none !important;
+  }
+}
