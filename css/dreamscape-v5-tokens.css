@@ -1,0 +1,65 @@
+/* Dream Vault V5 — Dreamscape Tokens */
+/* Additive tokens. Do not replace legacy tokens.css */
+
+:root {
+  /* Foundation */
+  --dream-bg: #F8F6FF;
+  --dream-surface: #FFFFFF;
+  --dream-surface-soft: #F3EFFF;
+  --dream-mist: #DED5FF;
+
+  /* Identity */
+  --dream-accent: #6850BC;
+  --dream-accent-hover: #543F9E;
+  --dream-highlight: #A88BF7;
+  --dream-ink: #19152C;
+  --dream-muted: #625979;
+
+  /* Glass materials */
+  --dream-glass:
+    rgba(255, 255, 255, .86);
+  --dream-glass-border:
+    rgba(207, 194, 244, .60);
+  --dream-border:
+    #E5DDF6;
+
+  /* Shapes */
+  --dream-radius-sm: 16px;
+  --dream-radius-md: 22px;
+  --dream-radius-lg: 28px;
+  --dream-radius-xl: 36px;
+  --dream-radius-pill: 999px;
+
+  /* Shadows */
+  --dream-shadow-soft:
+    0 12px 36px rgba(55, 37, 112, .055);
+
+  --dream-shadow-glass:
+    0 20px 55px rgba(65, 43, 139, .095),
+    inset 0 1px 0 rgba(255,255,255,.85);
+
+  --dream-shadow-hover:
+    0 28px 70px rgba(65, 43, 139, .14);
+
+  /* Layout */
+  --dream-container: 1280px;
+  --dream-section-gap: 32px;
+
+  /* Motion */
+  --dream-motion-fast: 160ms;
+  --dream-motion-normal: 260ms;
+  --dream-motion-slow: 550ms;
+  --dream-ease:
+    cubic-bezier(.22, 1, .36, 1);
+
+  /* Layering */
+  --dream-glass-blur: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dream-motion-fast: 0ms;
+    --dream-motion-normal: 0ms;
+    --dream-motion-slow: 0ms;
+  }
+}
