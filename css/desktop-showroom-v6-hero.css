@@ -1,0 +1,119 @@
+/* ============================================
+   Dream Vault V6 — Desktop Showroom Hero
+   Desktop-only visual composition
+   Mobile/tablet V5 remains unchanged
+============================================ */
+
+@media (min-width: 1025px) {
+
+  /* Progressive desktop canvas */
+  body.dreamscape-v5 .wrap {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 40px;
+  }
+
+  /* Hero stage */
+  .dreamscape-v5 .hero.hero--v5.hero--v6 {
+    min-height: 620px;
+    grid-template-columns:
+      minmax(0, 1.04fr)
+      minmax(0, .96fr);
+    gap: clamp(24px, 3vw, 56px);
+    padding: clamp(44px, 4vw, 68px);
+
+    border-radius: 38px;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero__title {
+    max-width: 720px;
+    font-size: clamp(4rem, 5.2vw, 6.2rem);
+    line-height: .96;
+    letter-spacing: -.075em;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero__description {
+    max-width: 475px;
+    font-size: clamp(1rem, 1.15vw, 1.1rem);
+  }
+
+  .dreamscape-v5 .hero--v6 .hero__visual {
+    min-height: 450px;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero-scene {
+    width: 100%;
+    max-width: 520px;
+    margin-inline: auto;
+    height: 450px;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero-scene__glow {
+    opacity: .95;
+  }
+}
+
+/* Desktop 1440px and above */
+
+@media (min-width: 1440px) {
+  body.dreamscape-v5 .wrap {
+    max-width: 1376px;
+    padding-inline: 48px;
+  }
+
+  .dreamscape-v5 .hero.hero--v5.hero--v6 {
+    min-height: 650px;
+    grid-template-columns:
+      minmax(0, 1.04fr)
+      minmax(0, .96fr);
+  }
+
+  .dreamscape-v5 .hero--v6 .hero-scene {
+    max-width: 560px;
+    height: 480px;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero__visual {
+    min-height: 480px;
+  }
+}
+
+/* Ultrawide desktop */
+
+@media (min-width: 1800px) {
+  body.dreamscape-v5 .wrap {
+    max-width: 1568px;
+    padding-inline: 64px;
+  }
+
+  .dreamscape-v5 .hero.hero--v5.hero--v6 {
+    min-height: 680px;
+    padding: 72px;
+    gap: 64px;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero__title {
+    font-size: clamp(5rem, 5vw, 6.5rem);
+  }
+
+  .dreamscape-v5 .hero--v6 .hero-scene {
+    max-width: 620px;
+    height: 500px;
+  }
+
+  .dreamscape-v5 .hero--v6 .hero__visual {
+    min-height: 500px;
+  }
+
+  /* Gentle repositioning — existing 3D transforms kept */
+  .dreamscape-v5 .hero--v6
+  .hero-scene__card--back {
+    left: 7%;
+  }
+
+  .dreamscape-v5 .hero--v6
+  .hero-scene__card--middle {
+    right: 2%;
+  }
+}
