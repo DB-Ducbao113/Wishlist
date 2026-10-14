@@ -1,0 +1,122 @@
+/* ==========================================
+   Dream Vault V7 — Cinematic Hero Motion
+   Desktop-only · No new JS/library
+========================================== */
+
+/* Decorative motion only on desktop,
+   with explicit motion consent */
+@media (min-width: 1025px) and
+       (prefers-reduced-motion: no-preference) {
+
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card--back {
+    animation: v7-float-back 8s ease-in-out infinite;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card--middle {
+    animation: v7-float-middle 7s ease-in-out -2.5s infinite;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card--front {
+    animation: v7-float-front 9s ease-in-out -5s infinite;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__glow {
+    animation: v7-glow-breathe 11s ease-in-out infinite;
+  }
+}
+
+/* Preserve original V5 transforms exactly */
+
+@keyframes v7-float-back {
+  0%, 100% {
+    transform:
+      rotate(-21deg)
+      rotateY(-18deg)
+      scale(.88)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      rotate(-21deg)
+      rotateY(-18deg)
+      scale(.88)
+      translateY(-6px);
+  }
+}
+
+@keyframes v7-float-middle {
+  0%, 100% {
+    transform:
+      rotate(18deg)
+      rotateY(16deg)
+      scale(.94)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      rotate(18deg)
+      rotateY(16deg)
+      scale(.94)
+      translateY(5px);
+  }
+}
+
+@keyframes v7-float-front {
+  0%, 100% {
+    transform:
+      translateX(-50%)
+      translateZ(90px)
+      rotate(-3deg)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateX(-50%)
+      translateZ(90px)
+      rotate(-3deg)
+      translateY(-5px);
+  }
+}
+
+/* No animated blur: opacity only */
+@keyframes v7-glow-breathe {
+  0%, 100% {
+    opacity: .78;
+  }
+
+  50% {
+    opacity: .95;
+  }
+}
+
+/* Smaller desktop: calmer motion */
+@media (min-width: 1025px) and
+       (max-width: 1350px) and
+       (prefers-reduced-motion: no-preference) {
+
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card--back,
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card--middle,
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card--front {
+    animation-duration: 10s;
+  }
+}
+
+/* Hard safety fallback */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__card,
+  body.dreamscape-v5
+  .hero--v7 .hero-scene__glow {
+    animation: none !important;
+  }
+}
