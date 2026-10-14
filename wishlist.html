@@ -116,6 +116,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/cinematic-v7-hero.css">
 <link rel="stylesheet" href="./css/cinematic-v7-gallery-lighting.css">
 <link rel="stylesheet" href="./css/cinematic-v7-workspace.css">
+<link rel="stylesheet" href="./css/cinematic-v7-visual-overhaul.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
@@ -716,6 +717,35 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   </form>
 </dialog>
+
+<!-- Dream Vault V7 — decorative hero motion pause.
+     Presentation only: toggles a CSS class when the hero is
+     offscreen or the tab is hidden. Does not touch app logic. -->
+<script>
+(function () {
+  try {
+    var hero = document.querySelector(".hero--v7");
+    if (!hero) return;
+
+    var offscreen = false;
+    function sync() {
+      var hidden = document.visibilityState === "hidden";
+      hero.classList.toggle("hero--v7-paused", hidden || offscreen);
+    }
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        offscreen = !entries[0].isIntersecting;
+        sync();
+      }).observe(hero);
+    }
+
+    document.addEventListener("visibilitychange", sync);
+  } catch (err) {
+    /* decorative motion only — safe to ignore failures */
+  }
+})();
+</script>
 
 <script>
 /* ===================================================================
