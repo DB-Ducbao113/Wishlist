@@ -100,9 +100,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/homepage-v3.css">
 <link rel="stylesheet" href="./css/collection-v3.css">
 <link rel="stylesheet" href="./css/dialog-v3.css">
+<link rel="stylesheet" href="./css/mobile-v3.css">
 
 </head>
-<body>
+<body id="top">
 <div class="wrap">
 <header class="top site-header">
 
@@ -368,8 +369,11 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 </section>
 
 <!-- Search and filters: independent section -->
-<section class="panel collection-panel collection-panel--v3"
-         aria-labelledby="collection-controls-title">
+<section
+  id="collection"
+  class="panel collection-panel collection-panel--v3"
+  aria-labelledby="collection-controls-title"
+>
 
   <div class="collection-panel__heading">
     <div>
@@ -1740,6 +1744,10 @@ function init(){
     "click",
     () => openForm(null)
   );
+  $("mobileAddWish").addEventListener(
+    "click",
+    () => openForm(null)
+  );
   $("emptyAction").addEventListener("click", () => {
     if (items.length === 0) {
       openForm(null);
@@ -2009,5 +2017,37 @@ function importJson(file){
 
 document.addEventListener("DOMContentLoaded", init);
 </script>
+
+<!-- Dream Vault V3 — Mobile Navigation -->
+<nav class="mobile-dock"
+     aria-label="Điều hướng nhanh trên điện thoại">
+
+  <a href="#top"
+     class="mobile-dock__item"
+     aria-label="Về đầu trang">
+    <span aria-hidden="true">⌂</span>
+    <small>Trang chủ</small>
+  </a>
+
+  <a href="#collection"
+     class="mobile-dock__item">
+    <span aria-hidden="true">▦</span>
+    <small>Bộ sưu tập</small>
+  </a>
+
+  <button type="button"
+          class="mobile-dock__add"
+          id="mobileAddWish"
+          aria-label="Thêm món yêu thích">
+    <span aria-hidden="true">+</span>
+  </button>
+
+  <a href="#q"
+     class="mobile-dock__item">
+    <span aria-hidden="true">⌕</span>
+    <small>Tìm kiếm</small>
+  </a>
+</nav>
+
 </body>
 </html>

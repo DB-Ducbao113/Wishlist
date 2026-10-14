@@ -1,0 +1,233 @@
+/* ==========================================
+   Dream Vault V3 — Mobile First Experience
+   No changes to Firebase / storage / CRUD
+========================================== */
+
+/* Desktop: mobile dock hidden */
+.mobile-dock {
+  display: none;
+}
+
+@media (max-width: 640px) {
+
+  /* Page structure */
+  .wrap {
+    padding-bottom:
+      calc(108px + env(safe-area-inset-bottom));
+  }
+
+  /* Header compact */
+  .site-header {
+    padding-bottom: 12px;
+  }
+
+  .site-nav {
+    min-height: 54px;
+  }
+
+  .nav-brand__name {
+    font-size: 1.15rem;
+  }
+
+  /* Header remains accessible,
+     no duplicated functionality */
+  .nav-actions .nav-add {
+    min-height: 44px;
+  }
+
+  /* Hero: content first */
+  .hero.hero--v3 {
+    margin-top: 16px;
+    padding: 34px 22px 20px;
+  }
+
+  .hero--v3 .hero__eyebrow {
+    font-size: 10px;
+  }
+
+  .hero--v3 .hero__title {
+    font-size: clamp(2.7rem, 10vw, 4rem);
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .hero--v3 .hero__description {
+    font-size: .92rem;
+    line-height: 1.7;
+  }
+
+  /* Dashboard: retain single column;
+     compact spacing for mobile */
+  .dashboard-panel.dashboard-panel--v2 {
+    margin-block: 18px 24px;
+    padding: 14px;
+  }
+
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    min-height: 110px;
+    padding: 16px 18px;
+    gap: 8px;
+  }
+
+  /* Search and filter */
+  #collection {
+    scroll-margin-top: 16px;
+  }
+
+  #q {
+    scroll-margin-top: 26px;
+  }
+
+  .collection-panel.collection-panel--v3 {
+    padding: 22px 16px;
+  }
+
+  .collection-panel--v3
+  .collection-panel__heading h2 {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+  }
+
+  .collection-panel--v3 .collection-filters {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  /* Product cards */
+  #grid.grid.gallery--v2 {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 18px;
+  }
+
+  #grid.gallery--v2 .product-media {
+    aspect-ratio: 16 / 11;
+  }
+
+  /* Native-feeling bottom dock */
+  .mobile-dock {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 90;
+
+    display: grid;
+    grid-template-columns:
+      1fr 1fr 64px 1fr;
+    align-items: center;
+    gap: 4px;
+
+    min-height: 74px;
+    padding: 8px;
+
+    background: rgba(255,255,255,.96);
+    border: 1px solid rgba(185,171,238,.38);
+    border-radius: 24px;
+
+    box-shadow:
+      0 12px 42px rgba(48,35,110,.16);
+
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-dock__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+
+    min-width: 0;
+    min-height: 48px;
+
+    color: #655c7b;
+    font-size: 24px;
+    text-decoration: none;
+  }
+
+  .mobile-dock__item small {
+    font-size: 10px;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .mobile-dock__item:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+
+  .mobile-dock__add {
+    display: grid;
+    place-items: center;
+
+    width: 56px;
+    height: 56px;
+    padding: 0;
+
+    border: none;
+    border-radius: 20px;
+
+    background: #7060c8;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 400;
+
+    box-shadow:
+      0 10px 25px rgba(91,68,184,.24);
+  }
+
+  .mobile-dock__add:focus-visible {
+    outline: 3px solid #4933b2;
+    outline-offset: 3px;
+  }
+
+  /* Never overlay an open modal */
+  body:has(dialog.product-dialog[open])
+  .mobile-dock {
+    display: none;
+  }
+
+  /* Fallback without backdrop-filter */
+  @supports not (backdrop-filter: blur(1px)) {
+    .mobile-dock {
+      background: #fff;
+    }
+  }
+}
+
+/* Smaller phones */
+@media (max-width: 380px) {
+  .mobile-dock {
+    left: 8px;
+    right: 8px;
+    grid-template-columns:
+      minmax(0,1fr)
+      minmax(0,1fr)
+      56px
+      minmax(0,1fr);
+  }
+
+  .mobile-dock__add {
+    width: 52px;
+    height: 52px;
+  }
+
+  .mobile-dock__item small {
+    font-size: 9px;
+  }
+
+  .collection-panel--v3 .collection-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-dock,
+  .mobile-dock * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
