@@ -1,0 +1,34 @@
+{
+ "mobile-375x812_V8": {
+  "fpsIdle": 60.4,
+  "fpsScroll": 60.2,
+  "maxGapMs": 18.4,
+  "longTaskMs": 0,
+  "cls": 0,
+  "idleLagMs": 3.38
+ },
+ "mobile-375x812_V7": {
+  "fpsIdle": 60.7,
+  "fpsScroll": 59.9,
+  "maxGapMs": 18.4,
+  "longTaskMs": 0,
+  "cls": 0,
+  "idleLagMs": 3.34
+ },
+ "desktop-1440_V8": {
+  "fpsIdle": 59.5,
+  "fpsScroll": 60,
+  "maxGapMs": 18.4,
+  "longTaskMs": 0,
+  "cls": 0,
+  "idleLagMs": 3.37
+ },
+ "desktop-1440_V7": {
+  "fpsIdle": 60.5,
+  "fpsScroll": 59.9,
+  "maxGapMs": 18.2,
+  "longTaskMs": 0,
+  "cls": 0,
+  "idleLagMs": 3.35
+ }
+}
