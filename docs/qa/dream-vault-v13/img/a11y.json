@@ -1,0 +1,36 @@
+[
+ {
+  "variant": "V13-gallery",
+  "titleContrast": 16.56,
+  "focusOutlineW": 3,
+  "activeBtnContrast": 6.07,
+  "idleBtnContrast": 5.63,
+  "interactive": 26,
+  "unnamed": 0,
+  "imgs": 7,
+  "noAlt": 0,
+  "decorHidden": true
+ },
+ {
+  "variant": "V13-focus",
+  "titleContrast": 16.56,
+  "focusOutlineW": 3,
+  "activeBtnContrast": 6.07,
+  "idleBtnContrast": 5.63,
+  "interactive": 26,
+  "unnamed": 0,
+  "imgs": 7,
+  "noAlt": 0,
+  "decorHidden": true
+ },
+ {
+  "variant": "V12-gallery",
+  "titleContrast": 16.56,
+  "focusOutlineW": 3,
+  "interactive": 24,
+  "unnamed": 0,
+  "imgs": 7,
+  "noAlt": 0,
+  "decorHidden": true
+ }
+]
