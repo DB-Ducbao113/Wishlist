@@ -1,0 +1,136 @@
+/* Dream Vault V12 — Product Presentation 3.0 (first implementation)
+ * Isolated presentation layer, built on frozen ui-v11.0.0.
+ * No tilt transform override, no persistence/auth/CRUD changes.
+ */
+body.dreamscape-v5 {
+  --v12-ink:#241b45;
+  --v12-violet:#7153cc;
+  --v12-line:rgba(99,77,173,.16);
+  --v12-stage:radial-gradient(ellipse 72% 52% at 52% 35%,rgba(255,255,255,.95),transparent 79%),
+              radial-gradient(ellipse 110% 70% at 50% 116%,rgba(140,112,225,.28),transparent 65%),
+              linear-gradient(157deg,#f6f1ff 8%,#e5d9fb 100%);
+}
+/* PRODUCT STAGE: striking gallery framing without disturbing image geometry. */
+body.dreamscape-v5 .v11-canvas #grid .thumb.product-media {
+  isolation:isolate;
+  background:var(--v12-stage);
+  border-bottom:1px solid rgba(119,93,193,.10);
+}
+body.dreamscape-v5 .v11-canvas #grid .thumb.product-media::after {
+  content:"";
+  position:absolute;
+  z-index:0;
+  width:64%;
+  aspect-ratio:1;
+  border:1px solid rgba(136,106,211,.18);
+  border-radius:50%;
+  left:18%;
+  top:12%;
+  box-shadow:0 0 0 18px rgba(255,255,255,.08),0 0 0 52px rgba(255,255,255,.06);
+  pointer-events:none;
+}
+body.dreamscape-v5 .v11-canvas #grid .product-media__frame {
+  position:relative;
+  z-index:1;
+}
+body.dreamscape-v5 .v11-canvas #grid .product-card__plaque {
+  z-index:3;
+  letter-spacing:.12em;
+}
+body.dreamscape-v5 .v11-canvas #grid .v12-stage-caption {
+  position:absolute;
+  z-index:2;
+  left:22px;
+  bottom:18px;
+  max-width:calc(100% - 44px);
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.86);
+  border-radius:99px;
+  background:rgba(255,255,255,.82);
+  color:#5b4993;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  pointer-events:none;
+}
+/* Card content: clear art/metadata/action hierarchy. Do not transform
+ * .wishlist-card__surface; setupCardTilt owns it. */
+body.dreamscape-v5 .v11-canvas #grid .product-card__content {
+  padding-top:clamp(22px,2vw,32px);
+}
+body.dreamscape-v5 .v11-canvas #grid .product-card__title {
+  color:var(--v12-ink);
+  letter-spacing:-.035em;
+  text-wrap:pretty;
+}
+body.dreamscape-v5 .v11-canvas #grid .product-card__price {
+  font-variant-numeric:tabular-nums;
+}
+body.dreamscape-v5 .v11-canvas #grid .product-card__actions {
+  border-top:1px solid var(--v12-line);
+  padding-top:14px;
+}
+body.dreamscape-v5 .v11-canvas #grid .product-card__view {
+  min-height:44px;
+  border-radius:13px;
+  font-weight:800;
+  letter-spacing:.01em;
+}
+body.dreamscape-v5 .v11-canvas #grid .product-card__view:focus-visible {
+  outline:3px solid #9d87e2;
+  outline-offset:3px;
+}
+/* A prominent flagship exhibit within the canvas. */
+@media (min-width:1200px) {
+  body.dreamscape-v5 .v11-canvas #grid > .wishlist-card:first-child:not(:only-child) .thumb.product-media {
+    background:
+      radial-gradient(ellipse 48% 65% at 52% 32%,rgba(255,255,255,.96),transparent 85%),
+      radial-gradient(ellipse 90% 68% at 48% 105%,rgba(112,80,194,.32),transparent 77%),
+      linear-gradient(145deg,#f7f2ff,#d9c9fa);
+  }
+  body.dreamscape-v5 .v11-canvas #grid > .wishlist-card:first-child:not(:only-child) .thumb.product-media::after {
+    width:72%;left:14%;top:7%;
+  }
+  body.dreamscape-v5 .v11-canvas #grid > .wishlist-card:first-child:not(:only-child) .product-card__title {
+    font-size:clamp(2rem,3vw,2.7rem);
+  }
+}
+/* Quick View has its own curated backdrop, native dialog, sticky close,
+ * and existing focus/keyboard behavior — no new listeners. */
+body.dreamscape-v5 #qv .quick-view__stage {
+  isolation:isolate;
+  background:var(--v12-stage);
+}
+body.dreamscape-v5 #qv .quick-view__stage::before {
+  content:"";
+  position:absolute;
+  left:17%;
+  top:10%;
+  width:66%;
+  aspect-ratio:1;
+  border:1px solid rgba(115,89,190,.19);
+  border-radius:50%;
+  pointer-events:none;
+}
+body.dreamscape-v5 #qv .quick-view__image {
+  position:relative;
+  z-index:1;
+}
+body.dreamscape-v5 #qv .quick-view__title {
+  color:var(--v12-ink);
+  text-wrap:pretty;
+}
+@media(max-width:767px){
+  body.dreamscape-v5 .v11-canvas #grid .v12-stage-caption {
+    bottom:12px;left:12px;font-size:8px;padding:6px 8px;
+  }
+  body.dreamscape-v5 .v11-canvas #grid .thumb.product-media::after {
+    box-shadow:0 0 0 16px rgba(255,255,255,.07);
+  }
+  body.dreamscape-v5 #qv .quick-view__stage::before {top:8%;width:58%;left:21%;}
+}
+@media(prefers-reduced-motion:reduce){
+  body.dreamscape-v5 .v11-canvas #grid .thumb.product-media,
+  body.dreamscape-v5 #qv .quick-view__stage {animation:none;transition:none;}
+}
