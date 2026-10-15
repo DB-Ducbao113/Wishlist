@@ -1,0 +1,208 @@
+{
+ "total": 40,
+ "pass": 40,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "X1a Link CSS V12 hiện diện, load sau V11",
+   "ok": true,
+   "detail": "true"
+  },
+  {
+   "name": "X1b Stage V12 áp dụng: media có gradient stage + frame là mount inset",
+   "ok": true,
+   "detail": "{\"link\":true,\"mediaBg\":\"radial-gradient(78% 52% at 50% 26%, rgba(168, 139, 247, 0.36), rgba(0, 0, 0, 0) 72%), radial-gradient(66% 42% at 50% 112%, rgba(104, 80, 188, 0.26), rgba(0, 0, 0, 0) 74%), linear-gradient(170deg, rgb(245, 241, 255) 0%, rgb(231, 222, 252) 100%)\",\"frameInsetX\":18,\"frameInsetY\":"
+  },
+  {
+   "name": "X2 1280x950: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 1440x950: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 1920x1080: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 768x1024: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 1024x900: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 320x568: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 320x700: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 375x667: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 375x812: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X2 430x932: ảnh trong media, media trong card, không tràn ngang",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"n\":7,\"imgOutside\":0,\"mediaOutside\":0}"
+  },
+  {
+   "name": "X3a Mỗi card có tối đa 1 caption V12 (stage caption only once)",
+   "ok": true,
+   "detail": "[1,1,1,1,1,1,1]"
+  },
+  {
+   "name": "X3b Caption hiển thị CHỈ trên featured (không lặp nhãn mọi card)",
+   "ok": true,
+   "detail": "{\"vc\":1,\"f\":true}"
+  },
+  {
+   "name": "X3c Caption là trang trí (aria-hidden=\"true\")",
+   "ok": true,
+   "detail": "true"
+  },
+  {
+   "name": "X4 Featured span canvas + tiêu đề lớn hơn card thường",
+   "ok": true,
+   "detail": "{\"gridW\":920,\"featW\":920,\"t1\":31.68,\"t2\":16.32}"
+  },
+  {
+   "name": "X5 Purchased card giữ signal (grayscale) — không bị V12 ghi đè",
+   "ok": true,
+   "detail": "{\"purchasedFilter\":\"grayscale(0.25)\",\"wantedFilter\":\"none\",\"hasClass\":true}"
+  },
+  {
+   "name": "X6 V12 CSS không đụng .wishlist-card__surface (Card Tilt transform)",
+   "ok": true,
+   "detail": "match=false"
+  },
+  {
+   "name": "X7a \"Xem chi tiết\" focus được + có outline",
+   "ok": true,
+   "detail": "{\"active\":true,\"outline\":\"3px\"}"
+  },
+  {
+   "name": "X7b Mở Quick View từ affordance xem-chi-tiết",
+   "ok": true,
+   "detail": "{\"open\":true}"
+  },
+  {
+   "name": "X7c QV edit bridge mở form + đóng QV",
+   "ok": true,
+   "detail": "{\"dlg\":true,\"qv\":false}"
+  },
+  {
+   "name": "X7d QV Escape trả focus về nút mở",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "X8a Card không link: không có \"Mở nơi bán\" nhưng vẫn có Xem chi tiết",
+   "ok": true,
+   "detail": "{\"noLinkBuy\":false,\"noLinkView\":true,\"brokenAlt\":\"Broken image item\",\"brokenSrc\":\"data:image/svg+xml;utf8,%3Csvg\"}"
+  },
+  {
+   "name": "X8b Ảnh lỗi rơi về placeholder (data URI) + có alt",
+   "ok": true,
+   "detail": "{\"noLinkBuy\":false,\"noLinkView\":true,\"brokenAlt\":\"Broken image item\",\"brokenSrc\":\"data:image/svg+xml;utf8,%3Csvg\"}"
+  },
+  {
+   "name": "X9a 0 item: empty state, không card",
+   "ok": true,
+   "detail": "{\"empty\":true,\"cards\":0}"
+  },
+  {
+   "name": "X9b 1 item: render đúng, không tràn",
+   "ok": true,
+   "detail": "{\"n\":1,\"overflow\":false}"
+  },
+  {
+   "name": "X9b 2 item: render đúng, không tràn",
+   "ok": true,
+   "detail": "{\"n\":2,\"overflow\":false}"
+  },
+  {
+   "name": "X9c 50 item: render đủ, không tràn card/canvas",
+   "ok": true,
+   "detail": "{\"n\":50,\"overflow\":false,\"docOverflow\":0}"
+  },
+  {
+   "name": "X10 1280: Discovery Rail hiển thị + không card nào vượt canvas",
+   "ok": true,
+   "detail": "{\"railVisible\":true,\"exceeds\":false}"
+  },
+  {
+   "name": "X10 1440: Discovery Rail hiển thị + không card nào vượt canvas",
+   "ok": true,
+   "detail": "{\"railVisible\":true,\"exceeds\":false}"
+  },
+  {
+   "name": "X10 1920: Discovery Rail hiển thị + không card nào vượt canvas",
+   "ok": true,
+   "detail": "{\"railVisible\":true,\"exceeds\":false}"
+  },
+  {
+   "name": "X11 320x568: hero CTA bấm được, dock hiện, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"heroHit\":true,\"dockWidth\":52}"
+  },
+  {
+   "name": "X11 375x812: hero CTA bấm được, dock hiện, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"heroHit\":true,\"dockWidth\":52}"
+  },
+  {
+   "name": "X11 430x932: hero CTA bấm được, dock hiện, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"heroHit\":true,\"dockWidth\":56}"
+  },
+  {
+   "name": "X12a Mọi ảnh sản phẩm có alt",
+   "ok": true,
+   "detail": "{\"imgs\":7,\"noAlt\":0,\"decorative\":14,\"notHidden\":0,\"named\":true}"
+  },
+  {
+   "name": "X12b Phần tử trang trí (plaque/caption) aria-hidden",
+   "ok": true,
+   "detail": "{\"imgs\":7,\"noAlt\":0,\"decorative\":14,\"notHidden\":0,\"named\":true}"
+  },
+  {
+   "name": "X12c Nút xem-chi-tiết có tên truy cập",
+   "ok": true,
+   "detail": "{\"imgs\":7,\"noAlt\":0,\"decorative\":14,\"notHidden\":0,\"named\":true}"
+  },
+  {
+   "name": "X13 Reduced Motion: không tràn, animation/tăng tốc tắt",
+   "ok": true,
+   "detail": "{\"over\":0,\"anim\":\"none\",\"trans\":\"0s\",\"cards\":7}"
+  },
+  {
+   "name": "V12 Console JS errors = 0 (lỗi tải tài nguyên mạng được tách riêng, không phải lỗi app)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V12 Ghi nhận: không có lỗi tài nguyên mạng ngoài dự kiến",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

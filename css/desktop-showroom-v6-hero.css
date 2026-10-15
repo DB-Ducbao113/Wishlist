@@ -41,17 +41,6 @@
   .dreamscape-v5 .hero--v6 .hero__visual {
     min-height: 450px;
   }
-
-  .dreamscape-v5 .hero--v6 .hero-scene {
-    width: 100%;
-    max-width: 520px;
-    margin-inline: auto;
-    height: 450px;
-  }
-
-  .dreamscape-v5 .hero--v6 .hero-scene__glow {
-    opacity: .95;
-  }
 }
 
 /* Desktop 1440px and above */
@@ -67,11 +56,6 @@
     grid-template-columns:
       minmax(0, 1.04fr)
       minmax(0, .96fr);
-  }
-
-  .dreamscape-v5 .hero--v6 .hero-scene {
-    max-width: 560px;
-    height: 480px;
   }
 
   .dreamscape-v5 .hero--v6 .hero__visual {
@@ -97,23 +81,7 @@
     font-size: clamp(5rem, 5vw, 6.5rem);
   }
 
-  .dreamscape-v5 .hero--v6 .hero-scene {
-    max-width: 620px;
-    height: 500px;
-  }
-
   .dreamscape-v5 .hero--v6 .hero__visual {
     min-height: 500px;
-  }
-
-  /* Gentle repositioning — existing 3D transforms kept */
-  .dreamscape-v5 .hero--v6
-  .hero-scene__card--back {
-    left: 7%;
-  }
-
-  .dreamscape-v5 .hero--v6
-  .hero-scene__card--middle {
-    right: 2%;
   }
 }

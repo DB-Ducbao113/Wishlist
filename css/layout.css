@@ -1,17 +1,15 @@
-.app-shell {
-  min-height: 100vh;
-  overflow-x: clip;
-}
+/* Layout primitives actually used by the current DOM.
+   V14: proven-dead blocks removed (`.app-shell`, `.stats`, `.wishlist-grid`
+   and bare `main` — no matching element in any viewport/state). Evidence:
+   docs/qa/dream-vault-v14/css-inventory.md + selector-liveness.json. */
 
-/* Legacy page container (migrated from inline styles) */
 .wrap {
   max-width: 1240px;
   margin: 0 auto;
   padding: clamp(18px, 4vw, 48px) clamp(16px, 4vw, 40px);
 }
 
-.site-nav,
-main {
+.site-nav {
   width: min(
     calc(100% - 48px),
     var(--container-width)
@@ -19,54 +17,12 @@ main {
   margin-inline: auto;
 }
 
-main {
-  padding-block: 48px 96px;
-}
-
-/* Stats */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-block: 48px;
-}
-
-/* Collection */
-.wishlist-grid {
-  display: grid;
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-
-/* Tablet */
-@media (max-width: 1024px) {
-  .wishlist-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* Mobile */
 @media (max-width: 640px) {
   .wrap {
     padding: 22px 15px 34px;
   }
 
-  .site-nav,
-  main {
+  .site-nav {
     width: min(calc(100% - 32px), var(--container-width));
-  }
-
-  main {
-    padding-block: 32px 64px;
-  }
-
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .wishlist-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
   }
 }

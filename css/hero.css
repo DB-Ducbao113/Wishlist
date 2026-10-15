@@ -70,130 +70,6 @@
   perspective: 1100px;
 }
 
-.hero-scene {
-  position: relative;
-  height: 380px;
-  transform-style: preserve-3d;
-  isolation: isolate;
-}
-
-.hero-scene__glow {
-  position: absolute;
-  inset: 45px 25px;
-  background: radial-gradient(
-    ellipse,
-    rgba(158, 141, 246, .22),
-    transparent 70%
-  );
-  filter: blur(32px);
-  pointer-events: none;
-}
-
-.hero-scene__card {
-  position: absolute;
-  width: 210px;
-  height: 260px;
-  padding: 20px;
-
-  background: linear-gradient(
-    145deg,
-    #ffffff,
-    #f7f6ff
-  );
-
-  border: 1px solid rgba(193, 185, 230, .65);
-  border-radius: 26px;
-
-  box-shadow:
-    0 20px 55px rgba(49, 39, 95, .12);
-
-  backface-visibility: hidden;
-}
-
-/* Background card */
-.hero-scene__card--back {
-  left: 6%;
-  top: 48px;
-  transform:
-    rotate(-15deg)
-    rotateY(-18deg)
-    scale(.9);
-  opacity: .75;
-}
-
-/* Middle card */
-.hero-scene__card--middle {
-  right: 4%;
-  top: 65px;
-  transform:
-    rotate(13deg)
-    rotateY(16deg)
-    scale(.94);
-  opacity: .9;
-}
-
-/* Foreground card */
-.hero-scene__card--front {
-  left: 50%;
-  top: 38px;
-  z-index: 2;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-
-  transform: translateX(-50%) translateZ(65px);
-  box-shadow:
-    0 35px 75px rgba(49, 39, 95, .18);
-}
-
-.hero-scene__icon {
-  font-size: 64px;
-  color: #b0a3e8;
-  text-align: center;
-  margin: 40px 0;
-}
-
-.hero-scene__line {
-  height: 9px;
-  border-radius: 99px;
-  background: #e9e5f8;
-  margin-top: 12px;
-}
-
-.hero-scene__line--short {
-  width: 58%;
-}
-
-.hero-scene__sparkle {
-  align-self: flex-end;
-  color: var(--color-accent);
-  font-size: 19px;
-}
-
-.hero-scene__product {
-  display: grid;
-  place-items: center;
-  width: 145px;
-  height: 145px;
-}
-
-.hero-scene__product svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(
-    0 15px 14px rgba(68, 52, 140, .15)
-  );
-}
-
-.hero-scene__product-label {
-  align-self: flex-start;
-  color: #62598b;
-  font-size: 12px;
-  font-weight: 650;
-}
-
 /* =======================================
    Responsive
 ======================================= */
@@ -201,11 +77,6 @@
 @media (max-width: 1024px) {
   .hero {
     gap: 24px;
-  }
-
-  .hero-scene {
-    transform: scale(.83);
-    transform-origin: center;
   }
 }
 
@@ -223,12 +94,6 @@
 
   .hero__description {
     font-size: .95rem;
-  }
-
-  .hero-scene {
-    height: 300px;
-    transform: scale(.68);
-    transform-origin: center top;
   }
 
   .hero__visual {

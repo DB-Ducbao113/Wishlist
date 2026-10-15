@@ -224,10 +224,6 @@ body.dreamscape-v5 .hero--v9 .hero__visual {
   min-height: 0;
 }
 
-body.dreamscape-v5 .hero--v9 .hero-scene {
-  display: none;
-}
-
 body.dreamscape-v5 .hero--v9 .v9-scene {
   position: relative;
   width: min(100%, 460px);

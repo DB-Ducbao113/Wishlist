@@ -1,0 +1,390 @@
+{
+ "generatedFrom": [
+  "desktop-gallery-7",
+  "desktop-focus-7",
+  "desktop-gallery-12",
+  "desktop-gallery-1",
+  "desktop-empty",
+  "tablet-768",
+  "tablet-1024",
+  "mobile-375",
+  "mobile-320",
+  "mobile-430",
+  "desktop-reduced",
+  "desktop-quickview",
+  "desktop-dialog",
+  "desktop-hover-focus"
+ ],
+ "totalFiles": 46,
+ "totalBytes": 261229,
+ "rows": [
+  {
+   "file": "toast.css",
+   "bytes": 1413,
+   "usedBytes": 0,
+   "unusedBytes": 1413,
+   "usedPct": 0,
+   "unusedSpans": 1
+  },
+  {
+   "file": "purchased-motion.css",
+   "bytes": 1480,
+   "usedBytes": 467,
+   "unusedBytes": 1013,
+   "usedPct": 31.6,
+   "unusedSpans": 3
+  },
+  {
+   "file": "grid-entrance.css",
+   "bytes": 477,
+   "usedBytes": 203,
+   "unusedBytes": 274,
+   "usedPct": 42.6,
+   "unusedSpans": 4
+  },
+  {
+   "file": "cinematic-v7-workspace.css",
+   "bytes": 2482,
+   "usedBytes": 1092,
+   "unusedBytes": 1390,
+   "usedPct": 44,
+   "unusedSpans": 8
+  },
+  {
+   "file": "cinematic-v7-gallery-lighting.css",
+   "bytes": 1935,
+   "usedBytes": 908,
+   "unusedBytes": 1027,
+   "usedPct": 46.9,
+   "unusedSpans": 9
+  },
+  {
+   "file": "legacy.css",
+   "bytes": 5231,
+   "usedBytes": 2719,
+   "unusedBytes": 2512,
+   "usedPct": 52,
+   "unusedSpans": 10
+  },
+  {
+   "file": "layout.css",
+   "bytes": 649,
+   "usedBytes": 344,
+   "unusedBytes": 305,
+   "usedPct": 53,
+   "unusedSpans": 4
+  },
+  {
+   "file": "desktop-showroom-v6-hero.css",
+   "bytes": 1785,
+   "usedBytes": 1028,
+   "unusedBytes": 757,
+   "usedPct": 57.6,
+   "unusedSpans": 6
+  },
+  {
+   "file": "product-card.css",
+   "bytes": 2765,
+   "usedBytes": 1736,
+   "unusedBytes": 1029,
+   "usedPct": 62.8,
+   "unusedSpans": 13
+  },
+  {
+   "file": "desktop-showroom-v6-mobile.css",
+   "bytes": 2301,
+   "usedBytes": 1469,
+   "unusedBytes": 832,
+   "usedPct": 63.8,
+   "unusedSpans": 11
+  },
+  {
+   "file": "immersive-v8-quick-view.css",
+   "bytes": 15596,
+   "usedBytes": 9974,
+   "unusedBytes": 5622,
+   "usedPct": 64,
+   "unusedSpans": 18
+  },
+  {
+   "file": "immersive-v11-workspace.css",
+   "bytes": 8237,
+   "usedBytes": 5434,
+   "unusedBytes": 2803,
+   "usedPct": 66,
+   "unusedSpans": 21
+  },
+  {
+   "file": "dreamscape-v5-mobile-interactions.css",
+   "bytes": 4922,
+   "usedBytes": 3283,
+   "unusedBytes": 1639,
+   "usedPct": 66.7,
+   "unusedSpans": 14
+  },
+  {
+   "file": "dialog-v3.css",
+   "bytes": 4496,
+   "usedBytes": 3118,
+   "unusedBytes": 1378,
+   "usedPct": 69.4,
+   "unusedSpans": 9
+  },
+  {
+   "file": "mobile-v3.css",
+   "bytes": 4630,
+   "usedBytes": 3216,
+   "unusedBytes": 1414,
+   "usedPct": 69.5,
+   "unusedSpans": 20
+  },
+  {
+   "file": "premium-v9-signature.css",
+   "bytes": 23018,
+   "usedBytes": 15992,
+   "unusedBytes": 7026,
+   "usedPct": 69.5,
+   "unusedSpans": 55
+  },
+  {
+   "file": "desktop-showroom-v6-gallery.css",
+   "bytes": 2864,
+   "usedBytes": 1998,
+   "unusedBytes": 866,
+   "usedPct": 69.8,
+   "unusedSpans": 10
+  },
+  {
+   "file": "navigation.css",
+   "bytes": 3106,
+   "usedBytes": 2180,
+   "unusedBytes": 926,
+   "usedPct": 70.2,
+   "unusedSpans": 9
+  },
+  {
+   "file": "desktop-showroom-v6-workspace.css",
+   "bytes": 4292,
+   "usedBytes": 3087,
+   "unusedBytes": 1205,
+   "usedPct": 71.9,
+   "unusedSpans": 8
+  },
+  {
+   "file": "product-v12-presentation.css",
+   "bytes": 5629,
+   "usedBytes": 4050,
+   "unusedBytes": 1579,
+   "usedPct": 71.9,
+   "unusedSpans": 11
+  },
+  {
+   "file": "interactive-v13-collection.css",
+   "bytes": 4327,
+   "usedBytes": 3142,
+   "unusedBytes": 1185,
+   "usedPct": 72.6,
+   "unusedSpans": 5
+  },
+  {
+   "file": "gallery-v2.css",
+   "bytes": 3929,
+   "usedBytes": 2865,
+   "unusedBytes": 1064,
+   "usedPct": 72.9,
+   "unusedSpans": 13
+  },
+  {
+   "file": "immersive-v8-gallery.css",
+   "bytes": 21057,
+   "usedBytes": 15367,
+   "unusedBytes": 5690,
+   "usedPct": 73,
+   "unusedSpans": 42
+  },
+  {
+   "file": "polish-v2.css",
+   "bytes": 2811,
+   "usedBytes": 2059,
+   "unusedBytes": 752,
+   "usedPct": 73.2,
+   "unusedSpans": 13
+  },
+  {
+   "file": "card-interactions-v4.css",
+   "bytes": 2906,
+   "usedBytes": 2134,
+   "unusedBytes": 772,
+   "usedPct": 73.4,
+   "unusedSpans": 12
+  },
+  {
+   "file": "cinematic-v7-mobile.css",
+   "bytes": 32242,
+   "usedBytes": 23801,
+   "unusedBytes": 8441,
+   "usedPct": 73.8,
+   "unusedSpans": 50
+  },
+  {
+   "file": "hero.css",
+   "bytes": 2156,
+   "usedBytes": 1594,
+   "unusedBytes": 562,
+   "usedPct": 73.9,
+   "unusedSpans": 10
+  },
+  {
+   "file": "gallery-v4.css",
+   "bytes": 2970,
+   "usedBytes": 2199,
+   "unusedBytes": 771,
+   "usedPct": 74,
+   "unusedSpans": 12
+  },
+  {
+   "file": "dreamscape-v5-surfaces.css",
+   "bytes": 3457,
+   "usedBytes": 2574,
+   "unusedBytes": 883,
+   "usedPct": 74.5,
+   "unusedSpans": 11
+  },
+  {
+   "file": "dreamscape-v5-hero.css",
+   "bytes": 4947,
+   "usedBytes": 3775,
+   "unusedBytes": 1172,
+   "usedPct": 76.3,
+   "unusedSpans": 16
+  },
+  {
+   "file": "mobile-products-v4.css",
+   "bytes": 2682,
+   "usedBytes": 2047,
+   "unusedBytes": 635,
+   "usedPct": 76.3,
+   "unusedSpans": 12
+  },
+  {
+   "file": "dreamscape-v5-dashboard-collection.css",
+   "bytes": 5630,
+   "usedBytes": 4339,
+   "unusedBytes": 1291,
+   "usedPct": 77.1,
+   "unusedSpans": 19
+  },
+  {
+   "file": "empty-state.css",
+   "bytes": 1846,
+   "usedBytes": 1440,
+   "unusedBytes": 406,
+   "usedPct": 78,
+   "unusedSpans": 4
+  },
+  {
+   "file": "base.css",
+   "bytes": 1196,
+   "usedBytes": 937,
+   "unusedBytes": 259,
+   "usedPct": 78.3,
+   "unusedSpans": 7
+  },
+  {
+   "file": "editorial-v10-workspace.css",
+   "bytes": 17325,
+   "usedBytes": 13849,
+   "unusedBytes": 3476,
+   "usedPct": 79.9,
+   "unusedSpans": 25
+  },
+  {
+   "file": "controls.css",
+   "bytes": 3766,
+   "usedBytes": 3025,
+   "unusedBytes": 741,
+   "usedPct": 80.3,
+   "unusedSpans": 14
+  },
+  {
+   "file": "dialog.css",
+   "bytes": 5693,
+   "usedBytes": 4654,
+   "unusedBytes": 1039,
+   "usedPct": 81.7,
+   "unusedSpans": 10
+  },
+  {
+   "file": "stats.css",
+   "bytes": 2751,
+   "usedBytes": 2247,
+   "unusedBytes": 504,
+   "usedPct": 81.7,
+   "unusedSpans": 11
+  },
+  {
+   "file": "gallery.css",
+   "bytes": 3823,
+   "usedBytes": 3202,
+   "unusedBytes": 621,
+   "usedPct": 83.8,
+   "unusedSpans": 15
+  },
+  {
+   "file": "stats-v2.css",
+   "bytes": 4311,
+   "usedBytes": 3611,
+   "unusedBytes": 700,
+   "usedPct": 83.8,
+   "unusedSpans": 12
+  },
+  {
+   "file": "collection-v3.css",
+   "bytes": 3575,
+   "usedBytes": 3041,
+   "unusedBytes": 534,
+   "usedPct": 85.1,
+   "unusedSpans": 15
+  },
+  {
+   "file": "hero-v2.css",
+   "bytes": 2920,
+   "usedBytes": 2576,
+   "unusedBytes": 344,
+   "usedPct": 88.2,
+   "unusedSpans": 11
+  },
+  {
+   "file": "cinematic-v7-visual-overhaul.css",
+   "bytes": 21999,
+   "usedBytes": 19534,
+   "unusedBytes": 2465,
+   "usedPct": 88.8,
+   "unusedSpans": 28
+  },
+  {
+   "file": "dreamscape-v5-tokens.css",
+   "bytes": 1389,
+   "usedBytes": 1273,
+   "unusedBytes": 116,
+   "usedPct": 91.6,
+   "unusedSpans": 4
+  },
+  {
+   "file": "homepage-v3.css",
+   "bytes": 2044,
+   "usedBytes": 1917,
+   "unusedBytes": 127,
+   "usedPct": 93.8,
+   "unusedSpans": 8
+  },
+  {
+   "file": "tokens.css",
+   "bytes": 2169,
+   "usedBytes": 2057,
+   "unusedBytes": 112,
+   "usedPct": 94.8,
+   "unusedSpans": 1
+  }
+ ]
+}

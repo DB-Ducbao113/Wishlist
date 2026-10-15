@@ -119,80 +119,6 @@
   perspective: 1200px;
 }
 
-.hero--v2 .hero-scene {
-  height: 440px;
-  transform-style: preserve-3d;
-}
-
-/* Ambient light */
-.hero--v2 .hero-scene__glow {
-  inset: 25px -10px;
-  background: radial-gradient(
-    ellipse,
-    rgba(127, 96, 237, .38),
-    rgba(191, 174, 255, .20) 40%,
-    transparent 72%
-  );
-  filter: blur(48px);
-}
-
-/* Premium glass cards */
-.hero--v2 .hero-scene__card {
-  width: 230px;
-  height: 290px;
-
-  border-radius: 30px;
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, .94),
-    rgba(246, 243, 255, .82)
-  );
-
-  border: 1px solid rgba(255, 255, 255, .95);
-
-  box-shadow:
-    0 28px 65px rgba(79, 55, 156, .16),
-    inset 0 1px 0 rgba(255, 255, 255, .9);
-
-  backface-visibility: hidden;
-}
-
-/* Background card */
-.hero--v2 .hero-scene__card--back {
-  left: 0;
-  top: 70px;
-  transform:
-    rotate(-22deg)
-    rotateY(-18deg)
-    scale(.9);
-  opacity: .80;
-}
-
-/* Middle card */
-.hero--v2 .hero-scene__card--middle {
-  right: -4%;
-  top: 90px;
-  transform:
-    rotate(19deg)
-    rotateY(16deg)
-    scale(.94);
-  opacity: .88;
-}
-
-/* Hero foreground */
-.hero--v2 .hero-scene__card--front {
-  left: 50%;
-  top: 62px;
-
-  transform:
-    translateX(-50%)
-    translateZ(90px)
-    rotate(-3deg);
-
-  box-shadow:
-    0 42px 100px rgba(79, 55, 156, .24);
-}
-
 /* Stage responsive */
 @media (max-width: 1024px) {
   .hero.hero--v2 {
@@ -203,11 +129,6 @@
 
   .hero--v2 .hero__title {
     font-size: clamp(3rem, 6vw, 4.5rem);
-  }
-
-  .hero--v2 .hero-scene {
-    transform: scale(.78);
-    transform-origin: center;
   }
 }
 
@@ -236,21 +157,6 @@
   .hero--v2 .hero__visual {
     height: 245px;
     overflow: hidden;
-  }
-
-  .hero--v2 .hero-scene {
-    width: 440px;
-    height: 390px;
-    position: relative;
-    left: 50%;
-    transform:
-      translateX(-50%)
-      scale(.62);
-    transform-origin: center top;
-  }
-
-  .hero--v2 .hero-scene__card--middle {
-    right: 4%;
   }
 }
 

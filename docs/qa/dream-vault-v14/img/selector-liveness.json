@@ -1,0 +1,542 @@
+{
+ "total": 830,
+ "live": 728,
+ "dead": 89,
+ "unknown": 13,
+ "deadSelectors": [
+  {
+   "selector": "button:focus-visible",
+   "base": "button-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "a:focus-visible",
+   "base": "a-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".status-chip:focus-visible",
+   "base": ".status-chip-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ":focus-visible",
+   "base": "-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".app-shell",
+   "base": ".app-shell",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "main",
+   "base": "main",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".stats",
+   "base": ".stats",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".wishlist-grid",
+   "base": ".wishlist-grid",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".motion-button",
+   "base": ".motion-button",
+   "live": false,
+   "media": "(prefers-reduced-motion: reduce)"
+  },
+  {
+   "selector": ".motion-button:hover",
+   "base": ".motion-button",
+   "live": false,
+   "media": "(hover: hover) and (pointer: fine)"
+  },
+  {
+   "selector": ".motion-button:active",
+   "base": ".motion-button",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".nav-more summary:focus-visible",
+   "base": ".nav-more summary-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene",
+   "base": ".hero-scene",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".hero-scene__glow",
+   "base": ".hero-scene__glow",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__card",
+   "base": ".hero-scene__card",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__card--back",
+   "base": ".hero-scene__card--back",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__card--middle",
+   "base": ".hero-scene__card--middle",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__card--front",
+   "base": ".hero-scene__card--front",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__icon",
+   "base": ".hero-scene__icon",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__line",
+   "base": ".hero-scene__line",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__line--short",
+   "base": ".hero-scene__line--short",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__sparkle",
+   "base": ".hero-scene__sparkle",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__product",
+   "base": ".hero-scene__product",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__product svg",
+   "base": ".hero-scene__product svg",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero-scene__product-label",
+   "base": ".hero-scene__product-label",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero--v2 .hero-scene",
+   "base": ".hero--v2 .hero-scene",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".hero--v2 .hero-scene__glow",
+   "base": ".hero--v2 .hero-scene__glow",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero--v2 .hero-scene__card",
+   "base": ".hero--v2 .hero-scene__card",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero--v2 .hero-scene__card--back",
+   "base": ".hero--v2 .hero-scene__card--back",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".hero--v2 .hero-scene__card--middle",
+   "base": ".hero--v2 .hero-scene__card--middle",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".hero--v2 .hero-scene__card--front",
+   "base": ".hero--v2 .hero-scene__card--front",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".collection-search__input-wrap:focus-within",
+   "base": ".collection-search__input-wrap-within",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".wishlist-card.is-purchase-celebrating .thumb::after",
+   "base": ".wishlist-card.is-purchase-celebrating .thumb",
+   "live": false,
+   "media": "(prefers-reduced-motion: reduce)"
+  },
+  {
+   "selector": ".wishlist-card.is-purchase-celebrating .badges .b-purchased",
+   "base": ".wishlist-card.is-purchase-celebrating .badges .b-purchased",
+   "live": false,
+   "media": "(prefers-reduced-motion: reduce)"
+  },
+  {
+   "selector": ".product-dialog input:focus-visible",
+   "base": ".product-dialog input-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".product-dialog select:focus-visible",
+   "base": ".product-dialog select-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".product-dialog textarea:focus-visible",
+   "base": ".product-dialog textarea-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".product-dialog button:focus-visible",
+   "base": ".product-dialog button-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".toast--error",
+   "base": ".toast--error",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".toast--info",
+   "base": ".toast--info",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".product-dialog .toast",
+   "base": ".product-dialog .toast",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".collection-panel--v3 .collection-search__input-wrap:focus-within",
+   "base": ".collection-panel--v3 .collection-search__input-wrap-within",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".mobile-dock__item:focus-visible",
+   "base": ".mobile-dock__item-visible",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".mobile-dock__add:focus-visible",
+   "base": ".mobile-dock__add-visible",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": "#grid.gallery--v4 .status-chip:focus-visible",
+   "base": "#grid.gallery--v4 .status-chip-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .collection-panel--v3 .collection-search__input-wrap:focus-within",
+   "base": ".dreamscape-v5 .collection-panel--v3 .collection-search__input-wrap-within",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene__glow",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene__glow",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene__card",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene__card",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene__card--back",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene__card--back",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene__card--middle",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene__card--middle",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene__card--front",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene__card--front",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v5 .hero-scene__product svg",
+   "base": ".dreamscape-v5 .hero--v5 .hero-scene__product svg",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .collection-panel--v3 .collection-filters select:focus-visible",
+   "base": ".dreamscape-v5 .collection-panel--v3 .collection-filters select-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": ".dreamscape-v5 .mobile-dock__item:focus-visible",
+   "base": ".dreamscape-v5 .mobile-dock__item-visible",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .mobile-dock__add:focus-visible",
+   "base": ".dreamscape-v5 .mobile-dock__add-visible",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v6 .hero-scene",
+   "base": ".dreamscape-v5 .hero--v6 .hero-scene",
+   "live": false,
+   "media": "(min-width: 1800px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v6 .hero-scene__glow",
+   "base": ".dreamscape-v5 .hero--v6 .hero-scene__glow",
+   "live": false,
+   "media": "(min-width: 1025px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v6 .hero-scene__card--back",
+   "base": ".dreamscape-v5 .hero--v6 .hero-scene__card--back",
+   "live": false,
+   "media": "(min-width: 1800px)"
+  },
+  {
+   "selector": ".dreamscape-v5 .hero--v6 .hero-scene__card--middle",
+   "base": ".dreamscape-v5 .hero--v6 .hero-scene__card--middle",
+   "live": false,
+   "media": "(min-width: 1800px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7 .hero-scene__card--back",
+   "base": "body.dreamscape-v5 .hero--v7 .hero-scene__card--back",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7 .hero-scene__card--middle",
+   "base": "body.dreamscape-v5 .hero--v7 .hero-scene__card--middle",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7 .hero-scene__card--front",
+   "base": "body.dreamscape-v5 .hero--v7 .hero-scene__card--front",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7 .hero-scene__glow",
+   "base": "body.dreamscape-v5 .hero--v7 .hero-scene__glow",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7 .hero-scene__card",
+   "base": "body.dreamscape-v5 .hero--v7 .hero-scene__card",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid.gallery--v6 > .wishlist-card:first-child:not(:only-child):has(:focus-visible) .product-media",
+   "base": "body.dreamscape-v5 #grid.gallery--v6 > .wishlist-card:first-child:not(:only-child):has(-visible) .product-media",
+   "live": false,
+   "media": "(min-width: 1025px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 #collection .collection-search__input-wrap:focus-within",
+   "base": "body.dreamscape-v5 #collection .collection-search__input-wrap-within",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 #collection .collection-filters select:focus-visible",
+   "base": "body.dreamscape-v5 #collection .collection-filters select-visible",
+   "live": false,
+   "media": "(max-width: 1024px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7 .hero-scene",
+   "base": "body.dreamscape-v5 .hero--v7 .hero-scene",
+   "live": false,
+   "media": "(min-width: 1025px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7.hero--v7-paused .hero-scene__card",
+   "base": "body.dreamscape-v5 .hero--v7.hero--v7-paused .hero-scene__card",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v7.hero--v7-paused .hero-scene__glow",
+   "base": "body.dreamscape-v5 .hero--v7.hero--v7-paused .hero-scene__glow",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .wishlist-card__surface",
+   "base": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .wishlist-card__surface",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .product-media",
+   "base": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .product-media",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .thumb",
+   "base": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .thumb",
+   "live": false,
+   "media": "(max-width: 640px)"
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .thumb.product-media",
+   "base": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child).is-purchased .thumb.product-media",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child) .is-purchased .product-media",
+   "base": "body.dreamscape-v5 #grid.gallery--v2.gallery--v4.gallery--v6 > .wishlist-card:first-child:not(:only-child) .is-purchased .product-media",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid .product-card__actions button:focus-visible",
+   "base": "body.dreamscape-v5 #grid .product-card__actions button-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid .product-card__actions a:focus-visible",
+   "base": "body.dreamscape-v5 #grid .product-card__actions a-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #grid .status-chip:focus-visible",
+   "base": "body.dreamscape-v5 #grid .status-chip-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv .quick-view__ring--saving",
+   "base": "body.dreamscape-v5 #qv .quick-view__ring--saving",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv .quick-view__ring--ordered",
+   "base": "body.dreamscape-v5 #qv .quick-view__ring--ordered",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv .quick-view__ring--purchased",
+   "base": "body.dreamscape-v5 #qv .quick-view__ring--purchased",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv .quick-view__ring--p-low",
+   "base": "body.dreamscape-v5 #qv .quick-view__ring--p-low",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv .quick-view__ring--p-medium",
+   "base": "body.dreamscape-v5 #qv .quick-view__ring--p-medium",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv .quick-view__note--empty",
+   "base": "body.dreamscape-v5 #qv .quick-view__note--empty",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 #qv :focus-visible",
+   "base": "body.dreamscape-v5 #qv -visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 .hero--v9 .hero-scene",
+   "base": "body.dreamscape-v5 .hero--v9 .hero-scene",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 .v11-canvas #grid .product-card__view:focus-visible",
+   "base": "body.dreamscape-v5 .v11-canvas #grid .product-card__view-visible",
+   "live": false,
+   "media": ""
+  },
+  {
+   "selector": "body.dreamscape-v5 .v13-viewbar__button:focus-visible",
+   "base": "body.dreamscape-v5 .v13-viewbar__button-visible",
+   "live": false,
+   "media": ""
+  }
+ ]
+}

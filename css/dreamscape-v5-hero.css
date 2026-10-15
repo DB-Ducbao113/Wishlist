@@ -135,84 +135,6 @@
   perspective: 1200px;
 }
 
-.dreamscape-v5 .hero--v5 .hero-scene {
-  position: relative;
-  height: 440px;
-  transform-style: preserve-3d;
-}
-
-/* Soft ambient light */
-
-.dreamscape-v5 .hero--v5 .hero-scene__glow {
-  background: radial-gradient(
-    ellipse,
-    rgba(137,107,237,.34) 0%,
-    rgba(194,178,255,.23) 43%,
-    transparent 73%
-  );
-  filter: blur(44px);
-  opacity: .9;
-}
-
-/* Glass objects */
-
-.dreamscape-v5 .hero--v5 .hero-scene__card {
-  border: 1px solid rgba(255,255,255,.85);
-  border-radius: 30px;
-
-  background: linear-gradient(
-    145deg,
-    rgba(255,255,255,.96),
-    rgba(238,231,255,.78)
-  );
-
-  box-shadow:
-    0 28px 72px rgba(70,46,143,.18),
-    inset 0 1px 0 rgba(255,255,255,.95);
-
-  backface-visibility: hidden;
-}
-
-/* Three distinct depths: preserve transforms */
-
-.dreamscape-v5 .hero--v5
-.hero-scene__card--back {
-  opacity: .74;
-  transform:
-    rotate(-21deg)
-    rotateY(-18deg)
-    scale(.88);
-}
-
-.dreamscape-v5 .hero--v5
-.hero-scene__card--middle {
-  opacity: .88;
-  transform:
-    rotate(18deg)
-    rotateY(16deg)
-    scale(.94);
-}
-
-.dreamscape-v5 .hero--v5
-.hero-scene__card--front {
-  transform:
-    translateX(-50%)
-    translateZ(90px)
-    rotate(-3deg);
-
-  box-shadow:
-    0 42px 100px rgba(81,53,166,.25),
-    inset 0 1px 0 rgba(255,255,255,.95);
-}
-
-/* Keep SVG and its content clear */
-
-.dreamscape-v5 .hero--v5
-.hero-scene__product svg {
-  max-width: 100%;
-  height: auto;
-}
-
 /* Tablet */
 
 @media (min-width: 641px) and
@@ -257,22 +179,6 @@
   .dreamscape-v5 .hero--v5 .hero__visual {
     height: 220px;
     overflow: hidden;
-  }
-
-  /* Explicitly preserve V2's centered scale */
-  .dreamscape-v5 .hero--v5 .hero-scene {
-    width: 440px;
-    height: 390px;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%) scale(.56);
-    transform-origin: center top;
-  }
-
-  /* Mobile: less blur, less visual noise */
-  .dreamscape-v5 .hero--v5 .hero-scene__glow {
-    filter: blur(20px);
-    opacity: .65;
   }
 }
 

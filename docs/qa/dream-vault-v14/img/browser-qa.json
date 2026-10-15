@@ -1,0 +1,133 @@
+{
+ "total": 25,
+ "pass": 25,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "Z1a Không còn link motion.css / cinematic-v7-hero.css; 48 -> 46 stylesheet",
+   "ok": true,
+   "detail": "{\"n\":46,\"motion\":false,\"cine\":false}"
+  },
+  {
+   "name": "Z1b Không còn selector hero-scene / motion-button trong bất kỳ stylesheet nào",
+   "ok": true,
+   "detail": "{\"badSel\":[],\"deadEls\":0,\"rules\":1290}"
+  },
+  {
+   "name": "Z1c Hai file chết đã bị xóa khỏi server (404)",
+   "ok": true,
+   "detail": "{\"motion.css\":404,\"cinematic-v7-hero.css\":404}"
+  },
+  {
+   "name": "Z2a Ô tìm kiếm #q có tên truy cập",
+   "ok": true,
+   "detail": "Tìm kiếm món, danh mục hoặc ghi chú"
+  },
+  {
+   "name": "Z2b viewbar switch + stats có role=group (aria-label hợp lệ)",
+   "ok": true,
+   "detail": "{\"qName\":\"Tìm kiếm món, danh mục hoặc ghi chú\",\"swRole\":\"group\",\"totRole\":\"group\",\"landmarks\":{\"nav\":2,\"h1\":1},\"interactive\":46,\"unnamed\":[]}"
+  },
+  {
+   "name": "Z2c Mọi phần tử tương tác đều có tên truy cập",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "Z2d Landmark + heading cơ bản tồn tại",
+   "ok": true,
+   "detail": "{\"nav\":2,\"h1\":1}"
+  },
+  {
+   "name": "Z3 @320x568: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @360x640: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @375x667: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @375x812: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @390x844: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @414x896: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @430x932: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @768x1024: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @1024x900: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @1280x800: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @1440x900: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z3 @1920x1080: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột",
+   "ok": true,
+   "detail": "{\"g\":{\"overflow\":0},\"f\":{\"overflow\":0,\"hit\":true,\"focusCols\":1}}"
+  },
+  {
+   "name": "Z4a Add tăng 1, Delete giảm 1",
+   "ok": true,
+   "detail": "{\"nBefore\":7,\"add\":8,\"del\":7}"
+  },
+  {
+   "name": "Z4b Search lọc đúng, Quick View mở/đóng, Tilt transform sống",
+   "ok": true,
+   "detail": "{\"search\":1,\"qv\":{\"open\":true,\"closed\":true},\"tilt\":true}"
+  },
+  {
+   "name": "Z5 Reduced motion: không tràn, không animation card",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"anim\":\"none\",\"focusCardAnim\":\"none\"}"
+  },
+  {
+   "name": "Z6 Dialog mở modal, focus vào trong, Escape đóng",
+   "ok": true,
+   "detail": "{\"r\":{\"open\":true,\"activeInDlg\":true},\"after\":{\"open\":false}}"
+  },
+  {
+   "name": "Z7 Console JS errors = 0",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Z8 Không có lỗi tài nguyên ngoài dự kiến",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

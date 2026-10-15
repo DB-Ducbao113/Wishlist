@@ -79,7 +79,6 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/tokens.css">
 <link rel="stylesheet" href="./css/base.css">
 <link rel="stylesheet" href="./css/layout.css">
-<link rel="stylesheet" href="./css/motion.css">
 
 <!-- Lesson 02 -->
 <link rel="stylesheet" href="./css/navigation.css">
@@ -113,7 +112,6 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/desktop-showroom-v6-gallery.css">
 <link rel="stylesheet" href="./css/desktop-showroom-v6-workspace.css">
 <link rel="stylesheet" href="./css/desktop-showroom-v6-mobile.css">
-<link rel="stylesheet" href="./css/cinematic-v7-hero.css">
 <link rel="stylesheet" href="./css/cinematic-v7-gallery-lighting.css">
 <link rel="stylesheet" href="./css/cinematic-v7-workspace.css">
 <link rel="stylesheet" href="./css/cinematic-v7-visual-overhaul.css">
@@ -387,6 +385,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   <!-- Dashboard Statistics -->
 <div class="total stats-dashboard"
+     role="group"
      aria-label="Thống kê wishlist">
 
   <!-- Remaining budget -->
@@ -496,6 +495,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <input
         id="q"
         type="search"
+        aria-label="Tìm kiếm món, danh mục hoặc ghi chú"
         placeholder="Tên món, danh mục hoặc ghi chú..."
         autocomplete="off"
       >
@@ -576,7 +576,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   </div>
   <div class="v13-viewbar" role="group" aria-label="Chế độ hiển thị bộ sưu tập">
     <span class="v13-viewbar__label">EXHIBITION MODE</span>
-    <div class="v13-viewbar__switch" aria-label="Chọn chế độ xem">
+    <div class="v13-viewbar__switch" role="group" aria-label="Chọn chế độ xem">
       <button id="v13GridView" type="button" class="v13-viewbar__button" aria-pressed="true" aria-controls="grid">Gallery</button>
       <button id="v13FocusView" type="button" class="v13-viewbar__button" aria-pressed="false" aria-controls="grid">Focus</button>
     </div>

@@ -231,56 +231,6 @@
     pointer-events: none;
   }
 
-  /* Exhibition card materials (structure untouched) */
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card {
-    border-radius: 24px;
-    background: linear-gradient(
-      150deg,
-      rgba(255, 255, 255, .97),
-      rgba(243, 238, 255, .92)
-    );
-    box-shadow:
-      0 22px 50px rgba(79, 55, 156, .20),
-      0 6px 14px rgba(79, 55, 156, .10),
-      inset 0 1px 0 rgba(255, 255, 255, .95);
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--back {
-    opacity: .70;
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--middle {
-    opacity: .80;
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--front {
-    background: linear-gradient(
-      155deg,
-      #FFFFFF 0%,
-      #FBF9FF 55%,
-      #F0E9FF 100%
-    );
-    box-shadow:
-      0 34px 74px rgba(79, 55, 156, .28),
-      0 8px 20px rgba(79, 55, 156, .13),
-      inset 0 1px 0 #FFFFFF,
-      inset 0 0 0 1px rgba(168, 139, 247, .18);
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__glow {
-    background: radial-gradient(
-      ellipse,
-      rgba(127, 96, 237, .5),
-      rgba(191, 174, 255, .26) 42%,
-      transparent 74%
-    );
-  }
-
   /* ======================================================
      §B — DASHBOARD · one dominant violet stat card
   ====================================================== */

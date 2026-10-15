@@ -1,0 +1,79 @@
+{
+ "method": "computed-style snapshot (all body elements, 40 properties) at 12 states",
+ "states": [
+  {
+   "state": "desktop-gallery-12",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "desktop-focus-12",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "desktop-empty",
+   "beforeElements": 286,
+   "afterElements": 286,
+   "diffs": 0
+  },
+  {
+   "state": "desktop-1",
+   "beforeElements": 309,
+   "afterElements": 309,
+   "diffs": 0
+  },
+  {
+   "state": "tablet-1024",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "tablet-768",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "mobile-375",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "mobile-320",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "wide-1920",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "desktop-qv",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "desktop-dialog",
+   "beforeElements": 543,
+   "afterElements": 543,
+   "diffs": 0
+  },
+  {
+   "state": "desktop-toast",
+   "beforeElements": 544,
+   "afterElements": 544,
+   "diffs": 0
+  }
+ ],
+ "totalDifferences": 0,
+ "verdict": "IDENTICAL"
+}

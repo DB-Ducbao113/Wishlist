@@ -244,71 +244,6 @@
     pointer-events: none;
   }
 
-  /* Scene container scale only — card transforms untouched */
-  body.dreamscape-v5
-  .hero--v7 .hero-scene {
-    transform: scale(1.08);
-  }
-
-  /* Keep the enlarged fan inside the hero frame
-     (positioning only — never the transform chain) */
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--middle {
-    right: -1%;
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card {
-    border-radius: 34px;
-    background: linear-gradient(
-      150deg,
-      rgba(255, 255, 255, .97),
-      rgba(243, 238, 255, .92)
-    );
-    box-shadow:
-      0 34px 80px rgba(79, 55, 156, .22),
-      0 8px 20px rgba(79, 55, 156, .10),
-      inset 0 1px 0 rgba(255, 255, 255, .95);
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--back {
-    opacity: .70;
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--middle {
-    opacity: .80;
-  }
-
-  /* Foreground exhibit — larger, crisper */
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__card--front {
-    width: 252px;
-    height: 324px;
-    background: linear-gradient(
-      155deg,
-      #FFFFFF 0%,
-      #FBF9FF 55%,
-      #F0E9FF 100%
-    );
-    box-shadow:
-      0 54px 120px rgba(79, 55, 156, .30),
-      0 12px 30px rgba(79, 55, 156, .14),
-      inset 0 1px 0 #FFFFFF,
-      inset 0 0 0 1px rgba(168, 139, 247, .18);
-  }
-
-  body.dreamscape-v5
-  .hero--v7 .hero-scene__glow {
-    background: radial-gradient(
-      ellipse,
-      rgba(127, 96, 237, .55),
-      rgba(191, 174, 255, .26) 42%,
-      transparent 74%
-    );
-  }
-
   /* ======================================================
      WORKSTREAM B — Premium Collection Workspace
   ====================================================== */
@@ -954,18 +889,4 @@
     min-height: 56px;
     font-size: 15px;
   }
-}
-
-/* ==========================================================
-   WORKSTREAM D — Visibility-based motion pause
-   Pauses the four decorative 17B hero animations when the
-   hero is offscreen or the tab is hidden (class toggled by
-   a tiny presentation-only script). No app logic touched.
-========================================================== */
-
-body.dreamscape-v5
-.hero--v7.hero--v7-paused .hero-scene__card,
-body.dreamscape-v5
-.hero--v7.hero--v7-paused .hero-scene__glow {
-  animation-play-state: paused;
 }
