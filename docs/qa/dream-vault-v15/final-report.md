@@ -155,6 +155,7 @@ Không đổi CSS; V14 đã phủ 12 viewport không tràn. V15 tái xác nhận
 
 - `sprint-spec.md` — brief (commit `f7d4ca4`).
 - `final-report.md` — báo cáo này.
+- `release-runbook.md` — runbook 6 bước đóng 3 release gate + checklist phát hành `ui-v15.0.0`.
 - `hosting-audit.json`, `hosting-manifest.json` — Workstream A.
 - `firestore-rules-static.json` — phân tích rules + phần UNVERIFIED.
 - `img/browser-qa.json` (15/15), `img/a11y.json`, `img/perf-vitals.json`, `img/render-50.json`, `img/static-headers.json`.
