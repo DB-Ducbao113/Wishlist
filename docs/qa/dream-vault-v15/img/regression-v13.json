@@ -1,0 +1,258 @@
+{
+ "total": 50,
+ "pass": 50,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "Y1a Viewbar + 2 nút Gallery/Focus tồn tại",
+   "ok": true,
+   "detail": "{\"bar\":true,\"group\":\"group\",\"gText\":\"Gallery\",\"fText\":\"Focus\",\"gPressed\":\"true\",\"fPressed\":\"false\",\"gControls\":\"grid\",\"fControls\":\"grid\"}"
+  },
+  {
+   "name": "Y1b aria-pressed khởi tạo đúng (gallery=true, focus=false) + aria-controls=grid",
+   "ok": true,
+   "detail": "{\"bar\":true,\"group\":\"group\",\"gText\":\"Gallery\",\"fText\":\"Focus\",\"gPressed\":\"true\",\"fPressed\":\"false\",\"gControls\":\"grid\",\"fControls\":\"grid\"}"
+  },
+  {
+   "name": "Y1c Viewbar là group có nhãn",
+   "ok": true,
+   "detail": "group"
+  },
+  {
+   "name": "Y2 @1280: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @1280: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":3,\"fcols\":1,\"sd\":\"grid\",\"feat\":\"grid\"}"
+  },
+  {
+   "name": "Y2 @1440: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @1440: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":3,\"fcols\":1,\"sd\":\"grid\",\"feat\":\"grid\"}"
+  },
+  {
+   "name": "Y2 @1920: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @1920: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":3,\"fcols\":1,\"sd\":\"grid\",\"feat\":\"grid\"}"
+  },
+  {
+   "name": "Y2 @768: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @768: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":2,\"fcols\":1,\"sd\":\"grid\",\"feat\":\"grid\"}"
+  },
+  {
+   "name": "Y2 @1024: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @1024: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":2,\"fcols\":1,\"sd\":\"grid\",\"feat\":\"grid\"}"
+  },
+  {
+   "name": "Y2 @320: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @320: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":1,\"fcols\":1,\"sd\":\"flex\",\"feat\":\"flex\"}"
+  },
+  {
+   "name": "Y2 @375: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @375: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":1,\"fcols\":1,\"sd\":\"flex\",\"feat\":\"flex\"}"
+  },
+  {
+   "name": "Y2 @375: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @375: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":1,\"fcols\":1,\"sd\":\"flex\",\"feat\":\"flex\"}"
+  },
+  {
+   "name": "Y2 @430: toggle focus/gallery + aria-pressed cập nhật",
+   "ok": true,
+   "detail": "{\"gv\":\"gallery\",\"focusV\":\"focus\",\"back\":\"gallery\",\"gp\":\"false\",\"fp\":\"true\"}"
+  },
+  {
+   "name": "Y3 @430: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ",
+   "ok": true,
+   "detail": "{\"gcols\":1,\"fcols\":1,\"sd\":\"flex\",\"feat\":\"flex\"}"
+  },
+  {
+   "name": "Y4 Toggle nhiều lần không nhân bản card",
+   "ok": true,
+   "detail": "{\"before\":7,\"n\":7,\"uniq\":7}"
+  },
+  {
+   "name": "Y5 Focus giữ nguyên qua search/filter/sort",
+   "ok": true,
+   "detail": "{\"afterSearch\":{\"mode\":\"focus\",\"n\":1},\"afterStatus\":{\"mode\":\"focus\"},\"afterSort\":{\"mode\":\"focus\"}}"
+  },
+  {
+   "name": "Y6 Focus giữ nguyên qua add + delete; không nhân bản",
+   "ok": true,
+   "detail": "{\"before\":7,\"add\":{\"open\":false,\"mode\":\"focus\",\"n\":8},\"del\":{\"mode\":\"focus\",\"n\":7}}"
+  },
+  {
+   "name": "Y7a Card Tilt vẫn sở hữu transform trong Focus (matrix, không \"none\")",
+   "ok": true,
+   "detail": "{\"transform\":\"matrix(1, 0, 0, 1, 0, 0)\",\"transformStyle\":\"preserve-3d\"}"
+  },
+  {
+   "name": "Y7b V13 CSS không khai báo transform cho .wishlist-card__surface",
+   "ok": true,
+   "detail": "match"
+  },
+  {
+   "name": "Y8a Viewbar có focus-visible outline",
+   "ok": true,
+   "detail": "{\"w\":3,\"style\":\"solid\"}"
+  },
+  {
+   "name": "Y8b Enter bật Focus, Space bật Gallery (bàn phím)",
+   "ok": true,
+   "detail": "{\"afterEnter\":\"focus\",\"afterSpace\":\"gallery\"}"
+  },
+  {
+   "name": "Y9a Mở Quick View từ Focus",
+   "ok": true,
+   "detail": "{\"open\":true,\"mode\":\"focus\"}"
+  },
+  {
+   "name": "Y9b Escape đóng QV, trả focus, giữ Focus mode",
+   "ok": true,
+   "detail": "{\"qvOpen\":false,\"restored\":true,\"mode\":\"focus\"}"
+  },
+  {
+   "name": "Y10a Nút viewbar có tên truy cập + aria-pressed hợp lệ",
+   "ok": true,
+   "detail": "{\"n\":2,\"unnamed\":0,\"badPressed\":0,\"imgs\":7,\"noAlt\":0,\"notHidden\":0}"
+  },
+  {
+   "name": "Y10b Ảnh có alt, phần tử trang trí aria-hidden",
+   "ok": true,
+   "detail": "{\"n\":2,\"unnamed\":0,\"badPressed\":0,\"imgs\":7,\"noAlt\":0,\"notHidden\":0}"
+  },
+  {
+   "name": "Y14 Status cycle trong Focus giữ mode + pressed + đổi trạng thái",
+   "ok": true,
+   "detail": "{\"before\":\"Chuyển trạng thái của Everyday essentials sang Đã đặt hàng\",\"mode\":\"focus\",\"fPressed\":\"true\",\"label\":\"Chuyển trạng thái của Everyday essentials sang Đã mua\"}"
+  },
+  {
+   "name": "Y15 Edit trong Focus giữ mode + cập nhật nội dung",
+   "ok": true,
+   "detail": "{\"opened\":true,\"mode\":\"focus\",\"has\":true}"
+  },
+  {
+   "name": "Y16 Import trong Focus giữ mode + pressed + nạp món mới",
+   "ok": true,
+   "detail": "{\"mode\":\"focus\",\"fPressed\":\"true\",\"n\":2,\"names\":[\"Imported item 1\",\"Imported item 2\"]}"
+  },
+  {
+   "name": "Y11 @1280: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":75}"
+  },
+  {
+   "name": "Y11 @1440: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":75}"
+  },
+  {
+   "name": "Y11 @1920: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":75}"
+  },
+  {
+   "name": "Y11 @768: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":75}"
+  },
+  {
+   "name": "Y11 @1024: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":75}"
+  },
+  {
+   "name": "Y11 @320: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":65}"
+  },
+  {
+   "name": "Y11 @375: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":65}"
+  },
+  {
+   "name": "Y11 @375: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":65}"
+  },
+  {
+   "name": "Y11 @430: Focus không tràn ngang + nút viewbar bấm được (dock không che)",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"hit\":true,\"btnW\":65}"
+  },
+  {
+   "name": "Y12a Focus + 0 item: empty state, viewbar vẫn dùng được",
+   "ok": true,
+   "detail": "{\"empty\":true,\"cards\":0,\"viewbar\":true,\"mode\":\"focus\"}"
+  },
+  {
+   "name": "Y12b Focus: no-link không có \"Mở nơi bán\", vẫn có Xem chi tiết",
+   "ok": true,
+   "detail": "{\"noLinkBuy\":false,\"hasView\":true}"
+  },
+  {
+   "name": "Y12c Focus: ảnh lỗi rơi về placeholder",
+   "ok": true,
+   "detail": "data:image/svg+xml;utf8,%3Csvg"
+  },
+  {
+   "name": "Y13 Reduced Motion + Focus: không tràn, hoạt động",
+   "ok": true,
+   "detail": "{\"overflow\":0,\"anim\":\"none\",\"mode\":\"focus\",\"n\":7}"
+  },
+  {
+   "name": "V13 Console JS errors = 0 (lỗi tài nguyên mạng tách riêng)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V13 Không có lỗi tài nguyên mạng ngoài dự kiến",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

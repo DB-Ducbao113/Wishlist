@@ -1,0 +1,262 @@
+{
+ "lang": "vi",
+ "landmarks": {
+  "header": 1,
+  "nav": 2,
+  "main": 1,
+  "footer": 0,
+  "h1": 1
+ },
+ "skipLink": null,
+ "interactive": 46,
+ "unnamed": [],
+ "imgs": 9,
+ "noAltImgs": 0,
+ "badAriaLabel": [
+  "SUMMARY."
+ ],
+ "headingJump": null,
+ "h1Count": 1,
+ "dialog": {
+  "hasDialog": true,
+  "labelledby": "dlgTitle",
+  "labelExists": true
+ },
+ "quickview": {
+  "tag": "DIALOG",
+  "role": null,
+  "labelledby": "qvTitle",
+  "labelExists": true
+ },
+ "viewbarSwitch": {
+  "role": "group",
+  "ariaLabel": "Chọn chế độ xem"
+ },
+ "liveRegions": [
+  "SPAN status",
+  "P alert",
+  "P status",
+  "DIV alert"
+ ],
+ "focusSamples": [
+  {
+   "tag": "A",
+   "cls": "v11-workspace-nav__link",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "cls": "v11-workspace-nav__link",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "primary",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "SUMMARY",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "hero-v3__primary",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "cls": "hero-v3__secondary",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "INPUT",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "none",
+   "boxShadow": false
+  },
+  {
+   "tag": "SELECT",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "SELECT",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "SELECT",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "SELECT",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "ghost",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "v13-viewbar__button",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "v13-viewbar__button",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "SPAN",
+   "cls": "badge",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "SPAN",
+   "cls": "badge",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "cls": "buy",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "SPAN",
+   "cls": "badge",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 3,
+   "outlineStyle": "solid",
+   "boxShadow": true
+  },
+  {
+   "tag": "BUTTON",
+   "cls": "mini",
+   "outlineW": 2,
+   "outlineStyle": "solid",
+   "boxShadow": false
+  }
+ ],
+ "focusNoVisible": [
+  {
+   "tag": "INPUT",
+   "cls": "",
+   "outlineW": 3,
+   "outlineStyle": "none",
+   "boxShadow": false
+  }
+ ]
+}

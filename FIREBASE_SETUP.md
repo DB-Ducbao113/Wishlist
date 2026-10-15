@@ -49,3 +49,24 @@ Danh sách, ghi chú và URL ảnh được đồng bộ qua Firestore. Firestor
 - Danh sách chưa đăng nhập vẫn hoạt động bằng bộ nhớ cục bộ của trình duyệt.
 - Bản mẫu tự thêm dữ liệu minh họa ở lần mở đầu tiên. Xóa dữ liệu mẫu trước khi đăng nhập nếu không muốn đưa chúng lên tài khoản.
 - Không đưa service-account key hoặc private key vào các tệp của trang web.
+
+---
+
+## V15 - Build before deploy (hosting allowlist)
+
+`firebase.json` now publishes the staging directory `dist/` only, assembled from an
+explicit allowlist by `scripts/build-hosting.mjs`. This prevents repository internals
+(`docs/` QA + design material, config files, dotfiles) from being served publicly.
+
+Deploy steps:
+
+```powershell
+Set-Location "E:\Buying Checklist"
+node scripts/build-hosting.mjs        # writes ./dist (wishlist.html, wishlist-cloud.js, css/)
+node scripts/check-hosting.mjs        # verifies allowlist / no leaks
+firebase use wishlist-787d2
+firebase deploy --only hosting,firestore:rules
+```
+
+If `dist/` is absent the deploy fails closed (nothing is published). Re-run the build
+after every content change.

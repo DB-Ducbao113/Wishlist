@@ -1,0 +1,83 @@
+{
+ "total": 15,
+ "pass": 15,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "D1 CRUD + persistence: 0->add/ edit/ delete; 12 & 50 lưu và render đúng",
+   "ok": true,
+   "detail": "{\"n0\":0,\"n1\":1,\"edited\":{\"title\":\"D1 item edited\",\"cards\":1},\"nDel\":0,\"n12\":12,\"n50\":50,\"n50stored\":50}"
+  },
+  {
+   "name": "D2 Export->Import roundtrip: JSON byte-identical, render đúng unicode/emoji",
+   "ok": true,
+   "detail": "{\"expLen\":2,\"impLen\":2,\"same\":true,\"rendered\":[\"Cà phê ☕\",\"Áo \\\"sơ mi\\\" <b>đỏ</b> 🧥\"]}"
+  },
+  {
+   "name": "D3 JSON hỏng: báo lỗi rõ ràng, dữ liệu không đổi, không crash",
+   "ok": true,
+   "detail": "{\"toast\":\"Tệp không chứa JSON hợp lệ.\",\"before\":7,\"after\":7}"
+  },
+  {
+   "name": "D4 Import trùng id + bản ghi sai: bỏ bản ghi lỗi, id được làm duy nhất, status/priority về mặc định",
+   "ok": true,
+   "detail": "{\"n\":3,\"ids\":[\"same\",\"same-k55o\",\"x\"],\"items\":[{\"id\":\"same\",\"price\":1,\"status\":\"wish\"},{\"id\":\"same-k55o\",\"price\":2,\"status\":\"wish\"},{\"id\":\"x\",\"price\":0,\"status\":\"wish\"}]}"
+  },
+  {
+   "name": "D5 Giá không hợp lệ (âm/chữ/null/float/Infinity) -> số nguyên >= 0, không NaN",
+   "ok": true,
+   "detail": "[{\"n\":\"neg\",\"p\":0},{\"n\":\"str\",\"p\":0},{\"n\":\"null\",\"p\":0},{\"n\":\"float\",\"p\":13},{\"n\":\"inf\",\"p\":0}]"
+  },
+  {
+   "name": "D6 XSS qua import: không thực thi script, text hiển thị nguyên văn",
+   "ok": true,
+   "detail": "{\"xss\":0,\"scripts\":0,\"title\":\"<img src=x onerror=\\\"window.__xss=1\\\">Payload\",\"imgs\":0}"
+  },
+  {
+   "name": "D7 localStorage đầy: báo \"bộ nhớ đầy\", dialog vẫn mở, dữ liệu cũ nguyên vẹn",
+   "ok": true,
+   "detail": "{\"toast\":\"Không thể lưu: bộ nhớ trình duyệt đã đầy. Hãy xóa bớt ảnh đã tải lên.\",\"dlg\":true,\"cards\":7,\"before\":7,\"after\":7}"
+  },
+  {
+   "name": "D8 Guard ảnh: từ chối tệp không phải ảnh; chặn ảnh thứ 13 (giới hạn 12)",
+   "ok": true,
+   "detail": "{\"nonImage\":\"Tệp đã chọn không phải ảnh.\",\"limit\":\"Danh sách đã có 12 ảnh tải lên. Giới hạn là 12 ảnh để tránh đầy bộ nhớ. Hãy xóa bớt ảnh hoặc dùng đường dẫn ảnh.\"}"
+  },
+  {
+   "name": "S1 safeUrl chỉ cho http(s):// và data:image/; chặn javascript/vbscript/data:text",
+   "ok": true,
+   "detail": "{\"js\":\"\",\"vb\":\"\",\"dataHtml\":\"\",\"dataSvg\":\"data:image/svg+xml,<svg/>\",\"https\":\"https://a.com/x\",\"http\":\"http://a.com\",\"upper\":\"HTTPS://A.com\",\"vi\":\"\",\"vip\":\"data:image/png;base64,AAAA\",\"vhttps\":\"https://a.com/i.png\"}"
+  },
+  {
+   "name": "S2 XSS form live (name/category/note): không thực thi, text nguyên văn, không chèn thẻ",
+   "ok": true,
+   "detail": "{\"xss\":0,\"title\":\"<img src=x onerror=\\\"window.__xss=9\\\">Live\",\"titleImgs\":0,\"cat\":\"<script>window.__xss=8</script>\",\"note\":\"\\\"><b>bold</b>\",\"scriptInGrid\":0}"
+  },
+  {
+   "name": "S2b Form chặn link javascript: (báo lỗi, dialog mở, không thêm món)",
+   "ok": true,
+   "detail": "{\"toast\":\"Liên kết mua hàng không hợp lệ. Chỉ chấp nhận địa chỉ HTTP hoặc HTTPS.\",\"dlgOpen\":true,\"cards\":0,\"stored\":0}"
+  },
+  {
+   "name": "S3 Link mua ngoài: rel=\"noopener noreferrer\" + target=\"_blank\"",
+   "ok": true,
+   "detail": "{\"href\":\"https://shop.example/p\",\"rel\":\"noopener noreferrer\",\"target\":\"_blank\"}"
+  },
+  {
+   "name": "S4 Không lưu token/secret dễ lộ trong localStorage/sessionStorage",
+   "ok": true,
+   "detail": "{\"lsKeys\":[\"wishlist.items\"],\"ssKeys\":[],\"leak\":[]}"
+  },
+  {
+   "name": "P1 Render 50 món < 400ms, đủ 50 card",
+   "ok": true,
+   "detail": "{\"ms\":7.2,\"cards\":50}"
+  },
+  {
+   "name": "S6 Console JS errors = 0 (toàn bộ kịch bản V15)",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

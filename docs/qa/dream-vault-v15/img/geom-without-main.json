@@ -1,0 +1,56 @@
+{
+ "scrollHeight": 4264,
+ "scrollWidth": 1440,
+ "mainCount": 0,
+ "headerInMain": false,
+ "rects": {
+  "header.site-header": {
+   "x": 80,
+   "y": 48,
+   "w": 1280,
+   "h": 174
+  },
+  "nav.site-nav": {
+   "x": 80,
+   "y": 48,
+   "w": 1280,
+   "h": 72
+  },
+  ".hero": {
+   "x": 80,
+   "y": 222,
+   "w": 1280,
+   "h": 720
+  },
+  "#collection": {
+   "x": 80,
+   "y": 1647,
+   "w": 320,
+   "h": 660
+  },
+  ".v11-workspace": {
+   "x": 80,
+   "y": 1647,
+   "w": 1280,
+   "h": 2569
+  },
+  "#grid": {
+   "x": 440,
+   "y": 1842,
+   "w": 920,
+   "h": 2374
+  },
+  ".total.stats-dashboard": {
+   "x": 124,
+   "y": 1171,
+   "w": 1192,
+   "h": 374
+  },
+  ".mobile-dock": {
+   "x": 0,
+   "y": 0,
+   "w": 0,
+   "h": 0
+  }
+ }
+}

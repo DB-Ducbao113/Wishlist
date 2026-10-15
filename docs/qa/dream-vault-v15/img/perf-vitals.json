@@ -1,0 +1,85 @@
+{
+ "generatedAt": "2026-10-15T16:54:24.369Z",
+ "note": "Headless Chrome lab (localhost). Field CWV cần real-user/production — UNVERIFIED.",
+ "runs": [
+  {
+   "label": "seed-1",
+   "items": "seed",
+   "lcpMs": 768,
+   "cls": 0.0017,
+   "longTaskCount": 1,
+   "longestTaskMs": 51,
+   "tbtMs": 1,
+   "domContentLoaded": 206,
+   "load": 237,
+   "ttfb": 3
+  },
+  {
+   "label": "50items-1",
+   "items": 50,
+   "lcpMs": 416,
+   "cls": 0.0017,
+   "longTaskCount": 1,
+   "longestTaskMs": 79,
+   "tbtMs": 29,
+   "domContentLoaded": 197,
+   "load": 253,
+   "ttfb": 2
+  },
+  {
+   "label": "seed-2",
+   "items": "seed",
+   "lcpMs": 384,
+   "cls": 0.0017,
+   "longTaskCount": 0,
+   "longestTaskMs": 0,
+   "tbtMs": 0,
+   "domContentLoaded": 186,
+   "load": 216,
+   "ttfb": 1
+  },
+  {
+   "label": "50items-2",
+   "items": 50,
+   "lcpMs": 384,
+   "cls": 0.0017,
+   "longTaskCount": 1,
+   "longestTaskMs": 82,
+   "tbtMs": 32,
+   "domContentLoaded": 198,
+   "load": 254,
+   "ttfb": 1
+  },
+  {
+   "label": "seed-3",
+   "items": "seed",
+   "lcpMs": 384,
+   "cls": 0.0017,
+   "longTaskCount": 0,
+   "longestTaskMs": 0,
+   "tbtMs": 0,
+   "domContentLoaded": 189,
+   "load": 218,
+   "ttfb": 1
+  },
+  {
+   "label": "50items-3",
+   "items": 50,
+   "lcpMs": 408,
+   "cls": 0.0017,
+   "longTaskCount": 1,
+   "longestTaskMs": 82,
+   "tbtMs": 32,
+   "domContentLoaded": 204,
+   "load": 261,
+   "ttfb": 2
+  }
+ ],
+ "median": {
+  "lcpMs": 408,
+  "cls": 0.0017,
+  "tbtMs": 29,
+  "longestTaskMs": 79,
+  "ttfb": 2
+ }
+}

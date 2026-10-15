@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-10-15",
+  "source": "firestore.rules",
+  "rulesText": "rules_version = '2'; service cloud.firestore { match /databases/{database}/documents { match /users/{userId}/items/{itemId} { allow read, write: if request.auth != null && request.auth.uid == userId; } } }",
+  "analysis": {
+    "scope": "Chỉ định nghĩa quyền cho /users/{userId}/items/{itemId}.",
+    "defaultDeny": "Đúng. Mọi đường dẫn KHÁC không được match sẽ bị Firestore từ chối mặc định (không có match /{document=**} nào mở quyền).",
+    "authRequired": "Đúng. Điều kiện request.auth != null chặn truy cập ẩn danh.",
+    "tenantIsolation": "Đúng. request.auth.uid == userId cách ly dữ liệu theo UID; người dùng A không đọc/ghi được dữ liệu của B.",
+    "readWriteUnion": "allow read, write gộp cả get/list/create/update/delete cho chủ sở hữu.",
+    "dataValidation": "KHÔNG có ràng buộc shape dữ liệu (kiểu field, kích thước). Là rủi ro thấp cho app cá nhân; khuyến nghị cân nhắc giới hạn kích thước field nếu mở rộng.",
+    "costNote": "Mỗi lần đọc/ghi tính 1 lượt đọc/ghi theo bậc miễn phí Spark."
+  },
+  "verification": {
+    "staticReview": "DONE (đọc source, phân tích như trên).",
+    "emulatorTest": "UNVERIFIED — máy kiểm thử không có JVM nên Firestore emulator không chạy được.",
+    "deployedRules": "UNVERIFIED — không có quyền/không được phép truy cập Firebase production; không xác nhận được rules đã deploy trùng với source trong repo.",
+    "ownerAction": "Chạy: firebase emulators:exec --only firestore --project wishlist-787d2 \"node scripts/test-firestore-rules.mjs\". Sau đó đối chiếu rules đã deploy bằng `firebase deploy --only firestore:rules --dry-run` hoặc Firebase Console."
+  }
+}

@@ -1,0 +1,178 @@
+{
+ "total": 34,
+ "pass": 34,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "W1a .v11-workspace tồn tại, rail = #collection trực tiếp",
+   "ok": true,
+   "detail": "{\"hasWs\":true,\"railIsCollection\":true,\"railHasClass\":true,\"canvasExists\":true,\"gridInCanvas\":true,\"emptyInCanvas\":true,\"statusInCanvas\":true,\"railNested\":false}"
+  },
+  {
+   "name": "W1b #grid + #empty + #resultStatus cùng nằm trong canvas (node DI CHUYỂN)",
+   "ok": true,
+   "detail": "{\"hasWs\":true,\"railIsCollection\":true,\"railHasClass\":true,\"canvasExists\":true,\"gridInCanvas\":true,\"emptyInCanvas\":true,\"statusInCanvas\":true,\"railNested\":false}"
+  },
+  {
+   "name": "W1c Toàn bộ ID collection/gallery được giữ nguyên",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "W1d Form owners giữ nguyên (4 select + input #q)",
+   "ok": true,
+   "detail": "{\"ok\":true,\"qTag\":\"INPUT\"}"
+  },
+  {
+   "name": "W2 1280x950 desktop: grid 2 cột, rail bên trái canvas, rail ~300px (≤30%)",
+   "ok": true,
+   "detail": "{\"display\":\"grid\",\"cols\":2,\"wsW\":1200,\"railW\":320,\"railRight\":360,\"canvasLeft\":396,\"railTop\":1566,\"canvasTop\":1566,\"ratio\":0.267,\"pos\":\"sticky\"}"
+  },
+  {
+   "name": "W2b 1280x950 featured (OBJECT 001) span trọn canvas",
+   "ok": true,
+   "detail": "{\"canvasW\":844,\"gridW\":844,\"firstW\":844}"
+  },
+  {
+   "name": "W2 1440x950 desktop: grid 2 cột, rail bên trái canvas, rail ~300px (≤30%)",
+   "ok": true,
+   "detail": "{\"display\":\"grid\",\"cols\":2,\"wsW\":1280,\"railW\":320,\"railRight\":400,\"canvasLeft\":440,\"railTop\":1647,\"canvasTop\":1647,\"ratio\":0.25,\"pos\":\"sticky\"}"
+  },
+  {
+   "name": "W2b 1440x950 featured (OBJECT 001) span trọn canvas",
+   "ok": true,
+   "detail": "{\"canvasW\":920,\"gridW\":920,\"firstW\":920}"
+  },
+  {
+   "name": "W2 1920x1080 desktop: grid 2 cột, rail bên trái canvas, rail ~300px (≤30%)",
+   "ok": true,
+   "detail": "{\"display\":\"grid\",\"cols\":2,\"wsW\":1440,\"railW\":320,\"railRight\":560,\"canvasLeft\":604,\"railTop\":1691,\"canvasTop\":1691,\"ratio\":0.222,\"pos\":\"sticky\"}"
+  },
+  {
+   "name": "W2b 1920x1080 featured (OBJECT 001) span trọn canvas",
+   "ok": true,
+   "detail": "{\"canvasW\":1076,\"gridW\":1076,\"firstW\":1076}"
+  },
+  {
+   "name": "W3a Rail sticky (position:sticky) khi cuộn vào workspace",
+   "ok": true,
+   "detail": "{\"pos\":\"sticky\",\"before\":1647,\"after\":22,\"headerBottom\":-2125}"
+  },
+  {
+   "name": "W3b Rail không che header (header đã cuộn khỏi viewport)",
+   "ok": true,
+   "detail": "{\"pos\":\"sticky\",\"before\":1647,\"after\":22,\"headerBottom\":-2125}"
+  },
+  {
+   "name": "W4a Desktop nav hiển thị, tái dùng anchor #top/#collection",
+   "ok": true,
+   "detail": "{\"exists\":true,\"display\":\"flex\",\"hrefs\":[\"#top\",\"#collection\"],\"texts\":[\"Trang chủ\",\"Bộ sưu tập\"]}"
+  },
+  {
+   "name": "W4b Nav link bấm được (không bị che)",
+   "ok": true,
+   "detail": "{\"clickable\":true}"
+  },
+  {
+   "name": "W4c Desktop nav ẩn trên mobile (không phá header 1 hàng)",
+   "ok": true,
+   "detail": "{\"display\":\"none\"}"
+  },
+  {
+   "name": "W5 768x1024 tablet: rail xếp chồng TRÊN canvas (toolbar full-width)",
+   "ok": true,
+   "detail": "{\"display\":\"block\",\"railBottom\":2139,\"canvasTop\":2161,\"railW\":707,\"canvasW\":707,\"pos\":\"static\"}"
+  },
+  {
+   "name": "W5 1024x900 tablet: rail xếp chồng TRÊN canvas (toolbar full-width)",
+   "ok": true,
+   "detail": "{\"display\":\"block\",\"railBottom\":2202,\"canvasTop\":2229,\"railW\":944,\"canvasW\":944,\"pos\":\"static\"}"
+  },
+  {
+   "name": "W6 320x568 mobile: một cột, search-first, dock dùng được, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"display\":\"block\",\"railBottom\":1940,\"canvasTop\":1958,\"searchH\":82,\"cols\":1,\"dockVis\":true,\"dockHit\":true,\"railFirst\":true}"
+  },
+  {
+   "name": "W6 320x700 mobile: một cột, search-first, dock dùng được, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"display\":\"block\",\"railBottom\":2053,\"canvasTop\":2071,\"searchH\":82,\"cols\":1,\"dockVis\":true,\"dockHit\":true,\"railFirst\":true}"
+  },
+  {
+   "name": "W6 375x667 mobile: một cột, search-first, dock dùng được, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"display\":\"block\",\"railBottom\":1945,\"canvasTop\":1963,\"searchH\":82,\"cols\":1,\"dockVis\":true,\"dockHit\":true,\"railFirst\":true}"
+  },
+  {
+   "name": "W6 375x812 mobile: một cột, search-first, dock dùng được, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"display\":\"block\",\"railBottom\":2030,\"canvasTop\":2048,\"searchH\":82,\"cols\":1,\"dockVis\":true,\"dockHit\":true,\"railFirst\":true}"
+  },
+  {
+   "name": "W6 430x932 mobile: một cột, search-first, dock dùng được, không tràn",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"display\":\"block\",\"railBottom\":1975,\"canvasTop\":1993,\"searchH\":82,\"cols\":1,\"dockVis\":true,\"dockHit\":true,\"railFirst\":true}"
+  },
+  {
+   "name": "W7a Search lọc + phục hồi (sau khi node di chuyển)",
+   "ok": true,
+   "detail": "{\"t0\":7,\"tf\":0,\"tr\":7,\"hasStatus\":true}"
+  },
+  {
+   "name": "W7b Sort thay đổi thứ tự gallery",
+   "ok": true,
+   "detail": "{\"n\":7,\"changed\":true}"
+  },
+  {
+   "name": "W7c Nút \"Xóa bộ lọc\" reset search + 3 filter + sort về mặc định",
+   "ok": true,
+   "detail": "{\"q\":\"\",\"s\":\"\",\"p\":\"\",\"c\":\"\",\"sort\":\"newest\"}"
+  },
+  {
+   "name": "W7d Quick View mở từ gallery (native <dialog>)",
+   "ok": true,
+   "detail": "{\"open\":true,\"isDialog\":\"DIALOG\"}"
+  },
+  {
+   "name": "W7e Quick View đóng bằng Escape",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "W8 Add/Edit/Delete vẫn hoạt động (dialog + xóa giảm số card)",
+   "ok": true,
+   "detail": "{\"dlgOpen\":true,\"editOpen\":true,\"before\":7,\"after\":6}"
+  },
+  {
+   "name": "W9a 0 item: empty state hiển thị trong canvas",
+   "ok": true,
+   "detail": "{\"emptyInCanvas\":true,\"emptyShown\":true,\"gridCards\":0}"
+  },
+  {
+   "name": "W9b 1 item: render đúng, không tràn canvas",
+   "ok": true,
+   "detail": "{\"n\":1,\"overflow\":false}"
+  },
+  {
+   "name": "W9b 2 item: render đúng, không tràn canvas",
+   "ok": true,
+   "detail": "{\"n\":2,\"overflow\":false}"
+  },
+  {
+   "name": "W9c 12 item: featured vẫn span canvas, gallery còn nguyên",
+   "ok": true,
+   "detail": "{\"n\":12,\"firstW\":920,\"gridW\":920}"
+  },
+  {
+   "name": "W10 Reduced Motion: workspace render, không tràn",
+   "ok": true,
+   "detail": "{\"over\":0,\"display\":\"grid\",\"pos\":\"sticky\",\"cards\":7}"
+  },
+  {
+   "name": "V11 Console errors = 0 qua toàn bộ suite",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}
