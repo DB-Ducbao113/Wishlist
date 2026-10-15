@@ -122,13 +122,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/immersive-v8-gallery.css">
 <link rel="stylesheet" href="./css/immersive-v8-quick-view.css">
 <link rel="stylesheet" href="./css/premium-v9-signature.css">
+<!-- Dream Vault V10 — The Editorial Workspace (header + overview + discovery studio) -->
+<link rel="stylesheet" href="./css/editorial-v10-workspace.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
 <div class="wrap">
 <header class="top site-header">
 
-  <nav class="site-nav" aria-label="Điều hướng Wishlist">
+  <nav class="site-nav" aria-label="Điều hướng Dream Vault">
 
     <!-- Brand -->
     <div class="nav-brand">
@@ -136,8 +138,14 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         ✦
       </span>
 
-      <span class="nav-brand__name">
-        Wishlist<span>.</span>
+      <span class="nav-brand__text">
+        <span class="nav-brand__name">
+          Dream Vault<span>.</span>
+        </span>
+
+        <span class="nav-brand__tagline">
+          The Editorial Workspace
+        </span>
       </span>
     </div>
 
@@ -148,14 +156,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         type="button"
         class="primary nav-add"
         id="btnAdd"
+        aria-label="Thêm món"
       >
         <span aria-hidden="true">+</span>
-        Thêm món
+        <span class="nav-add__label">Thêm món</span>
       </button>
 
       <details class="nav-more">
         <summary aria-label="Công cụ wishlist">
-          Công cụ
+          <span class="nav-more__label">Công cụ</span>
           <span aria-hidden="true">⌄</span>
         </summary>
 
@@ -349,6 +358,18 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <section class="panel dashboard-panel dashboard-panel--v2"
          aria-label="Tổng quan wishlist">
 
+  <!-- V10 — Editorial overview heading -->
+  <div class="overview-heading">
+    <p class="overview-heading__eyebrow">
+      <span class="overview-heading__no">01</span>
+      Your collection at a glance
+    </p>
+
+    <h2 class="overview-heading__title">
+      The value of your dreams
+    </h2>
+  </div>
+
   <!-- Dashboard Statistics -->
 <div class="total stats-dashboard"
      aria-label="Thống kê wishlist">
@@ -367,7 +388,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumTotal">0</b>
 
     <p class="stat-card__description">
-      Giá trị wishlist chưa mua
+      Giá trị những giấc mơ phía trước
     </p>
   </div>
 
@@ -421,7 +442,8 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   <div class="collection-panel__heading">
     <div>
       <p class="collection-panel__eyebrow">
-        YOUR COLLECTION
+        <span class="collection-panel__section-no">02</span>
+        Discover your wishes
       </p>
 
       <h2 id="collection-controls-title">

@@ -1,0 +1,634 @@
+/* ============================================================
+   Dream Vault V10 — The Editorial Workspace
+   ------------------------------------------------------------
+   Single scoped layer, loaded LAST (after premium-v9-signature.css).
+   Scope of work:
+     A. Header / navigation  → Premium Navigation
+     B. Dashboard            → Editorial collection overview
+     C. #collection          → Discovery Studio
+   Rules:
+     - No frozen V1–V9 CSS file is modified (V10 overrides via
+       equal/higher-specificity selectors that load later).
+     - All existing IDs / event behaviours preserved
+       (sumTotal, sumSpent, sumCount, q, fStatus, fPriority,
+        fCategoryFilter, fSort, btnClearFilter, btnAdd, syncStatus…).
+     - No new network requests, no external fonts, no paid libs.
+   -- $0 budget --
+   ============================================================ */
+
+:root {
+  /* V10 editorial accents */
+  --v10-ink: #19152C;
+  --v10-muted: #625979;
+  --v10-accent: #6850BC;
+  --v10-accent-2: #9377E4;
+  --v10-hairline: rgba(104, 80, 188, .16);
+  --v10-panel-border: rgba(255, 255, 255, .9);
+  --v10-serif: Georgia, "Times New Roman", serif;
+  --v10-ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ============================================================
+   A. HEADER — Premium Navigation
+   ============================================================ */
+
+body.dreamscape-v5 header.site-header {
+  padding-bottom: 22px;
+  border-bottom-color: var(--dream-border);
+}
+
+body.dreamscape-v5 .site-nav {
+  min-height: 72px;
+  gap: 20px;
+}
+
+/* ---- Brand identity ---- */
+body.dreamscape-v5 .nav-brand {
+  gap: 13px;
+  align-items: center;
+}
+
+body.dreamscape-v5 .nav-brand__mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
+  background:
+    radial-gradient(ellipse 120% 120% at 30% 20%, rgba(255,255,255,.34), transparent 60%),
+    linear-gradient(145deg, #6E57CB 0%, #8268DB 55%, #9377E4 100%);
+  color: #FFFFFF;
+  font-size: 21px;
+  box-shadow:
+    0 12px 26px rgba(84, 64, 153, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .45);
+}
+
+body.dreamscape-v5 .nav-brand__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+body.dreamscape-v5 .nav-brand__name {
+  font-size: 1.52rem;
+  font-weight: 780;
+  letter-spacing: -.055em;
+  line-height: 1;
+  color: var(--v10-ink);
+}
+
+body.dreamscape-v5 .nav-brand__name span {
+  color: var(--dream-accent);
+}
+
+body.dreamscape-v5 .nav-brand__tagline {
+  font-size: 9.5px;
+  font-weight: 750;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--v10-muted);
+}
+
+/* ---- Primary actions ---- */
+body.dreamscape-v5 .nav-actions .nav-add {
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  box-shadow: 0 12px 26px rgba(84, 64, 153, .22);
+}
+
+body.dreamscape-v5 .nav-actions .nav-more summary {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 17px;
+  border-radius: 999px;
+  border-color: var(--dream-border);
+  color: var(--v10-ink);
+  font-weight: 650;
+  background: #FFFFFF;
+}
+
+/* ---- Cloud Sync status bar ---- */
+body.dreamscape-v5 .nav-account {
+  margin-top: 15px;
+}
+
+body.dreamscape-v5 .nav-account .sync-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 12px 18px;
+  border: 1px solid var(--dream-border);
+  border-radius: var(--dream-radius-md);
+  background: linear-gradient(115deg, #FFFFFF 0%, #F7F3FF 100%);
+  box-shadow:
+    0 10px 28px rgba(65, 43, 139, .055),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+body.dreamscape-v5 .sync-copy {
+  align-items: center;
+  gap: 0 10px;
+  min-width: 0;
+}
+
+body.dreamscape-v5 .sync-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .84rem;
+  font-weight: 750;
+  letter-spacing: .01em;
+  color: var(--v10-ink);
+}
+
+body.dreamscape-v5 .sync-status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--dream-highlight);
+  box-shadow: 0 0 0 4px rgba(168, 139, 247, .18);
+}
+
+body.dreamscape-v5 .sync-email {
+  margin-left: 0;
+  font-size: .76rem;
+  color: var(--v10-muted);
+}
+
+body.dreamscape-v5 .sync-panel .btns {
+  margin-left: auto;
+  gap: 8px;
+}
+
+body.dreamscape-v5 .sync-panel button {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+body.dreamscape-v5 .nav-account__notice {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  max-width: 720px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--v10-muted);
+}
+
+body.dreamscape-v5 .sync-error {
+  font-size: .8rem;
+}
+
+/* ============================================================
+   B. DASHBOARD — Editorial collection overview
+   ============================================================ */
+
+body.dreamscape-v5 .overview-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 clamp(20px, 2vw, 30px);
+  padding-bottom: clamp(18px, 1.8vw, 26px);
+  border-bottom: 1px solid var(--v10-hairline);
+}
+
+body.dreamscape-v5 .overview-heading__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--dream-accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .overview-heading__no {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 9px;
+  background: rgba(104, 80, 188, .10);
+  border: 1px solid rgba(104, 80, 188, .16);
+  color: var(--dream-accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+body.dreamscape-v5 .overview-heading__title {
+  margin: 0;
+  font-family: var(--v10-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.7rem, 2.6vw, 2.6rem);
+  line-height: 1.04;
+  letter-spacing: -.035em;
+  color: var(--v10-ink);
+}
+
+/* Remove the legacy 01/02/03 card watermarks — the editorial
+   numbering now lives in the section heading. `:nth-child(n)`
+   matches every card while equalling the specificity of the
+   V7 `:nth-child(2/3)::after` rules that paint the numerals. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n)::after {
+  content: none;
+}
+
+/* ---- Primary statistic = dominant ---- */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+  background:
+    radial-gradient(ellipse 130% 120% at 8% 4%, rgba(255, 255, 255, .28), transparent 56%),
+    linear-gradient(152deg, #6E57CB 0%, #8268DB 52%, #9377E4 100%);
+  border-color: rgba(255, 255, 255, .42);
+  box-shadow:
+    0 30px 66px rgba(83, 62, 169, .34),
+    inset 0 1px 0 rgba(255, 255, 255, .38);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__label,
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__description {
+  color: rgba(255, 255, 255, .84);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__icon {
+  background: rgba(255, 255, 255, .2);
+  border-color: rgba(255, 255, 255, .42);
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   C. DISCOVERY STUDIO — #collection
+   ============================================================ */
+
+body.dreamscape-v5 #collection .collection-panel__section-no {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 26px;
+  padding: 0 8px;
+  margin-right: 2px;
+  border-radius: 9px;
+  background: rgba(104, 80, 188, .10);
+  border: 1px solid rgba(104, 80, 188, .16);
+  color: var(--dream-accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+/* The V7 “✦” pseudo-mark is replaced by the section number chip. */
+body.dreamscape-v5 #collection .collection-panel__eyebrow::before {
+  content: none;
+}
+
+body.dreamscape-v5 #collection .collection-panel__eyebrow {
+  gap: 10px;
+  letter-spacing: .24em;
+}
+
+/* Clear-filter keeps its quiet, non-competing ghost treatment. */
+body.dreamscape-v5 #collection .collection-clear {
+  border: 1px solid rgba(104, 80, 188, .34);
+  background: rgba(255, 255, 255, .72);
+  color: var(--dream-accent);
+}
+
+/* ============================================================
+   D. RESPONSIVE — deliberately designed per breakpoint
+   ============================================================ */
+
+/* ---------- Desktop ≥ 1025px ---------- */
+@media (min-width: 1025px) {
+  /* -- Overview: dominant primary + stacked secondary pair -- */
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: clamp(16px, 1.6vw, 24px);
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-height: clamp(300px, 26vw, 380px);
+    padding: clamp(30px, 2.6vw, 42px);
+    gap: 20px;
+    justify-content: space-between;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(2),
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(3) {
+    min-height: 0;
+    padding: clamp(22px, 2vw, 30px);
+    gap: 10px;
+    justify-content: center;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__label {
+    font-size: 12px;
+    letter-spacing: .2em;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__value {
+    font-size: clamp(3rem, 4.6vw, 5rem);
+    line-height: .98;
+    letter-spacing: -.045em;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 18px;
+    font-size: 24px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) .stat-card__value {
+    font-size: clamp(1.7rem, 2.2vw, 2.5rem);
+    line-height: 1.05;
+  }
+
+  /* -- Discovery Studio: full-width editorial console -- */
+  body.dreamscape-v5 #collection.collection-panel--v3 {
+    display: block;
+    padding: clamp(34px, 3.4vw, 56px);
+  }
+
+  body.dreamscape-v5 #collection .collection-panel__heading {
+    margin-bottom: clamp(26px, 2.6vw, 38px);
+  }
+
+  body.dreamscape-v5 #collection .collection-panel__heading > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr);
+    grid-template-areas:
+      "eyebrow eyebrow"
+      "title   desc";
+    align-items: end;
+    gap: 16px clamp(24px, 3vw, 60px);
+  }
+
+  body.dreamscape-v5 #collection .collection-panel__eyebrow {
+    grid-area: eyebrow;
+    margin: 0 0 2px;
+  }
+
+  body.dreamscape-v5 #collection .collection-panel__heading h2 {
+    grid-area: title;
+    max-width: none;
+    margin: 0;
+    font-size: clamp(2.7rem, 4vw, 4.2rem);
+  }
+
+  body.dreamscape-v5 #collection .collection-panel__description {
+    grid-area: desc;
+    max-width: none;
+    margin: 0 0 6px;
+  }
+
+  body.dreamscape-v5 #collection .collection-toolbar {
+    padding-left: 0;
+    border-left: 0;
+    gap: 18px;
+  }
+
+  body.dreamscape-v5 #collection .collection-search__input-wrap {
+    height: 78px;
+    padding: 0 26px;
+    border-radius: 24px;
+  }
+
+  body.dreamscape-v5 #collection .collection-search input {
+    font-size: 17px;
+  }
+
+  body.dreamscape-v5 #collection .collection-filters {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 1.4vw, 20px);
+  }
+
+  body.dreamscape-v5 #collection .collection-toolbar__footer {
+    padding-top: 18px;
+  }
+}
+
+/* ---------- Tablet 761–1024px ---------- */
+@media (min-width: 761px) and (max-width: 1024px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-height: 264px;
+    justify-content: space-between;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(2),
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(3) {
+    min-height: 0;
+    justify-content: center;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__value {
+    font-size: clamp(2.2rem, 4.4vw, 3rem);
+  }
+
+  body.dreamscape-v5 #collection .collection-panel__heading > div {
+    display: block;
+  }
+
+  body.dreamscape-v5 #collection .collection-search__input-wrap {
+    height: 68px;
+  }
+}
+
+/* ---------- Phone ≤ 760px ---------- */
+@media (max-width: 760px) {
+  /* Overview: dominant primary full width, secondary pair below */
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    min-height: 158px;
+    justify-content: space-between;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__value {
+    font-size: clamp(2.1rem, 9vw, 2.9rem);
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    font-size: 21px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) {
+    min-height: 118px;
+    padding: 18px;
+    justify-content: center;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) .stat-card__value {
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) .stat-card__description {
+    font-size: 11.5px;
+  }
+
+  body.dreamscape-v5 .overview-heading {
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+  }
+
+  body.dreamscape-v5 .overview-heading__title {
+    font-size: clamp(1.5rem, 6.4vw, 2rem);
+  }
+
+  /* Discovery studio stacks cleanly */
+  body.dreamscape-v5 #collection .collection-panel__heading > div {
+    display: block;
+  }
+
+  body.dreamscape-v5 #collection .collection-toolbar {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  body.dreamscape-v5 #collection .collection-search__input-wrap {
+    height: 58px;
+    padding: 0 16px;
+    border-radius: 18px;
+  }
+
+  body.dreamscape-v5 #collection .collection-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Header: identity kept, but compact enough to never overflow.
+     The editorial tagline is a desktop/tablet flourish — on phones the
+     mark + wordmark carry the identity, and tap targets shrink to fit. */
+  body.dreamscape-v5 .site-nav {
+    min-height: 58px;
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .nav-brand {
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .nav-brand__mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+
+  body.dreamscape-v5 .nav-brand__name {
+    font-size: 1.12rem;
+    letter-spacing: -.045em;
+  }
+
+  body.dreamscape-v5 .nav-brand__tagline {
+    display: none;
+  }
+
+  body.dreamscape-v5 .nav-actions {
+    gap: 7px;
+  }
+
+  body.dreamscape-v5 .nav-actions .nav-add {
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: .82rem;
+  }
+
+  body.dreamscape-v5 .nav-actions .nav-more summary {
+    min-height: 40px;
+    padding: 0 11px;
+    font-size: .82rem;
+  }
+
+  body.dreamscape-v5 .nav-account .sync-panel {
+    padding: 11px 14px;
+    gap: 9px 12px;
+  }
+
+  body.dreamscape-v5 .sync-panel .btns {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  body.dreamscape-v5 .sync-panel .btns button {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---------- Small phones ≤ 374px ---------- */
+@media (max-width: 374px) {
+  /* Keep the header on ONE row — a second row would push the hero CTA
+     behind the fixed mobile dock. Action buttons become icon-first;
+     their accessible names come from aria-label. */
+  body.dreamscape-v5 .nav-add__label,
+  body.dreamscape-v5 .nav-more__label {
+    display: none;
+  }
+
+  body.dreamscape-v5 .nav-actions {
+    gap: 8px;
+  }
+
+  body.dreamscape-v5 .nav-actions .nav-add {
+    padding: 0 12px;
+    font-size: 1.05rem;
+  }
+
+  body.dreamscape-v5 .nav-actions .nav-more summary {
+    padding: 0 12px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) .stat-card__icon {
+    display: none;
+  }
+}
+
+/* ============================================================
+   E. Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .nav-brand__mark,
+  body.dreamscape-v5 .nav-actions .nav-add,
+  body.dreamscape-v5 .nav-account .sync-panel {
+    transition: none;
+  }
+}
