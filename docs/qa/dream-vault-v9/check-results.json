@@ -107,7 +107,7 @@
   {
    "name": "B7 Tilt card còn hoạt động (transform đổi khi hover)",
    "ok": true,
-   "detail": "matrix(1, 0, 0, 1, 0, 0) → matrix3d(0.999871, 6.08772e-05, -0.01607"
+   "detail": "matrix(1, 0, 0, 1, 0, 0) → matrix3d(0.999875, 5.89927e-05, -0.01579"
   },
   {
    "name": "B8 R2: opener bị re-render → close an toàn, focus không về node cũ",
@@ -347,7 +347,7 @@
   {
    "name": "M11 @375×667 Hero CTA không đè Dock (kể cả khi dưới fold = cuộn được)",
    "ok": true,
-   "detail": "{\"inter\":false,\"anyOnScreen\":0,\"total\":2,\"clearance\":null}"
+   "detail": "{\"inter\":false,\"anyOnScreen\":1,\"total\":1,\"clearance\":25.4}"
   },
   {
    "name": "M1 @375×812 không tràn ngang",
