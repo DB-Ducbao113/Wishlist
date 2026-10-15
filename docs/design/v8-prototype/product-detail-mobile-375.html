@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V8-A Mockup — Quick View Mobile @375</title>
+<style>
+  :root{
+    --ex-ink:#19152C; --ex-muted:#625979; --ex-accent:#6850BC;
+    --ex-highlight:#A88BF7; --ex-bg:#F8F6FF;
+    --ex-stage:
+      radial-gradient(ellipse 80% 55% at 50% 28%, rgba(168,139,247,.42), transparent 70%),
+      radial-gradient(ellipse 70% 45% at 50% 112%, rgba(104,80,188,.30), transparent 72%),
+      linear-gradient(168deg,#F3EEFF 0%,#E3D8FC 100%);
+    --serif: Georgia,'Times New Roman',serif;
+    --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:var(--sans); color:var(--ex-ink); -webkit-font-smoothing:antialiased;
+    background:rgba(25,21,44,.42); min-height:100vh; display:flex; align-items:flex-end; }
+
+  .qv{ width:100%; max-height:92dvh; border-radius:28px 28px 0 0; overflow:hidden;
+    display:flex; flex-direction:column; background:#fff;
+    box-shadow:0 -20px 60px rgba(25,21,44,.3); }
+
+  .qv-stage{ position:relative; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+    background:var(--ex-stage); flex:none; }
+  .qv-plaque{ position:absolute; top:14px; left:14px; padding:7px 11px; border-radius:999px;
+    background:rgba(255,255,255,.82); border:1px solid rgba(255,255,255,.95);
+    box-shadow:0 8px 22px rgba(65,43,139,.16);
+    font-size:9px; font-weight:800; letter-spacing:.2em; color:var(--ex-accent); white-space:nowrap; }
+  .qv-close{ position:absolute; top:12px; right:12px; width:44px; height:44px; border-radius:50%;
+    border:1px solid rgba(104,80,188,.22); background:rgba(255,255,255,.9); color:var(--ex-muted);
+    font-size:20px; display:grid; place-items:center; }
+  .qv-stage .art{ width:64%; filter:drop-shadow(0 18px 30px rgba(65,43,139,.26)); }
+
+  .qv-panel{ overflow-y:auto; padding:22px 20px calc(16px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:14px; }
+  .kicker{ font-size:9.5px; font-weight:800; letter-spacing:.24em; text-transform:uppercase; color:var(--ex-accent);
+    display:flex; align-items:center; gap:7px; }
+  .kicker::before{ content:"✦"; color:var(--ex-highlight); font-size:10px; letter-spacing:0; }
+  .qv-title{ font-family:var(--serif); font-style:italic; font-weight:700; font-size:1.5rem; line-height:1.18; }
+  .qv-price{ font-size:1.55rem; font-weight:760; font-variant-numeric:tabular-nums; color:var(--ex-accent); }
+  .tags{ display:flex; gap:8px; }
+  .ring{ display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px;
+    font-size:9px; font-weight:800; letter-spacing:.16em; border:1.5px solid currentColor; background:rgba(255,255,255,.66); }
+  .ring::before{ content:""; width:4px; height:4px; border-radius:50%; background:currentColor; }
+  .ring-wish{ color:var(--ex-accent); } .ring-high{ color:#B3261E; }
+  .meta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px;
+    padding:14px 0; border-top:1px solid rgba(104,80,188,.14); border-bottom:1px solid rgba(104,80,188,.14); }
+  .meta dt{ font-size:9px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--ex-muted); margin-bottom:3px; }
+  .meta dd{ font-size:13px; font-weight:600; }
+  .story h4{ font-size:9px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--ex-muted); margin-bottom:8px; }
+  .story p{ font-size:13px; line-height:1.7; color:#3D3654; }
+
+  .cta-bar{ position:sticky; bottom:0; display:flex; flex-direction:column; gap:8px;
+    padding:12px 0 4px; margin-top:4px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.96) 22%); }
+  button{ font-family:var(--sans); }
+  .btn-primary{ height:52px; border:none; border-radius:999px;
+    background:linear-gradient(135deg,#7E66D6,#6850BC); color:#fff; font-size:14px; font-weight:700; letter-spacing:.05em;
+    box-shadow:0 12px 30px rgba(84,63,158,.34); }
+  .btn-row{ display:flex; gap:8px; }
+  .btn-glass{ flex:1; height:48px; border-radius:999px; background:rgba(255,255,255,.9);
+    border:1px solid rgba(104,80,188,.28); color:var(--ex-accent); font-size:13px; font-weight:700; }
+  .btn-ghost{ flex:1; height:48px; border-radius:999px; background:transparent;
+    border:1px solid rgba(104,80,188,.2); color:var(--ex-muted); font-size:13px; font-weight:650; }
+</style>
+</head>
+<body>
+<div class="qv" role="dialog" aria-labelledby="qvTitleM">
+
+  <div class="qv-stage">
+    <span class="qv-plaque">Object 001 — Private view</span>
+    <button class="qv-close" aria-label="Đóng hộp thoại chi tiết">×</button>
+    <svg class="art" viewBox="0 0 400 300" fill="none" aria-hidden="true">
+      <path d="M96 190 A104 104 0 0 1 304 190" stroke="#6850BC" stroke-width="26" stroke-linecap="round"/>
+      <rect x="70" y="176" width="66" height="108" rx="31" fill="#6850BC"/>
+      <rect x="264" y="176" width="66" height="108" rx="31" fill="#6850BC"/>
+      <rect x="86" y="192" width="34" height="76" rx="17" fill="rgba(255,255,255,.55)"/>
+      <rect x="280" y="192" width="34" height="76" rx="17" fill="rgba(255,255,255,.55)"/>
+      <rect x="100" y="120" width="200" height="16" rx="8" fill="#A88BF7" opacity=".55"/>
+    </svg>
+  </div>
+
+  <div class="qv-panel">
+    <p class="kicker">Product showcase</p>
+    <h2 id="qvTitleM" class="qv-title">Tai nghe không dây chống ồn chủ động thế hệ mới</h2>
+    <p class="qv-price">4.990.000 ₫</p>
+    <div class="tags"><span class="ring ring-wish">Muốn mua</span><span class="ring ring-high">Ưu tiên cao</span></div>
+
+    <dl class="meta-grid">
+      <div class="meta"><dt>Danh mục</dt><dd>Công nghệ</dd></div>
+      <div class="meta"><dt>Ưu tiên</dt><dd>Cao</dd></div>
+      <div class="meta"><dt>Trạng thái</dt><dd>Muốn mua</dd></div>
+      <div class="meta"><dt>Thêm ngày</dt><dd>12/10/2026</dd></div>
+    </dl>
+
+    <section class="story">
+      <h4>The story behind this wish</h4>
+      <p>Chống ồn chủ động tốt nhất trong tầm giá — mình sẽ dùng cho những buổi làm việc dài ở quán cà phê. Bản màu lavender đã hết hàng hai lần nên phải kiên nhẫn chờ.</p>
+    </section>
+
+    <div class="cta-bar">
+      <button class="btn-primary">Mở nơi bán ↗</button>
+      <div class="btn-row">
+        <button class="btn-glass">Sửa món này</button>
+        <button class="btn-ghost">Quay lại Gallery</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

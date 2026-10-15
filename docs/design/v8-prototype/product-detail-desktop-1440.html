@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>V8-A Mockup — Quick View Desktop @1440</title>
+<style>
+  :root{
+    --ex-ink:#19152C; --ex-muted:#625979; --ex-accent:#6850BC;
+    --ex-highlight:#A88BF7; --ex-bg:#F8F6FF;
+    --ex-stage:
+      radial-gradient(ellipse 80% 55% at 50% 28%, rgba(168,139,247,.42), transparent 70%),
+      radial-gradient(ellipse 70% 45% at 50% 112%, rgba(104,80,188,.30), transparent 72%),
+      linear-gradient(168deg,#F3EEFF 0%,#E3D8FC 100%);
+    --ex-shadow-stage: 0 40px 100px rgba(65,43,139,.16), inset 0 0 0 1px rgba(255,255,255,.85);
+    --serif: Georgia,'Times New Roman',serif;
+    --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    font-family:var(--sans); color:var(--ex-ink); -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(ellipse 60% 40% at 82% 0%, rgba(168,139,247,.12), transparent 65%),
+      var(--ex-bg);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 0;
+  }
+
+  /* backdrop giả lập */
+  .backdrop{ position:fixed; inset:0; background:rgba(25,21,44,.42); backdrop-filter:blur(8px); }
+  .stage-wrap{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:40px 0; }
+  dialog.qv{
+    position:fixed; inset:0; margin:auto;
+    width:min(1160px, 94vw); height:min(860px, 92vh);
+    padding:0; border:none; border-radius:32px; overflow:hidden;
+    display:grid; grid-template-columns:minmax(0,58fr) minmax(0,42fr);
+    background:#fff; box-shadow:var(--ex-shadow-stage), 0 4px 14px rgba(65,43,139,.08);
+    font-family:var(--sans); color:var(--ex-ink);
+  }
+
+  /* ---------- stage ---------- */
+  .qv-stage{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px; padding:48px; background:var(--ex-stage); }
+  .qv-plaque{
+    position:absolute; top:24px; left:26px; padding:9px 14px; border-radius:999px;
+    background:rgba(255,255,255,.82); border:1px solid rgba(255,255,255,.95);
+    box-shadow:0 8px 22px rgba(65,43,139,.16);
+    font-size:10.5px; font-weight:800; letter-spacing:.24em; color:var(--ex-accent); white-space:nowrap; pointer-events:none;
+  }
+  .qv-stage .art{ width:min(74%, 520px); filter:drop-shadow(0 26px 40px rgba(65,43,139,.28)); }
+  .qv-stage .tags{ display:flex; gap:10px; }
+  .ring{ display:inline-flex; align-items:center; gap:7px; padding:6px 13px; border-radius:999px;
+    font-size:10px; font-weight:800; letter-spacing:.18em; border:1.5px solid currentColor; background:rgba(255,255,255,.66); }
+  .ring::before{ content:""; width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .ring-wish{ color:var(--ex-accent); } .ring-high{ color:#B3261E; }
+
+  /* ---------- panel ---------- */
+  .qv-panel{ position:relative; display:flex; flex-direction:column; overflow-y:auto;
+    padding:44px 40px; gap:18px;
+    background:linear-gradient(170deg, rgba(255,255,255,.94), rgba(243,239,255,.72)); }
+  .qv-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+  .kicker{ font-size:10px; font-weight:800; letter-spacing:.26em; text-transform:uppercase; color:var(--ex-accent);
+    display:flex; align-items:center; gap:8px; }
+  .kicker::before{ content:"✦"; color:var(--ex-highlight); font-size:11px; letter-spacing:0; }
+  .qv-close{ width:44px; height:44px; border-radius:50%; border:1px solid rgba(104,80,188,.22);
+    background:rgba(255,255,255,.9); color:var(--ex-muted); font-size:20px; line-height:1; cursor:pointer;
+    display:grid; place-items:center; flex:none; }
+  .qv-title{ font-family:var(--serif); font-style:italic; font-weight:700;
+    font-size:clamp(1.9rem, 2.6vw, 2.5rem); line-height:1.14; letter-spacing:-.015em; }
+  .qv-price{ font-size:2.1rem; font-weight:760; letter-spacing:-.01em; font-variant-numeric:tabular-nums; color:var(--ex-accent); }
+  .meta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px 18px;
+    padding:18px 0; border-top:1px solid rgba(104,80,188,.14); border-bottom:1px solid rgba(104,80,188,.14); }
+  .meta dt{ font-size:10px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--ex-muted); margin-bottom:4px; }
+  .meta dd{ font-size:14px; font-weight:600; color:var(--ex-ink); }
+  .story h4{ font-size:10px; font-weight:800; letter-spacing:.22em; text-transform:uppercase; color:var(--ex-muted); margin-bottom:10px; }
+  .story p{ font-size:14px; line-height:1.75; color:#3D3654; }
+  .story p.empty{ color:#9A93AD; font-style:italic; }
+  .cta-col{ margin-top:auto; display:flex; flex-direction:column; gap:10px; padding-top:12px; }
+  button{ font-family:var(--sans); cursor:default; }
+  .btn-primary{ height:52px; border:none; border-radius:999px; cursor:pointer;
+    background:linear-gradient(135deg,#7E66D6,#6850BC); color:#fff; font-size:14px; font-weight:700; letter-spacing:.05em;
+    box-shadow:0 12px 30px rgba(84,63,158,.34); }
+  .btn-glass{ height:48px; border-radius:999px; cursor:pointer; background:rgba(255,255,255,.85);
+    border:1px solid rgba(104,80,188,.28); color:var(--ex-accent); font-size:13.5px; font-weight:700; letter-spacing:.04em; }
+  .btn-ghost{ height:44px; border-radius:999px; cursor:pointer; background:transparent;
+    border:1px solid rgba(104,80,188,.2); color:var(--ex-muted); font-size:13px; font-weight:650; }
+  .hint{ text-align:center; font-size:10.5px; letter-spacing:.14em; color:#9A93AD; font-weight:650; }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+<div class="stage-wrap">
+<dialog class="qv" open aria-labelledby="qvTitle">
+
+  <div class="qv-stage">
+    <span class="qv-plaque">Object 001 — Private view</span>
+    <svg class="art" viewBox="0 0 400 300" fill="none" aria-hidden="true">
+      <path d="M96 190 A104 104 0 0 1 304 190" stroke="#6850BC" stroke-width="26" stroke-linecap="round"/>
+      <rect x="70" y="176" width="66" height="108" rx="31" fill="#6850BC"/>
+      <rect x="264" y="176" width="66" height="108" rx="31" fill="#6850BC"/>
+      <rect x="86" y="192" width="34" height="76" rx="17" fill="rgba(255,255,255,.55)"/>
+      <rect x="280" y="192" width="34" height="76" rx="17" fill="rgba(255,255,255,.55)"/>
+      <rect x="100" y="120" width="200" height="16" rx="8" fill="#A88BF7" opacity=".55"/>
+    </svg>
+    <div class="tags">
+      <span class="ring ring-wish">Muốn mua</span>
+      <span class="ring ring-high">Ưu tiên cao</span>
+    </div>
+  </div>
+
+  <div class="qv-panel">
+    <div class="qv-top">
+      <p class="kicker">Product showcase</p>
+      <button class="qv-close" aria-label="Đóng hộp thoại chi tiết">×</button>
+    </div>
+
+    <h2 id="qvTitle" class="qv-title">Tai nghe không dây chống ồn chủ động thế hệ mới</h2>
+    <p class="qv-price">4.990.000 ₫</p>
+
+    <dl class="meta-grid">
+      <div class="meta"><dt>Danh mục</dt><dd>Công nghệ</dd></div>
+      <div class="meta"><dt>Ưu tiên</dt><dd>Cao</dd></div>
+      <div class="meta"><dt>Trạng thái</dt><dd>Muốn mua</dd></div>
+      <div class="meta"><dt>Thêm ngày</dt><dd>12/10/2026</dd></div>
+    </dl>
+
+    <section class="story">
+      <h4>The story behind this wish</h4>
+      <p>Chống ồn chủ động tốt nhất trong tầm giá — mình sẽ dùng cho những buổi làm việc dài ở quán cà phê. Bản màu lavender đã hết hàng hai lần nên phải kiên nhẫn chờ. Khi mua sẽ dùng kèm pad nhung thay thế.</p>
+    </section>
+
+    <div class="cta-col">
+      <button class="btn-primary">Mở nơi bán ↗</button>
+      <button class="btn-glass">Sửa món này</button>
+      <button class="btn-ghost">Quay lại Gallery</button>
+      <p class="hint">ESC ĐỂ ĐÓNG</p>
+    </div>
+  </div>
+
+</dialog>
+</div>
+</body>
+</html>

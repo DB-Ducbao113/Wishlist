@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>V8-A Mockup — Gallery Exhibition @1440</title>
+<style>
+  :root{
+    --ex-ink:#19152C; --ex-muted:#625979; --ex-accent:#6850BC; --ex-accent-deep:#58429F;
+    --ex-highlight:#A88BF7; --ex-bg:#F8F6FF;
+    --ex-stage:
+      radial-gradient(ellipse 80% 55% at 50% 28%, rgba(168,139,247,.42), transparent 70%),
+      radial-gradient(ellipse 70% 45% at 50% 112%, rgba(104,80,188,.30), transparent 72%),
+      linear-gradient(168deg,#F3EEFF 0%,#E3D8FC 100%);
+    --ex-shadow-stage: 0 40px 100px rgba(65,43,139,.16), inset 0 0 0 1px rgba(255,255,255,.85);
+    --ex-radius-card:28px;
+    --serif: Georgia,'Times New Roman',serif;
+    --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:
+      radial-gradient(ellipse 60% 40% at 82% 0%, rgba(168,139,247,.14), transparent 65%),
+      var(--ex-bg);
+    font-family:var(--sans); color:var(--ex-ink);
+    -webkit-font-smoothing:antialiased;
+    padding:56px 70px 84px;
+  }
+  .kicker{
+    font-size:11px; font-weight:800; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--ex-accent); display:flex; align-items:center; gap:10px;
+  }
+  .kicker::before{ content:"✦"; color:var(--ex-highlight); font-size:12px; letter-spacing:0; }
+
+  /* ---------- section header ---------- */
+  .ex-head{ margin-bottom:34px; }
+  .ex-head__row{ display:flex; align-items:flex-end; justify-content:space-between; margin-top:14px;
+    border-bottom:1px solid rgba(104,80,188,.16); padding-bottom:22px; }
+  .ex-title{ font-family:var(--serif); font-size:3.1rem; font-weight:780; letter-spacing:-.03em; line-height:1.04; }
+  .ex-title em{ font-style:italic; color:var(--ex-accent); }
+  .ex-meta{ font-size:11px; font-weight:700; letter-spacing:.22em; color:var(--ex-muted); text-transform:uppercase; }
+
+  /* ---------- grid ---------- */
+  .ex-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; align-items:start; }
+
+  /* ---------- featured ---------- */
+  .featured{
+    grid-column:span 2; display:grid; grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);
+    background:linear-gradient(150deg,#FFFFFF 0%,#F7F3FF 58%,#EFE7FF 100%);
+    border-radius:var(--ex-radius-card); box-shadow:var(--ex-shadow-stage);
+    overflow:hidden; min-height:580px;
+  }
+  .featured .stage{ position:relative; display:flex; align-items:center; justify-content:center;
+    background:var(--ex-stage); overflow:hidden; }
+  .featured .stage .art{ width:72%; max-width:460px; filter:drop-shadow(0 26px 40px rgba(65,43,139,.28)); }
+  .plaque{
+    position:absolute; top:22px; left:24px; z-index:2; pointer-events:none;
+    padding:9px 14px; border-radius:999px; background:rgba(255,255,255,.82);
+    border:1px solid rgba(255,255,255,.95); box-shadow:0 8px 22px rgba(65,43,139,.16);
+    font-size:10.5px; font-weight:800; letter-spacing:.24em; color:var(--ex-accent); white-space:nowrap;
+  }
+  .ghost-no{ position:absolute; right:20px; bottom:-30px; z-index:1; pointer-events:none;
+    font-family:var(--serif); font-style:italic; font-size:150px; line-height:1; font-weight:780;
+    color:rgba(104,80,188,.12); }
+  .story{ padding:clamp(30px,2.6vw,44px) clamp(26px,2.2vw,38px); display:flex; flex-direction:column; gap:13px; justify-content:center;
+    background:linear-gradient(165deg,rgba(255,255,255,.72),rgba(243,239,255,.4)); }
+  .story .kicker{ font-size:10px; letter-spacing:.24em; }
+  .f-title{ font-family:var(--serif); font-style:italic; font-weight:700; font-size:1.72rem; line-height:1.2; letter-spacing:-.01em;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .price{ font-size:1.55rem; font-weight:760; letter-spacing:-.01em; font-variant-numeric:tabular-nums; }
+  .tags{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .ring{ display:inline-flex; align-items:center; gap:7px; padding:6px 13px; border-radius:999px;
+    font-size:10px; font-weight:800; letter-spacing:.18em; border:1.5px solid currentColor; background:rgba(255,255,255,.66); }
+  .ring::before{ content:""; width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .ring-wish{ color:var(--ex-accent); } .ring-saving{ color:#8B7ED8; } .ring-ordered{ color:var(--ex-highlight); }
+  .ring-purchased{ color:var(--ex-ink); background:rgba(25,21,44,.06); }
+  .cat{ font-size:12px; font-weight:600; color:var(--ex-muted); letter-spacing:.04em; }
+  .excerpt{ font-size:13.5px; line-height:1.7; color:var(--ex-muted);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  button{ font-family:var(--sans); cursor:default; }
+  .btn-primary{ flex:1 1 150px; height:48px; padding:0 20px; border:none; border-radius:999px; cursor:pointer;
+    background:linear-gradient(135deg,#7E66D6,#6850BC); color:#fff; font-size:13px; font-weight:700; letter-spacing:.05em;
+    box-shadow:0 12px 28px rgba(84,63,158,.32); }
+  .btn-glass{ height:48px; padding:0 18px; border-radius:999px; cursor:pointer;
+    background:rgba(255,255,255,.85); border:1px solid rgba(104,80,188,.28); color:var(--ex-accent);
+    font-size:13px; font-weight:700; letter-spacing:.04em; }
+  .btn-ghost{ height:44px; padding:0 14px; border-radius:999px; cursor:pointer; background:transparent;
+    border:1px solid rgba(104,80,188,.2); color:var(--ex-muted); font-size:12.5px; font-weight:650; }
+  .btn-ghost.danger{ color:#B3261E; border-color:rgba(179,38,30,.22); }
+
+  /* ---------- regular cards ---------- */
+  .card{ background:linear-gradient(155deg,#FFFFFF,#FAF9FF); border:1px solid rgba(187,174,237,.4);
+    border-radius:var(--ex-radius-card); box-shadow:0 18px 45px rgba(57,43,122,.075), inset 0 1px rgba(255,255,255,.9);
+    overflow:hidden; display:flex; flex-direction:column; }
+  .card .stage{ position:relative; aspect-ratio:4/5; display:flex; align-items:center; justify-content:center;
+    background:var(--ex-stage); }
+  .card .stage.soft{ opacity:.82; }
+  .card .stage .art{ width:66%; max-width:250px; filter:drop-shadow(0 18px 26px rgba(65,43,139,.24)); }
+  .card .plaque{ top:16px; left:16px; font-size:9px; padding:7px 11px; letter-spacing:.2em; }
+  .card.is-purchased .stage{ filter:grayscale(.25); }
+  .card.is-purchased .f-title,.card.is-purchased .index{ opacity:.72; }
+  .obj-body{ padding:18px 20px 20px; display:flex; flex-direction:column; gap:9px; flex:1; }
+  .index{ font-size:10px; font-weight:800; letter-spacing:.26em; color:var(--ex-accent); text-transform:uppercase; }
+  .c-title{ font-family:var(--serif); font-style:italic; font-weight:700; font-size:1.06rem; line-height:1.28;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.56em; }
+  .c-price{ font-size:1rem; font-weight:740; font-variant-numeric:tabular-nums; }
+  .divider{ height:1px; background:rgba(104,80,188,.14); margin:5px 0 3px; }
+  .c-actions{ display:flex; align-items:center; gap:6px; margin-top:auto; }
+  .c-actions .btn-primary{ height:40px; font-size:12px; flex:1 1 auto; padding:0 14px; box-shadow:0 8px 18px rgba(84,63,158,.24); }
+  .c-actions .btn-ghost{ height:36px; padding:0 11px; font-size:11.5px; }
+  .nolink{ font-size:10.5px; font-weight:650; letter-spacing:.06em; color:#9A93AD; }
+
+  /* ---------- wall text tile (trang trí) ---------- */
+  .wall{ border:1px dashed rgba(104,80,188,.28); border-radius:var(--ex-radius-card);
+    padding:30px 26px; display:flex; flex-direction:column; gap:14px; justify-content:center; min-height:300px;
+    background:rgba(255,255,255,.4); }
+  .wall .kicker{ font-size:9.5px; }
+  .wall-quote{ font-family:var(--serif); font-style:italic; font-size:1.25rem; line-height:1.5; color:var(--ex-muted); }
+  .wall .end{ font-size:9px; letter-spacing:.3em; color:#9A93AD; font-weight:800; }
+
+  /* placeholder (V7 replica) */
+  .ph{ width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    background:#eef2ed; }
+  .ph b{ font-size:34px; color:#819087; font-weight:400; }
+  .ph span{ font-size:14px; color:#a4afa7; }
+</style>
+</head>
+<body>
+
+<header class="ex-head">
+  <p class="kicker">Dream Vault / Private Exhibition</p>
+  <div class="ex-head__row">
+    <h1 class="ex-title">Objects of <em>Desire.</em></h1>
+    <p class="ex-meta">Vol. 08 — 4 objects</p>
+  </div>
+</header>
+
+<main class="ex-grid">
+
+  <!-- 001 FEATURED -->
+  <article class="featured">
+    <div class="stage">
+      <span class="plaque">Object 001 — Curated wish</span>
+      <span class="ghost-no" aria-hidden="true">01</span>
+      <svg class="art" viewBox="0 0 400 300" fill="none" aria-hidden="true">
+        <path d="M96 190 A104 104 0 0 1 304 190" stroke="#6850BC" stroke-width="26" stroke-linecap="round"/>
+        <rect x="70" y="176" width="66" height="108" rx="31" fill="#6850BC"/>
+        <rect x="264" y="176" width="66" height="108" rx="31" fill="#6850BC"/>
+        <rect x="86" y="192" width="34" height="76" rx="17" fill="rgba(255,255,255,.55)"/>
+        <rect x="280" y="192" width="34" height="76" rx="17" fill="rgba(255,255,255,.55)"/>
+        <rect x="100" y="120" width="200" height="16" rx="8" fill="#A88BF7" opacity=".55"/>
+      </svg>
+    </div>
+    <div class="story">
+      <p class="kicker">Draft of a dream</p>
+      <h2 class="f-title">Tai nghe không dây chống ồn chủ động thế hệ mới</h2>
+      <p class="price">4.990.000 ₫</p>
+      <div class="tags"><span class="ring ring-wish">Muốn mua</span><span class="cat">Công nghệ · Ưu tiên cao</span></div>
+      <p class="excerpt">Chống ồn chủ động tốt nhất trong tầm giá — mình sẽ dùng cho những buổi làm việc dài ở quán cà phê. Bản màu lavender đã hết hàng hai lần nên phải kiên nhẫn chờ.</p>
+      <div class="actions">
+        <button class="btn-primary">Xem chi tiết ↗</button>
+        <button class="btn-glass">Mở nơi bán</button>
+        <button class="btn-ghost">Sửa</button>
+        <button class="btn-ghost danger">Xóa</button>
+      </div>
+    </div>
+  </article>
+
+  <!-- 002 -->
+  <article class="card">
+    <div class="stage soft">
+      <span class="plaque">Object 002</span>
+      <svg class="art" viewBox="0 0 400 300" fill="none" aria-hidden="true">
+        <path d="M150 138 C150 88, 250 88, 250 138" stroke="#6850BC" stroke-width="16" stroke-linecap="round"/>
+        <path d="M104 138 L296 138 L276 272 Q274 284 262 284 L138 284 Q126 284 124 272 Z" fill="#7A62D6"/>
+        <rect x="104" y="138" width="192" height="14" rx="7" fill="#58429F" opacity=".55"/>
+      </svg>
+    </div>
+    <div class="obj-body">
+      <p class="index">Object 002</p>
+      <h3 class="c-title">Everyday essentials</h3>
+      <p class="c-price">2.400.000 ₫</p>
+      <div class="tags"><span class="ring ring-saving">Đang để dành</span></div>
+      <div class="divider"></div>
+      <div class="c-actions">
+        <button class="btn-primary">Xem chi tiết ↗</button>
+        <button class="btn-ghost">Sửa</button>
+        <button class="btn-ghost danger">Xóa</button>
+      </div>
+      <p class="nolink">Chưa có liên kết mua</p>
+    </div>
+  </article>
+
+  <!-- 003 -->
+  <article class="card">
+    <div class="stage">
+      <span class="plaque">Object 003</span>
+      <svg class="art" viewBox="0 0 400 300" fill="none" aria-hidden="true">
+        <rect x="48" y="104" width="304" height="176" rx="28" fill="#6850BC"/>
+        <rect x="116" y="74" width="92" height="36" rx="12" fill="#58429F"/>
+        <circle cx="200" cy="192" r="68" fill="#F6F2FF"/>
+        <circle cx="200" cy="192" r="62" fill="none" stroke="#6850BC" stroke-width="10"/>
+        <circle cx="200" cy="192" r="34" fill="#7A62D6"/>
+        <circle cx="200" cy="192" r="14" fill="#2A2145"/>
+        <circle cx="308" cy="140" r="12" fill="#EFE9FF"/>
+      </svg>
+    </div>
+    <div class="obj-body">
+      <p class="index">Object 003</p>
+      <h3 class="c-title">The dream camera</h3>
+      <p class="c-price">12.500.000 ₫</p>
+      <div class="tags"><span class="ring ring-ordered">Đã đặt hàng</span></div>
+      <div class="divider"></div>
+      <div class="c-actions">
+        <button class="btn-primary">Xem chi tiết ↗</button>
+        <button class="btn-ghost">Mua</button>
+        <button class="btn-ghost">Sửa</button>
+        <button class="btn-ghost danger">Xóa</button>
+      </div>
+    </div>
+  </article>
+
+  <!-- 004 — placeholder + purchased -->
+  <article class="card is-purchased">
+    <div class="stage">
+      <span class="plaque">No image — object 004</span>
+      <div class="ph"><b>?</b><span>Chưa có ảnh</span></div>
+    </div>
+    <div class="obj-body">
+      <p class="index">Object 004</p>
+      <h3 class="c-title">Sách thiết kế hệ thống</h3>
+      <p class="c-price">320.000 ₫</p>
+      <div class="tags"><span class="ring ring-purchased">Đã mua</span></div>
+      <div class="divider"></div>
+      <div class="c-actions">
+        <button class="btn-primary">Xem chi tiết ↗</button>
+        <button class="btn-ghost">Sửa</button>
+        <button class="btn-ghost danger">Xóa</button>
+      </div>
+    </div>
+  </article>
+
+  <!-- wall text (trang trí, aria-hidden) -->
+  <aside class="wall" aria-hidden="true">
+    <p class="kicker">Collection note</p>
+    <p class="wall-quote">“A wishlist is a portrait —<br>drawn in objects.”</p>
+    <p class="end">✦ END OF EXHIBITION</p>
+  </aside>
+
+</main>
+</body>
+</html>
