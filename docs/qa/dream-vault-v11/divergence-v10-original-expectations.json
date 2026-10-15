@@ -1,0 +1,144 @@
+{
+ "total": 26,
+ "pass": 25,
+ "fail": 1,
+ "fails": [
+  {
+   "name": "G3c Search dominant (≥70px) + 4 filter cùng 1 hàng trên desktop",
+   "ok": false,
+   "detail": "{\"no\":\"02\",\"eb\":\"02 Discover your wishes\",\"searchH\":54,\"rowGroups\":2,\"missing\":[]}"
+  }
+ ],
+ "results": [
+  {
+   "name": "G1a Brand = \"Dream Vault.\" + tagline \"The Editorial Workspace\"",
+   "ok": true,
+   "detail": "{\"nameText\":\"Dream Vault.\",\"tagText\":\"The Editorial Workspace\",\"markBg\":\"radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.34), rgba(0, 0, 0, 0) 60%), linear-gradient(145deg, rgb(110, 87, 203) 0%, rgb(130, 104, 219) 55%, rgb(147, 119, 228) 100%)\",\"na"
+  },
+  {
+   "name": "G1b Brand mark dùng gradient (nhận diện Dream Vault)",
+   "ok": true,
+   "detail": "radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.34), rgba(0, 0, 0, 0) 60%), li"
+  },
+  {
+   "name": "G1c Toàn bộ ID header/nav/sync được giữ nguyên",
+   "ok": true,
+   "detail": "{\"missing\":[],\"addTag\":\"BUTTON\"}"
+  },
+  {
+   "name": "G1d Cloud Sync panel + status dot (::before) hiển thị",
+   "ok": true,
+   "detail": "{\"panel\":true,\"disp\":\"flex\",\"dot\":\"\\\"\\\"\"}"
+  },
+  {
+   "name": "G2a Overview có heading \"01 — Your collection at a glance\" + serif title",
+   "ok": true,
+   "detail": "{\"eb\":\"01 Your collection at a glance\",\"no\":\"01\",\"title\":\"The value of your dreams\",\"titleFont\":\"Georgia, \\\"Times New Roman\\\", serif\"}"
+  },
+  {
+   "name": "G2b Thẻ chính dominant (rộng hơn, chữ số lớn hơn hẳn thẻ phụ)",
+   "ok": true,
+   "detail": "{\"n\":3,\"fW\":710,\"sW\":458,\"fH\":374,\"sH\":176,\"fFont\":66.24,\"sFont\":31.68,\"fBg\":\"radial-gradient(130% 120% at 8% 4%, rgba(255, 255, 255, 0.28), rgba(0, 0, 0, 0) 56%), linear-gradient(152deg, rgb(110, 87, 203) 0%, rgb(130, 104, 219) 52%, rgb(147, 119, 228) 100%)\","
+  },
+  {
+   "name": "G2c Thẻ chính là signature card (gradient) + watermark số đã gỡ",
+   "ok": true,
+   "detail": "{\"n\":3,\"fW\":710,\"sW\":458,\"fH\":374,\"sH\":176,\"fFont\":66.24,\"sFont\":31.68,\"fBg\":\"radial-gradient(130% 120% at 8% 4%, rgba(255, 255, 255, 0.28), rgba(0, 0, 0, 0) 56%), linear-gradient(152deg, rgb(110, 87, 203) 0%, rgb(130, 104, 219) 52%, rgb(147, 119, 228) 100%)\","
+  },
+  {
+   "name": "G2d sumTotal/sumSpent/sumCount đều hiện diện",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "G2e sumTotal cập nhật động khi dữ liệu đổi",
+   "ok": true,
+   "detail": "34.690.000 ₫ -> 35.924.567 ₫"
+  },
+  {
+   "name": "G3a Discovery Studio có số \"02\" + eyebrow \"Discover your wishes\"",
+   "ok": true,
+   "detail": "{\"no\":\"02\",\"eb\":\"02 Discover your wishes\",\"searchH\":54,\"rowGroups\":2,\"missing\":[]}"
+  },
+  {
+   "name": "G3b Toàn bộ ID filter/search/reset được giữ nguyên",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "G3c Search dominant (≥70px) + 4 filter cùng 1 hàng trên desktop",
+   "ok": false,
+   "detail": "{\"no\":\"02\",\"eb\":\"02 Discover your wishes\",\"searchH\":54,\"rowGroups\":2,\"missing\":[]}"
+  },
+  {
+   "name": "G3d Search lọc được + xóa từ khóa phục hồi danh sách",
+   "ok": true,
+   "detail": "{\"total0\":7,\"totalFiltered\":0,\"totalReset\":7}"
+  },
+  {
+   "name": "G3e Sort thay đổi thứ tự gallery (thuật toán giữ nguyên)",
+   "ok": true,
+   "detail": "{\"changed\":true,\"n\":7}"
+  },
+  {
+   "name": "G4 1280x950 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 1440x950 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 1920x1080 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 768x1024 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 1024x900 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 320x568 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 320x700 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 375x667 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 375x812 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G4 430x932 không tràn ngang + CTA \"Thêm món\" bấm được",
+   "ok": true,
+   "detail": "{\"docOverflow\":0,\"bad\":[],\"addHit\":true,\"addVisible\":true}"
+  },
+  {
+   "name": "G5 Reduced Motion: không tràn, gallery render, animation tắt",
+   "ok": true,
+   "detail": "{\"over\":0,\"anim\":\"none\",\"gridCards\":7}"
+  },
+  {
+   "name": "V10 Console errors = 0 qua toàn bộ suite",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

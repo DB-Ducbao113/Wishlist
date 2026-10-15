@@ -124,6 +124,8 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/premium-v9-signature.css">
 <!-- Dream Vault V10 — The Editorial Workspace (header + overview + discovery studio) -->
 <link rel="stylesheet" href="./css/editorial-v10-workspace.css">
+<!-- Dream Vault V11 — Immersive Workspace 2.0 (discovery rail + collection canvas) -->
+<link rel="stylesheet" href="./css/immersive-v11-workspace.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
@@ -147,6 +149,17 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
           The Editorial Workspace
         </span>
       </span>
+    </div>
+
+    <!-- V11 — desktop workspace orientation (reuses existing anchors) -->
+    <div class="v11-workspace-nav">
+      <a href="#top" class="v11-workspace-nav__link">
+        Trang chủ
+      </a>
+
+      <a href="#collection" class="v11-workspace-nav__link is-active">
+        Bộ sưu tập
+      </a>
     </div>
 
     <!-- Primary actions -->
@@ -433,9 +446,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 </section>
 
 <!-- Search and filters: independent section -->
+<div class="v11-workspace">
 <section
   id="collection"
-  class="panel collection-panel collection-panel--v3"
+  class="panel collection-panel collection-panel--v3 v11-rail"
   aria-labelledby="collection-controls-title"
 >
 
@@ -543,6 +557,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   </section>
 
+  <!-- V11 collection canvas (gallery) -->
+  <div class="v11-canvas">
+
   <!-- ================= DANH SACH ================= -->
   <div class="list-heading list-heading--v3">
     <div>
@@ -616,6 +633,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   </button>
 </section>
   <p id="resultStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+
+  </div><!-- /.v11-canvas -->
+</div><!-- /.v11-workspace -->
 </div>
 
 <!-- ================= DIALOG THEM / SUA ================= -->
