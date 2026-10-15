@@ -1,0 +1,124 @@
+{
+ "disclaimers": [
+  "Headless Chrome only — KHÔNG đại diện thiết bị thật",
+  "Median of 3 runs, cùng dataset + cùng Chrome + cùng máy"
+ ],
+ "mobile-375x812_V8": {
+  "fpsIdle": 61.2,
+  "fpsScroll": 60,
+  "maxGapMs": 18.2,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "mobile-375x812_V7": {
+  "fpsIdle": 60.4,
+  "fpsScroll": 60.2,
+  "maxGapMs": 19.3,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "desktop-1440_V8": {
+  "fpsIdle": 60.2,
+  "fpsScroll": 59.6,
+  "maxGapMs": 18,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "desktop-1440_V7": {
+  "fpsIdle": 59.7,
+  "fpsScroll": 60,
+  "maxGapMs": 18.7,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "gallery_1item_V8": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60.3,
+  "maxGapMs": 18.7,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_12items_V8": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 32.6,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_50items_V8": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 17.5,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_1item_V7": {
+  "fpsIdle": 60.7,
+  "fpsScroll": 60,
+  "maxGapMs": 18.4,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_12items_V7": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 19,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_50items_V7": {
+  "fpsIdle": 61.2,
+  "fpsScroll": 59.8,
+  "maxGapMs": 20,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "qv_interaction": {
+  "runs": 5,
+  "openMedianMs": 31.4,
+  "openAll": [
+   41.7,
+   31.4,
+   29.2,
+   21.7,
+   35.4
+  ],
+  "closeMedianMs": 33.4,
+  "closeAll": [
+   33.3,
+   33.7,
+   33.4,
+   33.3,
+   33.5
+  ],
+  "maxFrameGapDuringOpenMedianMs": 17
+ },
+ "cpu4x_mobile_V8": {
+  "fpsIdle": 60.7,
+  "fpsScroll": 59.9,
+  "maxGapMs": 25.2,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "cpu4x_mobile_V7": {
+  "fpsIdle": 60.4,
+  "fpsScroll": 59.9,
+  "maxGapMs": 28.8,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "reducedMotion_mobile_V8": {
+  "fpsIdle": 61.1,
+  "fpsScroll": 60,
+  "maxGapMs": 22.4,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "consoleErrors": []
+}

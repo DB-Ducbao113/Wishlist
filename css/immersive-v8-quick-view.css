@@ -151,11 +151,21 @@ body.dreamscape-v5 #qv .quick-view__panel {
   );
 }
 
+/* Top row = thanh đóng dính — nút × luôn thấy kể cả khi panel cuộn
+   (note dài lấn overflow ở cả desktop lẫn mobile). */
 body.dreamscape-v5 #qv .quick-view__top {
+  position: sticky;
+  top: 0;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
+  margin: -22px -20px 0;
+  padding: 22px 20px 8px;
+  background: rgba(255, 255, 255, .88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 body.dreamscape-v5 #qv .quick-view__kicker {
@@ -291,6 +301,10 @@ body.dreamscape-v5 #qv .quick-view__cta {
   gap: 10px;
   margin-top: auto;
   padding-top: 6px;
+  /* Nền đục + viền trên: khi panel tràn (note dài) nội dung cuộn qua
+     không lòi chữ xuyên qua khối CTA. Mobile đổi gradient ở dưới. */
+  background: #fff;
+  border-top: 1px solid rgba(104, 80, 188, .12);
 }
 
 body.dreamscape-v5 #qv .quick-view__cta-row {
@@ -423,6 +437,15 @@ body.dreamscape-v5 #qv::backdrop {
       clamp(26px, 2.6vw, 40px);
   }
 
+  /* Đồng bộ sticky top row với padding panel mới (desktop) */
+  body.dreamscape-v5 #qv .quick-view__top {
+    margin:
+      calc(-1 * clamp(30px, 3vw, 44px))
+      calc(-1 * clamp(26px, 2.6vw, 40px))
+      0;
+    padding: clamp(30px, 3vw, 44px) clamp(26px, 2.6vw, 40px) 8px;
+  }
+
   body.dreamscape-v5 #qv .quick-view__kicker {
     font-size: 10px;
     letter-spacing: .26em;
@@ -500,17 +523,26 @@ body.dreamscape-v5 #qv::backdrop {
     padding: 20px;
   }
 
+  /* Dồn padding đáy panel vào CTA (CTA dính đáy): không còn dải trống
+     dưới CTA nơi chữ nội dung lòi ra khi cuộn. */
+  body.dreamscape-v5 #qv .quick-view__panel {
+    padding-bottom: 0;
+  }
+
   body.dreamscape-v5 #qv .quick-view__cta {
     position: sticky;
     bottom: 0;
     margin-top: auto;
     padding-top: 14px;
-    padding-bottom: 4px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    /* Nền đục thật: nội dung cuộn phía sau không lòi qua/không bị "Đè"
+       heading story (gradient mờ ở bản trước gây text xuyên). */
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, .94) 26%
+      rgba(255, 255, 255, .97) 0%,
+      #fff 26%
     );
+    border-top: 1px solid rgba(104, 80, 188, .12);
   }
 
   body.dreamscape-v5 #qv .quick-view__btn {
@@ -542,6 +574,12 @@ body.dreamscape-v5 #qv::backdrop {
 
   body.dreamscape-v5 #qv .quick-view__panel {
     gap: 12px;
+    padding-top: 16px;
+  }
+
+  /* Sync sticky top row với padding-top mới (viewport thấp) */
+  body.dreamscape-v5 #qv .quick-view__top {
+    margin-top: -16px;
     padding-top: 16px;
   }
 }
