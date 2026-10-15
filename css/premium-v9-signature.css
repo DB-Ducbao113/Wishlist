@@ -782,3 +782,86 @@ body.dreamscape-v5 .hero--v9 .v9-scene__caption {
     right: 3%;
   }
 }
+
+/* ---------- Fix C: CTA mobile luôn trong fold (review cuối V9) ----------
+   V9 hero cao hơn V8: @320×568 CTA cách fold 312px, @375×667 158px,
+   @375×812 13px — người dùng phải cuộn mới thấy nút chính.
+   Hotfix responsive (CSS-only, không đổi HTML/ID/hành vi):
+   1) ≤640px  — content (eyebrow → title → CTA) lên TRƯỚC, alcove scene
+                xuống dưới; siết margin/padding.
+   2) ≤700h   — title + description gọn hơn cho màn hình thấp.
+   3) ≤600h   — ẩn .hero__description (copy trang trí thuần văn bản) để
+                CTA + secondary link vừa trọn trong 320×568.
+   Scene/caption vẫn tồn tại trong DOM (test HV chỉ check tồn tại). */
+@media (max-width: 640px) {
+  /* Đảo thứ tự: visual không còn order:-1 (rule ≤1024 ở trên) */
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    order: 0;
+    /* Kế thừa lỗi V2/V5: rule cũ (hero.css/dreamscape-v5 ≤640) đặt
+       height:220px + overflow:hidden cho scene cũ 390px cắt có chủ đích.
+       Scene V9 cao 288px bị clip mất cụm pedestal + caption. Mở lại. */
+    height: auto;
+    overflow: visible;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 240px);
+    margin-inline: auto;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    margin-top: 12px;
+    font-size: clamp(2.2rem, 11vw, 2.7rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-top: 16px;
+    padding-top: 14px;
+    font-size: .92rem;
+    line-height: 1.6;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 20px;
+    gap: 8px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__footer {
+    margin-top: 16px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 640px) and (max-height: 700px) {
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    font-size: clamp(2rem, 9.5vw, 2.4rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-top: 12px;
+    padding-top: 12px;
+    font-size: .88rem;
+    line-height: 1.55;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 10px;
+  }
+
+  /* Màn hình thấp: primary CTA phải thông Dock với clearance an toàn.
+     Secondary (anchor → #grid) bị Dock che một phần và #grid nằm ngay
+     phía dưới hero — ẩn đi để không có nút nào nằm sau Dock. */
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) and (max-height: 600px) {
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    display: none;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 8px;
+  }
+}
