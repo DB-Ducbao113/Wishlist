@@ -127,6 +127,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <!-- Dream Vault V11 — Immersive Workspace 2.0 (discovery rail + collection canvas) -->
 <link rel="stylesheet" href="./css/immersive-v11-workspace.css">
 <link rel="stylesheet" href="./css/product-v12-presentation.css">
+<link rel="stylesheet" href="./css/interactive-v13-collection.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
@@ -572,6 +573,13 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
     <span class="list-heading__decoration"
           aria-hidden="true">✦</span>
+  </div>
+  <div class="v13-viewbar" role="group" aria-label="Chế độ hiển thị bộ sưu tập">
+    <span class="v13-viewbar__label">EXHIBITION MODE</span>
+    <div class="v13-viewbar__switch" aria-label="Chọn chế độ xem">
+      <button id="v13GridView" type="button" class="v13-viewbar__button" aria-pressed="true" aria-controls="grid">Gallery</button>
+      <button id="v13FocusView" type="button" class="v13-viewbar__button" aria-pressed="false" aria-controls="grid">Focus</button>
+    </div>
   </div>
 <section
   id="grid"
@@ -2054,8 +2062,19 @@ function updateCategoryFilter(){
   select.value = categories.includes(selected) ? selected : "";
 }
 
+// V13: view state is ephemeral UI only; do not persist or alter product data.
+function setCollectionView(mode){
+  const focus = mode === "focus";
+  const grid = $("grid");
+  grid.dataset.v13View = focus ? "focus" : "gallery";
+  $("v13GridView").setAttribute("aria-pressed", String(!focus));
+  $("v13FocusView").setAttribute("aria-pressed", String(focus));
+}
 function init(){
   buildSelects();
+  $("v13GridView").addEventListener("click", () => setCollectionView("gallery"));
+  $("v13FocusView").addEventListener("click", () => setCollectionView("focus"));
+  setCollectionView("gallery");
   load();
   render();
   try{ localStorage.removeItem("wishlist.geminiApiKey"); }
