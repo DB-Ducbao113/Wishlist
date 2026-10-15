@@ -118,6 +118,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/cinematic-v7-workspace.css">
 <link rel="stylesheet" href="./css/cinematic-v7-visual-overhaul.css">
 <link rel="stylesheet" href="./css/cinematic-v7-mobile.css">
+<!-- Dream Vault V8 — Immersive Product Experience (gallery + quick view) -->
+<link rel="stylesheet" href="./css/immersive-v8-gallery.css">
+<link rel="stylesheet" href="./css/immersive-v8-quick-view.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
@@ -719,6 +722,69 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   </form>
 </dialog>
 
+<!-- ============================================================
+     Dream Vault V8 — Product Detail Quick View (read-only).
+     Separate native <dialog>: never stacks with the add/edit
+     dialog, Escape natively, focus returns to the opener.
+     ============================================================ -->
+<dialog id="qv" class="quick-view" aria-labelledby="qvTitle">
+  <div class="quick-view__stage">
+    <img id="qvImage" class="quick-view__image" alt="">
+    <span class="quick-view__plaque" id="qvPlaque" aria-hidden="true">OBJECT STUDY</span>
+    <div class="quick-view__rings">
+      <span class="quick-view__ring" id="qvStatusRing">Muốn mua</span>
+      <span class="quick-view__ring quick-view__ring--priority" id="qvPriorityRing">Ưu tiên cao</span>
+    </div>
+  </div>
+
+  <div class="quick-view__panel">
+    <div class="quick-view__top">
+      <span class="quick-view__kicker">PRODUCT SHOWCASE</span>
+      <button type="button" id="qvClose" class="quick-view__close"
+              aria-label="Đóng hộp thoại chi tiết">×</button>
+    </div>
+
+    <p class="quick-view__object" id="qvObject" aria-hidden="true">OBJECT</p>
+    <h2 class="quick-view__title" id="qvTitle">—</h2>
+    <p class="quick-view__price" id="qvPrice">—</p>
+
+    <dl class="quick-view__meta">
+      <div class="quick-view__meta-item">
+        <dt>Danh mục</dt>
+        <dd id="qvCat">—</dd>
+      </div>
+      <div class="quick-view__meta-item">
+        <dt>Ưu tiên</dt>
+        <dd id="qvPriority">—</dd>
+      </div>
+      <div class="quick-view__meta-item">
+        <dt>Trạng thái</dt>
+        <dd id="qvStatus">—</dd>
+      </div>
+      <div class="quick-view__meta-item">
+        <dt>Thêm ngày</dt>
+        <dd id="qvDate">—</dd>
+      </div>
+    </dl>
+
+    <section class="quick-view__story" aria-labelledby="qvStoryHeading">
+      <h3 class="quick-view__story-heading" id="qvStoryHeading">The story behind this wish</h3>
+      <p class="quick-view__note" id="qvNote"></p>
+    </section>
+
+    <div class="quick-view__cta">
+      <a id="qvBuy" class="quick-view__btn quick-view__btn--primary" hidden
+         target="_blank" rel="noopener noreferrer">Mở nơi bán</a>
+      <p id="qvNoLink" class="quick-view__nolink">Chưa có liên kết mua</p>
+      <div class="quick-view__cta-row">
+        <button type="button" id="qvEdit" class="quick-view__btn quick-view__btn--glass">Sửa món này</button>
+        <button type="button" id="qvBack" class="quick-view__btn quick-view__btn--ghost">Quay lại Gallery</button>
+      </div>
+      <p class="quick-view__hint" aria-hidden="true">ESC để đóng · TAB để di chuyển</p>
+    </div>
+  </div>
+</dialog>
+
 <!-- Dream Vault V7 — decorative hero motion pause.
      Presentation only: toggles a CSS class when the hero is
      offscreen or the tab is hidden. Does not touch app logic. -->
@@ -1113,6 +1179,10 @@ function render(){
 
   grid.appendChild(frag);
 
+  // V8: đánh chỉ số OBJECT theo đúng thứ tự render hiện tại
+  // (sau search/filter/sort — không theo index trong mảng dữ liệu)
+  updateObjectIndices();
+
   // Run only for the first render.
   // Subsequent search/filter calls will not replay it.
   animateGridEntrance(grid);
@@ -1462,8 +1532,19 @@ function card(it){
   imageFrame.appendChild(img);
   thumb.appendChild(imageFrame);
 
+  // V8: plaque triển lãm (trang trí, aria-hidden).
+  // Văn bản do updateObjectIndices() điền theo thứ tự render.
+  const plaque = document.createElement("span");
+  plaque.className = "product-card__plaque";
+  plaque.setAttribute("aria-hidden", "true");
+  thumb.appendChild(plaque);
+
   const body = document.createElement("div");
   body.className = "card-body product-card__content";
+  // V8: chỉ số OBJECT 00X — dòng đầu của nội dung, trang trí
+  const index = document.createElement("p");
+  index.className = "product-card__index";
+  index.setAttribute("aria-hidden", "true");
   const badges = document.createElement("div");
   badges.className = "badges product-card__badges";
   // Trang thai la nut bam duoc: 1 click chuyen sang buoc ke tiep
@@ -1487,7 +1568,9 @@ function card(it){
   const price = document.createElement("div"); price.className = "price product-card__price";
   price.textContent = fmtMoney(it.price);
 
-  body.append(badges, h3, price);
+  // Thứ tự hiển thị: chỉ số → title → giá → nhẫn trạng thái
+  // (khớp thứ tự focus, không đảo visual so với DOM)
+  body.append(index, h3, price, badges);
   if(it.category){
     const c = document.createElement("div"); c.className = "cat";
     c.textContent = it.category; body.appendChild(c);
@@ -1504,6 +1587,14 @@ function card(it){
   const actions = document.createElement("div");
   actions.className = "card-actions product-card__actions";
   const link = safeUrl(it.link);
+  // V8: nut mo Quick View (chi doc) — rieng biet voi Buy/Edit/Delete
+  const bView = document.createElement("button");
+  bView.className = "mini product-card__view";
+  bView.type = "button";
+  bView.textContent = "Xem chi tiết";
+  bView.setAttribute("aria-label", "Xem chi tiết " + it.name);
+  bView.addEventListener("click", () => openQuickView(it.id, bView));
+  actions.appendChild(bView);
   if(link){
     const a = document.createElement("a");
     a.className = "buy"; a.href = link;
@@ -1531,6 +1622,117 @@ function card(it){
 function badge(text, cls){
   const s = document.createElement("span");
   s.className = "badge " + cls; s.textContent = text; return s;
+}
+
+/* ===================================================================
+   V8 — OBJECT INDEX + QUICK VIEW (Product Detail, chỉ đọc)
+   Không ghi dữ liệu, không chồng modal, textContent cho mọi
+   chuỗi người dùng (không innerHTML từ dữ liệu không tin cậy).
+=================================================================== */
+
+// Nút đã mở Quick View — dùng để trả focus khi đóng.
+let qvOpener = null;
+
+// Cập nhật nhãn "OBJECT 00X" theo đúng thứ tự card đang render.
+// Gọi sau mỗi lần render(): search/filter/sort đổi thứ tự thì số thứ tự đổi theo.
+function updateObjectIndices(){
+  const grid = $("grid");
+  const cards = grid.querySelectorAll(":scope > .wishlist-card");
+  const total = cards.length;
+  cards.forEach((cardEl, i) => {
+    const label = "OBJECT " + String(i + 1).padStart(3, "0");
+    cardEl.dataset.objectIndex = label;
+    const indexEl = cardEl.querySelector(".product-card__index");
+    if(indexEl) indexEl.textContent = label;
+    const plaque = cardEl.querySelector(".product-card__plaque");
+    if(plaque){
+      // Card đầu tiên (featured) mang câu chú đầy đủ như mockup
+      plaque.textContent = (i === 0 && total > 1)
+        ? label + " — CURATED WISH"
+        : label;
+    }
+  });
+}
+
+function openQuickView(id, opener){
+  // Không bao giờ chồng modal: form Thêm/Sửa đang mở thì bỏ qua
+  if($("dlg").open) return;
+  const qv = $("qv");
+  if(qv.open) return;
+
+  // Luôn đọc lại item mới nhất theo ID tại thời điểm mở
+  const it = items.find(x => x.id === id);
+  if(!it){
+    toast("Món đồ này không còn trong danh sách.");
+    return;
+  }
+  const st = findStatus(it.status), pr = findPriority(it.priority);
+
+  // Ảnh: cùng luật fallback với card() (ảnh lỗi → placeholder)
+  const img = $("qvImage");
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = PLACEHOLDER;
+  };
+  img.src = validImageSrc(it.image) || PLACEHOLDER;
+  img.alt = it.name || "Ảnh món đồ";
+
+  // Chuỗi nội dung: textContent duy nhất
+  const idxEl = document.querySelector(
+    '#grid > .wishlist-card[data-id="' + CSS.escape(id) + '"] .product-card__index'
+  );
+  const label = idxEl ? idxEl.textContent : "";
+  $("qvPlaque").textContent = label || "OBJECT STUDY";
+  $("qvObject").textContent = label ? label + " — PRIVATE VIEW" : "PRIVATE VIEW";
+  $("qvTitle").textContent = it.name || "(Món đồ chưa đặt tên)";
+  $("qvPrice").textContent = fmtMoney(it.price);
+  $("qvCat").textContent = it.category || "—";
+  $("qvPriority").textContent = pr.label;
+  $("qvStatus").textContent = st.label;
+  $("qvDate").textContent = fmtDate(it.createdAt) || "—";
+  $("qvNote").textContent = (it.note || "").trim() || "Chưa có ghi chú cho món này.";
+  $("qvNote").classList.toggle("quick-view__note--empty", !String(it.note || "").trim());
+
+  // Nhẫn trạng thái / ưu tiên trên sân khấu
+  $("qvStatusRing").textContent = st.label;
+  $("qvStatusRing").className = "quick-view__ring quick-view__ring--" + st.key;
+  $("qvPriorityRing").textContent = "Ưu tiên " + pr.label;
+  $("qvPriorityRing").className =
+    "quick-view__ring quick-view__ring--priority quick-view__ring--p-" + pr.key;
+
+  // Liên kết mua an toàn qua safeUrl() có sẵn
+  const link = safeUrl(it.link);
+  if(link){
+    $("qvBuy").href = link;
+    $("qvBuy").hidden = false;
+    $("qvNoLink").hidden = true;
+  }else{
+    $("qvBuy").removeAttribute("href");
+    $("qvBuy").hidden = true;
+    $("qvNoLink").hidden = false;
+  }
+
+  qv.dataset.id = it.id;
+  // Chỉ trả focus về opener nếu node đó còn tồn tại sau khi re-render
+  qvOpener = (opener && opener.isConnected) ? opener : null;
+  qv.showModal();
+  $("qvClose").focus();
+}
+
+function closeQuickView(){
+  const qv = $("qv");
+  if(qv.open) qv.close();
+}
+
+// Sửa từ Quick View: ĐÓNG QV TRƯỚC, mới mở form (không chồng modal).
+// qvOpener = null trước khi close để focus không quay về Gallery
+// trong lúc dialog form đang mở.
+function editFromQuickView(){
+  const qv = $("qv");
+  const it = items.find(x => x.id === qv.dataset.id);
+  qvOpener = null;
+  closeQuickView();
+  if(it) openForm(it);
 }
 
 /* ===================================================================
@@ -1827,6 +2029,22 @@ function init(){
   ).addEventListener("click", () => {
     $("dlg").close();
   });
+
+  // ===== V8 Quick View listeners =====
+  $("qvClose").addEventListener("click", closeQuickView);
+  $("qvBack").addEventListener("click", closeQuickView);
+  $("qvEdit").addEventListener("click", editFromQuickView);
+  // Escape (native cancel) cũng rơi vào "close" này → trả focus ổn định.
+  // Không trả focus nếu dialog form đang mở (đã mở từ QV) hoặc node đã bị
+  // re-render loại bỏ (isConnected).
+  $("qv").addEventListener("close", () => {
+    const opener = qvOpener;
+    qvOpener = null;
+    if(!opener || !opener.isConnected) return;
+    if($("dlg").open) return;
+    opener.focus();
+  });
+
   $("btnClearImg").addEventListener("click", () => {
     pendingDataUrl = ""; $("fImageUrl").value = ""; updatePreview();
   });

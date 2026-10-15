@@ -1,0 +1,780 @@
+/* ============================================================
+   Dream Vault V8 — Phase 1: Gallery Exhibition
+   "The Private Exhibition" — Light Lavender × Premium Editorial
+   Presentation only. Không đổi logic / CRUD / Firebase.
+   Nạp SAU toàn bộ CSS V5/V6/V7 — override có chủ đích.
+   Quy tắc bất di bất dịch:
+   - Không đặt transform trên .wishlist-card__surface (Tilt sở hữu).
+   - Không đổi cấu trúc button Buy/Edit/Delete/status-chip.
+   - Chỉ 2 điểm drop-shadow: stage featured (desktop) + QV stage.
+   ============================================================ */
+
+/* ---------- V8 tokens ---------- */
+body.dreamscape-v5 {
+  --ex-ink: #19152C;
+  --ex-muted: #625979;
+  --ex-accent: #6850BC;
+  --ex-highlight: #A88BF7;
+  --ex-stage:
+    radial-gradient(ellipse 80% 55% at 50% 28%,
+      rgba(168, 139, 247, .42), transparent 70%),
+    radial-gradient(ellipse 70% 45% at 50% 112%,
+      rgba(104, 80, 188, .30), transparent 72%),
+    linear-gradient(168deg, #F3EEFF 0%, #E3D8FC 100%);
+  --ex-shadow-card:
+    0 18px 45px rgba(57, 43, 122, .075),
+    inset 0 1px rgba(255, 255, 255, .9);
+  --ex-shadow-featured:
+    0 40px 100px rgba(65, 43, 139, .16),
+    0 4px 14px rgba(65, 43, 139, .08),
+    inset 0 0 0 1px rgba(255, 255, 255, .85);
+}
+
+/* ==========================================================
+   CARD SURFACE — bản in giấy lavender (không transform)
+========================================================== */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card__surface {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(187, 174, 237, .4);
+  border-radius: 22px;
+  background: linear-gradient(155deg, #FFFFFF, #FAF9FF);
+  box-shadow: var(--ex-shadow-card);
+}
+
+@media (min-width: 641px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card__surface {
+    border-radius: 28px;
+  }
+}
+
+/* ==========================================================
+   STAGE — sân khấu triển lãm (--ex-stage), ảnh contain
+========================================================== */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.thumb.product-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 22px 22px 0 0;
+  background: var(--ex-stage);
+}
+
+@media (min-width: 641px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .thumb.product-media {
+    border-radius: 28px 28px 0 0;
+    /* card dài hơn trên tablet/desktop: object như hiện vật trưng bày */
+    aspect-ratio: 4 / 5;
+  }
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-media__image {
+  object-fit: contain;
+  object-position: center;
+  padding: clamp(16px, 2vw, 30px);
+  filter: none;
+}
+
+/* Stage purchased: giữ signal "owned" bằng desaturate, không vỡ màu V8 */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card.is-purchased
+.thumb.product-media {
+  background: var(--ex-stage);
+  filter: grayscale(.25);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+> .wishlist-card:first-child:not(:only-child).is-purchased
+.thumb.product-media,
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+> .wishlist-card:first-child:not(:only-child)
+.is-purchased
+.product-media {
+  background: var(--ex-stage);
+  filter: grayscale(.25);
+}
+
+/* ==========================================================
+   PLAQUE (DOM, aria-hidden) — thay plaque ::before của V7
+========================================================== */
+/* Tắt plaque ::before "01 / THE FEATURED DREAM" của V7 (desktop + mobile) */
+body.dreamscape-v5
+#grid.gallery--v6
+> .wishlist-card:first-child:not(:only-child)
+.product-media::before,
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+> .wishlist-card:first-child:not(:only-child)
+.product-media::before {
+  content: none;
+}
+
+body.dreamscape-v5
+#grid .product-card__plaque {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  max-width: calc(100% - 28px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .85);
+  border: 1px solid rgba(255, 255, 255, .95);
+  box-shadow: 0 8px 20px rgba(65, 43, 139, .16);
+  color: var(--ex-accent);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid .product-card__plaque {
+    top: 22px;
+    left: 24px;
+    padding: 9px 14px;
+    font-size: 10.5px;
+    letter-spacing: .24em;
+  }
+}
+
+/* ==========================================================
+   CONTENT — chỉ số, title serif italic, price tabular
+========================================================== */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 9px;
+  padding: 16px 18px 14px;
+}
+
+@media (min-width: 641px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__content {
+    gap: 10px;
+    padding: 18px 20px 16px;
+  }
+}
+
+/* Chỉ số OBJECT 00X (decorative) */
+body.dreamscape-v5
+#grid .product-card__index {
+  order: 0;
+  margin: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--ex-accent);
+}
+
+/* Title: Georgia italic editorial */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__title {
+  order: 1;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.06rem;
+  line-height: 1.28;
+  letter-spacing: -.01em;
+  color: var(--ex-ink);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.56em;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__price {
+  order: 2;
+  font-size: 1rem;
+  font-weight: 740;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ex-ink);
+}
+
+/* Nhẫn trạng thái / ưu tiên (badge cũ, vòng mới) */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__badges {
+  order: 3;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+body.dreamscape-v5
+#grid .product-card__badges .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .66);
+  border: 1.5px solid currentColor;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+body.dreamscape-v5
+#grid .product-card__badges .badge::before {
+  content: "";
+  flex: 0 0 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-wish { color: var(--ex-accent); }
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-saving { color: #8B7ED8; }
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-ordered { color: var(--ex-highlight); }
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-purchased {
+  color: var(--ex-ink);
+  background: rgba(25, 21, 44, .06);
+}
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-high { color: #B3261E; }
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-medium { color: var(--ex-muted); }
+body.dreamscape-v5
+#grid .product-card__badges .badge.b-low { color: #9A93AD; }
+
+/* Status chip vẫn là nút bấm được (giữ hành vi cycle của V7) */
+body.dreamscape-v5
+#grid .status-chip {
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5
+  #grid .status-chip:hover {
+    background: rgba(104, 80, 188, .1);
+  }
+}
+
+/* Category / note / meta — nền phụ, đọc êm */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .cat {
+  order: 4;
+  color: var(--ex-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .note {
+  order: 5;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ex-muted);
+  font-size: 13px;
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .meta {
+  order: 6;
+  margin-top: auto;
+  padding-top: 4px;
+  color: #9A93AD;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================
+   ACTIONS — Xem chi tiết (chính) + Buy/Edit/Delete (vẫn đủ)
+========================================================== */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding: 14px 18px 18px;
+  border-top: 1px solid rgba(104, 80, 188, .14);
+}
+
+@media (min-width: 641px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions {
+    padding: 14px 20px 20px;
+  }
+}
+
+/* Nút "Xem chi tiết" — nhận diện chính, dẫn vào Quick View.
+   Specificity phải thắng chính rule .mini của file này (1,6,1). */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini.product-card__view {
+  flex: 1 1 110px;
+  min-height: 44px;
+  padding: 0 16px;
+  white-space: nowrap;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7E66D6, #6850BC);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  box-shadow: 0 8px 18px rgba(84, 63, 158, .24);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .mini.product-card__view:hover {
+    background: linear-gradient(135deg, #7159C8, #5F48AE);
+  }
+}
+
+/* Mua (link) — ghost tím, giữ nguyên target/rel/safeUrl */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .buy {
+  flex: 0 1 auto;
+  min-height: 44px;
+  padding: 0 15px;
+  white-space: nowrap;
+  border: 1px solid rgba(104, 80, 188, .28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .85);
+  color: var(--ex-accent);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Sửa / Xóa — ghost trung tính */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini {
+  flex: 0 1 auto;
+  min-height: 44px;
+  padding: 0 13px;
+  white-space: nowrap;
+  border: 1px solid rgba(104, 80, 188, .2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ex-muted);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini.danger {
+  color: #B3261E;
+  border-color: rgba(179, 38, 30, .22);
+}
+
+/* Hover V8 — chỉ nền/viền, không transform (Tilt sở hữu transform) */
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .buy:hover {
+    background: #F3EEFF;
+    border-color: rgba(104, 80, 188, .45);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .mini:hover {
+    background: rgba(104, 80, 188, .08);
+    border-color: rgba(104, 80, 188, .4);
+    color: var(--ex-accent);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .mini.danger:hover {
+    background: rgba(179, 38, 30, .07);
+    border-color: rgba(179, 38, 30, .4);
+    color: #B3261E;
+  }
+}
+
+/* ==========================================================
+   FEATURED (desktop ≥1025) — centerpiece 2 cột
+========================================================== */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .wishlist-card__surface,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .wishlist-card__surface {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 580px;
+    background: linear-gradient(
+      150deg,
+      #FFFFFF 0%,
+      #F7F3FF 58%,
+      #EFE7FF 100%
+    );
+    box-shadow: var(--ex-shadow-featured);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 0;
+    border-radius: 28px 0 0 28px;
+    background: var(--ex-stage);
+    filter: none;
+  }
+
+  /* Số bóng (ghost number) trên stage featured — decorative */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media__frame::after {
+    content: "01";
+    position: absolute;
+    right: 20px;
+    bottom: -30px;
+    z-index: 1;
+    pointer-events: none;
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 150px;
+    line-height: 1;
+    font-weight: 780;
+    color: rgba(104, 80, 188, .12);
+  }
+
+  /* Ảnh featured: drop-shadow spot #1 (giới hạn toàn trang) */
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media__image,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media__image {
+    padding: clamp(26px, 3vw, 46px);
+    filter: drop-shadow(0 26px 40px rgba(65, 43, 139, .28));
+  }
+
+  /* Story panel */
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+    gap: 13px;
+    padding: clamp(30px, 3vw, 44px) clamp(26px, 2.4vw, 38px);
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, .72),
+      rgba(243, 239, 255, .4)
+    );
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__title,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__title {
+    font-size: clamp(1.7rem, 2.2vw, 2.3rem);
+    line-height: 1.16;
+    letter-spacing: -.01em;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    min-height: 0;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__price,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__price {
+    font-size: clamp(1.6rem, 2vw, 2rem);
+    font-weight: 760;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content .note,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content .note {
+    font-size: 13.5px;
+    line-height: 1.7;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  /* Meta bám theo nhóm nội dung (không đẩy xuống đáy → hết khoảng trống) */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content .meta {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 16px clamp(26px, 2.4vw, 38px) clamp(24px, 2.6vw, 34px);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions .product-card__view {
+    min-height: 48px;
+    font-size: 13px;
+    box-shadow: 0 12px 28px rgba(84, 63, 158, .32);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions .buy {
+    min-height: 48px;
+    padding: 0 18px;
+    font-size: 13px;
+  }
+}
+
+/* ==========================================================
+   FEATURED ≤1024 — không giữ layout 2 cột của V7 mobile:
+   trả về nhịp thẻ thường, thêm bậc thang thị giác nhẹ
+========================================================== */
+@media (max-width: 1024px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .wishlist-card__surface {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: linear-gradient(155deg, #FFFFFF, #FAF9FF);
+    box-shadow: var(--ex-shadow-card);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    aspect-ratio: 4 / 3;
+    background: var(--ex-stage);
+    box-shadow: none;
+    filter: none;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media__image {
+    padding: clamp(16px, 3vw, 30px);
+    filter: none;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content {
+    padding: 18px 20px 10px;
+    gap: 10px;
+    background: transparent;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__title {
+    font-size: clamp(1.2rem, 3.4vw, 1.5rem);
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    min-height: 2.56em;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__price {
+    font-size: 1.15rem;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions {
+    padding: 14px 20px 20px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions .buy {
+    min-height: 48px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile: featured là "tượng chính" — stage cao hơn thẻ thường */
+@media (max-width: 640px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    aspect-ratio: 1 / 1.05;
+  }
+}
+
+/* ==========================================================
+   WALL TEXT TILE — trang trí, chỉ desktop, ẩn khi grid rỗng
+========================================================== */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6:not(:empty)::after {
+    content: "“A wishlist is a portrait — drawn in objects.”";
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    min-height: 300px;
+    padding: 30px 26px;
+    border: 1px dashed rgba(104, 80, 188, .28);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, .4);
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--ex-muted);
+    pointer-events: none;
+  }
+}
+
+/* ==========================================================
+   HOVER / FOCUS / MOTION — tinh tế, không vòng lặp vô hạn
+========================================================== */
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card:hover
+  .wishlist-card__surface {
+    border-color: rgba(148, 125, 235, .55);
+    box-shadow: 0 28px 70px rgba(74, 53, 153, .14);
+  }
+}
+
+body.dreamscape-v5
+#grid .product-card__actions button:focus-visible,
+body.dreamscape-v5
+#grid .product-card__actions a:focus-visible,
+body.dreamscape-v5
+#grid .status-chip:focus-visible {
+  outline: 2px solid var(--ex-highlight);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  #grid .product-card__plaque,
+  body.dreamscape-v5
+  #grid .product-card__badges .badge,
+  body.dreamscape-v5
+  #grid .product-card__actions button,
+  body.dreamscape-v5
+  #grid .product-card__actions a {
+    transition: none;
+  }
+}
