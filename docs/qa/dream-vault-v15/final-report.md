@@ -16,13 +16,13 @@
 | Security (XSS, URL scheme, rò rỉ token) | **GO** |
 | Regression V9–V14 | **GO** — 303/303 |
 | Accessibility / Responsive / Performance (lab) | **GO** (không regression) |
-| Firebase Sync thật (login, đa thiết bị, xung đột) | **UNVERIFIED / HOLD** |
-| Firestore Rules đã deploy trên production | **UNVERIFIED / HOLD** |
-| Xác minh trên URL production thật / thiết bị thật | **UNVERIFIED / HOLD** |
+| Firebase Sync thật (login, đa thiết bị, xung đột) | **UNVERIFIED / HOLD** — luồng OAuth mở được tới Google; chưa có tài khoản nào đăng nhập nên Firestore chưa có dữ liệu sync |
+| Firestore Rules đã deploy trên production | **VERIFIED** — rules deploy khớp tuyệt đối với source; truy cập ẩn danh bị `403 PERMISSION_DENIED` |
+| URL production thật (HTTPS, headers, asset, 404 nội bộ, smoke) | **VERIFIED** — smoke 10/10 PASS; mọi đường dẫn nội bộ đều 404 |
 
-**P0 = 0. P1 = 1 (đã sửa).** Không có lỗi P0/P1 tồn đọng trong phần xác minh được.
+**P0 = 0. P1 = 1 (đã sửa).** Không có lỗi P0/P1 tồn đọng.
 
-> GO cho toàn bộ hạng mục kiểm thử được ở client. **Chưa nên coi là 1.0 Stable production** cho tới khi chủ dự án đóng 3 mục UNVERIFIED ở §6 (cần Java cho emulator, tài khoản test, và một lần deploy thật).
+> V15 RC **đã được deploy lên production** (`https://wishlist-787d2.web.app`). Verification production ở §9: Hosting allowlist, headers, Firestore Rules **VERIFIED**; **còn 1 gate**: Google Login + sync đa thiết bị thực tế (chưa có tài khoản nào đăng nhập). Do đó **Dream Vault 1.0 Stable vẫn HOLD** tới khi Gate 2 hoàn tất.
 
 ---
 
@@ -134,11 +134,16 @@ Không đổi CSS; V14 đã phủ 12 viewport không tràn. V15 tái xác nhận
 
 ---
 
-## 6. UNVERIFIED / HOLD (chính xác phần còn thiếu)
+## 6. Gate còn lại / đã xác minh
 
-1. **Firebase Sync thật** — login Google, logout, đồng bộ đa thiết bị, xử lý xung đột/offline. *Thiếu*: tài khoản test được phép + môi trường có mạng tới Firebase. *(Code: nút Sync, `wishlist-cloud.js`, persistence `browserSession/Local` đã review tĩnh; chưa chạy end-to-end.)*
-2. **Firestore Rules đã deploy** — *thiếu*: JVM để chạy emulator (máy kiểm thử không có Java) + quyền đọc/đối chiếu rules production. Kịch bản đã sẵn (`scripts/test-firestore-rules.mjs`).
-3. **Production thật** — URL thật, HTTPS, headers thực tế, deploy `--only hosting` sau khi build. *Thiếu*: quyền deploy + `firebase login` (sprint này **không** deploy theo yêu cầu).
+**Còn HOLD (1 gate):**
+1. **Firebase Sync thật** — login Google, logout, đồng bộ đa thiết bị, xử lý xung đột/offline. *Đã xác minh được*: SDK Firebase 10.14.1 nạp từ gstatic, Identity Toolkit reachable, bấm "Đăng nhập" mở đúng `/__/auth/handler`. *Còn thiếu*: một tài khoản Google đăng nhập thật (2 thiết bị) — **Firestore `users` hiện rỗng**, chưa có dữ liệu sync.
+
+**Đã xác minh trong review này:**
+2. **Firestore Rules trên production** — **VERIFIED**: rules đã deploy khớp tuyệt đối với `firestore.rules` trong repo (đọc qua Rules API); truy cập ẩn danh bị `403 PERMISSION_DENIED`. Cách ly theo UID được chứng minh bằng chính văn bản rules; kiểm chứng chéo 2 tài khoản thật vẫn khuyến nghị (emulator cần Java — máy này không có).
+3. **Production thật** — **VERIFIED**: `https://wishlist-787d2.web.app` (và `.firebaseapp.com`) HTTPS 200; headers HSTS + `nosniff` + Referrer-Policy; 46 CSS + `wishlist-cloud.js` 200; **mọi** đường dẫn nội bộ (`docs/`, `firebase.json`, `firestore.rules`, `.firebaserc`, `FIREBASE_SETUP.md`, `scripts/`, ảnh thừa) đều **404**. Smoke browser production 10/10 PASS.
+
+**Chưa làm:**
 4. **Thiết bị thật / mạng yếu** — perf trên điện thoại thật, background-tab throttling, 50+ sản phẩm trên máy yếu.
 
 ---
@@ -175,3 +180,52 @@ node <harness>/v15-a11y.js
 node <harness>/v15-perf.js
 # regression: v9..v14-check.js (V11EQ=1 cho v9/v10)
 ```
+
+---
+
+## 9. Production Verification (sau khi deploy)
+
+**URL**: `https://wishlist-787d2.web.app` (và `https://wishlist-787d2.firebaseapp.com`) — HTTP 200, HTTPS.
+
+### 9.1 Hosting / allowlist trên production — VERIFIED
+Mọi đường dẫn nội bộ trả **404**, chỉ runtime asset 200:
+
+| Đường dẫn | Status |
+|---|---|
+| `/` · `/wishlist.html` | 200 |
+| `/css/layout.css` · `/wishlist-cloud.js` | 200 |
+| `/docs/qa/...final-report.md` · `/docs/design/...` | **404** |
+| `/docs/qa/.../browser-qa.json` | **404** |
+| `/firebase.json` · `/firestore.rules` · `/.firebaserc` · `/FIREBASE_SETUP.md` | **404** |
+| `/scripts/build-hosting.mjs` | **404** |
+| `/image/Macbook.jpg` (asset thừa) · `/worker/` | **404** |
+
+→ Lỗ hổng `public: "."` đã được khắc phục **trên production thật**, không chỉ trên config.
+Headers: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
+Bằng chứng: `img/production-hosting-paths.json`.
+
+### 9.2 Smoke browser trên production — 10/10 PASS
+HTTPS đúng origin · 46 stylesheet, 0 request 4xx nội bộ · `<main>` hiện diện, header ngoài main · render 7 món · **0 JS error** · CRUD local · export JSON hợp lệ · responsive 1440/375/320 không tràn · reduced-motion tắt animation · Firebase SDK (app/auth/firestore) nạp + nút đăng nhập.
+Bằng chứng: `img/prod-browser.json`.
+
+### 9.3 Firestore Rules production — VERIFIED
+Đọc ruleset đã deploy qua Rules API:
+`projects/wishlist-787d2/releases/cloud.firestore` → ruleset `dc7e9d94-445a-4ec9-b420-2b78ec93ee3f`.
+**Nội dung khớp tuyệt đối** với `firestore.rules` trong repo. Truy cập ẩn danh tới `/users/{uid}/items` (list/get) và `/users` → **403 PERMISSION_DENIED**.
+Bằng chứng: `img/prod-firestore-rules.json`.
+
+### 9.4 Google Auth — luồng reachable, chưa đăng nhập
+SDK nạp từ `gstatic.com/firebasejs/10.14.1`; request tới `identitytoolkit.googleapis.com` thành công; bấm "Đăng nhập" mở popup tới `/__/auth/handler?apiKey=...`. **Chưa** hoàn tất đăng nhập (không có credential), **Firestore `users` rỗng** → Gate "sync thật" còn HOLD.
+Bằng chứng: `img/prod-auth-probe.json`.
+
+### 9.5 Tổng kết 6 bước
+| Bước | Trạng thái |
+|---|---|
+| 0. Sao lưu | ⚠️ Chưa có bằng chứng (nên xác nhận trước thao tác tiếp theo) |
+| 1. Firestore Rules (deployed + ẩn danh) | ✅ VERIFIED (chéo 2 tài khoản: khuyến nghị) |
+| 2. Google Login/Sync đa thiết bị | ⛔ UNVERIFIED — cần đăng nhập thật |
+| 3. Build `dist/` + audit | ✅ VERIFIED (local 48/0; production chỉ runtime asset) |
+| 4. Deploy | ✅ Do chủ dự án thực hiện |
+| 5. Smoke production | ✅ 10/10 PASS |
+| 6. Tag `ui-v15.0.0` | ⏳ Chờ Gate 2 + phê duyệt GO |
+

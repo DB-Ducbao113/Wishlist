@@ -1,0 +1,15 @@
+{
+ "base": "https://wishlist-787d2.web.app/wishlist.html",
+ "gstaticRequests": [
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js",
+  "https://identitytoolkit.googleapis.com/v1/projects?key=AIzaSyB7NJKRMf1aDCmPtyurPiNkT4qayEZ",
+  "https://identitytoolkit.googleapis.com/v1/projects?key=AIzaSyB7NJKRMf1aDCmPtyurPiNkT4qayEZ"
+ ],
+ "authPopup": "https://wishlist-787d2.web.app/__/auth/handler?apiKey=AIzaSyB7NJKRMf1aDCmPtyurPiNkT4qayEZvERQ&appName=%5BDEFAULT%5D&auth",
+ "signInClicked": true,
+ "errors": [],
+ "gstaticFirebase": 3,
+ "googleapis": 1
+}

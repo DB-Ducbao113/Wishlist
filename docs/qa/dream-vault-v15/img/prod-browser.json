@@ -1,0 +1,60 @@
+{
+ "base": "https://wishlist-787d2.web.app/wishlist.html",
+ "generatedAt": "2026-10-15T23:54:17.296Z",
+ "total": 10,
+ "pass": 10,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "P1 Production tải qua HTTPS, đúng origin/protocol",
+   "ok": true,
+   "detail": "{\"url\":\"https://wishlist-787d2.web.app/wishlist.html\",\"origin\":\"https://wishlist-787d2.web.app\",\"protocol\":\"https:\",\"home\":\"/wishlist.html\",\"title\":\"Danh sách yêu thích\",\"sheetCount\":46,\"main\":true,\"headerInMain\":false,\"cards\":7,\"hasSignIn\":true,\"syncPanel\":\"Đang lưu trên thiết bị này\\n\\n        \\n      \\n\\n      \\n        \\n          Đăng nhập\",\"firebaseSdk\":false}"
+  },
+  {
+   "name": "P2 46 stylesheet tải, không request 4xx nội bộ",
+   "ok": true,
+   "detail": "{\"sheetCount\":46,\"badRes\":[]}"
+  },
+  {
+   "name": "P3 Landmark <main> hiện diện, header không nằm trong main",
+   "ok": true,
+   "detail": "{\"main\":true,\"headerInMain\":false}"
+  },
+  {
+   "name": "P4 Render danh sách từ localStorage (7 món)",
+   "ok": true,
+   "detail": "{\"cards\":7,\"expected\":7}"
+  },
+  {
+   "name": "P5 Không có JS error trên production",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "P6 CRUD production (local): add +1, edit, delete -1",
+   "ok": true,
+   "detail": "{\"n0\":7,\"n1\":8,\"edited\":true,\"n2\":7}"
+  },
+  {
+   "name": "P7 Export JSON trên production hợp lệ",
+   "ok": true,
+   "detail": "{\"len\":7}"
+  },
+  {
+   "name": "P8 Responsive production 1440/375/320 không tràn ngang",
+   "ok": true,
+   "detail": "[{\"w\":1440,\"overflow\":0},{\"w\":375,\"overflow\":0},{\"w\":320,\"overflow\":0}]"
+  },
+  {
+   "name": "P9 Reduced motion production: không animation card",
+   "ok": true,
+   "detail": "{\"anim\":\"none\"}"
+  },
+  {
+   "name": "P10 Firebase SDK (app/auth/firestore) nạp từ gstatic + panel đồng bộ có nút đăng nhập",
+   "ok": true,
+   "detail": "{\"sdkCount\":3,\"sdk\":[\"firebase-app.js\",\"firebase-auth.js\",\"firebase-firestore.js\"],\"hasSignIn\":true}"
+  }
+ ]
+}

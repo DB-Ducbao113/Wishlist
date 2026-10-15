@@ -1,0 +1,14 @@
+﻿{
+  "generatedAt": "2026-10-16",
+  "project": "wishlist-787d2",
+  "release": "projects/wishlist-787d2/releases/cloud.firestore",
+  "rulesetName": "projects/wishlist-787d2/rulesets/dc7e9d94-445a-4ec9-b420-2b78ec93ee3f",
+  "deployedRulesMatchRepoSource": true,
+  "unauthenticatedProduction": {
+    "list users/{uid}/items": "403 PERMISSION_DENIED",
+    "get users/{uid}/items/{id}": "403 PERMISSION_DENIED",
+    "list users": "403 PERMISSION_DENIED"
+  },
+  "crossAccountEmpirical": "UNVERIFIED - cần 2 tài khoản Google thật; cách ly UID được chứng minh bằng chính văn bản rules (request.auth.uid == userId).",
+  "firestoreUsersCollection": "RỖNG - chưa có tài khoản nào đăng nhập/sync (Gate 2 còn UNVERIFIED)."
+}
