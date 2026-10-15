@@ -17,12 +17,12 @@
 | Vai trò | SHA | Ghi chú |
 |---|---|---|
 | **V8-C implementation (code fix + evidence)** | **`24fdb8da78a7e31cda1a333822a9e4cabf362930`** (`24fdb8d`) | 2 fix CSS + 29 ảnh JPEG + 2 JSON QA/perf |
+| **V8-C report (commit này)** | **`cf518b55d5f91df6f263a0a5b74920d9963ef14e`** (`cf518b5`) | `final-release-report.md` |
 | V8-B implementation (trước đó) | `dabb915` | gallery + quick view |
 | V8-B QA docs | `329cc51` | implementation-report |
 | V8-A design | `70dbe06` | mockup + prototype |
 | V7 frozen (baseline) | `ce75465` | tag `ui-v7.0.0` |
 
-Report này là commit kế tiếp (SHA sẽ bổ sung cuối §1 sau khi push).
 **Tag `ui-v8.0.0`: CHƯA TẠO** — chờ người dùng chốt sau khi đọc report này.
 
 ---
