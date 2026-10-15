@@ -3,7 +3,7 @@
 **Branch:** `feature/product-presentation-v12`
 **Baseline:** `ui-v11.0.0`
 **Budget:** $0
-**Current gate:** **HOLD — browser visual QA and regression not yet run.**
+**Current gate:** **QA COMPLETE — GO (release candidate); awaiting owner final review before tagging `ui-v12.0.0`.** See `final-report.md`.
 
 ## Source implemented
 - `css/product-v12-presentation.css`: new independent presentation layer for Gallery product stages, featured exhibit, action hierarchy, and Quick View. Respects reduced motion.
@@ -26,3 +26,24 @@
 - No refactor of storage logic/Firebase/Auth/Sync/CRUD.
 
 **Note:** This file records implementation and required QA only, not a completed test result.
+
+---
+
+## QA execution log (2026-10-15)
+
+| Gate item | Status | Evidence |
+| --- | --- | --- |
+| 1. Re-run all V11 regression | DONE | V9 **128/128**, V10 **26/26**, V11 **34/34** (`img/regression-v*.json`), V11EQ equivalent mode |
+| 2. New V12 assertions | DONE | V12 **40/40** (`img/browser-qa.json`) |
+| 3. Browser functional regression | DONE | covered by V9 128 + V12 40 suites |
+| 4. Baseline V11 vs V12 screenshots | DONE | 28 matched pairs, all listed viewports + gallery + QV (`img/`) |
+| 5. Rail visible / no overflow / CTA+Dock | DONE | V12 X2 (11 viewports), X10, X11 |
+| 6. Perf A/B + a11y | DONE | `img/perf-v11-v12.json`, `img/a11y.json` |
+| 7. Documented report + machine-readable | DONE | `final-report.md`, JSON in `img/` |
+| 8. Fix P0/P1 + rerun; no tag | DONE | D1 (P1 dead-band) + D2 (duplicate label) fixed; no `ui-v12.0.0` |
+
+Defects fixed this sprint: **D1** frame-collapse dead band (P1), **D2** repeated
+`PRIVATE COLLECTION` label, **D3** ring ornament cleanup. D4 (broken-image/lazy test timing)
+was a harness issue, not an app bug.
+
+**Verdict: GO (release candidate).** Do not create `ui-v12.0.0` before the owner's final review.

@@ -1,0 +1,152 @@
+{
+ "compares": "V11 (ui-v11.0.0) vs V12 (feature/product-presentation-v12)",
+ "disclaimers": [
+  "Headless Chrome only — KHÔNG đại diện thiết bị thật",
+  "Median of 3 runs, cùng dataset + cùng Chrome + cùng máy"
+ ],
+ "mobile-375x812_V11": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 19,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "mobile-375x812_V12": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 18.3,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "desktop-1440_V11": {
+  "fpsIdle": 59.9,
+  "fpsScroll": 60,
+  "maxGapMs": 16.9,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "desktop-1440_V12": {
+  "fpsIdle": 59.9,
+  "fpsScroll": 60,
+  "maxGapMs": 16.8,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "gallery_1item_V11": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 19.1,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_12items_V11": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 19,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_50items_V11": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 19,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_1item_V12": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 19.1,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_12items_V12": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 18.6,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "gallery_50items_V12": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 18.7,
+  "longTaskMs": 0,
+  "cls": 0,
+  "lastCardAppearMs": 0
+ },
+ "qv_interaction_V11": {
+  "runs": 5,
+  "openMedianMs": 31.8,
+  "openAll": [
+   31.2,
+   31.9,
+   31.8,
+   31.8,
+   32.3
+  ],
+  "closeMedianMs": 33.4,
+  "closeAll": [
+   33.5,
+   33.4,
+   33.1,
+   33.4,
+   33.2
+  ],
+  "maxFrameGapDuringOpenMedianMs": 16.9
+ },
+ "qv_interaction_V12": {
+  "runs": 5,
+  "openMedianMs": 31.3,
+  "openAll": [
+   31.3,
+   31.2,
+   31.9,
+   29.8,
+   32.1
+  ],
+  "closeMedianMs": 33.4,
+  "closeAll": [
+   33.9,
+   33.7,
+   33.3,
+   33.1,
+   33.4
+  ],
+  "maxFrameGapDuringOpenMedianMs": 16.9
+ },
+ "cpu4x_mobile_V11": {
+  "fpsIdle": 60.8,
+  "fpsScroll": 59.9,
+  "maxGapMs": 17.7,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "cpu4x_mobile_V12": {
+  "fpsIdle": 60.9,
+  "fpsScroll": 59.8,
+  "maxGapMs": 17.7,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "reducedMotion_mobile_V11": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 18.6,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "reducedMotion_mobile_V12": {
+  "fpsIdle": 60.6,
+  "fpsScroll": 60,
+  "maxGapMs": 18.3,
+  "longTaskMs": 0,
+  "cls": 0
+ },
+ "consoleErrors": []
+}

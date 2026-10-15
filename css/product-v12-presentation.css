@@ -26,12 +26,24 @@ body.dreamscape-v5 .v11-canvas #grid .thumb.product-media::after {
   border-radius:50%;
   left:18%;
   top:12%;
-  box-shadow:0 0 0 18px rgba(255,255,255,.08),0 0 0 52px rgba(255,255,255,.06);
+  box-shadow:0 0 0 20px rgba(255,255,255,.07);
   pointer-events:none;
 }
+/* NOTE: do NOT set `position` here. gallery.css positions the frame
+ * `absolute; inset:0` to fill the stage; overriding it to `relative`
+ * collapses the frame and leaves a large dead band. A positioned
+ * element (absolute) already accepts z-index, so layering needs only
+ * z-index — the frame must keep filling the media.
+ *
+ * V12 composition: inset the frame so the product sits on a defined
+ * mount board framed within the lit stage (a real layout change, not an
+ * added shadow). */
 body.dreamscape-v5 .v11-canvas #grid .product-media__frame {
-  position:relative;
   z-index:1;
+  inset:clamp(10px,1.6vw,18px);
+  border-radius:16px;
+  background:rgba(255,255,255,.44);
+  box-shadow:0 14px 30px rgba(60,42,128,.09),inset 0 0 0 1px rgba(255,255,255,.72);
 }
 body.dreamscape-v5 .v11-canvas #grid .product-card__plaque {
   z-index:3;
@@ -53,6 +65,14 @@ body.dreamscape-v5 .v11-canvas #grid .v12-stage-caption {
   letter-spacing:.16em;
   text-transform:uppercase;
   pointer-events:none;
+}
+/* Reserved for the flagship exhibit only — a repeated object label on every
+ * card duplicates the plaque (V11 visual language forbids duplicate labels). */
+body.dreamscape-v5 .v11-canvas #grid .v12-stage-caption {
+  display:none;
+}
+body.dreamscape-v5 .v11-canvas #grid > .wishlist-card:first-child:not(:only-child) .v12-stage-caption {
+  display:inline-block;
 }
 /* Card content: clear art/metadata/action hierarchy. Do not transform
  * .wishlist-card__surface; setupCardTilt owns it. */

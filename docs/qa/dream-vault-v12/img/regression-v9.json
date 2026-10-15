@@ -1,0 +1,648 @@
+{
+ "total": 128,
+ "pass": 128,
+ "fail": 0,
+ "fails": [],
+ "results": [
+  {
+   "name": "A1 QV mở từ nút \"Xem chi tiết\" + focus nút ×",
+   "ok": true,
+   "detail": "{\"found\":true,\"open\":true,\"active\":\"qvClose\"}"
+  },
+  {
+   "name": "A2 QV hiển thị đúng title/price/category/status/priority/date",
+   "ok": true,
+   "detail": "{\"title\":\"Tai nghe không dây chống ồn chủ động thế hệ mới\",\"price\":\"4.990.000 ₫\",\"cat\":\"Công nghệ\",\"status\":\"Muốn mua\",\"priority\":\"Cao\",\"date\":\"12/10/2026\",\"note\":\"Chống ồn chủ động tốt nhất trong tầm giá — mình sẽ dùng cho những buổi làm v"
+  },
+  {
+   "name": "A2b QV ghi chú đầy đủ (q1, dài)",
+   "ok": true,
+   "detail": "len=199"
+  },
+  {
+   "name": "A2c QV nhãn OBJECT theo thứ tự render",
+   "ok": true,
+   "detail": "OBJECT 007 / OBJECT 007 — PRIVATE VIEW"
+  },
+  {
+   "name": "A2d QV link mua an toàn (safeUrl, _blank, noopener)",
+   "ok": true,
+   "detail": "\"https://example.com/buy\""
+  },
+  {
+   "name": "A2e QV ảnh object-fit contain",
+   "ok": true,
+   "detail": "contain"
+  },
+  {
+   "name": "A3 Escape (trusted) đóng QV, focus quay về nút mở",
+   "ok": true,
+   "detail": "{\"open\":false,\"cls\":\"mini product-card__view\"}"
+  },
+  {
+   "name": "A4 Nút × và \"Quay lại Gallery\" đóng + trả focus",
+   "ok": true,
+   "detail": "{\"a4a\":{\"open\":false,\"cls\":\"mini product-card__view\"},\"a4b\":{\"open\":false,\"cls\":\"mini product-card__view\"}}"
+  },
+  {
+   "name": "A5 QV ghi chú dài (q3) đủ + không tràn khung",
+   "ok": true,
+   "detail": "{\"note\":\"Máy ảnh mơ ước từ thời sinh viên. Body cũ đã bán, ống kính 35mm giữ lại làm kỷ niệm. Target: bản màu bạc, shutter còn dưới 5k. Sẽ mua sau khi hoàn tất quỹ du lịch Nhật.\",\"scrollable\":true,\"within\":true}"
+  },
+  {
+   "name": "A6 QV không có link → ẩn \"Mở nơi bán\", hiện \"Chưa có liên kết mua\"",
+   "ok": true,
+   "detail": "{\"buyHidden\":true,\"noLink\":true,\"noLinkText\":\"Chưa có liên kết mua\"}"
+  },
+  {
+   "name": "A7 Ảnh hỏng trong QV → fallback placeholder, không vỡ khung",
+   "ok": true,
+   "detail": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20widt"
+  },
+  {
+   "name": "A8 QV item đã mua → nhẫn \"Đã mua\" (purchased)",
+   "ok": true,
+   "detail": "{\"status\":\"Đã mua\",\"ring\":\"quick-view__ring quick-view__ring--purchased\"}"
+  },
+  {
+   "name": "B6 Dashboard tổng hợp đúng (34.690.000 / 320.000 / 7 món)",
+   "ok": true,
+   "detail": "{\"total\":\"34.690.000 ₫\",\"spent\":\"320.000 ₫\",\"count\":\"7 món\"}"
+  },
+  {
+   "name": "B1 Status chip giữ hành vi cycle + không mở QV",
+   "ok": true,
+   "detail": "{\"found\":true,\"before\":{\"role\":\"button\",\"label\":\"Đang để dành\",\"qv\":false},\"afterLabel\":\"Đã đặt hàng\",\"qvAfter\":false}"
+  },
+  {
+   "name": "B2 Purchased Celebration + is-purchased khi cycle sang \"Đã mua\"",
+   "ok": true,
+   "detail": "{\"celebrating\":true,\"purchased\":true}"
+  },
+  {
+   "name": "B3 Card giữ link \"Mở nơi bán\" (target _blank, noopener)",
+   "ok": true,
+   "detail": "{\"href\":\"https://example.com/camera\",\"target\":\"_blank\",\"rel\":\"noopener noreferrer\"}"
+  },
+  {
+   "name": "B4 Sửa trên card mở form đúng item, không mở QV",
+   "ok": true,
+   "detail": "{\"dlg\":true,\"name\":\"Tai nghe không dây chống ồn chủ động thế hệ mới\",\"qv\":false}"
+  },
+  {
+   "name": "B5 Sort giá giảm dần → card đầu là OBJECT 001 = item đắt nhất (R3: theo thứ tự render)",
+   "ok": true,
+   "detail": "{\"sortDescId\":\"q3\",\"sortDescIdx\":\"OBJECT 001\"}"
+  },
+  {
+   "name": "B5b Search lọc còn 1 card, chỉ số về OBJECT 001",
+   "ok": true,
+   "detail": "{\"cards\":1,\"idx\":\"OBJECT 001\",\"id\":\"q3\"}"
+  },
+  {
+   "name": "B5c Filter trạng thái \"Muốn mua\" → 3 card (q1,q6,q7)",
+   "ok": true,
+   "detail": "cards=3"
+  },
+  {
+   "name": "B7 Tilt card còn hoạt động (transform đổi khi hover)",
+   "ok": true,
+   "detail": "matrix(1, 0, 0, 1, 0, 0) → matrix3d(0.999744, 9.59241e-05, -0.02261"
+  },
+  {
+   "name": "B8 R2: opener bị re-render → close an toàn, focus không về node cũ",
+   "ok": true,
+   "detail": "{\"activeCls\":\"quick-view__close\",\"tag\":\"BUTTON\"}"
+  },
+  {
+   "name": "A9 Mở/đóng QV không mutate dữ liệu (localStorage giữ nguyên)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "F1 Grid entrance hoàn tất, card không kẹt opacity 0",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "R1 QV→Sửa: QV đóng trước, form mở, focus vào fName (không về Gallery)",
+   "ok": true,
+   "detail": "{\"qvOpen\":false,\"dlgOpen\":true,\"active\":\"fName\",\"activeInDlg\":true,\"activeIsView\":false,\"name\":\"Bàn phím cơ cơ học cấu hình cao custom keycap PBT dye-sub theme pastel lavender\"}"
+  },
+  {
+   "name": "R1 (sau close event) focus vẫn trong form, không quay về nút Gallery",
+   "ok": true,
+   "detail": "{\"active\":\"fName\",\"inDlg\":true,\"isView\":false}"
+  },
+  {
+   "name": "R1b Mở lại QV sau khi sửa → hiển thị dữ liệu mới nhất theo ID",
+   "ok": true,
+   "detail": "Bàn phím đã sửa qua Quick View"
+  },
+  {
+   "name": "A10 Không chồng modal: form đang mở → QV không mở được",
+   "ok": true,
+   "detail": "{\"dlgOpen\":true,\"qvBlocked\":true}"
+  },
+  {
+   "name": "A11 ID không tồn tại → QV đóng, có toast, không crash",
+   "ok": true,
+   "detail": "{\"closed\":true,\"toast\":\"Món đồ này không còn trong danh sách.\"}"
+  },
+  {
+   "name": "A12 Item đã xóa → openQuickView an toàn (đóng + toast, không crash)",
+   "ok": true,
+   "detail": "{\"gone\":true,\"qv\":false}"
+  },
+  {
+   "name": "C1 @1280 [V11-equiv] canvas gallery 3 cột, card ≥250px, không nhồi nhét",
+   "ok": true,
+   "detail": "{\"cols\":3,\"min\":263}"
+  },
+  {
+   "name": "C2 @1280 [V11-equiv] featured span trọn canvas (khớp width #grid)",
+   "ok": true,
+   "detail": "feat=844 grid=844"
+  },
+  {
+   "name": "C3 @1280 nút hành động không cắt chữ, cao ≥40px",
+   "ok": true,
+   "detail": "{\"clip\":null,\"short\":null}"
+  },
+  {
+   "name": "C4 @1280 title dài (q6) không tràn card",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C5 @1280 QV split ≈ 56.00000000000001/43.99999999999999 (±0.04)",
+   "ok": true,
+   "detail": "ratio=0.56"
+  },
+  {
+   "name": "C6 @1280 QV nằm trọn trong viewport + panel cuộn được (overflow-y auto) + bo góc",
+   "ok": true,
+   "detail": "{\"ratio\":0.56,\"within\":true,\"overflowY\":\"auto\",\"radius\":\"32px\"}"
+  },
+  {
+   "name": "C1 @1440 [V11-equiv] canvas gallery 3 cột, card ≥250px, không nhồi nhét",
+   "ok": true,
+   "detail": "{\"cols\":3,\"min\":285}"
+  },
+  {
+   "name": "C2 @1440 [V11-equiv] featured span trọn canvas (khớp width #grid)",
+   "ok": true,
+   "detail": "feat=920 grid=920"
+  },
+  {
+   "name": "C3 @1440 nút hành động không cắt chữ, cao ≥40px",
+   "ok": true,
+   "detail": "{\"clip\":null,\"short\":null}"
+  },
+  {
+   "name": "C4 @1440 title dài (q6) không tràn card",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C5 @1440 QV split ≈ 57.99999999999999/42.00000000000001 (±0.04)",
+   "ok": true,
+   "detail": "ratio=0.58"
+  },
+  {
+   "name": "C6 @1440 QV nằm trọn trong viewport + panel cuộn được (overflow-y auto) + bo góc",
+   "ok": true,
+   "detail": "{\"ratio\":0.58,\"within\":true,\"overflowY\":\"auto\",\"radius\":\"32px\"}"
+  },
+  {
+   "name": "C1 @1920 [V11-equiv] canvas gallery 3 cột, card ≥250px, không nhồi nhét",
+   "ok": true,
+   "detail": "{\"cols\":3,\"min\":337}"
+  },
+  {
+   "name": "C2 @1920 [V11-equiv] featured span trọn canvas (khớp width #grid)",
+   "ok": true,
+   "detail": "feat=1076 grid=1076"
+  },
+  {
+   "name": "C3 @1920 nút hành động không cắt chữ, cao ≥40px",
+   "ok": true,
+   "detail": "{\"clip\":null,\"short\":null}"
+  },
+  {
+   "name": "C4 @1920 title dài (q6) không tràn card",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "C5 @1920 QV split ≈ 57.99999999999999/42.00000000000001 (±0.04)",
+   "ok": true,
+   "detail": "ratio=0.58"
+  },
+  {
+   "name": "C6 @1920 QV nằm trọn trong viewport + panel cuộn được (overflow-y auto) + bo góc",
+   "ok": true,
+   "detail": "{\"ratio\":0.58,\"within\":true,\"overflowY\":\"auto\",\"radius\":\"32px\"}"
+  },
+  {
+   "name": "M1 @320×700 không tràn ngang",
+   "ok": true,
+   "detail": "overflow=0"
+  },
+  {
+   "name": "M2 @320×700 gallery 1 cột",
+   "ok": true,
+   "detail": "cols=1"
+  },
+  {
+   "name": "M3 @320×700 nút card ≥44px (touch)",
+   "ok": true,
+   "detail": "null"
+  },
+  {
+   "name": "M4 @320×700 Dock hiển thị khi QV đóng",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M5 @320×700 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M6 @320×700 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M7 @320×700 Dock ẩn khi QV mở (không đè modal)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M8 @320×700 Panel QV cuộn được (note dài không bị cắt)",
+   "ok": true,
+   "detail": "{\"s\":true,\"o\":\"auto\"}"
+  },
+  {
+   "name": "M9 @320×700 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ",
+   "ok": true,
+   "detail": "{\"top\":145,\"maxScroll\":145,\"noteLen\":168}"
+  },
+  {
+   "name": "M10 @320×700 Dock hiện lại sau khi đóng QV",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M1 @375×667 không tràn ngang",
+   "ok": true,
+   "detail": "overflow=0"
+  },
+  {
+   "name": "M2 @375×667 gallery 1 cột",
+   "ok": true,
+   "detail": "cols=1"
+  },
+  {
+   "name": "M3 @375×667 nút card ≥44px (touch)",
+   "ok": true,
+   "detail": "null"
+  },
+  {
+   "name": "M4 @375×667 Dock hiển thị khi QV đóng",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M5 @375×667 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M6 @375×667 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M7 @375×667 Dock ẩn khi QV mở (không đè modal)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M8 @375×667 Panel QV cuộn được (note dài không bị cắt)",
+   "ok": true,
+   "detail": "{\"s\":true,\"o\":\"auto\"}"
+  },
+  {
+   "name": "M9 @375×667 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ",
+   "ok": true,
+   "detail": "{\"top\":206,\"maxScroll\":206,\"noteLen\":168}"
+  },
+  {
+   "name": "M10 @375×667 Dock hiện lại sau khi đóng QV",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M11 @375×667 Hero CTA không đè Dock (kể cả khi dưới fold = cuộn được)",
+   "ok": true,
+   "detail": "{\"inter\":false,\"anyOnScreen\":1,\"total\":1,\"clearance\":21}"
+  },
+  {
+   "name": "M1 @375×812 không tràn ngang",
+   "ok": true,
+   "detail": "overflow=0"
+  },
+  {
+   "name": "M2 @375×812 gallery 1 cột",
+   "ok": true,
+   "detail": "cols=1"
+  },
+  {
+   "name": "M3 @375×812 nút card ≥44px (touch)",
+   "ok": true,
+   "detail": "null"
+  },
+  {
+   "name": "M4 @375×812 Dock hiển thị khi QV đóng",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M5 @375×812 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M6 @375×812 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M7 @375×812 Dock ẩn khi QV mở (không đè modal)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M8 @375×812 Panel QV cuộn được (note dài không bị cắt)",
+   "ok": true,
+   "detail": "{\"s\":true,\"o\":\"auto\"}"
+  },
+  {
+   "name": "M9 @375×812 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ",
+   "ok": true,
+   "detail": "{\"top\":149,\"maxScroll\":149,\"noteLen\":168}"
+  },
+  {
+   "name": "M10 @375×812 Dock hiện lại sau khi đóng QV",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M1 @430×932 không tràn ngang",
+   "ok": true,
+   "detail": "overflow=0"
+  },
+  {
+   "name": "M2 @430×932 gallery 1 cột",
+   "ok": true,
+   "detail": "cols=1"
+  },
+  {
+   "name": "M3 @430×932 nút card ≥44px (touch)",
+   "ok": true,
+   "detail": "null"
+  },
+  {
+   "name": "M4 @430×932 Dock hiển thị khi QV đóng",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M5 @430×932 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M6 @430×932 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA",
+   "ok": true,
+   "detail": "{\"bottomPinned\":true,\"hFit\":true,\"radiusTop\":\"28px\",\"close\":{\"w\":44,\"hh\":44},\"minCta\":52,\"rowClipped\":false,\"dockHidden\":true,\"panelScroll\":true,\"panelOverflow\":\"auto\"}"
+  },
+  {
+   "name": "M7 @430×932 Dock ẩn khi QV mở (không đè modal)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "M8 @430×932 Panel QV cuộn được (note dài không bị cắt)",
+   "ok": true,
+   "detail": "{\"s\":true,\"o\":\"auto\"}"
+  },
+  {
+   "name": "M9 @430×932 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ",
+   "ok": true,
+   "detail": "{\"top\":56,\"maxScroll\":56,\"noteLen\":168}"
+  },
+  {
+   "name": "M10 @430×932 Dock hiện lại sau khi đóng QV",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "S1 1 item: không dùng Featured layout, QV vẫn mở được",
+   "ok": true,
+   "detail": "{\"feat\":false,\"plaque\":\"OBJECT 001\",\"idx\":\"OBJECT 001\",\"qv\":true}"
+  },
+  {
+   "name": "S2 12 items @1920: đủ 12, đánh chỉ số đến OBJECT 012, không tràn, entrance xong",
+   "ok": true,
+   "detail": "{\"n\":12,\"last\":\"OBJECT 012\",\"overflow\":0,\"opacitiesOk\":true}"
+  },
+  {
+   "name": "S3 Empty state: không card, không wall tile ẩn trong grid",
+   "ok": true,
+   "detail": "{\"emptyVisible\":true,\"gridEmpty\":true,\"wall\":\"none\"}"
+  },
+  {
+   "name": "K1 Enter mở QV, focus vào nút ×",
+   "ok": true,
+   "detail": "{\"open\":true,\"active\":\"qvClose\"}"
+  },
+  {
+   "name": "K2 Tab ×6 không focus được control nào phía sau dialog (trap native)",
+   "ok": true,
+   "detail": "in,in,in,body,in,in"
+  },
+  {
+   "name": "K3 Shift+Tab không focus được control phía sau dialog",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "K4 Focus ring visible (outline solid, màu highlight)",
+   "ok": true,
+   "detail": "{\"tag\":\"qvEdit\",\"style\":\"solid\",\"color\":\"rgb(168, 139, 247)\",\"width\":\"2px\"}"
+  },
+  {
+   "name": "K5 Escape đóng, focus quay về nút \"Xem chi tiết\"",
+   "ok": true,
+   "detail": "{\"open\":false,\"cls\":\"mini product-card__view\"}"
+  },
+  {
+   "name": "K6 Status chip cycle bằng Enter (role=button còn nguyên)",
+   "ok": true,
+   "detail": "{\"before\":\"Đang để dành\",\"after\":\"Đã đặt hàng\"}"
+  },
+  {
+   "name": "K7 Không có animation vòng lặp vô hạn trong QV/gallery",
+   "ok": true,
+   "detail": "[]"
+  },
+  {
+   "name": "S7 Reduced Motion: QV + backdrop không animation",
+   "ok": true,
+   "detail": "{\"anim\":\"none\",\"back\":\"none\"}"
+  },
+  {
+   "name": "T1a Tablet 768: không tràn ngang",
+   "ok": true,
+   "detail": "overflowX=0"
+  },
+  {
+   "name": "T1b Tablet 768: 0 card bị cắt nút",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "T1c Tablet 768: mobile dock ẩn (chỉ ≤640)",
+   "ok": true,
+   "detail": "shown=false"
+  },
+  {
+   "name": "T1d Tablet 768: QV mở + vừa viewport",
+   "ok": true,
+   "detail": "{\"open\":true,\"fits\":true,\"w\":680}"
+  },
+  {
+   "name": "T1a Tablet 1024: không tràn ngang",
+   "ok": true,
+   "detail": "overflowX=0"
+  },
+  {
+   "name": "T1b Tablet 1024: 0 card bị cắt nút",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "T1c Tablet 1024: mobile dock ẩn (chỉ ≤640)",
+   "ok": true,
+   "detail": "shown=false"
+  },
+  {
+   "name": "T1d Tablet 1024: QV mở + vừa viewport",
+   "ok": true,
+   "detail": "{\"open\":true,\"fits\":true,\"w\":680}"
+  },
+  {
+   "name": "V1a Desktop note dài: panel tràn > 0 (test có ý nghĩa)",
+   "ok": true,
+   "detail": "{\"overflow\":198,\"scrolled\":198,\"inViewport\":true,\"hitIsClose\":true,\"pos\":\"sticky\"}"
+  },
+  {
+   "name": "V1b Desktop note dài: nút × vẫn trong viewport sau scroll",
+   "ok": true,
+   "detail": "{\"overflow\":198,\"scrolled\":198,\"inViewport\":true,\"hitIsClose\":true,\"pos\":\"sticky\"}"
+  },
+  {
+   "name": "V1c Desktop: hit-test trỏ đúng nút × (bấm được)",
+   "ok": true,
+   "detail": "{\"overflow\":198,\"scrolled\":198,\"inViewport\":true,\"hitIsClose\":true,\"pos\":\"sticky\"}"
+  },
+  {
+   "name": "V1d Mobile scrolled: nút × vẫn thấy",
+   "ok": true,
+   "detail": "{\"scrolled\":300,\"inViewport\":true}"
+  },
+  {
+   "name": "V2a CTA mobile position: sticky",
+   "ok": true,
+   "detail": "sticky"
+  },
+  {
+   "name": "V2b CTA mobile nền đục (alpha ≥ .9)",
+   "ok": true,
+   "detail": "alpha=0.97"
+  },
+  {
+   "name": "V2c CTA chạm đáy panel, không còn dải lòi chữ",
+   "ok": true,
+   "detail": "{\"alpha\":0.97,\"pos\":\"sticky\",\"ctaBottom\":568,\"panelBottom\":568,\"reachesBottom\":true,\"textBelow\":0}"
+  },
+  {
+   "name": "V3a Form Thêm mở + submit được",
+   "ok": true,
+   "detail": "{\"wasOpen\":true}"
+  },
+  {
+   "name": "V3b Thêm item: card mới xuất hiện (newest-first), form đóng",
+   "ok": true,
+   "detail": "{\"count\":8,\"firstName\":\"Món đồ thêm trong V8-C QA\",\"firstIndex\":\"OBJECT 001\",\"uniqueIndices\":true,\"dlgOpen\":false}"
+  },
+  {
+   "name": "V3c OBJECT index mới = OBJECT 001 (đánh số theo render, không trùng)",
+   "ok": true,
+   "detail": "{\"count\":8,\"firstName\":\"Món đồ thêm trong V8-C QA\",\"firstIndex\":\"OBJECT 001\",\"uniqueIndices\":true,\"dlgOpen\":false}"
+  },
+  {
+   "name": "V3d Dọn QA: xóa item added, về lại 7",
+   "ok": true,
+   "detail": "now=7"
+  },
+  {
+   "name": "V9a Featured: đúng 1 nhãn (index hiện, plaque ẩn)",
+   "ok": true,
+   "detail": "{\"featId\":\"q2\",\"regId\":\"q3\",\"featPlaqueVis\":false,\"featIndexVis\":true,\"featIndexText\":\"OBJECT 001\",\"regPlaqueVis\":true,\"regIndexVis\":false,\"regPlaqueText\":\"OBJECT 002\",\"totalVisibleFeatured\":1,\"totalVisibleRegular\":1}"
+  },
+  {
+   "name": "V9b Regular: đúng 1 nhãn (plaque hiện, index ẩn)",
+   "ok": true,
+   "detail": "{\"featId\":\"q2\",\"regId\":\"q3\",\"featPlaqueVis\":false,\"featIndexVis\":true,\"featIndexText\":\"OBJECT 001\",\"regPlaqueVis\":true,\"regIndexVis\":false,\"regPlaqueText\":\"OBJECT 002\",\"totalVisibleFeatured\":1,\"totalVisibleRegular\":1}"
+  },
+  {
+   "name": "HV1a Hero có alcove scene V9 (scene cũ bị ẩn)",
+   "ok": true,
+   "detail": "{\"sceneExists\":true,\"sceneW\":480,\"sceneH\":576,\"oldHidden\":true,\"noAttr\":\"001\",\"noContent\":\"none\",\"noVis\":true,\"capText\":\"Object 001 — Curated Wish\"}"
+  },
+  {
+   "name": "HV1b Alcove có số + caption \"CURATED\"",
+   "ok": true,
+   "detail": "{\"sceneExists\":true,\"sceneW\":480,\"sceneH\":576,\"oldHidden\":true,\"noAttr\":\"001\",\"noContent\":\"none\",\"noVis\":true,\"capText\":\"Object 001 — Curated Wish\"}"
+  },
+  {
+   "name": "HV2 Headline: dòng 2 là serif italic, eyebrow \"PRIVATE SHOWROOM / 09\"",
+   "ok": true,
+   "detail": "{\"spanFont\":\"Georgia, \\\"Times New Roman\\\", serif\",\"spanStyle\":\"italic\",\"eyebrow\":\"PRIVATE SHOWROOM / 09\"}"
+  },
+  {
+   "name": "HV3 Hero CTA giữ ID heroAddWish (button) + secondary href=\"#grid\"",
+   "ok": true,
+   "detail": "{\"addId\":true,\"addTag\":\"BUTTON\",\"secondaryHref\":\"#grid\"}"
+  },
+  {
+   "name": "QV object-line nằm trong sticky top-bar + không tràn khỏi bar",
+   "ok": true,
+   "detail": "{\"inside\":true,\"objWithinTop\":true,\"text\":\"OBJECT 007 — PRIVATE VIEW\"}"
+  },
+  {
+   "name": "AH View Detail là primary (nền đặc/gradient), Delete yên lặng hơn (nền trong suốt, hẹp)",
+   "ok": true,
+   "detail": "{\"viewBg\":\"linear-gradient(135deg, rgb(126, 102, 214), rgb(93, 69, 178))\",\"delBg\":\"none\",\"viewW\":144,\"delW\":47}"
+  },
+  {
+   "name": "F2 Console errors = 0 qua toàn bộ suite",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

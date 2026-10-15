@@ -1,0 +1,38 @@
+[
+ {
+  "variant": "V11",
+  "viewText": [
+   255,
+   255,
+   255
+  ],
+  "viewContrast": 1.07,
+  "titleContrast": 16.56,
+  "interactive": 24,
+  "unnamed": 0,
+  "focusOutlineW": 2,
+  "focusOutlineStyle": "solid",
+  "decorativeHidden": true,
+  "imgs": 7,
+  "noAlt": 0,
+  "h": "H1,H2,H2,H2,H3,H3,H3,H3,H3,H3,H3,H3,H2,H3,H3,H3,H2,H3"
+ },
+ {
+  "variant": "V12",
+  "viewText": [
+   255,
+   255,
+   255
+  ],
+  "viewContrast": 1.07,
+  "titleContrast": 16.56,
+  "interactive": 24,
+  "unnamed": 0,
+  "focusOutlineW": 3,
+  "focusOutlineStyle": "solid",
+  "decorativeHidden": true,
+  "imgs": 7,
+  "noAlt": 0,
+  "h": "H1,H2,H2,H2,H3,H3,H3,H3,H3,H3,H3,H3,H2,H3,H3,H3,H2,H3"
+ }
+]
