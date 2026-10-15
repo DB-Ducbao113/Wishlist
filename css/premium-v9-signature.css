@@ -1,0 +1,784 @@
+/* ============================================================
+   Dream Vault V9 — The Signature Collection
+   Light Lavender × Premium Editorial × Cinematic Showroom
+   × Restrained Luxury.
+
+   SCOPE: 1 file duy nhất, nạp SAU toàn bộ CSS V5–V8.
+   Quy tắc:
+   - Không đổi logic Firebase/CRUD/schema.
+   - Không transform trên .wishlist-card__surface (Tilt sở hữu).
+   - Không animation infinite, tôn trọng prefers-reduced-motion.
+   - Không backdrop-filter nặng, không will-change tràn lan.
+   - Hero scene V9 dựng bằng SVG inline (0 request, 0 dependency).
+   ============================================================ */
+
+/* ---------- V9 tokens ---------- */
+body.dreamscape-v5 {
+  --v9-ink: #17122E;
+  --v9-muted: #5E5678;
+  --v9-accent: #6850BC;
+  --v9-accent-deep: #4F3B96;
+  --v9-highlight: #A88BF7;
+  --v9-line: rgba(104, 80, 188, .16);
+  --v9-surface: #FFFFFF;
+  --v9-surface-soft: #F7F4FF;
+  --v9-stage:
+    radial-gradient(ellipse 78% 52% at 50% 26%,
+      rgba(168, 139, 247, .36), transparent 72%),
+    radial-gradient(ellipse 66% 42% at 50% 112%,
+      rgba(104, 80, 188, .26), transparent 74%),
+    linear-gradient(170deg, #F5F1FF 0%, #E7DEFC 100%);
+  --v9-shadow-card:
+    0 16px 40px rgba(57, 43, 122, .07),
+    inset 0 1px rgba(255, 255, 255, .92);
+  --v9-shadow-featured:
+    0 44px 110px rgba(65, 43, 139, .17),
+    0 6px 18px rgba(65, 43, 139, .08),
+    inset 0 0 0 1px rgba(255, 255, 255, .88);
+  --v9-ease: cubic-bezier(.22, 1, .36, 1);
+  --v9-serif: Georgia, "Times New Roman", serif;
+}
+
+/* ==========================================================
+   1. HERO — "The Signature" composition
+   Lớp phủ toàn bộ bố cục V5/V6/V7 bên dưới.
+========================================================== */
+body.dreamscape-v5 .hero.hero--v9 {
+  position: relative;
+  isolation: isolate;
+  align-items: center;
+  min-height: 0;
+  padding: clamp(30px, 3.6vw, 48px) clamp(24px, 3.4vw, 48px)
+    clamp(34px, 3.8vw, 52px);
+  border: 1px solid rgba(104, 80, 188, .14);
+  border-radius: clamp(22px, 2.4vw, 32px);
+  background: linear-gradient(162deg, #FFFFFF 0%, #F8F5FF 56%, #EFE8FE 100%);
+  box-shadow:
+    0 34px 90px rgba(65, 43, 139, .10),
+    inset 0 1px rgba(255, 255, 255, .9);
+}
+
+/* Hạ tầng V5 (lưới + lưới + texture) bị thay bằng nền sạch V9 */
+body.dreamscape-v5 .hero.hero--v9::before,
+body.dreamscape-v5 .hero.hero--v9::after {
+  content: none;
+}
+
+/* ---------- Editorial copy ---------- */
+body.dreamscape-v5 .hero--v9 .hero__content {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  max-width: 640px;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--v9-accent);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .34em;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__eyebrow::before {
+  content: "";
+  flex: 0 0 26px;
+  height: 1px;
+  background: var(--v9-highlight);
+}
+
+/* Hai dòng title: sans nặng + serif italic — chữ ký V9 */
+body.dreamscape-v5 .hero--v9 .hero__title {
+  max-width: none;
+  margin: 18px 0 0;
+  font-size: clamp(2.55rem, 4.5vw, 4.4rem);
+  font-weight: 780;
+  line-height: .98;
+  letter-spacing: -.05em;
+  color: var(--v9-ink);
+}
+
+body.dreamscape-v5 .hero--v9 .hero__title span {
+  display: block;
+  margin-top: .1em;
+  color: var(--v9-accent);
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+/* Rule mảnh + copy đọc êm */
+body.dreamscape-v5 .hero--v9 .hero__description {
+  position: relative;
+  max-width: 470px;
+  margin: 24px 0 0;
+  padding-top: 22px;
+  color: var(--v9-muted);
+  font-size: .98rem;
+  line-height: 1.75;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__description::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 1px;
+  background: var(--v9-line);
+}
+
+/* ---------- Actions: 1 filled + 1 text-link ---------- */
+body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+  min-height: 50px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7E66D6, #5D45B2);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  box-shadow: 0 14px 30px rgba(84, 63, 158, .26);
+  transition: background var(--v9-ease) 160ms,
+    box-shadow var(--v9-ease) 160ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary:hover {
+    background: linear-gradient(135deg, #7159C8, #54399E);
+    box-shadow: 0 18px 36px rgba(84, 63, 158, .32);
+  }
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+  min-height: 44px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--v9-accent);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 3px;
+  background: currentColor;
+  opacity: .45;
+  transition: opacity 160ms var(--v9-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ---------- Footer line ---------- */
+body.dreamscape-v5 .hero--v9 .hero__footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+  color: var(--v9-muted);
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-size: 12.5px;
+  opacity: .9;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__indicator {
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--v9-accent);
+  border-radius: 50%;
+}
+
+/* ==========================================================
+   1b. HERO SCENE V9 — "Showroom Alcove"
+   Scene cũ (V5/V6/V7) bị ẩn; scene mới inline SVG, 0 request.
+========================================================== */
+body.dreamscape-v5 .hero--v9 .hero__visual {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-scene {
+  display: none;
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene {
+  position: relative;
+  width: min(100%, 460px);
+  margin-inline: auto;
+  aspect-ratio: 5 / 6;
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene__alcove {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene__product {
+  position: absolute;
+  left: 50%;
+  bottom: 26%;
+  width: 44%;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 22px 26px rgba(65, 43, 139, .22));
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene__no {
+  position: absolute;
+  right: 4%;
+  bottom: -1%;
+  z-index: 0;
+  color: rgba(104, 80, 188, .10);
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-size: clamp(5rem, 9vw, 8rem);
+  line-height: .8;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* Chỉ số = card featured thực tế (updateObjectIndices điền) */
+body.dreamscape-v5 .hero--v9 .v9-scene__no::after {
+  content: attr(data-object);
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--v9-muted);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+}
+
+/* Motion: một nhịp thở nhẹ cho cả cụm (không infinite riêng lẻ) */
+@media (min-width: 1025px) and (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 .hero--v9 .v9-scene__product {
+    animation: v9-breathe 9s ease-in-out infinite;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    animation: v9-glow 11s ease-in-out infinite;
+  }
+}
+
+@keyframes v9-breathe {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-7px); }
+}
+
+@keyframes v9-glow {
+  0%, 100% { opacity: .85; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9 .v9-scene__product,
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    animation: none !important;
+  }
+}
+
+/* ---------- Hero V9 grid ---------- */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .hero.hero--v9 {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+    gap: clamp(28px, 3.4vw, 64px);
+    min-height: 560px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 480px);
+  }
+}
+
+@media (min-width: 1440px) {
+  body.dreamscape-v5 .hero.hero--v9 {
+    min-height: 600px;
+  }
+}
+
+/* Tablet / mobile: scene lên trên, copy dưới */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .hero.hero--v9 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(22px, 4vw, 34px);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    order: -1;
+  }
+
+  /* Scene dọc 5:6 — giữ đúng tỷ lệ alcove, không letterbox/cut pedestal */
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 280px);
+    aspect-ratio: 5 / 6;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__content {
+    max-width: none;
+  }
+}
+
+/* ==========================================================
+   2. COLLECTION HEADING — dải editorial
+========================================================== */
+body.dreamscape-v5 .list-heading--v3 {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin: clamp(38px, 5vw, 64px) 0 clamp(20px, 2.4vw, 30px);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--v9-line);
+}
+
+body.dreamscape-v5 .list-heading__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  color: var(--v9-accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .32em;
+}
+
+body.dreamscape-v5 .list-heading__eyebrow::before {
+  content: "";
+  flex: 0 0 22px;
+  height: 1px;
+  background: var(--v9-highlight);
+}
+
+body.dreamscape-v5 .list-heading--v3 h2 {
+  margin: 0;
+  color: var(--v9-ink);
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(1.7rem, 2.8vw, 2.5rem);
+  line-height: 1.08;
+  letter-spacing: -.015em;
+}
+
+body.dreamscape-v5 .list-heading__decoration {
+  color: var(--v9-highlight);
+  font-size: 20px;
+}
+
+/* ==========================================================
+   3. GALLERY — rhythm sạch, bớt nhãn lặp
+   3a. Nhãn OBJECT: hiện 1 lần/card
+   - Regular: plaque trên stage (index trong content ẩn)
+   - Featured: index trong story (plaque trên stage ẩn)
+========================================================== */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+> .wishlist-card:first-child:not(:only-child)
+.product-card__plaque {
+  display: none;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+> .wishlist-card:not(:first-child)
+.product-card__index {
+  display: none;
+}
+
+/* ---------- Card surface: viền mảnh, bóng dịu ---------- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card__surface {
+  border-color: rgba(104, 80, 188, .14);
+  background: var(--v9-surface);
+  box-shadow: var(--v9-shadow-card);
+}
+
+/* ---------- Stage: khung tranh mảnh ---------- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.thumb.product-media {
+  background: var(--v9-stage);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-media__frame {
+  border: 1px solid rgba(104, 80, 188, .10);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .34);
+}
+
+/* ---------- Nội dung: khoảng thở điều độ ---------- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content {
+  gap: 8px;
+  padding: 16px 18px 12px;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__title {
+  font-size: 1.02rem;
+  line-height: 1.26;
+}
+
+/* Nhẫn trạng thái: nhẹ hơn, ít cạnh tranh với title */
+body.dreamscape-v5
+#grid .product-card__badges .badge {
+  padding: 4px 11px;
+  border-width: 1px;
+  background: transparent;
+  font-size: 9.5px;
+  letter-spacing: .14em;
+}
+
+/* Ghi chú / meta: mảnh hơn */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .note {
+  color: var(--v9-muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .meta {
+  font-size: 9.5px;
+}
+
+/* ---------- Actions: phân cấp rõ, Edit/Delete lặng đi ---------- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions {
+  gap: 7px;
+  padding: 13px 18px 16px;
+  border-top-color: rgba(104, 80, 188, .10);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini.product-card__view {
+  background: linear-gradient(135deg, #7E66D6, #5D45B2);
+  box-shadow: 0 8px 18px rgba(84, 63, 158, .22);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .buy {
+  border-color: rgba(104, 80, 188, .22);
+  background: transparent;
+  color: var(--v9-accent);
+  font-size: 12px;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini {
+  padding: 0 12px;
+  border-color: transparent;
+  background: rgba(104, 80, 188, .05);
+  color: var(--v9-muted);
+  font-size: 11.5px;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini.danger {
+  color: #B3261E;
+  background: rgba(179, 38, 30, .05);
+}
+
+/* ---------- Featured: stage rộng hơn, story sâu hơn ---------- */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .wishlist-card__surface {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr);
+    min-height: 540px;
+    background: linear-gradient(158deg, #FFFFFF 0%, #FAF7FF 58%, #F1EAFE 100%);
+    box-shadow: var(--v9-shadow-featured);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    background: var(--v9-stage);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content {
+    gap: 12px;
+    padding: clamp(28px, 2.8vw, 42px) clamp(24px, 2.2vw, 34px);
+  }
+}
+
+/* ---------- Wall tile: endcap của triển lãm ---------- */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6:not(:empty)::after {
+    border-color: rgba(104, 80, 188, .20);
+    background: linear-gradient(165deg, rgba(255, 255, 255, .55), rgba(247, 244, 255, .3));
+    color: var(--v9-muted);
+  }
+}
+
+/* ==========================================================
+   4. QUICK VIEW — product showcase
+========================================================== */
+
+/* Panel: tinh chỉnh typography + nhịp dọc */
+body.dreamscape-v5 #qv .quick-view__panel {
+  gap: 14px;
+  background: linear-gradient(170deg, #FFFFFF 0%, #FBF9FF 100%);
+}
+
+body.dreamscape-v5 #qv .quick-view__title {
+  margin: 0;
+  color: var(--v9-ink);
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.015em;
+}
+
+body.dreamscape-v5 #qv .quick-view__price {
+  color: var(--v9-accent);
+  font-weight: 780;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Meta: divider mảnh, nhãn trên giá trị */
+body.dreamscape-v5 #qv .quick-view__meta {
+  gap: 0;
+}
+
+body.dreamscape-v5 #qv .quick-view__meta-item {
+  padding: 10px 0;
+  border-top: 1px solid rgba(104, 80, 188, .10);
+}
+
+body.dreamscape-v5 #qv .quick-view__meta dt {
+  color: var(--v9-accent);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .22em;
+}
+
+body.dreamscape-v5 #qv .quick-view__meta dd {
+  margin-top: 4px;
+  color: var(--v9-ink);
+  font-size: 14.5px;
+  font-weight: 650;
+}
+
+/* Story: tiêu đề hành trình, nội dung serif nhẹ */
+body.dreamscape-v5 #qv .quick-view__story-heading {
+  color: var(--v9-accent);
+  font-size: 10px;
+  letter-spacing: .26em;
+}
+
+body.dreamscape-v5 #qv .quick-view__note {
+  color: var(--v9-muted);
+  line-height: 1.75;
+}
+
+/* CTA: primary tím đặc, secondary kính dịu */
+body.dreamscape-v5 #qv .quick-view__btn--primary {
+  background: linear-gradient(135deg, #7E66D6, #5D45B2);
+  box-shadow: 0 12px 28px rgba(84, 63, 158, .26);
+}
+
+body.dreamscape-v5 #qv .quick-view__btn--glass {
+  border-color: rgba(104, 80, 188, .22);
+  background: rgba(255, 255, 255, .8);
+  color: var(--v9-accent);
+}
+
+body.dreamscape-v5 #qv .quick-view__btn--ghost {
+  border-color: rgba(104, 80, 188, .16);
+  color: var(--v9-muted);
+}
+
+/* Nút đóng: outline mảnh, hiện đại hơn */
+body.dreamscape-v5 #qv .quick-view__close {
+  border-color: rgba(104, 80, 188, .18);
+  background: rgba(255, 255, 255, .82);
+  color: var(--v9-muted);
+  transition: color 160ms var(--v9-ease),
+    border-color 160ms var(--v9-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 #qv .quick-view__close:hover {
+    border-color: rgba(104, 80, 188, .4);
+    background: #F5F1FF;
+    color: var(--v9-accent);
+  }
+}
+
+/* ---------- Desktop ≥1025: split showroom ---------- */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 #qv .quick-view__stage {
+    padding: clamp(30px, 3.2vw, 54px);
+    background: var(--v9-stage);
+  }
+
+  /* Ảnh showcase: phóng lớn, sâu hơn */
+  body.dreamscape-v5 #qv .quick-view__image {
+    max-width: 92%;
+    max-height: 86%;
+    filter: drop-shadow(0 30px 44px rgba(65, 43, 139, .26));
+  }
+
+  body.dreamscape-v5 #qv .quick-view__plaque {
+    top: 26px;
+    left: 28px;
+    background: rgba(255, 255, 255, .88);
+  }
+
+  body.dreamscape-v5 #qv .quick-view__rings {
+    left: 28px;
+    bottom: 28px;
+  }
+
+  body.dreamscape-v5 #qv .quick-view__panel {
+    gap: 16px;
+    padding: clamp(28px, 2.8vw, 42px) clamp(26px, 2.6vw, 38px)
+      clamp(24px, 2.4vw, 34px);
+  }
+
+  /* Đồng bộ sticky top row với padding panel mới */
+  body.dreamscape-v5 #qv .quick-view__top {
+    margin:
+      calc(-1 * clamp(28px, 2.8vw, 42px))
+      calc(-1 * clamp(26px, 2.6vw, 38px))
+      0;
+    padding: clamp(28px, 2.8vw, 42px) clamp(26px, 2.6vw, 38px) 8px;
+  }
+
+  body.dreamscape-v5 #qv .quick-view__title {
+    font-size: clamp(1.9rem, 2.3vw, 2.6rem);
+  }
+
+  body.dreamscape-v5 #qv .quick-view__price {
+    font-size: 2.15rem;
+  }
+
+  body.dreamscape-v5 #qv .quick-view__meta {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 22px;
+  }
+
+  body.dreamscape-v5 #qv .quick-view__note {
+    font-size: 14.5px;
+  }
+}
+
+/* ---------- Mobile ≤640: sheet giữ nguyên hành vi V8 ---------- */
+@media (max-width: 640px) {
+  body.dreamscape-v5 #qv .quick-view__stage {
+    padding: 20px;
+    background: var(--v9-stage);
+  }
+
+  body.dreamscape-v5 #qv .quick-view__image {
+    filter: drop-shadow(0 22px 32px rgba(65, 43, 139, .24));
+  }
+
+  body.dreamscape-v5 #qv .quick-view__title {
+    font-size: 1.5rem;
+  }
+
+  body.dreamscape-v5 #qv .quick-view__meta {
+    column-gap: 18px;
+  }
+}
+
+/* ============================================================
+   FIXES sau review ảnh V9 (sprint)
+   ============================================================ */
+
+/* ---------- Fix A: mobile QV — object-line vào trong sticky top ----------
+   Lỗi kế thừa V8: dòng .quick-view__object là flex item nằm SAU sticky
+   .quick-view__top (margin-top:-22px) nên bị mép bar đè ~8px, và khi
+   cuộn trượt lên trên "nửa mảnh" sau nền blur. V9 gộp nó vào top-id group
+   (kicker + object trên cùng một hàng sticky, sát nút ×) — ít thành phần
+   hơn, object number luôn hiện hữu khi cuộn, hết chỗ cho chữ bị cắt.
+   ID #qvObject giữ nguyên; text vẫn do updateObjectIndices() điền. */
+.quick-view__top-id {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+body.dreamscape-v5 #qv .quick-view__object {
+  margin: 0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--v9-accent);
+  line-height: 1;
+}
+
+/* ---------- Fix B: số alcove "01" không chồng caption ---------- */
+body.dreamscape-v5 .hero--v9 .v9-scene__no {
+  bottom: 5%;
+  right: 7%;
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+  bottom: -4px;
+}
+
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    font-size: clamp(3.5rem, 12vw, 5rem);
+    bottom: 1%;
+    right: 3%;
+  }
+}

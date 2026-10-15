@@ -121,6 +121,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <!-- Dream Vault V8 — Immersive Product Experience (gallery + quick view) -->
 <link rel="stylesheet" href="./css/immersive-v8-gallery.css">
 <link rel="stylesheet" href="./css/immersive-v8-quick-view.css">
+<link rel="stylesheet" href="./css/premium-v9-signature.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
@@ -230,15 +231,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </header>
 
-<!-- Apple Minimal Hero -->
+<!-- V9 Hero — The Signature Collection -->
 <section
-  class="hero hero--v2 hero--v3 hero--v5 hero--v6 hero--v7"
+  class="hero hero--v2 hero--v3 hero--v5 hero--v6 hero--v7 hero--v9"
   aria-labelledby="hero-title"
 >
 
   <div class="hero__content">
     <p class="hero__eyebrow">
-      YOUR PERSONAL COLLECTION
+      PRIVATE SHOWROOM / 09
     </p>
 
     <h1 class="hero__title" id="hero-title">
@@ -274,51 +275,70 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     </div>
   </div>
 
-  <!-- Decorative 3D scene -->
+  <!-- V9 showroom alcove (decorative, inline SVG — 0 request) -->
   <div class="hero__visual" aria-hidden="true">
-    <div class="hero-scene">
+    <div class="v9-scene">
 
-      <div class="hero-scene__glow"></div>
+      <svg class="v9-scene__alcove" viewBox="0 0 440 528"
+           xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="v9niche" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFFFFF" stop-opacity=".92"/>
+            <stop offset="1" stop-color="#E7DEFB" stop-opacity=".78"/>
+          </linearGradient>
+          <linearGradient id="v9pedestal" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#FFFFFF"/>
+            <stop offset="1" stop-color="#EDE6FD"/>
+          </linearGradient>
+        </defs>
 
-      <div class="hero-scene__card hero-scene__card--back">
-        <div class="hero-scene__icon">✧</div>
-        <div class="hero-scene__line"></div>
-        <div class="hero-scene__line hero-scene__line--short"></div>
+        <!-- niche arch -->
+        <path d="M44 508V226C44 120 136 34 220 34C304 34 396 120 396 226V508Z"
+              fill="url(#v9niche)"/>
+        <path d="M44 508V226C44 120 136 34 220 34C304 34 396 120 396 226V508Z"
+              fill="none" stroke="rgba(104,80,188,.28)" stroke-width="1.25"/>
+
+        <!-- halo -->
+        <circle cx="220" cy="196" r="96" fill="#A88BF7" opacity=".16"/>
+
+        <!-- hanging lamp -->
+        <line x1="220" y1="34" x2="220" y2="84"
+              stroke="rgba(104,80,188,.45)" stroke-width="1.25"/>
+        <path d="M206 116L214 84H226L234 116Z"
+              fill="#7E66D6"/>
+        <ellipse cx="220" cy="117" rx="14" ry="4"
+                 fill="#F3ECFF"/>
+
+        <!-- floor shadow -->
+        <ellipse cx="220" cy="470" rx="150" ry="22"
+                 fill="#6850BC" opacity=".16"/>
+
+        <!-- pedestal -->
+        <ellipse cx="220" cy="376" rx="116" ry="26" fill="#FFFFFF"/>
+        <path d="M104 376L120 470H320L336 376Z" fill="url(#v9pedestal)"/>
+        <ellipse cx="220" cy="470" rx="100" ry="16"
+                 fill="none" stroke="rgba(104,80,188,.22)" stroke-width="1.25"/>
+      </svg>
+
+      <div class="v9-scene__product">
+        <svg viewBox="0 0 100 100" fill="none"
+             xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M22 56V42C22 4 78 4 78 42V56"
+                stroke="#A99BE7" stroke-width="11"
+                stroke-linecap="round"/>
+          <rect x="12" y="46" width="25" height="39"
+                rx="12" fill="#8273CA"/>
+          <rect x="63" y="46" width="25" height="39"
+                rx="12" fill="#8273CA"/>
+          <rect x="18" y="51" width="13" height="28"
+                rx="6" fill="#C7BEF2"/>
+          <rect x="69" y="51" width="13" height="28"
+                rx="6" fill="#C7BEF2"/>
+        </svg>
       </div>
 
-      <div class="hero-scene__card hero-scene__card--middle">
-        <div class="hero-scene__icon">◇</div>
-        <div class="hero-scene__line"></div>
-        <div class="hero-scene__line hero-scene__line--short"></div>
-      </div>
-
-      <div class="hero-scene__card hero-scene__card--front">
-        <div class="hero-scene__sparkle">✦</div>
-
-        <div class="hero-scene__product">
-          <svg viewBox="0 0 100 100" fill="none"
-               xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M22 56V42C22 4 78 4 78 42V56"
-              stroke="#A99BE7"
-              stroke-width="11"
-              stroke-linecap="round"
-            />
-            <rect x="12" y="46" width="25" height="39"
-                  rx="12" fill="#8273CA"/>
-            <rect x="63" y="46" width="25" height="39"
-                  rx="12" fill="#8273CA"/>
-            <rect x="18" y="51" width="13" height="28"
-                  rx="6" fill="#C7BEF2"/>
-            <rect x="69" y="51" width="13" height="28"
-                  rx="6" fill="#C7BEF2"/>
-          </svg>
-        </div>
-
-        <div class="hero-scene__product-label">
-          Your next favorite.
-        </div>
-      </div>
+      <span class="v9-scene__no" data-object="01"></span>
+      <span class="v9-scene__caption">Object 001 — Curated Wish</span>
 
     </div>
   </div>
@@ -739,12 +759,14 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   <div class="quick-view__panel">
     <div class="quick-view__top">
-      <span class="quick-view__kicker">PRODUCT SHOWCASE</span>
+      <div class="quick-view__top-id">
+        <span class="quick-view__kicker">PRODUCT SHOWCASE</span>
+        <span class="quick-view__object" id="qvObject" aria-hidden="true">OBJECT</span>
+      </div>
       <button type="button" id="qvClose" class="quick-view__close"
               aria-label="Đóng hộp thoại chi tiết">×</button>
     </div>
 
-    <p class="quick-view__object" id="qvObject" aria-hidden="true">OBJECT</p>
     <h2 class="quick-view__title" id="qvTitle">—</h2>
     <p class="quick-view__price" id="qvPrice">—</p>
 
@@ -1652,6 +1674,14 @@ function updateObjectIndices(){
         : label;
     }
   });
+
+  // V9: đồng bộ số thứ tự trên "alcove" hero với card featured đang hiển thị.
+  // Phần tử trang trí aria-hidden — chỉ gán text, không đổi dữ liệu/render.
+  const sceneNo = document.querySelector(".hero--v9 .v9-scene__no");
+  if(sceneNo && total > 0){
+    const firstLabel = cards[0].dataset.objectIndex || "OBJECT 001";
+    sceneNo.dataset.object = firstLabel.replace(/\D/g, "").slice(-3);
+  }
 }
 
 function openQuickView(id, opener){
