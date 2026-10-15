@@ -126,6 +126,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/editorial-v10-workspace.css">
 <!-- Dream Vault V11 — Immersive Workspace 2.0 (discovery rail + collection canvas) -->
 <link rel="stylesheet" href="./css/immersive-v11-workspace.css">
+<link rel="stylesheet" href="./css/product-v12-presentation.css">
 
 </head>
 <body id="top" class="dreamscape-v5">
@@ -1602,6 +1603,13 @@ function card(it){
   plaque.className = "product-card__plaque";
   plaque.setAttribute("aria-hidden", "true");
   thumb.appendChild(plaque);
+
+  // V12: decorative exhibit caption; no product-data or event changes.
+  const exhibitCaption = document.createElement("span");
+  exhibitCaption.className = "v12-stage-caption";
+  exhibitCaption.setAttribute("aria-hidden", "true");
+  exhibitCaption.textContent = "PRIVATE COLLECTION";
+  thumb.appendChild(exhibitCaption);
 
   const body = document.createElement("div");
   body.className = "card-body product-card__content";
