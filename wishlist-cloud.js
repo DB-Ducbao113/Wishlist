@@ -24,7 +24,11 @@ import {
 
 const firebaseConfig = {
   apiKey: "AIzaSyB7NJKRMf1aDCmPtyurPiNkT4qayEZvERQ",
-  authDomain: "wishlist-787d2.web.app",
+  // Firebase Hosting preview must use its own auth helper origin for redirect on Safari.
+  // Production keeps its existing auth domain.
+  authDomain: location.hostname === "wishlist-787d2--image-sync-v1-efzo5nzk.web.app"
+    ? "wishlist-787d2--image-sync-v1-efzo5nzk.web.app"
+    : "wishlist-787d2.web.app",
   projectId: "wishlist-787d2",
   storageBucket: "wishlist-787d2.firebasestorage.app",
   appId: "1:444123301601:web:627db751e201ac50a619a0",
@@ -165,7 +169,9 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
     // Preview authDomain differs from its page origin; redirect can lose the
     // auth result on iOS Safari due to cross-origin storage restrictions.
     // Experiment: initiate popup directly from the user click on all devices.
-    signIn: () => signInWithPopup(auth, provider),
+    signIn: () => matchMedia("(max-width: 700px)").matches
+      ? signInWithRedirect(auth, provider)
+      : signInWithPopup(auth, provider),
     signOut: () => signOut(auth),
     async uploadImage(dataUrl){
       if(!user) throw new Error("Hãy đăng nhập Google để đồng bộ ảnh.");
