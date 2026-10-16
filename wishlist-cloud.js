@@ -22,13 +22,19 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
+// Firebase "signInWithRedirect" best practice (Option 1) for web.app / custom
+// domains: the auth helper (authDomain) MUST live on the SAME origin as the
+// app. Otherwise Safari (ITP) blocks the cross-origin storage the redirect
+// flow depends on and the user ends up signed in at Google but NOT in the app.
+// Using the real page host keeps production and the Image Sync preview channel
+// each same-origin. Non-hosting origins (localhost) keep the default domain.
+const AUTH_DOMAIN = /\.(web\.app|firebaseapp\.com)$/i.test(location.hostname)
+  ? location.hostname
+  : "wishlist-787d2.web.app";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB7NJKRMf1aDCmPtyurPiNkT4qayEZvERQ",
-  // Firebase Hosting preview must use its own auth helper origin for redirect on Safari.
-  // Production keeps its existing auth domain.
-  authDomain: location.hostname === "wishlist-787d2--image-sync-v1-efzo5nzk.web.app"
-    ? "wishlist-787d2--image-sync-v1-efzo5nzk.web.app"
-    : "wishlist-787d2.web.app",
+  authDomain: AUTH_DOMAIN,
   projectId: "wishlist-787d2",
   storageBucket: "wishlist-787d2.firebasestorage.app",
   appId: "1:444123301601:web:627db751e201ac50a619a0",
@@ -39,6 +45,35 @@ const firebaseConfig = {
 const isConfigured = Object.values(firebaseConfig).every(value =>
   value && !value.startsWith("PASTE_")
 );
+
+/* =====================================================================
+   TEMPORARY AUTH DIAGNOSTICS (Phase 2A — iOS sign-in investigation)
+   Enable with  ?authdebug=1  (or localStorage.dreamVaultAuthDebug = "1").
+   Records NON-SENSITIVE auth metadata only: event names, Firebase error
+   codes, the resolved authDomain and the active persistence kind.
+   It NEVER records ID tokens, e-mail addresses, UIDs or wishlist data.
+   Remove this block once iPhone sign-in is confirmed working.
+   ===================================================================== */
+const AUTH_DEBUG = (() => {
+  try {
+    return new URLSearchParams(location.search).get("authdebug") === "1" ||
+           localStorage.getItem("dreamVaultAuthDebug") === "1";
+  } catch (error) {
+    return false;
+  }
+})();
+const authLogBuffer = [];
+try { window.__dvAuthLog = authLogBuffer; } catch (error) { /* ignore */ }
+function authLog(event, detail = "") {
+  authLogBuffer.push({
+    t: new Date().toISOString(),
+    event,
+    detail: String(detail).slice(0, 160),
+    host: location.hostname
+  });
+  if (authLogBuffer.length > 200) authLogBuffer.shift();
+  if (AUTH_DEBUG) console.info("[dv-auth] " + event + (detail ? " :: " + detail : ""));
+}
 
 export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError }) {
   if(!isConfigured){
@@ -61,20 +96,30 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
   let remoteDocumentIds = new Set();
   let writeQueue = Promise.resolve();
 
+  authLog("init", "authDomain=" + firebaseConfig.authDomain);
+
   // Safari (notably non-private tabs with restricted storage)
   // may reject local persistence with auth/internal-error.
   // Fall back gracefully so sign-in still works for the session.
-  for (const persistence of [browserLocalPersistence, browserSessionPersistence, inMemoryPersistence]) {
+  for (const [kind, persistence] of [
+    ["local", browserLocalPersistence],
+    ["session", browserSessionPersistence],
+    ["memory", inMemoryPersistence]
+  ]) {
     try {
       await setPersistence(auth, persistence);
+      authLog("persistence", kind);
       break;
     } catch (persistenceError) {
+      authLog("persistence-error", kind + ":" + (persistenceError.code || persistenceError.message));
       if (persistence === inMemoryPersistence) throw persistenceError;
     }
   }
-  await getRedirectResult(auth);
 
+  // The state listener is attached BEFORE the redirect result is consumed so a
+  // restored session is applied even when getRedirectResult later rejects.
   onAuthStateChanged(auth, nextUser => {
+    authLog("state", nextUser ? "signed-in" : "signed-out");
     user = nextUser;
     if(stopListening){
       stopListening();
@@ -140,8 +185,22 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
       }
     );
   }, error => {
+    authLog("state-error", error.code || error.message);
     onError("Lỗi xác thực Firebase: " + error.message);
   });
+
+  // Consume the redirect (mobile/Safari) result. A failure here must NOT abort
+  // sync init — the state listener above already reflects the real session.
+  try {
+    const redirectResult = await getRedirectResult(auth);
+    authLog("redirect-result", redirectResult && redirectResult.user ? "user-restored" : "empty");
+  } catch (redirectError) {
+    authLog("redirect-error", redirectError.code || redirectError.message);
+    onError(
+      "Không khôi phục được phiên đăng nhập sau khi Google chuyển hướng: " +
+      (redirectError.code || redirectError.message)
+    );
+  }
 
   async function writeItems(items, expectedUid) {
     if(!user || user.uid !== expectedUid) return;
@@ -166,12 +225,16 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
 
   return {
     get user(){ return user; },
-    // Preview authDomain differs from its page origin; redirect can lose the
-    // auth result on iOS Safari due to cross-origin storage restrictions.
-    // Experiment: initiate popup directly from the user click on all devices.
-    signIn: () => matchMedia("(max-width: 700px)").matches
-      ? signInWithRedirect(auth, provider)
-      : signInWithPopup(auth, provider),
+    // Mobile keeps signInWithRedirect (Firebase's recommended flow for Safari),
+    // which is now safe because authDomain is same-origin (see AUTH_DOMAIN).
+    // Desktop keeps signInWithPopup to preserve the existing behaviour.
+    signIn: () => {
+      const mobile = matchMedia("(max-width: 700px)").matches;
+      authLog("sign-in", "mode=" + (mobile ? "redirect" : "popup"));
+      return mobile
+        ? signInWithRedirect(auth, provider)
+        : signInWithPopup(auth, provider);
+    },
     signOut: () => signOut(auth),
     async uploadImage(dataUrl){
       if(!user) throw new Error("Hãy đăng nhập Google để đồng bộ ảnh.");

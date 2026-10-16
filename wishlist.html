@@ -2411,7 +2411,7 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=8");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=9");
     cloudSync = await initializeWishlistCloud({
       onStatus: (kind, email = "") => applySyncState(kind, email),
       onRemoteItems: (remoteItems, initialSnapshot) => {
@@ -2443,6 +2443,22 @@ async function initializeCloudSync(){
   return cloudSyncPromise;
 }
 
+// Map Firebase Auth error codes to an actionable Vietnamese message so an
+// on-device failure (iPhone, no devtools) is unambiguous.
+function describeAuthError(error){
+  const code = error && error.code ? error.code : "";
+  const messages = {
+    "auth/unauthorized-domain": "Tên miền này chưa được thêm vào Firebase Auth → Settings → Authorized domains.",
+    "auth/operation-not-supported-in-this-environment": "Trình duyệt đang chặn đăng nhập (chế độ riêng tư hoặc lưu trữ bị hạn chế). Hãy thử lại bằng Safari thường.",
+    "auth/popup-blocked": "Trình duyệt đã chặn cửa sổ đăng nhập. Hãy cho phép popup cho trang này rồi thử lại.",
+    "auth/popup-closed-by-user": "Bạn đã đóng cửa sổ đăng nhập trước khi hoàn tất.",
+    "auth/cancelled-popup-request": "Yêu cầu đăng nhập đã bị thay thế bởi một lần bấm khác.",
+    "auth/network-request-failed": "Không có kết nối mạng tới Firebase.",
+    "auth/internal-error": "Firebase gặp lỗi nội bộ khi khôi phục phiên đăng nhập."
+  };
+  return messages[code] || "";
+}
+
 async function signInToCloud(){
   if(location.protocol !== "https:" && location.hostname !== "localhost"){
     showCloudError("Đồng bộ cần chạy trên HTTPS hoặc localhost. Hãy triển khai trang web rồi mở liên kết trên điện thoại.");
@@ -2460,7 +2476,10 @@ async function signInToCloud(){
     }
     await cloudSync.signIn();
   }catch(error){
-    showCloudError("Không thể kết nối Firebase: " + error.message);
+    const hint = describeAuthError(error);
+    showCloudError(
+      "Không thể kết nối Firebase: " + error.message + (hint ? " — " + hint : "")
+    );
     applySyncState("local");
   }finally{
     $("btnSignIn").disabled = false;
