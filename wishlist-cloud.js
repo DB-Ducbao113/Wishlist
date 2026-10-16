@@ -162,9 +162,10 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
 
   return {
     get user(){ return user; },
-    signIn: () => matchMedia("(max-width: 700px)").matches
-      ? signInWithRedirect(auth, provider)
-      : signInWithPopup(auth, provider),
+    // Preview authDomain differs from its page origin; redirect can lose the
+    // auth result on iOS Safari due to cross-origin storage restrictions.
+    // Experiment: initiate popup directly from the user click on all devices.
+    signIn: () => signInWithPopup(auth, provider),
     signOut: () => signOut(auth),
     async uploadImage(dataUrl){
       if(!user) throw new Error("Hãy đăng nhập Google để đồng bộ ảnh.");
