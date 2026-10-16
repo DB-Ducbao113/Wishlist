@@ -1,5 +1,10 @@
 # P1 Blocker — Google Sign-in trả `redirect_uri_mismatch`
 
+> **✅ ĐÃ GIẢI QUYẾT — 2026-10-16.** Google đã chấp nhận redirect URI
+> `https://wishlist-787d2.web.app/__/auth/handler` (kiểm chứng: OAuth authorize URL trả **trang đăng nhập Google**,
+> không còn `redirect_uri_mismatch`). Chủ dự án xác nhận đăng nhập + đồng bộ thành công; Firestore đã có dữ liệu sync.
+> Không cần đổi code hay deploy lại. Tài liệu dưới đây giữ lại làm hồ sơ sự cố.
+
 **Mức độ**: P1 — chặn phát hành 1.0 Stable (người dùng mới không đăng nhập được).
 **Phát hiện**: 2026-10-16, kiểm thử trên `https://wishlist-787d2.web.app`.
 

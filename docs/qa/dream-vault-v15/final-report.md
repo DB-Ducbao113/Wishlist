@@ -17,13 +17,13 @@
 | Regression V9–V14 | **GO** — 303/303 |
 | Accessibility / Responsive / Performance (lab) | **GO** (không regression) |
 | Firebase Sync (read/write/cách ly) thật | **VERIFIED** — đọc/ghi sync hoạt động; token Google thật đọc dữ liệu của mình 200, uid khác 403 |
-| Google Login cho người dùng **mới** | **🔴 NO-GO — P1** — popup trả `redirect_uri_mismatch` |
+| Google Login cho người dùng mới | **✅ RESOLVED** — OAuth redirect URI đã được chấp nhận; đăng nhập + sync xác nhận thành công |
 | Firestore Rules đã deploy trên production | **VERIFIED** — rules deploy khớp tuyệt đối với source; ẩn danh `403`; cách ly UID `403` |
 | URL production thật (HTTPS, headers, asset, 404 nội bộ, smoke) | **VERIFIED** — smoke 10/10 PASS; mọi đường dẫn nội bộ đều 404 |
 
-**P0 = 0. P1 = 1 (ĐANG MỞ — Google OAuth `redirect_uri_mismatch`, xem §10).**
+**P0 = 0. P1 = 0** (P1 OAuth `redirect_uri_mismatch` đã được giải quyết — xem §10).
 
-> V15 RC **đã được deploy lên production** (`https://wishlist-787d2.web.app`). Verification production ở §9: Hosting, headers, Firestore Rules và sync read/write đều **VERIFIED** — nhưng **đăng nhập Google cho người dùng mới đang hỏng (P1)**. Do đó **Dream Vault 1.0 Stable = NO-GO** tới khi P1 ở §10 được sửa và xác minh lại.
+> V15 RC **đã được deploy lên production** (`https://wishlist-787d2.web.app`). Verification production ở §9: Hosting, headers, Firestore Rules, Google Login và sync read/write **đều VERIFIED**. **Dream Vault 1.0 Stable = GO về mặt kỹ thuật**; còn lại bước tạo tag `ui-v15.0.0` (cần phê duyệt GO của chủ dự án) và xác nhận sao lưu Gate 0.
 
 ---
 
@@ -229,15 +229,12 @@ Bằng chứng: `img/prod-browser.json`.
 
 Bằng chứng: `img/prod-firestore-rules.json`, `img/prod-rules-live.json`.
 
-### 9.4 Google Auth — 🔴 đăng nhập MỚI HỎNG (P1)
-SDK nạp từ `gstatic.com/firebasejs/10.14.1`; bấm "Đăng nhập" mở popup tới `/__/auth/handler`. Tuy nhiên popup Google trả:
-
-> Access blocked: This app's request is invalid — **Error 400: redirect_uri_mismatch**
-
-Redirect URI bị từ chối: `https://wishlist-787d2.web.app/__/auth/handler` (do `authDomain` = `wishlist-787d2.web.app` chưa được đăng ký trong OAuth client).
-→ **Người dùng mới không thể đăng nhập.** Chi tiết + cách sửa: `production-blocker-oauth.md` và §10.
-
-Trong khi đó, **sync với phiên đã đăng nhập cũ hoạt động**: app đọc danh sách từ máy chủ (`Đã nhận dữ liệu từ máy chủ`), và bản ghi thêm mới đã xuất hiện trên Firestore (xác nhận qua admin read rồi dọn sạch).
+### 9.4 Google Auth — ✅ đã hoạt động
+SDK nạp từ `gstatic.com/firebasejs/10.14.1`; popup mở tới `/__/auth/handler`.
+Ban đầu popup trả `redirect_uri_mismatch` (xem §10). Sau khi redirect URI được đăng ký trong Google Cloud Console:
+- Kiểm chứng độc lập: OAuth authorize URL với `redirect_uri=https://wishlist-787d2.web.app/__/auth/handler` trả **trang đăng nhập Google** (không còn lỗi).
+- Chủ dự án xác nhận đăng nhập + đồng bộ thành công.
+- Firestore `/users/{uid}/items` đã có dữ liệu sync (10 document: 6 món thật + 4 món minh họa).
 Bằng chứng: `img/prod-auth-probe.json`, `img/prod-login-detail.json`.
 
 ### 9.5 Tổng kết 6 bước
@@ -245,15 +242,19 @@ Bằng chứng: `img/prod-auth-probe.json`, `img/prod-login-detail.json`.
 |---|---|
 | 0. Sao lưu | ⚠️ Chưa có bằng chứng (nên xác nhận trước thao tác tiếp theo) |
 | 1. Firestore Rules (deployed + ẩn danh + chéo 2 tài khoản) | ✅ **VERIFIED** (token thật: của mình 200 / uid khác 403) |
-| 2. Google Login/Sync | 🔴 **NO-GO** — sync OK, nhưng **đăng nhập mới hỏng** (`redirect_uri_mismatch`) |
+| 2. Google Login/Sync | ✅ **RESOLVED** — OAuth redirect URI đã đăng ký; đăng nhập + sync xác nhận thành công |
 | 3. Build `dist/` + audit | ✅ VERIFIED (local 48/0; production chỉ runtime asset) |
 | 4. Deploy | ✅ Do chủ dự án thực hiện |
 | 5. Smoke production | ✅ 10/10 PASS |
-| 6. Tag `ui-v15.0.0` | ⛔ **HOLD** — chờ sửa P1 (§10) + phê duyệt GO |
+| 6. Tag `ui-v15.0.0` | ⏳ Chờ phê duyệt GO |
 
 ---
 
-## 10. P1 — Google Login `redirect_uri_mismatch` (blocker)
+## 10. P1 — Google Login `redirect_uri_mismatch` (✅ đã giải quyết)
+
+> **Trạng thái: RESOLVED (2026-10-16).** Chủ dự án đã đăng ký redirect URI trong Google Cloud Console; kiểm chứng
+> độc lập cho thấy Google chấp nhận `https://wishlist-787d2.web.app/__/auth/handler` và đăng nhập + sync thành công.
+> Hồ sơ sự cố đầy đủ: `production-blocker-oauth.md`.
 
 **Mức độ**: P1 — chặn phát hành 1.0 Stable.
 **Nguyên nhân**: `wishlist-cloud.js` đặt `authDomain: "wishlist-787d2.web.app"` → Firebase Auth dùng
