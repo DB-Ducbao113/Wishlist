@@ -302,21 +302,31 @@ standardised — the rest of the dashboard is not built in F1.
 
 ## 5. Commit, diff and test results
 
-**Commit:** `PENDING_SHA` — `feat(dashboard): split global metrics and add ownership progress`
+**Commit:** `39b7eed` — `feat(dashboard): separate global metrics and add ownership progress`
+
+_(The SHA above is pinned by a follow-up `docs(f1)` commit that changes this one
+line and nothing else: no history rewrite, no force-push, no extra branch.)_
+
+**Diff** (`git show --stat 39b7eed`) — 13 files changed, 2157 insertions(+), 28 deletions(-)
 
 ```
- wishlist.html                                   | 139 ++++++++++++++++++++++++-----
- scripts/check-hosting.mjs                       | 5 +++-
- css/dashboard-v16.css                           | new (49 CSS files published)
- docs/qa/dream-vault-v16/dashboard-foundation.md | new
- docs/qa/dream-vault-v16/f1-report.md            | new
- docs/qa/dream-vault-v16/f1-audit-results.json   | new
- docs/qa/dream-vault-v16/kpi-before.json         | new
- docs/qa/dream-vault-v16/kpi-after.json          | new
- docs/qa/dream-vault-v16/img/                    | new (3 screenshots)
- docs/qa/dream-vault-v15/hosting-manifest.json   | regenerated (52 → 53 files)
- docs/qa/dream-vault-v15/hosting-audit.json      | regenerated (verdict FAIL → PASS)
+ wishlist.html                                      |  156 ++-
+ scripts/check-hosting.mjs                          |    6 +-
+ css/dashboard-v16.css                              |  171 +++        (new)
+ docs/qa/dream-vault-v16/f1-report.md               |  462 +++        (new)
+ docs/qa/dream-vault-v16/dashboard-foundation.md    |  252 +++        (new)
+ docs/qa/dream-vault-v16/f1-audit-results.json      | 1072 +++        (new)
+ docs/qa/dream-vault-v16/kpi-before.json            |   22 +         (new)
+ docs/qa/dream-vault-v16/kpi-after.json             |   22 +         (new)
+ docs/qa/dream-vault-v16/img/f1-dashboard-desktop-50items.png  | Bin     (new)
+ docs/qa/dream-vault-v16/img/f1-dashboard-desktop-empty.png    | Bin     (new)
+ docs/qa/dream-vault-v16/img/f1-dashboard-mobile-50items.png   | Bin     (new)
+ docs/qa/dream-vault-v15/hosting-manifest.json      |    7 +-       (regenerated 52 -> 53 files)
+ docs/qa/dream-vault-v15/hosting-audit.json         |   15 +-       (regenerated FAIL -> PASS)
 ```
+
+`wishlist.html` breakdown: `+139 / -17` — 17 lines removed are exactly the old
+filtered-list KPI computation and the two misleading labels.
 
 ### Tests actually run
 
