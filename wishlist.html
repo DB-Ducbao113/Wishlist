@@ -2264,6 +2264,14 @@ function init(){
       $("fImageUrl").focus(); return;
     }
 
+    // Never silently treat a device-only image as successfully cloud-synced.
+    if (image.startsWith("data:image/") && !cloudSync?.user) {
+      setImageSync("error", "Ảnh chưa được đồng bộ. Hãy đăng nhập Google và thử lưu lại.");
+      showCloudError("Chưa kết nối tài khoản Firebase: ảnh chỉ có thể lưu trên thiết bị này.");
+      const localOnly = confirm("Bạn chưa kết nối Firebase. Ảnh sẽ CHỈ lưu trên thiết bị này, không đồng bộ sang thiết bị khác. Bạn vẫn muốn lưu cục bộ?");
+      if (!localOnly) return;
+    }
+
     if (image.startsWith("data:image/") && cloudSync?.user) {
       const button = $("form").querySelector('button[type="submit"]');
       if (button?.disabled) return;
@@ -2305,7 +2313,7 @@ function init(){
     if(!save()){ items = backup; resync(); return; }
     if(uploadedNow) setImageSync("synced", "Ảnh đã tải lên và lưu. Danh sách sẽ đồng bộ với máy chủ.");
     render(); $("dlg").close();
-    toast(id ? "Đã cập nhật món." : "Đã thêm món.");
+    toast(image.startsWith("data:image/") && !cloudSync?.user ? "Đã lưu trên thiết bị này — ảnh chưa đồng bộ." : (id ? "Đã cập nhật món." : "Đã thêm món."));
   });
 
   // Loc / tim kiem / sap xep: search debounce, select phan hoi tuc thi
