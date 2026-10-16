@@ -1,0 +1,28 @@
+FAIL | Z1a Không còn link motion.css / cinematic-v7-hero.css; 48 -> 46 stylesheet | {"n":47,"motion":false,"cine":false}
+PASS | Z1b Không còn selector hero-scene / motion-button trong bất kỳ stylesheet nào
+PASS | Z1c Hai file chết đã bị xóa khỏi server (404)
+PASS | Z2a Ô tìm kiếm #q có tên truy cập
+PASS | Z2b viewbar switch + stats có role=group (aria-label hợp lệ)
+PASS | Z2c Mọi phần tử tương tác đều có tên truy cập
+PASS | Z2d Landmark + heading cơ bản tồn tại
+PASS | Z3 @320x568: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @360x640: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @375x667: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @375x812: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @390x844: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @414x896: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @430x932: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @768x1024: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @1024x900: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @1280x800: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @1440x900: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z3 @1920x1080: gallery + focus không tràn, nút viewbar bấm được, focus 1 cột
+PASS | Z4a Add tăng 1, Delete giảm 1
+PASS | Z4b Search lọc đúng, Quick View mở/đóng, Tilt transform sống
+PASS | Z5 Reduced motion: không tràn, không animation card
+PASS | Z6 Dialog mở modal, focus vào trong, Escape đóng
+PASS | Z7 Console JS errors = 0
+PASS | Z8 Không có lỗi tài nguyên ngoài dự kiến
+
+==== V14 SUMMARY: 24/25 PASS, 1 FAIL ====
+FAIL >> Z1a Không còn link motion.css / cinematic-v7-hero.css; 48 -> 46 stylesheet :: {"n":47,"motion":false,"cine":false}

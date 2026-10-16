@@ -1,0 +1,131 @@
+PASS | A1 QV mở từ nút "Xem chi tiết" + focus nút ×
+FAIL | A2 QV hiển thị đúng title/price/category/status/priority/date | {"title":"Tai nghe không dây chống ồn chủ động thế hệ mới","price":"4.990.000 ₫","cat":"Công nghệ","status":"Muốn mua","priority":"Cao","date":"13/10/2026","note":"Chống ồn chủ động tốt nhất trong tầm giá — mình sẽ dùng cho những buổi làm việc dài ở quán cà phê. Bản màu lavender đã hết hàng hai lần nên phải kiên nhẫn chờ. Khi mua sẽ dùng kèm pad nhung thay thế.","plaque":"VẬT PHẨM 007","obj":"VẬT PHẨM 007 — XEM CHI TIẾT","buyHref":"https://example.com/buy","buyTarget":"_blank","buyRel":"noopener noreferrer","buyHidden":false,"noLinkHidden":true,"imgFit":"contain"}
+PASS | A2b QV ghi chú đầy đủ (q1, dài)
+PASS | A2c QV nhãn VẬT PHẨM theo thứ tự render
+PASS | A2d QV link mua an toàn (safeUrl, _blank, noopener)
+PASS | A2e QV ảnh object-fit contain
+PASS | A3 Escape (trusted) đóng QV, focus quay về nút mở
+PASS | A4 Nút × và "Quay lại Gallery" đóng + trả focus
+PASS | A5 QV ghi chú dài (q3) đủ + không tràn khung
+PASS | A6 QV không có link → ẩn "Mở nơi bán", hiện "Chưa có liên kết mua"
+PASS | A7 Ảnh hỏng trong QV → fallback placeholder, không vỡ khung
+PASS | A8 QV item đã mua → nhẫn "Đã mua" (purchased)
+PASS | B6 Dashboard tổng hợp đúng (34.690.000 / 320.000 / 7 món)
+PASS | B1 Status chip giữ hành vi cycle + không mở QV
+PASS | B2 Purchased Celebration + is-purchased khi cycle sang "Đã mua"
+PASS | B3 Card giữ link "Mở nơi bán" (target _blank, noopener)
+PASS | B4 Sửa trên card mở form đúng item, không mở QV
+PASS | B5 Sort giá giảm dần → card đầu là VẬT PHẨM 001 = item đắt nhất (R3: theo thứ tự render)
+PASS | B5b Search lọc còn 1 card, chỉ số về VẬT PHẨM 001
+PASS | B5c Filter trạng thái "Muốn mua" → 3 card (q1,q6,q7)
+PASS | B7 Tilt card còn hoạt động (transform đổi khi hover)
+PASS | B8 R2: opener bị re-render → close an toàn, focus không về node cũ
+PASS | A9 Mở/đóng QV không mutate dữ liệu (localStorage giữ nguyên)
+PASS | F1 Grid entrance hoàn tất, card không kẹt opacity 0
+PASS | R1 QV→Sửa: QV đóng trước, form mở, focus vào fName (không về Gallery)
+PASS | R1 (sau close event) focus vẫn trong form, không quay về nút Gallery
+PASS | R1b Mở lại QV sau khi sửa → hiển thị dữ liệu mới nhất theo ID
+PASS | A10 Không chồng modal: form đang mở → QV không mở được
+PASS | A11 ID không tồn tại → QV đóng, có toast, không crash
+PASS | A12 Item đã xóa → openQuickView an toàn (đóng + toast, không crash)
+FAIL | C1 @1280 grid 3 cột, card ≥300px, không nhồi nhét | {"cols":3,"min":263}
+FAIL | C2 @1280 featured span 2 cột (khớp 2×card + gap) | feat=844 card=263
+PASS | C3 @1280 nút hành động không cắt chữ, cao ≥40px
+PASS | C4 @1280 title dài (q6) không tràn card
+PASS | C5 @1280 QV split ≈ 56.00000000000001/43.99999999999999 (±0.04)
+PASS | C6 @1280 QV nằm trọn trong viewport + panel cuộn được (overflow-y auto) + bo góc
+FAIL | C1 @1440 grid 3 cột, card ≥300px, không nhồi nhét | {"cols":3,"min":285}
+FAIL | C2 @1440 featured span 2 cột (khớp 2×card + gap) | feat=920 card=285
+PASS | C3 @1440 nút hành động không cắt chữ, cao ≥40px
+PASS | C4 @1440 title dài (q6) không tràn card
+PASS | C5 @1440 QV split ≈ 57.99999999999999/42.00000000000001 (±0.04)
+PASS | C6 @1440 QV nằm trọn trong viewport + panel cuộn được (overflow-y auto) + bo góc
+PASS | C1 @1920 grid 3 cột, card ≥300px, không nhồi nhét
+FAIL | C2 @1920 featured span 2 cột (khớp 2×card + gap) | feat=1076 card=337
+PASS | C3 @1920 nút hành động không cắt chữ, cao ≥40px
+PASS | C4 @1920 title dài (q6) không tràn card
+PASS | C5 @1920 QV split ≈ 57.99999999999999/42.00000000000001 (±0.04)
+PASS | C6 @1920 QV nằm trọn trong viewport + panel cuộn được (overflow-y auto) + bo góc
+PASS | M1 @320×700 không tràn ngang
+PASS | M2 @320×700 gallery 1 cột
+PASS | M3 @320×700 nút card ≥44px (touch)
+PASS | M4 @320×700 Dock hiển thị khi QV đóng
+PASS | M5 @320×700 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)
+PASS | M6 @320×700 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA
+PASS | M7 @320×700 Dock ẩn khi QV mở (không đè modal)
+PASS | M8 @320×700 Panel QV cuộn được (note dài không bị cắt)
+PASS | M9 @320×700 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ
+PASS | M10 @320×700 Dock hiện lại sau khi đóng QV
+PASS | M1 @375×667 không tràn ngang
+PASS | M2 @375×667 gallery 1 cột
+PASS | M3 @375×667 nút card ≥44px (touch)
+PASS | M4 @375×667 Dock hiển thị khi QV đóng
+PASS | M5 @375×667 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)
+PASS | M6 @375×667 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA
+PASS | M7 @375×667 Dock ẩn khi QV mở (không đè modal)
+PASS | M8 @375×667 Panel QV cuộn được (note dài không bị cắt)
+PASS | M9 @375×667 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ
+PASS | M10 @375×667 Dock hiện lại sau khi đóng QV
+PASS | M11 @375×667 Hero CTA vẫn thông dock (giữ hotfix 17G)
+PASS | M1 @375×812 không tràn ngang
+PASS | M2 @375×812 gallery 1 cột
+PASS | M3 @375×812 nút card ≥44px (touch)
+PASS | M4 @375×812 Dock hiển thị khi QV đóng
+PASS | M5 @375×812 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)
+PASS | M6 @375×812 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA
+PASS | M7 @375×812 Dock ẩn khi QV mở (không đè modal)
+PASS | M8 @375×812 Panel QV cuộn được (note dài không bị cắt)
+PASS | M9 @375×812 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ
+PASS | M10 @375×812 Dock hiện lại sau khi đóng QV
+PASS | M1 @430×932 không tràn ngang
+PASS | M2 @430×932 gallery 1 cột
+PASS | M3 @430×932 nút card ≥44px (touch)
+PASS | M4 @430×932 Dock hiển thị khi QV đóng
+PASS | M5 @430×932 QV là bottom sheet (dính đáy, ≤92dvh, bo 28px)
+PASS | M6 @430×932 QV: nút × 44px, CTA ≥48px, không cắt chữ CTA
+PASS | M7 @430×932 Dock ẩn khi QV mở (không đè modal)
+PASS | M8 @430×932 Panel QV cuộn được (note dài không bị cắt)
+PASS | M9 @430×932 cuộn panel hoạt động (hoặc content vừa khít), note q3 đầy đủ
+PASS | M10 @430×932 Dock hiện lại sau khi đóng QV
+PASS | S1 1 item: không dùng Featured layout, QV vẫn mở được
+PASS | S2 12 items @1920: đủ 12, đánh chỉ số đến VẬT PHẨM 012, không tràn, entrance xong
+PASS | S3 Empty state: không card, không wall tile ẩn trong grid
+PASS | K1 Enter mở QV, focus vào nút ×
+PASS | K2 Tab ×6 không focus được control nào phía sau dialog (trap native)
+PASS | K3 Shift+Tab không focus được control phía sau dialog
+PASS | K4 Focus ring visible (outline solid, màu highlight)
+PASS | K5 Escape đóng, focus quay về nút "Xem chi tiết"
+PASS | K6 Status chip cycle bằng Enter (role=button còn nguyên)
+PASS | K7 Không có animation vòng lặp vô hạn trong QV/gallery
+PASS | S7 Reduced Motion: QV + backdrop không animation
+PASS | T1a Tablet 768: không tràn ngang
+PASS | T1b Tablet 768: 0 card bị cắt nút
+PASS | T1c Tablet 768: mobile dock ẩn (chỉ ≤640)
+PASS | T1d Tablet 768: QV mở + vừa viewport
+PASS | T1a Tablet 1024: không tràn ngang
+PASS | T1b Tablet 1024: 0 card bị cắt nút
+PASS | T1c Tablet 1024: mobile dock ẩn (chỉ ≤640)
+PASS | T1d Tablet 1024: QV mở + vừa viewport
+PASS | V1a Desktop note dài: panel tràn > 0 (test có ý nghĩa)
+PASS | V1b Desktop note dài: nút × vẫn trong viewport sau scroll
+PASS | V1c Desktop: hit-test trỏ đúng nút × (bấm được)
+PASS | V1d Mobile scrolled: nút × vẫn thấy
+PASS | V2a CTA mobile position: sticky
+PASS | V2b CTA mobile nền đục (alpha ≥ .9)
+PASS | V2c CTA chạm đáy panel, không còn dải lòi chữ
+PASS | V3a Form Thêm mở + submit được
+PASS | V3b Thêm item: card mới xuất hiện (newest-first), form đóng
+PASS | V3c VẬT PHẨM index mới = VẬT PHẨM 001 (đánh số theo render, không trùng)
+PASS | V3d Dọn QA: xóa item added, về lại 7
+PASS | V4a Featured: plaque stage ≠ story index (không lặp nguyên văn)
+FAIL | V4b Featured: cả plaque stage + story kicker đều thấy | {"plaqueText":"VẬT PHẨM 001 — ĐIỀU ƯỚC ĐÃ CHỌN","indexText":"VẬT PHẨM 001","plaqueVisible":false,"indexVisible":true,"sameText":false}
+PASS | F2 Console errors = 0 qua toàn bộ suite
+
+==== SUMMARY: 115/122 PASS, 7 FAIL ====
+FAIL >> A2 QV hiển thị đúng title/price/category/status/priority/date :: {"title":"Tai nghe không dây chống ồn chủ động thế hệ mới","price":"4.990.000 ₫","cat":"Công nghệ","status":"Muốn mua","priority":"Cao","date":"13/10/2026","note":"Chống ồn chủ động tốt nhất trong tầm giá — mình sẽ dùng cho những buổi làm v
+FAIL >> C1 @1280 grid 3 cột, card ≥300px, không nhồi nhét :: {"cols":3,"min":263}
+FAIL >> C2 @1280 featured span 2 cột (khớp 2×card + gap) :: feat=844 card=263
+FAIL >> C1 @1440 grid 3 cột, card ≥300px, không nhồi nhét :: {"cols":3,"min":285}
+FAIL >> C2 @1440 featured span 2 cột (khớp 2×card + gap) :: feat=920 card=285
+FAIL >> C2 @1920 featured span 2 cột (khớp 2×card + gap) :: feat=1076 card=337
+FAIL >> V4b Featured: cả plaque stage + story kicker đều thấy :: {"plaqueText":"VẬT PHẨM 001 — ĐIỀU ƯỚC ĐÃ CHỌN","indexText":"VẬT PHẨM 001","plaqueVisible":false,"indexVisible":true,"sameText":false}

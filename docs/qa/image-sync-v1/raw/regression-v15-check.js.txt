@@ -1,0 +1,18 @@
+PASS | D1 CRUD + persistence: 0->add/ edit/ delete; 12 & 50 lưu và render đúng
+PASS | D2 Export->Import roundtrip: JSON byte-identical, render đúng unicode/emoji
+PASS | D3 JSON hỏng: báo lỗi rõ ràng, dữ liệu không đổi, không crash
+PASS | D4 Import trùng id + bản ghi sai: bỏ bản ghi lỗi, id được làm duy nhất, status/priority về mặc định
+PASS | D5 Giá không hợp lệ (âm/chữ/null/float/Infinity) -> số nguyên >= 0, không NaN
+PASS | D6 XSS qua import: không thực thi script, text hiển thị nguyên văn
+PASS | D7 localStorage đầy: báo "bộ nhớ đầy", dialog vẫn mở, dữ liệu cũ nguyên vẹn
+PASS | D8 Guard ảnh: từ chối tệp không phải ảnh; chặn ảnh thứ 13 (giới hạn 12)
+PASS | S1 safeUrl chỉ cho http(s):// và data:image/; chặn javascript/vbscript/data:text
+PASS | S2 XSS form live (name/category/note): không thực thi, text nguyên văn, không chèn thẻ
+PASS | S2b Form chặn link javascript: (báo lỗi, dialog mở, không thêm món)
+PASS | S3 Link mua ngoài: rel="noopener noreferrer" + target="_blank"
+PASS | S4 Không lưu token/secret dễ lộ trong localStorage/sessionStorage
+INFO headers: {"cache-control":"no-store","connection":"keep-alive","content-type":"text/html; charset=utf-8","date":"Fri, 16 Oct 2026 08:03:36 GMT","keep-alive":"timeout=5"}
+PASS | P1 Render 50 món < 400ms, đủ 50 card
+PASS | S6 Console JS errors = 0 (toàn bộ kịch bản V15)
+
+==== V15 SUMMARY: 15/15 PASS, 0 FAIL ====

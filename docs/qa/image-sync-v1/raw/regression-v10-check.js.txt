@@ -1,0 +1,29 @@
+PASS | G1a Brand = "Dream Vault." + tagline "The Không gian lưu giữ ước mơ"
+PASS | G1b Brand mark dùng gradient (nhận diện Dream Vault)
+PASS | G1c Toàn bộ ID header/nav/sync được giữ nguyên (btnDeleteSample đã gỡ theo kế hoạch; thêm ID trạng thái ảnh)
+PASS | G1d Cloud Sync panel + status dot (::before) hiển thị
+PASS | G2a Overview có heading "01 — Your Toàn cảnh bộ sưu tập" + serif title
+PASS | G2b Thẻ chính dominant (rộng hơn, chữ số lớn hơn hẳn thẻ phụ)
+PASS | G2c Thẻ chính là signature card (gradient) + watermark số đã gỡ
+PASS | G2d sumTotal/sumSpent/sumCount đều hiện diện
+PASS | G2e sumTotal cập nhật động khi dữ liệu đổi
+PASS | G3a Discovery Studio có số "02" + eyebrow "Discover your wishes"
+PASS | G3b Toàn bộ ID filter/search/reset được giữ nguyên
+FAIL | G3c Search dominant (≥70px) + 4 filter cùng 1 hàng trên desktop | {"no":"02","eb":"02 Khám phá điều ước","searchH":54,"rowGroups":2,"missing":[]}
+PASS | G3d Search lọc được + xóa từ khóa phục hồi danh sách
+PASS | G3e Sort thay đổi thứ tự gallery (thuật toán giữ nguyên)
+PASS | G4 1280x950 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 1440x950 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 1920x1080 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 768x1024 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 1024x900 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 320x568 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 320x700 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 375x667 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 375x812 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G4 430x932 không tràn ngang + CTA "Thêm món" bấm được
+PASS | G5 Reduced Motion: không tràn, gallery render, animation tắt
+PASS | V10 Console errors = 0 qua toàn bộ suite
+
+==== V10 SUMMARY: 25/26 PASS, 1 FAIL ====
+FAIL >> G3c Search dominant (≥70px) + 4 filter cùng 1 hàng trên desktop :: {"no":"02","eb":"02 Khám phá điều ước","searchH":54,"rowGroups":2,"missing":[]}

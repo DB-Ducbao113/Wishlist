@@ -1,0 +1,36 @@
+PASS | W1a .v11-workspace tồn tại, rail = #collection trực tiếp
+PASS | W1b #grid + #empty + #resultStatus cùng nằm trong canvas (node DI CHUYỂN)
+PASS | W1c Toàn bộ ID collection/gallery được giữ nguyên
+PASS | W1d Form owners giữ nguyên (4 select + input #q)
+PASS | W2 1280x950 desktop: grid 2 cột, rail bên trái canvas, rail ~300px (≤30%)
+PASS | W2b 1280x950 featured (OBJECT 001) span trọn canvas
+PASS | W2 1440x950 desktop: grid 2 cột, rail bên trái canvas, rail ~300px (≤30%)
+PASS | W2b 1440x950 featured (OBJECT 001) span trọn canvas
+PASS | W2 1920x1080 desktop: grid 2 cột, rail bên trái canvas, rail ~300px (≤30%)
+PASS | W2b 1920x1080 featured (OBJECT 001) span trọn canvas
+PASS | W3a Rail sticky (position:sticky) khi cuộn vào workspace
+PASS | W3b Rail không che header (header đã cuộn khỏi viewport)
+PASS | W4a Desktop nav hiển thị, tái dùng anchor #top/#collection
+PASS | W4b Nav link bấm được (không bị che)
+PASS | W4c Desktop nav ẩn trên mobile (không phá header 1 hàng)
+PASS | W5 768x1024 tablet: rail xếp chồng TRÊN canvas (toolbar full-width)
+PASS | W5 1024x900 tablet: rail xếp chồng TRÊN canvas (toolbar full-width)
+PASS | W6 320x568 mobile: một cột, search-first, dock dùng được, không tràn
+PASS | W6 320x700 mobile: một cột, search-first, dock dùng được, không tràn
+PASS | W6 375x667 mobile: một cột, search-first, dock dùng được, không tràn
+PASS | W6 375x812 mobile: một cột, search-first, dock dùng được, không tràn
+PASS | W6 430x932 mobile: một cột, search-first, dock dùng được, không tràn
+PASS | W7a Search lọc + phục hồi (sau khi node di chuyển)
+PASS | W7b Sort thay đổi thứ tự gallery
+PASS | W7c Nút "Xóa bộ lọc" reset search + 3 filter + sort về mặc định
+PASS | W7d Quick View mở từ gallery (native <dialog>)
+PASS | W7e Quick View đóng bằng Escape
+PASS | W8 Add/Edit/Delete vẫn hoạt động (dialog + xóa giảm số card)
+PASS | W9a 0 item: empty state hiển thị trong canvas
+PASS | W9b 1 item: render đúng, không tràn canvas
+PASS | W9b 2 item: render đúng, không tràn canvas
+PASS | W9c 12 item: featured vẫn span canvas, gallery còn nguyên
+PASS | W10 Reduced Motion: workspace render, không tràn
+PASS | V11 Console errors = 0 qua toàn bộ suite
+
+==== V11 SUMMARY: 34/34 PASS, 0 FAIL ====

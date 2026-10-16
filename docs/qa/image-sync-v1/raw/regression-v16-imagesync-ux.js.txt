@@ -1,0 +1,15 @@
+PASS | T1 Người dùng mới: danh sách TRỐNG, không tự tạo dữ liệu mẫu
+PASS | T2 Dữ liệu cũ (kể cả id sample-*) KHÔNG bị tự xóa; không còn nút xóa mẫu
+PASS | T3a Header mặc định: "Chỉ lưu trên thiết bị", notice mới, không còn tuyên bố lỗi thời
+PASS | T3b applySyncState("synced"): hiển thị đúng "Đã đồng bộ" + tài khoản
+PASS | T3c "Đã đồng bộ" KHÔNG hiện ở trạng thái lỗi/offline/local
+PASS | T3d Thanh ảnh: lỗi hiện + Retry; đang tải không có Retry; idle ẩn
+PASS | T4a "Đánh dấu đã mua": status=purchased, card is-purchased, nút đổi "Hoàn tác", stats Đã chi cập nhật
+PASS | T4b "Hoàn tác": về ordered, nút trở lại "Đánh dấu đã mua"
+PASS | T5 Quick View desktop: 2 cột tách biệt, ảnh nằm trong sân khấu, không tràn viewport, nút đóng truy cập được
+PASS | T5b Quick View: "Đánh dấu đã mua" cập nhật trạng thái + nhãn + hoàn tác được
+PASS | T5c Quick View ghi chú dài: panel cuộn được, dialog không tràn viewport, nút đóng thấy
+PASS | T6 Quick View mobile: 1 cột, contained, nút đóng trong dialog
+PASS | T7 Console JS errors = 0 (toàn bộ kịch bản V16)
+
+==== V16 SUMMARY: 13/13 PASS, 0 FAIL ====

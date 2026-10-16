@@ -1,0 +1,5 @@
+POST production-origin no-auth -> 401
+POST preview-origin no-auth -> 403
+POST evil-origin no-auth -> 403
+OPTIONS preflight -> 204
+GET wrong-method -> 404

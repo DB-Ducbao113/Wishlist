@@ -1,0 +1,52 @@
+PASS | Y1a Viewbar + 2 nút Gallery/Focus tồn tại
+PASS | Y1b aria-pressed khởi tạo đúng (gallery=true, focus=false) + aria-controls=grid
+PASS | Y1c Viewbar là group có nhãn
+PASS | Y2 @1280: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @1280: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ
+PASS | Y2 @1440: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @1440: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ
+PASS | Y2 @1920: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @1920: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ
+PASS | Y2 @768: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @768: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ
+PASS | Y2 @1024: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @1024: Focus = 1 cột (thực tế, không chỉ attribute) + surface=grid + featured đồng bộ
+PASS | Y2 @320: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @320: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ
+PASS | Y2 @375: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @375: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ
+PASS | Y2 @375: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @375: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ
+PASS | Y2 @430: toggle focus/gallery + aria-pressed cập nhật
+PASS | Y3 @430: Focus = 1 cột (thực tế, không chỉ attribute) + surface=flex + featured đồng bộ
+PASS | Y4 Toggle nhiều lần không nhân bản card
+PASS | Y5 Focus giữ nguyên qua search/filter/sort
+PASS | Y6 Focus giữ nguyên qua add + delete; không nhân bản
+PASS | Y7a Card Tilt vẫn sở hữu transform trong Focus (matrix, không "none")
+PASS | Y7b V13 CSS không khai báo transform cho .wishlist-card__surface
+PASS | Y8a Viewbar có focus-visible outline
+PASS | Y8b Enter bật Focus, Space bật Gallery (bàn phím)
+PASS | Y9a Mở Quick View từ Focus
+PASS | Y9b Escape đóng QV, trả focus, giữ Focus mode
+PASS | Y10a Nút viewbar có tên truy cập + aria-pressed hợp lệ
+PASS | Y10b Ảnh có alt, phần tử trang trí aria-hidden
+PASS | Y14 Status cycle trong Focus giữ mode + pressed + đổi trạng thái
+PASS | Y15 Edit trong Focus giữ mode + cập nhật nội dung
+PASS | Y16 Import trong Focus giữ mode + pressed + nạp món mới
+PASS | Y11 @1280: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @1440: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @1920: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @768: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @1024: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @320: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @375: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @375: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y11 @430: Focus không tràn ngang + nút viewbar bấm được (dock không che)
+PASS | Y12a Focus + 0 item: empty state, viewbar vẫn dùng được
+PASS | Y12b Focus: no-link không có "Mở nơi bán", vẫn có Xem chi tiết
+PASS | Y12c Focus: ảnh lỗi rơi về placeholder
+PASS | Y13 Reduced Motion + Focus: không tràn, hoạt động
+PASS | V13 Console JS errors = 0 (lỗi tài nguyên mạng tách riêng)
+PASS | V13 Không có lỗi tài nguyên mạng ngoài dự kiến
+
+==== V13 SUMMARY: 50/50 PASS, 0 FAIL ====

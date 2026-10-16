@@ -1,0 +1,42 @@
+PASS | X1a Link CSS V12 hiện diện, load sau V11
+PASS | X1b Stage V12 áp dụng: media có gradient stage + frame là mount inset
+PASS | X2 1280x950: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 1440x950: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 1920x1080: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 768x1024: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 1024x900: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 320x568: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 320x700: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 375x667: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 375x812: ảnh trong media, media trong card, không tràn ngang
+PASS | X2 430x932: ảnh trong media, media trong card, không tràn ngang
+PASS | X3a Mỗi card có tối đa 1 caption V12 (stage caption only once)
+PASS | X3b Caption hiển thị CHỈ trên featured (không lặp nhãn mọi card)
+PASS | X3c Caption là trang trí (aria-hidden="true")
+PASS | X4 Featured span canvas + tiêu đề lớn hơn card thường
+PASS | X5 Purchased card giữ signal (grayscale) — không bị V12 ghi đè
+PASS | X6 V12 CSS không đụng .wishlist-card__surface (Card Tilt transform)
+PASS | X7a "Xem chi tiết" focus được + có outline
+PASS | X7b Mở Quick View từ affordance xem-chi-tiết
+PASS | X7c QV edit bridge mở form + đóng QV
+PASS | X7d QV Escape trả focus về nút mở
+PASS | X8a Card không link: không có "Mở nơi bán" nhưng vẫn có Xem chi tiết
+PASS | X8b Ảnh lỗi rơi về placeholder (data URI) + có alt
+PASS | X9a 0 item: empty state, không card
+PASS | X9b 1 item: render đúng, không tràn
+PASS | X9b 2 item: render đúng, không tràn
+PASS | X9c 50 item: render đủ, không tràn card/canvas
+PASS | X10 1280: Discovery Rail hiển thị + không card nào vượt canvas
+PASS | X10 1440: Discovery Rail hiển thị + không card nào vượt canvas
+PASS | X10 1920: Discovery Rail hiển thị + không card nào vượt canvas
+PASS | X11 320x568: hero CTA bấm được, dock hiện, không tràn
+PASS | X11 375x812: hero CTA bấm được, dock hiện, không tràn
+PASS | X11 430x932: hero CTA bấm được, dock hiện, không tràn
+PASS | X12a Mọi ảnh sản phẩm có alt
+PASS | X12b Phần tử trang trí (plaque/caption) aria-hidden
+PASS | X12c Nút xem-chi-tiết có tên truy cập
+PASS | X13 Reduced Motion: không tràn, animation/tăng tốc tắt
+PASS | V12 Console JS errors = 0 (lỗi tải tài nguyên mạng được tách riêng, không phải lỗi app)
+PASS | V12 Ghi nhận: không có lỗi tài nguyên mạng ngoài dự kiến
+
+==== V12 SUMMARY: 40/40 PASS, 0 FAIL ====
