@@ -51,7 +51,7 @@ Cấu hình cũ `"public": "."` publish **toàn bộ repo** trừ một ignore-l
 | | File sẽ publish | Rò rỉ nội bộ |
 |---|---|---|
 | **Cũ** (`public: "."`) | **719** | **616** (toàn bộ `docs/design/*`, `docs/qa/*`, ảnh QA/JSON nội bộ) |
-| **Mới** (`public: "dist"` allowlist) | **48** (`wishlist.html`, `wishlist-cloud.js`, 46 CSS) | **0** |
+| **Mới** (`public: "dist"` allowlist) | **48 asset + 2 file nền tảng** (`wishlist.html`, `wishlist-cloud.js`, 46 CSS, `_redirects`, `_headers`) | **0** |
 
 → Đây là rò rỉ thông tin nội bộ thật (tài liệu thiết kế, bằng chứng QA, đường dẫn repo). Đã sửa bằng **staging allowlist** (đúng ưu tiên trong spec), fail-closed: thiếu `dist/` thì deploy không publish gì.
 
@@ -164,6 +164,7 @@ Không đổi CSS; V14 đã phủ 12 viewport không tràn. V15 tái xác nhận
 - `hosting-audit.json`, `hosting-manifest.json` — Workstream A.
 - `firestore-rules-static.json` — phân tích rules tĩnh (đã được kiểm chứng live ở §9.3).
 - `production-blocker-oauth.md` — P1 Google Login `redirect_uri_mismatch` + cách sửa. **ĐỌC TRƯỚC KHI PHÁT HÀNH.**
+- `cloudflare-pages-deploy.md` — deploy Cloudflare Pages (build command + output dir + `_redirects`/`_headers`).
 - `img/prod-firestore-rules.json`, `img/prod-rules-live.json` — rules deploy + kiểm chứng cách ly UID bằng token thật.
 - `img/prod-login-detail.json` — chi tiết lỗi OAuth trên production (đã che email/uid).
 - `img/prod-browser.json`, `img/prod-auth-probe.json`, `img/production-hosting-paths.json` — smoke/hosting production.
@@ -243,7 +244,7 @@ Bằng chứng: `img/prod-auth-probe.json`, `img/prod-login-detail.json`.
 | 0. Sao lưu | ⚠️ Chưa có bằng chứng (nên xác nhận trước thao tác tiếp theo) |
 | 1. Firestore Rules (deployed + ẩn danh + chéo 2 tài khoản) | ✅ **VERIFIED** (token thật: của mình 200 / uid khác 403) |
 | 2. Google Login/Sync | ✅ **RESOLVED** — OAuth redirect URI đã đăng ký; đăng nhập + sync xác nhận thành công |
-| 3. Build `dist/` + audit | ✅ VERIFIED (local 48/0; production chỉ runtime asset) |
+| 3. Build `dist/` + audit | ✅ VERIFIED (local 50 file: 48 asset + 2 platform; 0 rò rỉ) |
 | 4. Deploy | ✅ Do chủ dự án thực hiện |
 | 5. Smoke production | ✅ 10/10 PASS |
 | 6. Tag `ui-v15.0.0` | ⏳ Chờ phê duyệt GO |

@@ -79,7 +79,7 @@ Chuẩn bị: 1 tài khoản Google test (được phép dùng).
 ```powershell
 node scripts/build-hosting.mjs     # dựng dist/ từ allowlist
 node scripts/check-hosting.mjs     # in hosting-audit.json
-Get-ChildItem dist -Recurse -File | Measure-Object   # kỳ vọng 48 file
+Get-ChildItem dist -Recurse -File | Measure-Object   # kỳ vọng 50 file (48 asset + _redirects + _headers)
 ```
 **Kỳ vọng**: `verdict: PASS — no repo internals published; all runtime assets present`; **0 rò rỉ**; `cssCount = 46`; có `wishlist.html`, `wishlist-cloud.js`.
 **Phải có**: `docs/`, `firebase.json`, `firestore.rules`, `FIREBASE_SETUP.md`, `.firebaserc`, mọi dotfile **KHÔNG** xuất hiện trong `dist/`.
