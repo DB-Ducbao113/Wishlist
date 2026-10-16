@@ -933,7 +933,7 @@
   #grid.gallery--v2.gallery--v4.gallery--v6
   > .wishlist-card:first-child:not(:only-child)
   .product-media::before {
-    content: "01 / THE FEATURED DREAM";
+    content: "01 / TÁC PHẨM NỔI BẬT";
     position: absolute;
     top: 14px;
     left: 14px;
