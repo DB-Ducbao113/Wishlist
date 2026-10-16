@@ -2411,7 +2411,7 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=6");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=7");
     cloudSync = await initializeWishlistCloud({
       onStatus: (kind, email = "") => applySyncState(kind, email),
       onRemoteItems: (remoteItems, initialSnapshot) => {
@@ -2453,8 +2453,12 @@ async function signInToCloud(){
   $("syncError").textContent = "";
   $("syncError").classList.add("hidden");
   try{
-    const sync = await initializeCloudSync();
-    await sync.signIn();
+    if (!cloudSync) {
+      await initializeCloudSync();
+      showCloudError("Đã khởi tạo. Vui lòng bấm Đăng nhập thêm lần nữa.");
+      return;
+    }
+    await cloudSync.signIn();
   }catch(error){
     showCloudError("Không thể kết nối Firebase: " + error.message);
     applySyncState("local");
