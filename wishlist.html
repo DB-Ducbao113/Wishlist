@@ -189,10 +189,6 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
           <button type="button" id="btnImport">
             Nhập JSON
           </button>
-
-          <button type="button" id="btnDeleteSample">
-            Xóa dữ liệu mẫu
-          </button>
         </div>
       </details>
 
@@ -216,8 +212,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
           class="sync-status"
           role="status"
           aria-live="polite"
+          data-state="local"
         >
-          Đang lưu trên thiết bị này
+          Chỉ lưu trên thiết bị này
         </span>
 
         <span id="syncEmail" class="sync-email"></span>
@@ -237,10 +234,32 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         </button>
       </div>
 
+      <dl class="sync-summary">
+        <div class="sync-summary__item">
+          <dt>Wishlist và hình ảnh</dt>
+          <dd id="syncListState">Chỉ trên thiết bị này</dd>
+        </div>
+        <div class="sync-summary__item">
+          <dt>Tài khoản</dt>
+          <dd id="syncAccountState">Chưa đăng nhập</dd>
+        </div>
+      </dl>
+
       <p class="sync-email nav-account__notice">
-        URL ảnh công khai sẽ đồng bộ.
-        Ảnh tải từ thiết bị chỉ lưu tại thiết bị này.
+        Ảnh mới sẽ đồng bộ sau khi tải lên và lưu thành công.
       </p>
+
+      <div
+        id="imageSyncBar"
+        class="image-sync hidden"
+        role="status"
+        aria-live="polite"
+      >
+        <span id="imageSyncStatus" class="image-sync__text"></span>
+        <button type="button" id="btnImageRetry" class="image-sync__retry hidden">
+          Thử lại
+        </button>
+      </div>
 
       <p
         id="syncError"
@@ -852,6 +871,8 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <a id="qvBuy" class="quick-view__btn quick-view__btn--primary" hidden
          target="_blank" rel="noopener noreferrer">Mở nơi bán</a>
       <p id="qvNoLink" class="quick-view__nolink">Chưa có liên kết mua</p>
+      <button type="button" id="qvPurchase"
+              class="quick-view__btn quick-view__btn--primary qv-purchase">Đánh dấu đã mua</button>
       <div class="quick-view__cta-row">
         <button type="button" id="qvEdit" class="quick-view__btn quick-view__btn--glass">Sửa món này</button>
         <button type="button" id="qvBack" class="quick-view__btn quick-view__btn--ghost">Quay lại Gallery</button>
@@ -1029,9 +1050,6 @@ let pendingDataUrl = "";     // anh upload dang cho (data-URL) khi them/sua
 let cloudSync = null;
 let cloudSyncPromise = null;
 
-function hasSamples(){
-  return items.some(x => String(x.id).startsWith("sample-"));
-}
 // Trang thai ke tiep trong chu trinh: wish -> saving -> ordered -> purchased
 function nextStatus(it){
   const i = STATUSES.findIndex(s => s.key === it.status);
@@ -1077,8 +1095,9 @@ function load(){
   let raw = null;
   try{ raw = localStorage.getItem(STORAGE_KEY); }catch(e){ raw = null; }
   if(raw === null){
-    // Lan dau mo trang: chua tung co du lieu -> them 4 mon mau roi luu luon
-    items = sampleItems();
+    // Người dùng mới bắt đầu với danh sách TRỐNG.
+    // Không tự tạo dữ liệu mẫu; không tự xóa dữ liệu cũ đã đồng bộ.
+    items = [];
     save();
     return;
   }
@@ -1107,34 +1126,6 @@ function resync(){
   render();
 }
 
-/* ===================================================================
-   DU LIEU MAU (minh hoa - gia va link deu la gia lap)
-   =================================================================== */
-function sampleItems(){
-  const now = Date.now();
-  const mk = (o, i) => Object.assign({
-    id: "sample-" + i, name: "", price: 0, image: "", link: "",
-    status: DEFAULT_STATUS, priority: DEFAULT_PRIORITY,
-    category: "", note: "", createdAt: now
-  }, o);
-  return [
-    mk({ name: "Tai nghe chống ồn (minh họa)", price: 2500000,
-         link: "https://example.com/tai-nghe", status: "wish", priority: "high",
-         category: "Công nghệ", note: "Chờ đợt giảm giá cuối năm.",
-         createdAt: now - 86400000 * 6 }, 1),
-    mk({ name: "Bàn phím cơ (minh họa)", price: 1200000,
-         link: "https://example.com/ban-phim", status: "saving", priority: "medium",
-         category: "Công nghệ", note: "Đang để dành 300.000 đồng mỗi tuần.",
-         createdAt: now - 86400000 * 4 }, 2),
-    mk({ name: "Nồi chiên không dầu (minh họa)", price: 1800000,
-         link: "https://example.com/noi-chien", status: "ordered", priority: "low",
-         category: "Nhà cửa", note: "Đã đặt, đang chờ giao.",
-         createdAt: now - 86400000 * 2 }, 3),
-    mk({ name: "Sách lập trình (minh họa)", price: 320000,
-         link: "https://example.com/sach", status: "purchased", priority: "low",
-         category: "Sach", note: "", createdAt: now - 86400000 }, 4)
-  ];
-}
 /* ===================================================================
    LOC + SAP XEP
    =================================================================== */
@@ -1243,9 +1234,6 @@ function render(){
   $("sumTotal").textContent = fmtMoney(sum(pending));
   $("sumCount").textContent = list.length + " món";
   $("sumSpent").textContent = fmtMoney(sum(bought));
-
-  // Chi hien nut xoa du lieu mau khi con mon mau
-  $("btnDeleteSample").classList.toggle("hidden", !hasSamples());
 
   const frag = document.createDocumentFragment();
 
@@ -1685,6 +1673,21 @@ function card(it){
     a.textContent = "Mở nơi bán";
     actions.appendChild(a);
   }
+  // V16: thao tác hoàn thành trực quan + hoàn tác (không thêm trạng thái mới)
+  const bPurchase = document.createElement("button");
+  bPurchase.type = "button";
+  bPurchase.className = "mini mark-purchased";
+  if(it.status === "purchased"){
+    bPurchase.textContent = "Hoàn tác";
+    bPurchase.setAttribute("aria-label", "Hoàn tác trạng thái đã mua cho " + it.name);
+    bPurchase.addEventListener("click", () => undoPurchased(it.id));
+  }else{
+    bPurchase.textContent = "Đánh dấu đã mua";
+    bPurchase.setAttribute("aria-label", "Đánh dấu " + it.name + " là đã mua");
+    bPurchase.addEventListener("click", () => markPurchased(it.id));
+  }
+  actions.appendChild(bPurchase);
+
   const bEdit = document.createElement("button");
   bEdit.className = "mini"; bEdit.textContent = "Sửa";
   bEdit.setAttribute("aria-label", "Sửa món " + it.name);
@@ -1743,6 +1746,26 @@ function updateObjectIndices(){
     const firstLabel = cards[0].dataset.objectIndex || "OBJECT 001";
     sceneNo.dataset.object = firstLabel.replace(/\D/g, "").slice(-3);
   }
+}
+
+function updateQuickViewPurchase(id){
+  const it = items.find(x => x.id === id);
+  if(!it) return;
+  const st = findStatus(it.status);
+  $("qvStatus").textContent = st.label;
+  $("qvStatusRing").textContent = st.label;
+  $("qvStatusRing").className = "quick-view__ring quick-view__ring--" + st.key;
+  const btn = $("qvPurchase");
+  if(!btn) return;
+  const done = it.status === "purchased";
+  btn.textContent = done ? "Hoàn tác đã mua" : "Đánh dấu đã mua";
+  btn.setAttribute(
+    "aria-label",
+    done
+      ? "Hoàn tác trạng thái đã mua cho " + it.name
+      : "Đánh dấu " + it.name + " là đã mua"
+  );
+  btn.classList.toggle("is-undo", done);
 }
 
 function openQuickView(id, opener){
@@ -1804,6 +1827,7 @@ function openQuickView(id, opener){
   }
 
   qv.dataset.id = it.id;
+  updateQuickViewPurchase(it.id);
   // Chỉ trả focus về opener nếu node đó còn tồn tại sau khi re-render
   qvOpener = (opener && opener.isConnected) ? opener : null;
   qv.showModal();
@@ -1925,6 +1949,36 @@ function cycleStatus(id) {
   }
 
   toast('Đã chuyển sang "' + nx.label + '".');
+}
+
+// Đánh dấu đã mua trực tiếp + hoàn tác về bước trước trong STATUSES.
+// Không tạo trạng thái dữ liệu mới.
+function statusBefore(it){
+  const i = STATUSES.findIndex(s => s.key === it.status);
+  return i > 0 ? STATUSES[i - 1] : null;
+}
+
+function markPurchased(id){
+  const it = items.find(x => x.id === id);
+  if(!it || it.status === "purchased") return;
+  const backup = it.status;
+  it.status = "purchased";
+  if(!save()){ it.status = backup; resync(); return; }
+  render();
+  animatePurchasedTransition(it.id);
+  toast('Đã đánh dấu "' + it.name + '" là đã mua.');
+}
+
+function undoPurchased(id){
+  const it = items.find(x => x.id === id);
+  if(!it || it.status !== "purchased") return;
+  const prev = statusBefore(it);
+  if(!prev) return;
+  const backup = it.status;
+  it.status = prev.key;
+  if(!save()){ it.status = backup; resync(); return; }
+  render();
+  toast('Đã hoàn tác "' + it.name + '" về "' + prev.label + '".');
 }
 
 function openForm(item, draft = null){
@@ -2088,6 +2142,9 @@ function init(){
     try{ await cloudSync.signOut(); }
     catch(error){ showCloudError("Không đăng xuất được: " + error.message); }
   });
+  $("btnImageRetry").addEventListener("click", () => {
+    if(typeof imageRetryAction === "function") imageRetryAction();
+  });
   if(location.protocol === "https:" || location.hostname === "localhost"){
     initializeCloudSync().catch(error => showCloudError(error.message));
   }
@@ -2136,6 +2193,15 @@ function init(){
   $("qvClose").addEventListener("click", closeQuickView);
   $("qvBack").addEventListener("click", closeQuickView);
   $("qvEdit").addEventListener("click", editFromQuickView);
+  $("qvPurchase").addEventListener("click", () => {
+    const id = $("qv").dataset.id;
+    if(!id) return;
+    const it = items.find(x => x.id === id);
+    if(!it) return;
+    if(it.status === "purchased") undoPurchased(id);
+    else markPurchased(id);
+    updateQuickViewPurchase(id);
+  });
   // Escape (native cancel) cũng rơi vào "close" này → trả focus ổn định.
   // Không trả focus nếu dialog form đang mở (đã mở từ QV) hoặc node đã bị
   // re-render loại bỏ (isConnected).
@@ -2163,6 +2229,7 @@ function init(){
 
   $("form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    let uploadedNow = false;
     const name = $("fName").value.trim();
     const priceRaw = $("fPrice").value;
     if(!name){ toast("Vui lòng nhập tên món."); $("fName").focus(); return; }
@@ -2200,10 +2267,14 @@ function init(){
       const button = $("form").querySelector('button[type="submit"]');
       if (button?.disabled) return;
       if (button) button.disabled = true;
+      // Cho phép "Thử lại" gửi lại biểu mẫu đang mở (ảnh vẫn còn trong form).
+      imageRetryAction = () => { if($("dlg").open) $("form").requestSubmit(); };
+      setImageSync("uploading", "Đang tải ảnh lên máy chủ ảnh…");
       try {
-        toast("Đang tải ảnh lên Cloudinary...");
         image = await cloudSync.uploadImage(image);
+        uploadedNow = true;
       } catch (error) {
+        setImageSync("error", "Tải ảnh thất bại: " + error.message + ". Ảnh vẫn được giữ trong biểu mẫu.");
         showCloudError("Upload ảnh thất bại: " + error.message + ". Ảnh vẫn được giữ trong form.");
         return;
       } finally {
@@ -2231,6 +2302,7 @@ function init(){
     }
     // Bug 1: luu that bai thi khoi phuc du lieu cu va khong bao thanh cong
     if(!save()){ items = backup; resync(); return; }
+    if(uploadedNow) setImageSync("synced", "Ảnh đã tải lên và lưu. Danh sách sẽ đồng bộ với máy chủ.");
     render(); $("dlg").close();
     toast(id ? "Đã cập nhật món." : "Đã thêm món.");
   });
@@ -2247,17 +2319,6 @@ function init(){
         renderImmediately
       );
     });
-
-  // Xoa toan bo du lieu mau (chi xoa cac mon co id "sample-*")
-  $("btnDeleteSample").addEventListener("click", () => {
-    const samples = items.filter(x => String(x.id).startsWith("sample-"));
-    if(!samples.length) return;
-    if(!confirm("Xóa " + samples.length + " món mẫu? Các món bạn tự thêm sẽ được giữ lại.")) return;
-    const backup = items.slice();
-    items = items.filter(x => !String(x.id).startsWith("sample-"));
-    if(!save()){ items = backup; resync(); return; }
-    render(); toast("Đã xóa dữ liệu mẫu.");
-  });
 
   $("btnClearFilter").addEventListener("click", () => {
     $("q").value = ""; $("fStatus").value = ""; $("fPriority").value = "";
@@ -2279,25 +2340,57 @@ function showCloudError(message){
   $("syncError").classList.remove("hidden");
 }
 
+// Trạng thái đồng bộ do module cloud phát (kind), UI quyết định câu chữ.
+// "Đã đồng bộ" CHỈ hiển thị khi máy chủ thực sự xác nhận (kind === "synced").
+const SYNC_STATES = {
+  unconfigured: { text: "Chưa cấu hình Firebase", list: "Chưa cấu hình", dot: "local" },
+  local:        { text: "Chỉ lưu trên thiết bị này", list: "Chỉ trên thiết bị này", dot: "local" },
+  syncing:      { text: "Đang đồng bộ…", list: "Đang đồng bộ…", dot: "syncing" },
+  synced:       { text: "Đã đồng bộ", list: "Đã đồng bộ", dot: "synced" },
+  offline:      { text: "Đang chờ kết nối máy chủ…", list: "Đang chờ kết nối…", dot: "offline" },
+  error:        { text: "Đồng bộ bị gián đoạn", list: "Đồng bộ gián đoạn", dot: "error" }
+};
+
+function applySyncState(kind, email = ""){
+  const state = SYNC_STATES[kind] || SYNC_STATES.local;
+  const status = $("syncStatus");
+  status.textContent = state.text;
+  status.dataset.state = state.dot;
+  $("syncListState").textContent = state.list;
+  $("syncEmail").textContent = email;
+  $("syncAccountState").textContent = email || "Chưa đăng nhập";
+  $("btnSignIn").classList.toggle("hidden", !!email);
+  $("btnSignOut").classList.toggle("hidden", !email);
+  // Xoá lỗi cũ khi máy chủ đã xác nhận dữ liệu mới.
+  if(kind === "synced"){
+    $("syncError").textContent = "";
+    $("syncError").classList.add("hidden");
+  }
+}
+
+let imageSyncTimer = null;
+let imageRetryAction = null;
+function setImageSync(state, message){
+  const bar = $("imageSyncBar");
+  if(imageSyncTimer){ clearTimeout(imageSyncTimer); imageSyncTimer = null; }
+  bar.dataset.state = state;
+  bar.classList.toggle("hidden", state === "idle");
+  $("imageSyncStatus").textContent = message || "";
+  $("btnImageRetry").classList.toggle("hidden", state !== "error");
+  if(state === "synced"){
+    imageSyncTimer = setTimeout(() => {
+      if($("imageSyncBar").dataset.state === "synced") setImageSync("idle", "");
+    }, 4000);
+  }
+}
+
 async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=5");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=6");
     cloudSync = await initializeWishlistCloud({
-      onStatus: (status, email = "") => {
-        $("syncStatus").textContent = status;
-        $("syncEmail").textContent = email;
-        $("btnSignIn").classList.toggle("hidden", !!email);
-        $("btnSignOut").classList.toggle("hidden", !email);
-        // Clear a stale sync error once the server
-        // confirms fresh data (new statuses no longer
-        // contain "đồng bộ" on success).
-        if(status.includes("máy chủ") || status.includes("đồng bộ")){
-          $("syncError").textContent = "";
-          $("syncError").classList.add("hidden");
-        }
-      },
+      onStatus: (kind, email = "") => applySyncState(kind, email),
       onRemoteItems: (remoteItems, initialSnapshot) => {
         const localImages = new Map(items
           .filter(item => /^data:image\//i.test(item.image || ""))

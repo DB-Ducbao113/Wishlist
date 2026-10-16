@@ -143,7 +143,7 @@ body.dreamscape-v5 #qv .quick-view__panel {
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  padding: 22px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  padding: 0 20px calc(20px + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(
     165deg,
     rgba(255, 255, 255, .96),
@@ -161,7 +161,7 @@ body.dreamscape-v5 #qv .quick-view__top {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  margin: -22px -20px 0;
+  margin: 0 -20px 0;
   padding: 22px 20px 8px;
   background: rgba(255, 255, 255, .88);
   -webkit-backdrop-filter: blur(10px);
@@ -312,6 +312,19 @@ body.dreamscape-v5 #qv .quick-view__cta-row {
   gap: 8px;
 }
 
+/* Quick View: hành động "Đánh dấu đã mua" (V16) — nút chính toàn chiều rộng.
+   Khi đã mua, chuyển sang kiểu phụ (hoàn tác). */
+body.dreamscape-v5 #qv .qv-purchase {
+  width: 100%;
+}
+
+body.dreamscape-v5 #qv .qv-purchase.is-undo {
+  background: rgba(255, 255, 255, .85);
+  border: 1px solid rgba(104, 80, 188, .28);
+  color: var(--ex-accent);
+  box-shadow: none;
+}
+
 body.dreamscape-v5 #qv .quick-view__btn {
   display: inline-flex;
   align-items: center;
@@ -402,18 +415,25 @@ body.dreamscape-v5 #qv::backdrop {
 ========================================================== */
 @media (min-width: 1025px) {
   body.dreamscape-v5 dialog#qv[open] {
-    display: grid;
-    grid-template-columns: minmax(0, 56fr) minmax(0, 44fr);
-    grid-template-rows: minmax(0, 1fr);
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    /* Hai cột 56/44. KHÔNG ép chiều cao cố định: hộp thoại cao theo nội dung
+       nhưng bị chặn bởi max-height; khi ghi chú dài, panel cuộn bên trong
+       (nút đóng sticky luôn thấy). Tránh việc "sân khấu quá lớn" lấn/che
+       phần chi tiết, đồng thời không cắt nội dung. */
+    max-height: min(860px, 92dvh);
     width: calc(100% - 64px);
     max-width: 1160px;
     border-radius: 32px;
   }
 
   body.dreamscape-v5 #qv .quick-view__stage {
+    flex: 0 0 56%;
     aspect-ratio: auto;
-    height: 100%;
+    height: auto;
     min-height: 0;
+    min-width: 0;
     padding: clamp(28px, 3.4vw, 48px);
   }
 
@@ -432,17 +452,17 @@ body.dreamscape-v5 #qv::backdrop {
   }
 
   body.dreamscape-v5 #qv .quick-view__panel {
+    flex: 1 1 44%;
+    min-width: 0;
     gap: 18px;
-    padding: clamp(30px, 3vw, 44px) clamp(26px, 2.6vw, 40px)
-      clamp(26px, 2.6vw, 40px);
+    /* padding-top = 0: khoảng trên do chính thanh sticky (.quick-view__top)
+       đảm nhiệm. Tránh dùng margin âm lớn ở sticky khiến flex chỉ "đặt chỗ"
+       phần margin box → tiêu đề bị thanh dính đè lên (lỗi tồn tại trước). */
+    padding: 0 clamp(26px, 2.6vw, 40px) clamp(26px, 2.6vw, 40px);
   }
 
-  /* Đồng bộ sticky top row với padding panel mới (desktop) */
   body.dreamscape-v5 #qv .quick-view__top {
-    margin:
-      calc(-1 * clamp(30px, 3vw, 44px))
-      calc(-1 * clamp(26px, 2.6vw, 40px))
-      0;
+    margin: 0 calc(-1 * clamp(26px, 2.6vw, 40px)) 0;
     padding: clamp(30px, 3vw, 44px) clamp(26px, 2.6vw, 40px) 8px;
   }
 
@@ -485,8 +505,11 @@ body.dreamscape-v5 #qv::backdrop {
 }
 
 @media (min-width: 1366px) {
-  body.dreamscape-v5 dialog#qv[open] {
-    grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
+  body.dreamscape-v5 #qv .quick-view__stage {
+    flex-basis: 58%;
+  }
+  body.dreamscape-v5 #qv .quick-view__panel {
+    flex-basis: 42%;
   }
 }
 
@@ -574,12 +597,12 @@ body.dreamscape-v5 #qv::backdrop {
 
   body.dreamscape-v5 #qv .quick-view__panel {
     gap: 12px;
-    padding-top: 16px;
+    padding-top: 0;
   }
 
   /* Sync sticky top row với padding-top mới (viewport thấp) */
   body.dreamscape-v5 #qv .quick-view__top {
-    margin-top: -16px;
+    margin-top: 0;
     padding-top: 16px;
   }
 }

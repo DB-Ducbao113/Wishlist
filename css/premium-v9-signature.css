@@ -682,16 +682,14 @@ body.dreamscape-v5 #qv .quick-view__close {
 
   body.dreamscape-v5 #qv .quick-view__panel {
     gap: 16px;
-    padding: clamp(28px, 2.8vw, 42px) clamp(26px, 2.6vw, 38px)
-      clamp(24px, 2.4vw, 34px);
+    /* padding-top = 0: khoảng trên do thanh sticky (.quick-view__top) đảm
+       nhiệm, tránh margin âm lớn ở sticky khiến tiêu đề bị thanh dính đè lên. */
+    padding: 0 clamp(26px, 2.6vw, 38px) clamp(24px, 2.4vw, 34px);
   }
 
   /* Đồng bộ sticky top row với padding panel mới */
   body.dreamscape-v5 #qv .quick-view__top {
-    margin:
-      calc(-1 * clamp(28px, 2.8vw, 42px))
-      calc(-1 * clamp(26px, 2.6vw, 38px))
-      0;
+    margin: 0 calc(-1 * clamp(26px, 2.6vw, 38px)) 0;
     padding: clamp(28px, 2.8vw, 42px) clamp(26px, 2.6vw, 38px) 8px;
   }
 

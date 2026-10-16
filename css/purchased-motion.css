@@ -83,3 +83,13 @@
     animation: none;
   }
 }
+
+/* V16: explicit completion action on each card */
+.wishlist-card .mark-purchased {
+  font-weight: 700;
+}
+
+.wishlist-card.is-purchased .mark-purchased {
+  color: #2E7D5B;
+  border-color: rgba(46, 125, 91, .35);
+}

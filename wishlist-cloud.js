@@ -38,7 +38,7 @@ const isConfigured = Object.values(firebaseConfig).every(value =>
 
 export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError }) {
   if(!isConfigured){
-    onStatus("Chưa cấu hình Firebase");
+    onStatus("unconfigured");
     return {
       user: null,
       signIn: async () => { throw new Error("Hãy điền Firebase Web App config theo hướng dẫn trong FIREBASE_SETUP.md."); },
@@ -80,12 +80,12 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
     isFirstSnapshot = true;
 
     if(!user){
-      onStatus("Đang lưu trên thiết bị này");
+      onStatus("local");
       return;
     }
 
     const itemsRef = collection(db, "users", user.uid, "items");
-    onStatus("Đang tải danh sách đồng bộ…", user.email || "");
+    onStatus("syncing", user.email || "");
     stopListening = onSnapshot(
       itemsRef,
       { includeMetadataChanges: true },
@@ -115,11 +115,11 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
         isFirstSnapshot = false;
 
         if (pending) {
-          onStatus("Đang gửi thay đổi…", user.email || "");
+          onStatus("syncing", user.email || "");
         } else if (fromCache) {
-          onStatus("Đang chờ kết nối máy chủ…", user.email || "");
+          onStatus("offline", user.email || "");
         } else {
-          onStatus("Đã nhận dữ liệu từ máy chủ", user.email || "");
+          onStatus("synced", user.email || "");
         }
       },
 
@@ -130,7 +130,7 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
         );
 
         onStatus(
-          "Đồng bộ bị gián đoạn",
+          "error",
           user?.email || ""
         );
       }
