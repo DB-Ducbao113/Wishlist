@@ -8,8 +8,8 @@
 | Cloudinary cloud | `herun6yp` |
 | Production origin | `https://wishlist-787d2.web.app` |
 | **Preview origin** | `https://wishlist-787d2--image-sync-v1-efzo5nzk.web.app` |
-| Preview channel | `image-sync-v1` (hết hạn 2026-10-23, version `033bc604dcc05089`) |
-| Branch | `feature/cloudinary-image-sync-v1` (HEAD `bb93977`) |
+| Preview channel | `image-sync-v1` (hết hạn 2026-10-23, version `c1b5dba36244f889`) |
+| Branch | `feature/cloudinary-image-sync-v1` (HEAD `f92744c`) |
 
 ## Cloudflare Worker — TRẠNG THÁI (cập nhật 2026-10-16)
 
@@ -29,9 +29,14 @@
 
 ## Firebase Auth (Bước 2) — iPhone redirect
 
-- **Authentication → Settings → Authorized domains**: thêm `wishlist-787d2--image-sync-v1-efzo5nzk.web.app`. *(Cần chủ dự án xác nhận — không kiểm tra được từ môi trường này.)*
-- Nếu API key có giới hạn referrer: thêm `https://wishlist-787d2--image-sync-v1-efzo5nzk.web.app/*`.
-- **Auth helper cùng origin (Safari redirect)**: `wishlist-cloud.js` dùng `authDomain` = origin preview khi chạy trên preview, để redirect không mất kết quả trên iOS Safari. Luồng đăng nhập mobile dùng **popup trực tiếp từ cú pháp người dùng** (thử nghiệm) — lần bấm đầu khởi tạo module, lần bấm thứ hai thực hiện đăng nhập.
+> **Xem báo cáo audit đầy đủ: [`ios-auth-audit.md`](./ios-auth-audit.md) (Phase 2A).**
+> Nguyên nhân gốc đã xác định: `Error 400: redirect_uri_mismatch` — tên miền Preview chưa được
+> cấp phép làm OAuth redirect domain. **Khối chặn duy nhất còn lại** là cấu hình Console (§8 báo cáo).
+
+- **Authentication → Settings → Authorized domains**: thêm `wishlist-787d2--image-sync-v1-efzo5nzk.web.app`. *(Cần chủ dự án làm — không thể từ repo.)*
+- **Google Cloud Console → Credentials → OAuth client `…i8di1kmj4em9jk2j7b8bg1o0mscjt37l`**: thêm redirect URI `https://wishlist-787d2--image-sync-v1-efzo5nzk.web.app/__/auth/handler`.
+- **Auth helper cùng origin (Safari redirect)**: `wishlist-cloud.js` suy ra `authDomain` từ `location.hostname` (same-origin, Firebase Option 1). Mobile: `signInWithRedirect`; desktop: `signInWithPopup` (giữ nguyên hành vi cũ).
+- **Chẩn đoán trên máy thật**: mở `…/wishlist.html?authdebug=1` → đọc `window.__dvAuthLog` (không chứa token/PII).
 
 ## Nhật ký deploy Preview (Firebase Hosting channel `image-sync-v1`)
 
@@ -40,6 +45,7 @@
 | 2026-10-16 (đầu) | `d19e3a8a31cc74fc` | Bản trước khi đồng bộ |
 | 2026-10-16 | `ed1dd18ca0880271` | UI/UX mới: CTA pill gradient, tiếng Việt, header responsive, placeholder lavender |
 | 2026-10-16 | `033bc604dcc05089` | + 4 bản vá Firebase Auth cho iOS Safari (authDomain cùng origin, popup user-activation, cache-bust `?v=8`) |
+| 2026-10-16 | `c1b5dba36244f889` | Phase 2A: authDomain suy ra từ page host + diagnostics `?authdebug=1` + hardening redirect (`?v=9`) |
 
 Kiểm chứng sau deploy cuối (`node tmp-preview.js`): **17/17 PASS** — asset trên Live khớp byte với `dist`
 (SHA-256), CTA `radius:999px` + viền gradient, UI tiếng Việt, CRUD thêm món OK, 0 console error.

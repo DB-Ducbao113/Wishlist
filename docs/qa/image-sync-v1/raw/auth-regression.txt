@@ -1,0 +1,14 @@
+Auth-change regression sweep @ f92744c (harness BASE=127.0.0.1:8115)
+
+[v8b-check.js] PASS=95 FAIL=6
+[v8c-check.js] PASS=115 FAIL=7
+[v9-check.js] PASS=122 FAIL=6
+[v10-check.js] PASS=25 FAIL=1
+[v11-check.js] PASS=34 FAIL=0
+[v12-check.js] PASS=40 FAIL=0
+[v13-check.js] PASS=50 FAIL=0
+[v14-check.js] PASS=24 FAIL=1
+[v15-check.js] PASS=15 FAIL=0
+[v16-imagesync-ux.js] PASS=13 FAIL=0
+
+NOTE: identical counts to the pre-change baseline (533 PASS / 21 FAIL, all pre-existing).
