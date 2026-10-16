@@ -13,11 +13,12 @@ FIREBASE_PROJECT_ID = "wishlist-787d2"
 # Never set "*" and never disable the check.
 ALLOWED_ORIGINS = "https://wishlist-787d2.web.app"
 
-# Configure via Cloudflare dashboard as a variable (non-secret):
-# CLOUDINARY_API_KEY
-#
-# Configure as an encrypted secret (never commit):
-# CLOUDINARY_API_SECRET
+# IMPORTANT: `wrangler deploy` (used by Cloudflare Builds) REMOVES plaintext vars
+# that are not declared in this file. Store these as encrypted Worker SECRETS so
+# they survive every deploy (otherwise the Worker answers 503 "not configured"):
+#   CLOUDINARY_API_KEY    (encrypted secret)
+#   CLOUDINARY_API_SECRET (encrypted secret)
+# Do NOT commit either value.
 #
 # Cloudflare Builds settings:
 # Root directory: workers/cloudinary-sign

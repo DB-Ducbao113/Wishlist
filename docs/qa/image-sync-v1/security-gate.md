@@ -36,5 +36,8 @@ preview origin hợp lệ → 200 · chữ ký bị sửa → 401 · rate limit 
 4. **Preview origin**: khi có preview channel, thêm origin đó vào biến `ALLOWED_ORIGINS` trên Cloudflare (không tắt kiểm tra Origin).
 
 ## Trạng thái
-Security Gate (Bước 1): **PASS** — code + test. Chờ redeploy Worker với code mới và cập nhật biến `ALLOWED_ORIGINS`.
+Security Gate (Bước 1): **PASS** — code + test.
+Phát hiện khi verify deploy: bản Worker redeploy (code mới, có header `nosniff`) đang trả **503 `not configured`**
+→ cấu hình (`CLOUDINARY_API_KEY`/`CLOUDINARY_API_SECRET`) bị mất sau redeploy. Cần khôi phục dạng **encrypted secrets**
+(xem `preview-and-qa.md`). Sau khi khôi phục, `POST` không auth phải trả **401**.
 Chưa test upload ảnh thật (Bước 3) — vẫn **HOLD** phát hành.
