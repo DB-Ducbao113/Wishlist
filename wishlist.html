@@ -918,7 +918,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
    =================================================================== */
 const CURRENCY = "VND";              // don vi tien te mac dinh (vd: "USD", "EUR", "JPY")
 const CURRENCY_LOCALE = "vi-VN";     // ngon ngu hien thi so tien
+// V16 — luu tru tach theo vai tro phien, de du lieu khach va tung tai khoan
+// Google khong bao gio tron vao nhau:
+//   wishlist.items                 key kieu cu (truoc V16) - chi doc, giu lam backup
+//   wishlist.guest.items           danh sach cua KHACH (V16)
+//   wishlist.account.<uid>         ban cache cua MOT tai khoan da dang nhap (V16)
 const STORAGE_KEY = "wishlist.items";
+const GUEST_KEY = "wishlist.guest.items";
+const ACCOUNT_KEY_PREFIX = "wishlist.account.";
+const LEGACY_BACKUP_KEY = "wishlist.items.legacy-backup-v16";
 
 // Trang thai: cac buoc tu "muon mua" -> "da mua"
 const STATUSES = [
@@ -1053,6 +1061,13 @@ let items = [];              // danh sach mon do hien tai
 let pendingDataUrl = "";     // anh upload dang cho (data-URL) khi them/sua
 let cloudSync = null;
 let cloudSyncPromise = null;
+// V16 — phien hien tai: null = khach; uid = dang xem du lieu cua tai khoan do.
+let activeUid = null;
+// Du lieu local kieu cu cho mot lan migration (chi dung mot lan khi nang cap).
+let legacyPending = null;
+// Anh data-URL cua du lieu kieu cu — Firestore KHONG luu cac anh nay nen phai
+// giu rieng de gan lai theo id cho tai khoan dang nhap.
+let legacyImages = new Map();
 
 // Trang thai ke tiep trong chu trinh: wish -> saving -> ordered -> purchased
 function nextStatus(it){
@@ -1093,26 +1108,67 @@ function localizeLegacySamples(){
       }
     });
   });
-  if(changed) save();
+  // Chi doi trong bo nho; phien nao se luu theo phien do trong handleSessionChange.
+  void changed;
 }
-function load(){
+/* ===================================================================
+   LUU TRU THEO PHIEN (V16) — tach khach / tai khoan
+   =================================================================== */
+function readList(key){
   let raw = null;
-  try{ raw = localStorage.getItem(STORAGE_KEY); }catch(e){ raw = null; }
-  if(raw === null){
-    // Người dùng mới bắt đầu với danh sách TRỐNG.
-    // Không tự tạo dữ liệu mẫu; không tự xóa dữ liệu cũ đã đồng bộ.
-    items = [];
-    save();
-    return;
+  try{ raw = localStorage.getItem(key); }catch(e){ return null; }
+  if(raw === null) return null;
+  try{
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  }catch(e){ return []; }
+}
+function writeList(key, list){
+  try{ localStorage.setItem(key, JSON.stringify(list)); return true; }
+  catch(e){ return false; }
+}
+function listKeyForSession(){
+  return activeUid ? ACCOUNT_KEY_PREFIX + activeUid : GUEST_KEY;
+}
+// Migration mot lan, khong pha huy: sao chep du lieu key cu sang mot key backup
+// chi doc, roi tra cho danh sach khach HOAC tai khoan dau tien dang nhap. Nho do
+// du lieu cu khong bao gio bi hien nham cho phien sai.
+function migrateLegacyOnce(){
+  if(readList(GUEST_KEY) !== null) return;      // V16 da duoc dung
+  const legacy = readList(STORAGE_KEY);
+  if(legacy === null) return;                    // khong co gi de chuyen
+  if(readList(LEGACY_BACKUP_KEY) === null){
+    writeList(LEGACY_BACKUP_KEY, legacy);        // backup truoc khi lam bat cu dieu gi
   }
-  try{ items = JSON.parse(raw); }catch(e){ items = []; }
+  legacyPending = legacy;
+  // Giu lai anh local (data-URL) cua du lieu cu: Firestore bo trong truong image
+  // nen day la ban sao duy nhat con lai cua cac anh do.
+  legacyImages = new Map(
+    legacy
+      .filter(it => it && /^data:image\//i.test(it.image || ""))
+      .map(it => [it.id, it.image])
+  );
+}
+// Nap danh sach dung voi phien hien tai. uid = null => khach.
+function loadForSession(uid){
+  activeUid = uid || null;
+  if(!activeUid && readList(GUEST_KEY) === null && legacyPending){
+    // Chua biet phien la khach hay tai khoan: hien tam du lieu cu, KHONG ghi.
+    items = legacyPending.slice();
+  }else{
+    const stored = readList(listKeyForSession());
+    items = stored || [];
+  }
   if(!Array.isArray(items)) items = [];
   localizeLegacySamples();
 }
 function save(syncCloud = true){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    if(syncCloud && cloudSync && cloudSync.user){
+    localStorage.setItem(listKeyForSession(), JSON.stringify(items));
+    // Chi phien da dang nhap moi duoc day len Firestore, va chi khi module cloud
+    // van bao dung uid do. Nho vay mot lan ghi cu (hoac ghi rong luc dang xuat)
+    // khong the cham vao du lieu cua tai khoan khac.
+    if(syncCloud && activeUid && cloudSync && cloudSync.user && cloudSync.user.uid === activeUid){
       cloudSync.syncItems(items).catch(error => {
         $("syncError").textContent = "Không đồng bộ được với Firebase. Dữ liệu vẫn còn trên thiết bị này. " + error.message;
         $("syncError").classList.remove("hidden");
@@ -1126,8 +1182,20 @@ function save(syncCloud = true){
 }
 // Doc lai tu storage va ve lai UI (dung khi save() that bai)
 function resync(){
-  load();
+  loadForSession(activeUid);
   render();
+}
+// V16 — phien dang nhap vua thay doi (dang nhap, dang xuat hoac A -> B).
+// Du lieu kieu cu chi duoc tra ve danh sach KHACH. Khi dang nhap, no KHONG duoc
+// tron vao tai khoan (tranh A -> B lan du lieu); anh local cua no van duoc gan
+// lai qua legacyImages va van con nguyen trong key backup.
+function handleSessionChange(uid){
+  if(!uid && legacyPending) writeList(GUEST_KEY, legacyPending);
+  legacyPending = null;
+  loadForSession(uid);
+  resetTransientUi();
+  render();
+  save(false);
 }
 
 /* ===================================================================
@@ -2136,8 +2204,12 @@ function init(){
   $("v13GridView").addEventListener("click", () => setCollectionView("gallery"));
   $("v13FocusView").addEventListener("click", () => setCollectionView("focus"));
   setCollectionView("gallery");
-  load();
+  migrateLegacyOnce();
+  loadForSession(null);
   render();
+  syncWorkspaceNav();
+  window.addEventListener("scroll", syncWorkspaceNav, { passive: true });
+  window.addEventListener("resize", syncWorkspaceNav, { passive: true });
   try{ localStorage.removeItem("wishlist.geminiApiKey"); }
   catch(error){ toast("Không xóa được API key AI cũ khỏi bộ nhớ trình duyệt: " + error.message); }
   $("btnSignIn").addEventListener("click", signInToCloud);
@@ -2391,6 +2463,49 @@ function applySyncState(kind, email = ""){
   }
 }
 
+// V16 — dong bo trang thai active cua thanh dieu huong voi section dang xem.
+function syncWorkspaceNav(){
+  const links = document.querySelectorAll(".v11-workspace-nav__link");
+  if(!links.length) return;
+  const collection = document.getElementById("collection");
+  let active = "top";
+  if(collection){
+    const rect = collection.getBoundingClientRect();
+    if(rect.top <= window.innerHeight * 0.5) active = "collection";
+  }
+  links.forEach(link => {
+    const isActive = link.getAttribute("href") === "#" + active;
+    link.classList.toggle("is-active", isActive);
+    if(isActive) link.setAttribute("aria-current", "true");
+    else link.removeAttribute("aria-current");
+  });
+}
+
+// V16 — xoa moi trang thai UI tam thoi thuoc ve phien truoc, de dang xuat /
+// doi tai khoan tra ve dung mac dinh (bo loc, tim kiem, modal, anh dang cho).
+function resetTransientUi(){
+  cancelPendingSearchRender();
+  const q = $("q"); if(q) q.value = "";
+  ["fStatus","fPriority","fCategoryFilter"].forEach(id => {
+    const el = $(id); if(el) el.value = "";
+  });
+  const sort = $("fSort"); if(sort) sort.value = "newest";
+  pendingDataUrl = "";
+  const imageUrl = $("fImageUrl"); if(imageUrl) imageUrl.value = "";
+  if(typeof updatePreview === "function") updatePreview();
+  imageRetryAction = null;
+  setImageSync("idle", "");
+  if($("syncError")){
+    $("syncError").textContent = "";
+    $("syncError").classList.add("hidden");
+  }
+  const dlg = $("dlg"); if(dlg && dlg.open) dlg.close();
+  const qv = $("qv"); if(qv && qv.open) qv.close();
+  const more = document.querySelector(".nav-more"); if(more) more.open = false;
+  setCollectionView("gallery");
+  syncWorkspaceNav();
+}
+
 let imageSyncTimer = null;
 let imageRetryAction = null;
 function setImageSync(state, message){
@@ -2411,18 +2526,25 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=9");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=10");
     cloudSync = await initializeWishlistCloud({
+      // V16 — danh tinh dang nhap doi (login / logout / A -> B): doi danh sach
+      // dang hien truoc khi bat ky snapshot nao cua phien moi duoc ap dung.
+      onUserChanged: handleSessionChange,
       onStatus: (kind, email = "") => applySyncState(kind, email),
       onRemoteItems: (remoteItems, initialSnapshot) => {
-        const localImages = new Map(items
+        // Bo qua snapshot den muon sau khi phien da doi (tranh ro ri du lieu A/B).
+        if(!activeUid || !cloudSync || !cloudSync.user || cloudSync.user.uid !== activeUid) return;
+        const localImages = new Map(legacyImages);
+        items
           .filter(item => /^data:image\//i.test(item.image || ""))
-          .map(item => [item.id, item.image]));
+          .forEach(item => localImages.set(item.id, item.image));
         const mergedRemote = remoteItems.map(item => ({
           ...item,
           image: item.image || localImages.get(item.id) || ""
         }));
         if(initialSnapshot){
+          // Chi merge voi cache cua CHINH tai khoan dang mo — khong bao gio voi khach.
           const merged = new Map(mergedRemote.map(item => [item.id, item]));
           items.forEach(item => { if(!merged.has(item.id)) merged.set(item.id, item); });
           items = [...merged.values()];
