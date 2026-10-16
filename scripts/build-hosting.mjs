@@ -38,6 +38,15 @@ for (const entry of ALLOW) {
   cpSync(src, join(OUT, entry), { recursive: true });
 }
 
+// Cloudflare Pages platform files (ignored by Firebase Hosting; harmless there).
+// Cloudflare serves index.html at "/" by default, but our entry is wishlist.html,
+// so we provide an explicit rewrite plus the same safe headers as firebase.json.
+const PLATFORM = {
+  '_redirects': '/  /wishlist.html  200\n',
+  '_headers': '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n',
+};
+for (const [name, content] of Object.entries(PLATFORM)) writeFileSync(join(OUT, name), content);
+
 const files = walk(OUT).map(p => relative(OUT, p).split('\\').join('/')).sort();
 const violations = files.filter(f => FORBIDDEN.test(f));
 if (violations.length) {
@@ -45,13 +54,17 @@ if (violations.length) {
   process.exit(1);
 }
 
+const platformFiles = files.filter(f => f in PLATFORM);
+const assetFiles = files.filter(f => !(f in PLATFORM));
 const manifest = {
   generatedBy: 'scripts/build-hosting.mjs',
   allowlist: ALLOW,
   fileCount: files.length,
+  assetCount: assetFiles.length,
+  platformFiles,
   totalBytes: files.reduce((a, f) => a + statSync(join(OUT, f)).size, 0),
   files,
 };
 writeFileSync(join(ROOT, 'docs', 'qa', 'dream-vault-v15', 'hosting-manifest.json'), JSON.stringify(manifest, null, 1));
-console.log(`dist built: ${files.length} files, ${manifest.totalBytes} bytes`);
+console.log(`dist built: ${files.length} files (${assetFiles.length} assets + ${platformFiles.length} platform), ${manifest.totalBytes} bytes`);
 console.log('allowlist: ' + ALLOW.join(', '));
