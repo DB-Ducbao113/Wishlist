@@ -128,6 +128,149 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/interactive-v13-collection.css">
 
 <link rel="stylesheet" href="./css/header-sync-v1.css">
+
+<link rel="stylesheet" href="./css/motion-v16.css">
+
+<!-- V16 — Premium scroll motion runtime.
+     Self-contained so a failure anywhere else can never leave content hidden:
+     the class is only added when IntersectionObserver exists and the user
+     allows motion, and an in-viewport safety pass guarantees nothing stays
+     invisible. Presentation only: no product data is touched here. -->
+<script>
+(function () {
+  try {
+    var SUPPORTED = "IntersectionObserver" in window;
+    var reduce = window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
+
+    if (!SUPPORTED || (reduce && reduce.matches)) return;
+
+    document.documentElement.classList.add("dv-motion");
+
+    var SECTION_STAGGER = 60;     // ms between sibling sections (50-70 band)
+    var MAX_STAGGER_ITEMS = 10;   // cap so long lists never crawl
+    var pending = new Set();
+    var observer = null;
+    var closed = false;
+
+    function settle(el) {
+      if (!el || el.__dvSettled) return;
+      el.__dvSettled = true;
+      // Drop both markers once the motion is over: they are what keys the
+      // hidden state, so this is what stops a revealed element from snapping
+      // back to invisible, and it also releases the containing block a
+      // transform would otherwise create for sticky/fixed descendants.
+      el.removeAttribute("data-dv-section");
+      el.removeAttribute("data-dv-reveal");
+      el.classList.remove("dv-reveal-in");
+      el.style.removeProperty("--dv-reveal-delay");
+    }
+
+    function reveal(el) {
+      if (!el || closed) return;
+      if (el.classList.contains("dv-reveal-in")) return;
+      if (observer) observer.unobserve(el);
+      pending.delete(el);
+      el.classList.add("dv-reveal-in");
+
+      var onEnd = function (event) {
+        if (event.target !== el) return;      // ignore child animations
+        el.removeEventListener("animationend", onEnd);
+        settle(el);
+      };
+      el.addEventListener("animationend", onEnd);
+
+      // Belt and braces: settle even if the animation event never arrives
+      // (element hidden at reveal time, animation disabled by another rule).
+      var cs = window.getComputedStyle(el);
+      var dur = (parseFloat(cs.animationDuration) || 0.62) * 1000;
+      var del = (parseFloat(cs.animationDelay) || 0) * 1000;
+      setTimeout(function () {
+        el.removeEventListener("animationend", onEnd);
+        settle(el);
+      }, dur + del + 250);
+    }
+
+    function observe(el, index) {
+      if (!el || closed) return;
+      if (el.classList.contains("dv-reveal-in")) return;
+      if (el.hasAttribute("data-dv-reveal")) return;
+      el.setAttribute("data-dv-reveal", "");
+      var i = Math.min(Math.max(index || 0, 0), MAX_STAGGER_ITEMS);
+      el.style.setProperty("--dv-reveal-delay", (i * SECTION_STAGGER) + "ms");
+      pending.add(el);
+      if (!observer) {
+        observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) reveal(entry.target);
+          });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+      }
+      observer.observe(el);
+    }
+
+    // Safety net: anything already on screen must never stay invisible even
+    // if an observer callback is missed (fast scroll, restore, tab switch).
+    function revealInViewport() {
+      pending.forEach(function (el) {
+        var rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 1.05 && rect.bottom > -1) {
+          reveal(el);
+        }
+      });
+    }
+
+    function scan() {
+      var sections = document.querySelectorAll("[data-dv-section]");
+      for (var i = 0; i < sections.length; i++) observe(sections[i], i);
+      revealInViewport();
+    }
+
+    // Expose for the main script (product cards register themselves here).
+    window.DVReveal = {
+      observe: observe,
+      reveal: reveal,
+      refresh: revealInViewport,
+      off: function () {
+        closed = true;
+        if (observer) { observer.disconnect(); observer = null; }
+        pending.forEach(function (el) {
+          el.removeAttribute("data-dv-section");
+          el.removeAttribute("data-dv-reveal");
+        });
+        pending.clear();
+        // Nothing may stay hidden once the runtime is torn down.
+        document.documentElement.classList.remove("dv-motion");
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", scan, { once: true });
+    } else {
+      scan();
+    }
+
+    setTimeout(revealInViewport, 1600);
+    window.addEventListener("load", revealInViewport, { once: true });
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) revealInViewport();
+    });
+    window.addEventListener("pagehide", window.DVReveal.off, { once: true });
+
+    if (reduce && reduce.addEventListener) {
+      reduce.addEventListener("change", function (event) {
+        if (event.matches) {
+          pending.forEach(reveal);
+        }
+      });
+    }
+  } catch (err) {
+    /* Decorative only: never let motion setup break the page. */
+    document.documentElement.classList.remove("dv-motion");
+  }
+})();
+</script>
 </head>
 <body id="top" class="dreamscape-v5">
 <div class="wrap">
@@ -390,7 +533,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 </section>
 
   <!-- Statistics: independent section -->
-<section class="panel dashboard-panel dashboard-panel--v2"
+<section class="panel dashboard-panel dashboard-panel--v2" data-dv-section
          aria-label="Tổng quan wishlist">
 
   <!-- V10 — Editorial overview heading -->
@@ -476,7 +619,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   aria-labelledby="collection-controls-title"
 >
 
-  <div class="collection-panel__heading">
+  <div class="collection-panel__heading" data-dv-section>
     <div>
       <p class="collection-panel__eyebrow">
         <span class="collection-panel__section-no">02</span>
@@ -493,7 +636,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     </div>
   </div>
 
-<div class="toolbar collection-toolbar">
+<div class="toolbar collection-toolbar" data-dv-section>
 
   <!-- Search -->
   <div class="field search collection-search">
@@ -596,7 +739,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <span class="list-heading__decoration"
           aria-hidden="true">✦</span>
   </div>
-  <div class="v13-viewbar" role="group" aria-label="Chế độ hiển thị bộ sưu tập">
+  <div class="v13-viewbar" data-dv-section role="group" aria-label="Chế độ hiển thị bộ sưu tập">
     <span class="v13-viewbar__label">CHẾ ĐỘ HIỂN THỊ</span>
     <div class="v13-viewbar__switch" role="group" aria-label="Chọn chế độ xem">
       <button id="v13GridView" type="button" class="v13-viewbar__button" aria-pressed="true" aria-controls="grid">Dạng lưới</button>
@@ -1272,9 +1415,7 @@ function render(){
   const list = visibleItems();
   const grid = $("grid");
 
-  // Stop old animations and remove listeners
-  // before replacing product cards.
-  cleanupEntranceAnimations();
+  // Stop old motion listeners before replacing product cards.
   cleanupCardMotions();
 
   grid.innerHTML = "";
@@ -1319,93 +1460,33 @@ function render(){
   // (sau search/filter/sort — không theo index trong mảng dữ liệu)
   updateObjectIndices();
 
-  // Run only for the first render.
-  // Subsequent search/filter calls will not replay it.
-  animateGridEntrance(grid);
+  // V16 — staggered scroll reveal, once per product id: search / filter /
+  // render never replay it, but genuinely new items still animate in.
+  revealGridCards(grid);
 }
 
 /* ==========================================
-   Product Grid Entrance Animation
+   V16 — Product card scroll reveal
+   Cards are handed to the page-level IntersectionObserver runtime defined in
+   <head>. Each product id reveals exactly once, so re-rendering the grid for a
+   search or filter never restarts the animation. When IntersectionObserver is
+   unavailable the runtime is absent and cards simply render visible.
 ========================================== */
 
-let initialGridAnimationPlayed = false;
+const revealedGridIds = new Set();
 
-const GRID_ENTRANCE = {
-  duration: 420,
-  stagger: 45,
-  distance: 14,
-  maxItems: 12,
-  easing: "cubic-bezier(0.22, 1, 0.36, 1)"
-};
-
-const activeEntranceAnimations = new Set();
-
-function cleanupEntranceAnimations() {
-  for (const animation of activeEntranceAnimations) {
-    animation.cancel();
-  }
-
-  activeEntranceAnimations.clear();
-}
-
-const motionPreference = matchMedia(
-  "(prefers-reduced-motion: reduce)"
-);
-
-motionPreference.addEventListener("change", () => {
-  if (motionPreference.matches) {
-    cleanupEntranceAnimations();
-  }
-});
-
-function animateGridEntrance(grid) {
-  if (initialGridAnimationPlayed) return;
-
-  const cards = Array.from(
-    grid.querySelectorAll(":scope > .wishlist-card")
-  ).slice(0, GRID_ENTRANCE.maxItems);
-
-  // Wait until there are actual cards.
-  if (!cards.length) return;
-
-  // The first non-empty render owns the entrance.
-  initialGridAnimationPlayed = true;
-
-  if (
-    motionPreference.matches ||
-    document.hidden ||
-    typeof Element.prototype.animate !== "function"
-  ) {
-    return;
-  }
+function revealGridCards(grid){
+  const runtime = window.DVReveal;
+  const cards = grid.querySelectorAll(":scope > .wishlist-card");
 
   cards.forEach((card, index) => {
-    const animation = card.animate(
-      [
-        {
-          opacity: 0,
-          translate: `0 ${GRID_ENTRANCE.distance}px`
-        },
-        {
-          opacity: 1,
-          translate: "0 0"
-        }
-      ],
-      {
-        duration: GRID_ENTRANCE.duration,
-        delay: index * GRID_ENTRANCE.stagger,
-        easing: GRID_ENTRANCE.easing,
-        fill: "backwards"
-      }
-    );
-
-    activeEntranceAnimations.add(animation);
-
-    animation.finished.then(
-      () => activeEntranceAnimations.delete(animation),
-      () => activeEntranceAnimations.delete(animation)
-    );
+    const id = card.dataset.id || "";
+    if(id && revealedGridIds.has(id)) return;   // already animated in
+    if(id) revealedGridIds.add(id);
+    if(runtime) runtime.observe(card, index);
   });
+
+  if(runtime && typeof runtime.refresh === "function") runtime.refresh();
 }
 
 /* ==========================================

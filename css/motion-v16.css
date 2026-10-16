@@ -1,0 +1,70 @@
+/* =====================================================================
+   V16 — Premium scroll motion (IntersectionObserver + CSS transforms)
+   Presentation only. It never touches product data, search, CRUD, the
+   Focus/Gallery switch or the 3D card tilt (the tilt owns the inner
+   surface, this system only moves the outer element).
+
+   Progressive enhancement:
+   - <html class="dv-motion"> is added by a tiny inline script that only
+     runs when IntersectionObserver exists AND the user allows motion.
+   - Without that class nothing is ever hidden, so a browser without
+     IntersectionObserver (or with JS off) still shows all content.
+   - prefers-reduced-motion always resolves straight to the final state.
+
+   A CSS animation (not a transition) drives the reveal because a single
+   `animationend` event marks the end of the whole motion. A transition
+   would fire one `transitionend` per property, and tearing the rules down
+   after the first one would cancel the second mid-flight.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.dv-motion [data-dv-section],
+  html.dv-motion [data-dv-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--dv-reveal-shift, 22px), 0);
+  }
+
+  /* Cards need their own rule: product-card.css pins the outer card with
+     `.grid > .card.wishlist-card { transform: none }` (three classes), so a
+     plain `[data-dv-reveal]` selector would lose the cascade. */
+  html.dv-motion #grid > .card.wishlist-card[data-dv-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--dv-reveal-shift, 18px), 0);
+    --dv-reveal-shift: 18px;
+    --dv-reveal-duration: 560ms;
+  }
+
+  /* Hint the compositor only while the reveal is still pending. */
+  html.dv-motion [data-dv-reveal]:not(.dv-reveal-in) {
+    will-change: opacity, transform;
+  }
+
+  html.dv-motion [data-dv-section].dv-reveal-in,
+  html.dv-motion [data-dv-reveal].dv-reveal-in {
+    animation: dv-reveal
+      var(--dv-reveal-duration, 620ms)
+      cubic-bezier(.22, .68, .24, 1)
+      var(--dv-reveal-delay, 0ms) both;
+  }
+}
+
+@keyframes dv-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--dv-reveal-shift, 22px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: always the resolved state, no animation at all. */
+@media (prefers-reduced-motion: reduce) {
+  [data-dv-section],
+  [data-dv-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

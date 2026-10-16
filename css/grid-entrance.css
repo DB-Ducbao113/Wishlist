@@ -3,10 +3,8 @@
 ====================================== */
 
 /*
-  The outer card is responsible for
-  entrance opacity/translate.
-
-  The inner surface owns 3D rotation.
+  The outer card owns the scroll reveal (css/motion-v16.css).
+  The inner surface owns 3D rotation (card tilt).
 */
 
 .wishlist-grid,
@@ -14,35 +12,10 @@
   isolation: isolate;
 }
 
-#grid > .wishlist-card {
-  opacity: 1;
-  translate: 0 0;
-}
-
-/* Motion capability */
-@media (prefers-reduced-motion: reduce) {
-  #grid > .wishlist-card {
-    opacity: 1;
-    translate: none;
-  }
-}
-
 /* Motion pass 1 — progressive enhancement, presentation only.
    Scroll effects do not affect product data, focus, or Firebase. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Browser-native scroll timeline: no JS observers or scroll handlers.
-     Unsupported browsers keep the fully visible fallback state. */
-  @supports (animation-timeline: view()) {
-    body.dreamscape-v5 .dashboard-panel,
-    body.dreamscape-v5 #collection {
-      animation-name: dv-section-reveal;
-      animation-duration: 1ms;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 72%;
-    }
-  }
+  /* Section-level reveals live in css/motion-v16.css (IntersectionObserver). */
 
   /* The media image animates independently of the card's 3D tilt surface. */
   body.dreamscape-v5 .product-media__image {
@@ -58,12 +31,6 @@
     }
   }
 }
-@keyframes dv-section-reveal {
-  from { opacity: .72; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 @media (prefers-reduced-motion: reduce) {
-  body.dreamscape-v5 .dashboard-panel,
-  body.dreamscape-v5 #collection { animation: none !important; }
   body.dreamscape-v5 .product-media__image { transition: none !important; }
 }
