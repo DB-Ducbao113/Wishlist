@@ -2,6 +2,17 @@
    One clear language in UI: Vietnamese. Brand name remains Dream Vault.
    Scoped overrides, loaded after all existing stylesheets. */
 body.dreamscape-v5 .site-header{min-width:0}
+/* Keep the short nav labels on a single line so they never wrap mid-word. */
+body.dreamscape-v5 .site-nav .nav-add__label,
+body.dreamscape-v5 .site-nav .nav-more__label{white-space:nowrap}
+/* Phones: tighten spacing so the single-line labels still fit one row
+   (no overflow, hero CTA stays clear of the dock). */
+@media(max-width:430px){
+  body.dreamscape-v5 .site-nav{gap:8px}
+  body.dreamscape-v5 .nav-actions{gap:5px}
+  body.dreamscape-v5 .nav-actions .nav-add{padding:0 10px}
+  body.dreamscape-v5 .nav-actions .nav-more summary{padding:0 9px}
+}
 body.dreamscape-v5 .nav-account{margin-top:12px}
 body.dreamscape-v5 .nav-account .sync-panel{
   display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"status actions" "feedback feedback";

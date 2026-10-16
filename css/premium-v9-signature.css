@@ -197,6 +197,33 @@ body.dreamscape-v5 .hero--v9 .hero-v3__secondary::after {
   }
 }
 
+/* Hero CTA — keyboard focus ring, pressed state, reduced-motion fallback.
+   Declared after :hover so the pressed look wins while the pointer is down. */
+body.dreamscape-v5 .hero--v9 .hero-v3__primary:focus-visible,
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary:focus-visible {
+  outline: 2px solid var(--v9-accent);
+  outline-offset: 3px;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary:active {
+  background: linear-gradient(135deg, #664FBC, #4A3590);
+  box-shadow: 0 8px 18px rgba(84, 63, 158, .28);
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary:active {
+  background:
+    linear-gradient(#EFE8FB, #EFE8FB) padding-box,
+    linear-gradient(120deg, #7159C8, #9F8AE8) border-box;
+  box-shadow: 0 4px 12px rgba(84, 63, 158, .16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary,
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+    transition: none;
+  }
+}
+
 /* ---------- Footer line ---------- */
 body.dreamscape-v5 .hero--v9 .hero__footer {
   display: flex;
