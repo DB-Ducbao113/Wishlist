@@ -5,9 +5,16 @@
   "wishlist-cloud.js",
   "css"
  ],
- "fileCount": 49,
- "totalBytes": 376560,
+ "fileCount": 52,
+ "assetCount": 50,
+ "platformFiles": [
+  "_headers",
+  "_redirects"
+ ],
+ "totalBytes": 394159,
  "files": [
+  "_headers",
+  "_redirects",
   "css/base.css",
   "css/card-interactions-v4.css",
   "css/cinematic-v7-gallery-lighting.css",
@@ -45,6 +52,7 @@
   "css/legacy.css",
   "css/mobile-products-v4.css",
   "css/mobile-v3.css",
+  "css/motion-v16.css",
   "css/navigation.css",
   "css/polish-v2.css",
   "css/premium-v9-signature.css",
