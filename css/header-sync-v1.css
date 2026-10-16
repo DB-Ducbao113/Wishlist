@@ -1,0 +1,35 @@
+/* Dream Vault — Header & sync bar final layout.
+   One clear language in UI: Vietnamese. Brand name remains Dream Vault.
+   Scoped overrides, loaded after all existing stylesheets. */
+body.dreamscape-v5 .site-header{min-width:0}
+body.dreamscape-v5 .nav-account{margin-top:12px}
+body.dreamscape-v5 .nav-account .sync-panel{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"status actions" "feedback feedback";
+  align-items:center;gap:8px 16px;padding:12px 18px;
+  border-radius:20px;min-height:66px
+}
+body.dreamscape-v5 .sync-panel .sync-copy{
+  grid-area:status;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;min-width:0
+}
+body.dreamscape-v5 .sync-panel .sync-status{font-size:14px;line-height:1.4}
+body.dreamscape-v5 .sync-panel #syncEmail{
+  min-width:0;max-width:32ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px
+}
+body.dreamscape-v5 .sync-panel .btns{grid-area:actions;margin:0;display:flex;justify-content:flex-end}
+body.dreamscape-v5 .sync-panel .btns button{min-height:42px;white-space:nowrap}
+body.dreamscape-v5 .sync-panel .sync-summary,
+body.dreamscape-v5 .sync-panel .nav-account__notice{display:none}
+body.dreamscape-v5 .sync-panel .image-sync:not(.hidden),
+body.dreamscape-v5 .sync-panel .sync-error:not(.hidden){grid-area:feedback;margin:0;min-width:0;overflow-wrap:anywhere}
+body.dreamscape-v5 .sync-panel .image-sync.hidden,
+body.dreamscape-v5 .sync-panel .sync-error.hidden{display:none}
+@media(max-width:640px){
+ body.dreamscape-v5 .nav-account .sync-panel{
+   grid-template-columns:minmax(0,1fr);grid-template-areas:"status" "actions" "feedback";
+   gap:10px;padding:12px 14px;border-radius:18px
+ }
+ body.dreamscape-v5 .sync-panel .sync-copy{gap:3px 8px}
+ body.dreamscape-v5 .sync-panel #syncEmail{max-width:100%}
+ body.dreamscape-v5 .sync-panel .btns{justify-content:stretch;width:100%;margin:0}
+ body.dreamscape-v5 .sync-panel .btns button{width:100%;min-height:44px}
+}
