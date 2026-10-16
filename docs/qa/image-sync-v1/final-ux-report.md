@@ -2,7 +2,7 @@
 
 - **Branch:** `feature/cloudinary-image-sync-v1`
 - **Base SHA:** `bed2558` (docs: sprint scope)
-- **Report/UX commit:** `e00ac6a` (thay thế `__REPORT_SHA__`)
+- **Report/UX commit:** `e00ac6a`
 - **Ngày:** 2026-10-16
 - **Phạm vi:** 4 hạng mục UX (Quick View, sync header, bỏ dữ liệu mẫu, "Đánh dấu đã mua" + hoàn tác) + xác thực đồng bộ ảnh 2 thiết bị.
 - **Ràng buộc:** giữ `ui-v15.0.0` frozen, không redesign/V16, không tag, không deploy production, không sửa Firebase Rules, không xóa dữ liệu thật.
