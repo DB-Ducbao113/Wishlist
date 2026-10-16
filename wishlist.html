@@ -2411,7 +2411,7 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=7");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=8");
     cloudSync = await initializeWishlistCloud({
       onStatus: (kind, email = "") => applySyncState(kind, email),
       onRemoteItems: (remoteItems, initialSnapshot) => {
