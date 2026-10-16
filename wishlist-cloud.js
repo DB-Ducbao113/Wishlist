@@ -5,6 +5,7 @@ import {
   browserSessionPersistence,
   getAuth,
   getRedirectResult,
+  getIdToken,
   inMemoryPersistence,
   onAuthStateChanged,
   setPersistence,
@@ -165,6 +166,37 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
       ? signInWithRedirect(auth, provider)
       : signInWithPopup(auth, provider),
     signOut: () => signOut(auth),
+    async uploadImage(dataUrl){
+      if(!user) throw new Error("Hãy đăng nhập Google để đồng bộ ảnh.");
+      if(!/^data:image\/jpeg;base64,/i.test(dataUrl)) throw new Error("Ảnh tải lên phải là JPEG đã nén.");
+      const expectedUid = user.uid;
+      const binary = await fetch(dataUrl).then(response => response.blob());
+      if(binary.size > 1.5 * 1024 * 1024) throw new Error("Ảnh vượt giới hạn 1.5 MB.");
+      const token = await getIdToken(user);
+      const signedResponse = await fetch("https://wishlist-images.ducbao147258.workers.dev/sign", {
+        method: "POST",
+        headers: {"Authorization": "Bearer " + token}
+      });
+      if(!signedResponse.ok) throw new Error("Không thể xác thực upload ảnh (" + signedResponse.status + ").");
+      const signed = await signedResponse.json();
+      if(signed.cloud_name !== "herun6yp" || !signed.signature || !signed.api_key || !signed.folder ||
+         !signed.folder.startsWith("dream-vault/") || !signed.timestamp) throw new Error("Phản hồi ký upload không hợp lệ.");
+      const body = new FormData();
+      body.append("file", binary, "wishlist.jpg");
+      body.append("api_key", signed.api_key);
+      body.append("timestamp", String(signed.timestamp));
+      body.append("folder", signed.folder);
+      body.append("signature", signed.signature);
+      const response = await fetch("https://api.cloudinary.com/v1_1/herun6yp/image/upload", {method: "POST", body});
+      if(!response.ok) throw new Error("Cloudinary từ chối ảnh (" + response.status + ").");
+      const result = await response.json();
+      if(!user || user.uid !== expectedUid) throw new Error("Tài khoản đã thay đổi trong lúc upload.");
+      let url;
+      try { url = new URL(result.secure_url); } catch { throw new Error("Cloudinary không trả về URL ảnh hợp lệ."); }
+      if(url.protocol !== "https:" || url.hostname !== "res.cloudinary.com" ||
+         !url.pathname.startsWith("/herun6yp/image/upload/")) throw new Error("Cloudinary trả về URL không hợp lệ.");
+      return url.href;
+    },
     syncItems(items){
       if(!user) return Promise.resolve();
       const expectedUid = user.uid;
