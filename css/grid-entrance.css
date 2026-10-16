@@ -12,25 +12,5 @@
   isolation: isolate;
 }
 
-/* Motion pass 1 — progressive enhancement, presentation only.
-   Scroll effects do not affect product data, focus, or Firebase. */
-@media (prefers-reduced-motion: no-preference) {
-  /* Section-level reveals live in css/motion-v16.css (IntersectionObserver). */
-
-  /* The media image animates independently of the card's 3D tilt surface. */
-  body.dreamscape-v5 .product-media__image {
-    transition: transform 620ms cubic-bezier(.2,.8,.2,1),
-                filter 620ms cubic-bezier(.2,.8,.2,1);
-    transform-origin: center center;
-    will-change: auto;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    body.dreamscape-v5 .wishlist-card:hover .product-media__image,
-    body.dreamscape-v5 .wishlist-card:focus-within .product-media__image {
-      transform: scale(1.045);
-    }
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  body.dreamscape-v5 .product-media__image { transition: none !important; }
-}
+/* Product media motion now lives in css/motion-v16.css (with the Quick View
+   exit animation). Nothing else belongs in this file. */

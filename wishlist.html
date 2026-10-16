@@ -1712,6 +1712,72 @@ function setupCardTilt(cardEl, surfaceEl) {
   return cleanup;
 }
 
+// V16 — pointer-follow micro motion for the product image.
+// The card publishes the pointer offset as CSS variables; only the image
+// moves (via the `translate` property), so the tilt keeps full ownership of
+// the surface's `transform`. Desktop pointers only - never a fake hover on
+// touch - and it is a no-op under prefers-reduced-motion.
+function setupImageParallax(cardEl, imageEl){
+  if(!cardEl || !imageEl) return () => {};
+
+  const pointerQuery = matchMedia("(hover: hover) and (pointer: fine)");
+  const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+
+  if(!pointerQuery.matches || motionQuery.matches) return () => {};
+
+  const MAX_SHIFT = 6;   // px of travel at most
+  let offsetX = 0;
+  let offsetY = 0;
+  let rafId = null;
+
+  const paint = () => {
+    rafId = null;
+    cardEl.style.setProperty("--dv-parallax-x", (offsetX * MAX_SHIFT).toFixed(2) + "px");
+    cardEl.style.setProperty("--dv-parallax-y", (offsetY * MAX_SHIFT).toFixed(2) + "px");
+  };
+
+  const schedule = () => {
+    if(rafId === null) rafId = requestAnimationFrame(paint);
+  };
+
+  const clamp = (value) => Math.max(-1, Math.min(1, value));
+
+  const handleMove = (event) => {
+    const rect = cardEl.getBoundingClientRect();
+    if(!rect.width || !rect.height) return;
+    offsetX = clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2);
+    offsetY = clamp(((event.clientY - rect.top) / rect.height - 0.5) * 2);
+    schedule();
+  };
+
+  const handleLeave = () => {
+    offsetX = 0;
+    offsetY = 0;
+    schedule();
+  };
+
+  cardEl.setAttribute("data-dv-parallax", "");
+  cardEl.addEventListener("pointermove", handleMove);
+  cardEl.addEventListener("pointerleave", handleLeave);
+
+  const cleanup = () => {
+    if(rafId !== null){
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    cardEl.removeEventListener("pointermove", handleMove);
+    cardEl.removeEventListener("pointerleave", handleLeave);
+    cardEl.removeAttribute("data-dv-parallax");
+    cardEl.style.removeProperty("--dv-parallax-x");
+    cardEl.style.removeProperty("--dv-parallax-y");
+    cardMotionCleanups.delete(cleanup);
+  };
+
+  cardMotionCleanups.add(cleanup);
+
+  return cleanup;
+}
+
 function card(it){
   const st = findStatus(it.status), pr = findPriority(it.priority);
   const el = document.createElement("article");
@@ -1855,6 +1921,7 @@ function card(it){
   el.appendChild(surface);
 
   setupCardTilt(el, surface);
+  setupImageParallax(el, img);
 
   return el;
 }
@@ -1925,7 +1992,9 @@ function openQuickView(id, opener){
   // Không bao giờ chồng modal: form Thêm/Sửa đang mở thì bỏ qua
   if($("dlg").open) return;
   const qv = $("qv");
+  if(qvClosing) return;          // đang chạy animation đóng
   if(qv.open) return;
+  qv.classList.remove("qv-closing");
 
   // Luôn đọc lại item mới nhất theo ID tại thời điểm mở
   const it = items.find(x => x.id === id);
@@ -1987,20 +2056,60 @@ function openQuickView(id, opener){
   $("qvClose").focus();
 }
 
+// V16 — Quick View đóng bằng một animation thoát tương ứng với animation mở.
+// Trả về Promise hoàn tất khi dialog thực sự đã đóng, để nơi mở modal khác
+// (form Sửa) không bao giờ chồng hai dialog lên nhau.
+let qvClosing = false;
+
+function prefersReducedMotion(){
+  return typeof matchMedia === "function" &&
+    matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function closeQuickView(){
   const qv = $("qv");
-  if(qv.open) qv.close();
+  if(!qv.open || qvClosing) return Promise.resolve();
+
+  if(prefersReducedMotion()){
+    qv.close();
+    return Promise.resolve();
+  }
+
+  qvClosing = true;
+  qv.classList.add("qv-closing");
+
+  return new Promise(resolve => {
+    let settled = false;
+
+    const finish = () => {
+      if(settled) return;
+      settled = true;
+      clearTimeout(timer);
+      qv.removeEventListener("animationend", onEnd);
+      qv.classList.remove("qv-closing");
+      qvClosing = false;
+      if(qv.open) qv.close();
+      resolve();
+    };
+
+    const onEnd = (event) => { if(event.target === qv) finish(); };
+
+    qv.addEventListener("animationend", onEnd);
+    // Lưới an toàn: nếu animation không bắn sự kiện thì vẫn phải đóng.
+    const timer = setTimeout(finish, 420);
+  });
 }
 
 // Sửa từ Quick View: ĐÓNG QV TRƯỚC, mới mở form (không chồng modal).
 // qvOpener = null trước khi close để focus không quay về Gallery
-// trong lúc dialog form đang mở.
+// trong lúc dialog form đang mở. Chờ animation thoát xong mới mở form.
 function editFromQuickView(){
   const qv = $("qv");
   const it = items.find(x => x.id === qv.dataset.id);
   qvOpener = null;
-  closeQuickView();
-  if(it) openForm(it);
+  closeQuickView().then(() => {
+    if(it) openForm(it);
+  });
 }
 
 /* ===================================================================
@@ -2350,6 +2459,12 @@ function init(){
   $("qvClose").addEventListener("click", closeQuickView);
   $("qvBack").addEventListener("click", closeQuickView);
   $("qvEdit").addEventListener("click", editFromQuickView);
+  // V16 — ESC cũng phải chạy animation thoát (dialog gốc đóng tức thì).
+  // Sự kiện "close" bên dưới vẫn lo việc trả focus.
+  $("qv").addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeQuickView();
+  });
   $("qvPurchase").addEventListener("click", () => {
     const id = $("qv").dataset.id;
     if(!id) return;

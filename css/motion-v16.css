@@ -68,3 +68,88 @@
     animation: none !important;
   }
 }
+
+/* =====================================================================
+   V16 — Product imagery
+   Transform + translate only. No animated filter/blur: that is a GPU cost
+   the brief explicitly rules out.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 .wishlist-card .product-media__image {
+    transform: scale(1);
+    translate: 0 0;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    transition:
+      transform 320ms cubic-bezier(.22, .68, .24, 1),
+      translate 320ms cubic-bezier(.22, .68, .24, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    body.dreamscape-v5 .wishlist-card:hover .product-media__image,
+    body.dreamscape-v5 .wishlist-card:focus-within .product-media__image {
+      transform: scale(1.045);
+    }
+
+    /* Pointer parallax. The card publishes the offset, only the image moves
+       (via `translate`), so the tilt keeps sole ownership of the surface's
+       `transform`. */
+    body.dreamscape-v5 #grid .wishlist-card[data-dv-parallax] .product-media__image {
+      translate: var(--dv-parallax-x, 0px) var(--dv-parallax-y, 0px);
+    }
+  }
+}
+
+/* Touch devices never run a fake hover state. */
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .wishlist-card .product-media__image {
+    transform: none !important;
+    translate: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .wishlist-card .product-media__image {
+    transform: none !important;
+    translate: none !important;
+    transition: none !important;
+  }
+}
+
+/* =====================================================================
+   V16 — Quick View exit
+   Mirrors the existing entrance (opacity + transform only) so the dialog
+   leaves as smoothly as it arrives.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 #qv.qv-closing[open] {
+    animation: v8-qv-out .24s cubic-bezier(.4, 0, .7, .3) both;
+  }
+
+  body.dreamscape-v5 #qv.qv-closing[open]::backdrop {
+    animation: v8-qv-backdrop-out .24s ease both;
+  }
+
+  @media (max-width: 640px) {
+    body.dreamscape-v5 dialog#qv.qv-closing[open] {
+      animation: v8-qv-sheet-out .24s cubic-bezier(.4, 0, .7, .3) both;
+    }
+  }
+}
+
+@keyframes v8-qv-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(10px) scale(.985); }
+}
+
+@keyframes v8-qv-sheet-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(40px); }
+}
+
+@keyframes v8-qv-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
