@@ -11,7 +11,7 @@ PASS | S2 XSS form live (name/category/note): không thực thi, text nguyên v�
 PASS | S2b Form chặn link javascript: (báo lỗi, dialog mở, không thêm món)
 PASS | S3 Link mua ngoài: rel="noopener noreferrer" + target="_blank"
 PASS | S4 Không lưu token/secret dễ lộ trong localStorage/sessionStorage
-INFO headers: {"cache-control":"no-store","connection":"keep-alive","content-type":"text/html; charset=utf-8","date":"Fri, 16 Oct 2026 08:03:36 GMT","keep-alive":"timeout=5"}
+INFO headers: {"cache-control":"no-store","connection":"keep-alive","content-type":"text/html; charset=utf-8","date":"Fri, 16 Oct 2026 09:18:26 GMT","keep-alive":"timeout=5"}
 PASS | P1 Render 50 món < 400ms, đủ 50 card
 PASS | S6 Console JS errors = 0 (toàn bộ kịch bản V15)
 

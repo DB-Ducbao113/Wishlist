@@ -168,12 +168,13 @@ Kết quả: **hOverflow = 0, navOverflow = 0, CTA Hero không bị Dock che, 0 
 | Trường hợp | Kết quả | Kỳ vọng | Đạt |
 |---|---|---|---|
 | Origin production, không auth | **401** | 401 (đã cấu hình, chặn thiếu token) | ✅ |
-| Origin preview channel, không auth | **403** | 200/401 (nếu origin đã allowlist) | ❌ **preview origin chưa nằm trong `ALLOWED_ORIGINS`** |
+| Origin preview channel, không auth | **401** | 401 (đã allowlist) | ✅ *(cập nhật 2026-10-16)* |
 | Origin lạ (`evil.example`) | **403** | 403 | ✅ |
 | `OPTIONS` preflight | **204** + `Access-Control-Allow-Origin` | 204 | ✅ |
 | `GET` (sai method) | **404** | 404 | ✅ |
 
-→ Worker **đã được cấu hình lại** (trước đây `503 not configured`, nay `401`) và **fail-closed đúng**. Nhưng **preview origin vẫn bị chặn 403**, nên kênh preview chưa thể ký upload.
+→ Worker **đã được cấu hình lại** (trước đây `503 not configured`, nay `401`) và **fail-closed đúng**.
+Chủ dự án đã thêm preview origin vào `ALLOWED_ORIGINS` (`wrangler.toml` + deploy) → **preview origin nay trả 401** (không còn 403). Blocker CORS của Preview đã được giải quyết.
 
 ---
 
@@ -210,9 +211,7 @@ Thư mục: `docs/qa/image-sync-v1/screenshots-vn/` (before = `4e3aa75` @8117; a
 
 ## 8. Việc chủ dự án cần làm (để mở HOLD)
 
-1. **Cloudflare Worker → `ALLOWED_ORIGINS`**: thêm
-   `https://wishlist-787d2--image-sync-v1-efzo5nzk.web.app`
-   (giữ kiểm tra Origin, không dùng `*`). Kiểm tra lại: `POST /sign` từ preview origin phải **≠ 403**.
+1. ~~**Cloudflare Worker → `ALLOWED_ORIGINS`**: thêm preview origin~~ ✅ **ĐÃ XONG** — preview origin nay trả **401** (kiểm chứng live 2026-10-16), vẫn giữ kiểm tra Origin, không dùng `*`.
 2. **Firebase → Authentication → Authorized domains**: thêm `wishlist-787d2--image-sync-v1-efzo5nzk.web.app`.
 3. **Cloudinary Console**: đặt "Maximum image file size" (≈1.5 MB) + chỉ cho JPG.
 4. Sau đó chạy 6 kịch bản ảnh thật 2 thiết bị (§6) và cập nhật kết quả.
