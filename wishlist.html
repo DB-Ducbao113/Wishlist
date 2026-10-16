@@ -297,6 +297,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
     <!-- V11 — desktop workspace orientation (reuses existing anchors) -->
     <div class="v11-workspace-nav">
+      <!-- V16 — pill trượt giữa hai mục, thuần trang trí. -->
+      <span class="v11-workspace-nav__indicator" aria-hidden="true"></span>
+
       <a href="#top" class="v11-workspace-nav__link">
         Trang chủ
       </a>
@@ -2399,7 +2402,14 @@ function init(){
   render();
   syncWorkspaceNav();
   window.addEventListener("scroll", syncWorkspaceNav, { passive: true });
-  window.addEventListener("resize", syncWorkspaceNav, { passive: true });
+  window.addEventListener("resize", () => {
+    syncWorkspaceNav();
+    scheduleWorkspaceIndicator();
+  }, { passive: true });
+  // Font xong (hoặc đổi font/ngôn ngữ) là bề rộng chữ đổi -> đo lại pill.
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(scheduleWorkspaceIndicator).catch(() => {});
+  }
   try{ localStorage.removeItem("wishlist.geminiApiKey"); }
   catch(error){ toast("Không xóa được API key AI cũ khỏi bộ nhớ trình duyệt: " + error.message); }
   $("btnSignIn").addEventListener("click", signInToCloud);
@@ -2659,7 +2669,42 @@ function applySyncState(kind, email = ""){
   }
 }
 
-// V16 — dong bo trang thai active cua thanh dieu huong voi section dang xem.
+// V16 — thanh điều hướng workspace: pill trượt theo mục đang active.
+// Pill được định vị tuyệt đối nên không bao giờ tạo layout shift, và hình học
+// được đo lại mỗi khi: đổi mục active, resize, hoặc font tải xong (đổi ngôn
+// ngữ / font làm bề rộng chữ thay đổi).
+let activeWorkspaceNavId = "";
+let workspaceNavIndicatorRaf = null;
+
+function syncWorkspaceIndicator(){
+  const nav = document.querySelector(".v11-workspace-nav");
+  const indicator = document.querySelector(".v11-workspace-nav__indicator");
+  if(!nav || !indicator) return;
+
+  const active = nav.querySelector(".v11-workspace-nav__link.is-active");
+  if(!active || !nav.offsetWidth){
+    nav.removeAttribute("data-v11-nav-ready");
+    return;
+  }
+
+  // offsetLeft/offsetWidth are relative to the nav's padding box, which is
+  // exactly what the absolutely positioned pill is laid out against.
+  nav.style.setProperty("--v11-nav-x", active.offsetLeft + "px");
+  nav.style.setProperty("--v11-nav-w", active.offsetWidth + "px");
+  nav.setAttribute("data-v11-nav-ready", "");
+}
+
+function scheduleWorkspaceIndicator(){
+  if(workspaceNavIndicatorRaf !== null) return;
+  workspaceNavIndicatorRaf = requestAnimationFrame(() => {
+    workspaceNavIndicatorRaf = null;
+    syncWorkspaceIndicator();
+  });
+}
+
+// V16 — đồng bộ trạng thái active của thanh điều hướng với section đang xem.
+// Chỉ chạm vào DOM khi mục active thực sự đổi, nên cuộn trang không sinh
+// thêm chi phí đo layout.
 function syncWorkspaceNav(){
   const links = document.querySelectorAll(".v11-workspace-nav__link");
   if(!links.length) return;
@@ -2669,12 +2714,15 @@ function syncWorkspaceNav(){
     const rect = collection.getBoundingClientRect();
     if(rect.top <= window.innerHeight * 0.5) active = "collection";
   }
+  if(active === activeWorkspaceNavId) return;
+  activeWorkspaceNavId = active;
   links.forEach(link => {
     const isActive = link.getAttribute("href") === "#" + active;
     link.classList.toggle("is-active", isActive);
     if(isActive) link.setAttribute("aria-current", "true");
     else link.removeAttribute("aria-current");
   });
+  syncWorkspaceIndicator();
 }
 
 // V16 — xoa moi trang thai UI tam thoi thuoc ve phien truoc, de dang xuat /

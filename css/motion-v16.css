@@ -153,3 +153,62 @@
   from { opacity: 1; }
   to   { opacity: 0; }
 }
+
+/* =====================================================================
+   V16 — Sliding workspace nav indicator
+   The pill is absolutely positioned (so it can never shift layout) and is
+   driven by two custom properties published from the real link metrics.
+   Because the geometry comes from measurement, resize / font load /
+   language change all stay correct.
+   ===================================================================== */
+
+body.dreamscape-v5 .v11-workspace-nav {
+  position: relative;
+}
+
+body.dreamscape-v5 .v11-workspace-nav__indicator {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: var(--v11-nav-w, 0px);
+  height: calc(100% - 8px);
+  border-radius: 999px;
+  background: var(--dream-accent);
+  transform: translateX(var(--v11-nav-x, 0px));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.dreamscape-v5 .v11-workspace-nav[data-v11-nav-ready] .v11-workspace-nav__indicator {
+  opacity: 1;
+}
+
+body.dreamscape-v5 .v11-workspace-nav__link {
+  position: relative;
+  z-index: 1;
+}
+
+/* The pill owns the "active" fill now, so the link itself stays transparent
+   and only its text colour changes. */
+body.dreamscape-v5 .v11-workspace-nav__link.is-active,
+body.dreamscape-v5 .v11-workspace-nav__link.is-active:hover {
+  background: transparent;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 .v11-workspace-nav__indicator {
+    transition:
+      transform 260ms cubic-bezier(.22, .68, .24, 1),
+      width 260ms cubic-bezier(.22, .68, .24, 1),
+      opacity 180ms ease;
+  }
+}
+
+/* Reduced motion: the pill still goes to the right place, it just teleports. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .v11-workspace-nav__indicator {
+    transition: none !important;
+  }
+}
