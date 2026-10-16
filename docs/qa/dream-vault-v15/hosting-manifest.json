@@ -5,8 +5,8 @@
   "wishlist-cloud.js",
   "css"
  ],
- "fileCount": 48,
- "totalBytes": 359028,
+ "fileCount": 49,
+ "totalBytes": 371823,
  "files": [
   "css/base.css",
   "css/card-interactions-v4.css",
@@ -33,6 +33,7 @@
   "css/gallery-v4.css",
   "css/gallery.css",
   "css/grid-entrance.css",
+  "css/header-sync-v1.css",
   "css/hero-v2.css",
   "css/hero.css",
   "css/homepage-v3.css",
