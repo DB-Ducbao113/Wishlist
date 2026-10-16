@@ -1,6 +1,6 @@
 # Dream Vault — Cloudinary Image Sync 1.0 (Implementation Gate)
 
-Status: **PHASE A scaffold only; HOLD (not usable in production).**
+Status: **PHASE B — Security Gate complete (Worker hardened + tests). Upload flow still HOLD pending real-image QA.**
 
 Baseline `ui-v15.0.0`. Branch `feature/cloudinary-image-sync-v1`.
 Cloudinary cloud name (public): `herun6yp`. No secrets checked in.

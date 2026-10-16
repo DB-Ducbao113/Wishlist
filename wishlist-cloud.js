@@ -180,12 +180,14 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
       if(!signedResponse.ok) throw new Error("Không thể xác thực upload ảnh (" + signedResponse.status + ").");
       const signed = await signedResponse.json();
       if(signed.cloud_name !== "herun6yp" || !signed.signature || !signed.api_key || !signed.folder ||
-         !signed.folder.startsWith("dream-vault/") || !signed.timestamp) throw new Error("Phản hồi ký upload không hợp lệ.");
+         !signed.folder.startsWith("dream-vault/") || !signed.timestamp ||
+         signed.allowed_formats !== "jpg") throw new Error("Phản hồi ký upload không hợp lệ.");
       const body = new FormData();
       body.append("file", binary, "wishlist.jpg");
       body.append("api_key", signed.api_key);
       body.append("timestamp", String(signed.timestamp));
       body.append("folder", signed.folder);
+      body.append("allowed_formats", signed.allowed_formats);
       body.append("signature", signed.signature);
       const response = await fetch("https://api.cloudinary.com/v1_1/herun6yp/image/upload", {method: "POST", body});
       if(!response.ok) throw new Error("Cloudinary từ chối ảnh (" + response.status + ").");

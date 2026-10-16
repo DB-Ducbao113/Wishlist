@@ -6,7 +6,12 @@ workers_dev = true
 [vars]
 CLOUDINARY_CLOUD_NAME = "herun6yp"
 FIREBASE_PROJECT_ID = "wishlist-787d2"
-ALLOWED_ORIGIN = "https://wishlist-787d2.web.app"
+
+# Exact-origin allowlist, comma separated. The check is always enforced.
+# Production origin first; add the Firebase Hosting preview origin when testing
+# (e.g. "https://wishlist-787d2.web.app,https://wishlist-787d2--image-sync-v1-XXXX.web.app").
+# Never set "*" and never disable the check.
+ALLOWED_ORIGINS = "https://wishlist-787d2.web.app"
 
 # Configure via Cloudflare dashboard as a variable (non-secret):
 # CLOUDINARY_API_KEY
