@@ -19,8 +19,17 @@ ALLOWED_ORIGINS = "https://wishlist-787d2.web.app,https://wishlist-787d2--image-
 #   CLOUDINARY_API_KEY    (encrypted secret)
 #   CLOUDINARY_API_SECRET (encrypted secret)
 # Do NOT commit either value.
-#
+
+# Worker Previews.
+# Cloudflare Builds runs `npx wrangler preview` for every branch that is NOT the
+# project's production branch. Without a `previews` block that command aborts with:
+#   "Your Wrangler configuration is missing a `previews` block to run this command."
+# (known issue: cloudflare/workers-sdk#15979). This empty block makes preview
+# builds succeed for non-production branches; production deploys are unaffected.
+[previews]
+
 # Cloudflare Builds settings:
+# Production branch: main
 # Root directory: workers/cloudinary-sign
 # Deploy command: npx wrangler deploy
 # Build command: leave empty
