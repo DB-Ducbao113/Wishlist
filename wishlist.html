@@ -131,6 +131,8 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 <link rel="stylesheet" href="./css/motion-v16.css">
 
+<link rel="stylesheet" href="./css/dashboard-v16.css">
+
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
      the class is only added when IntersectionObserver exists and the user
@@ -556,11 +558,11 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      role="group"
      aria-label="Thống kê wishlist">
 
-  <!-- Remaining budget -->
+  <!-- Value not yet owned: every item whose status is not "purchased" -->
   <div class="stat-card">
     <div class="stat-card__header">
       <span class="stat-card__label">
-        Còn phải chi
+        Giá trị chưa mua
       </span>
       <span class="stat-card__icon" aria-hidden="true">
         ◇
@@ -570,15 +572,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumTotal">0</b>
 
     <p class="stat-card__description">
-      Giá trị những giấc mơ phía trước
+      Tổng giá của tất cả món chưa mua
     </p>
   </div>
 
-  <!-- Purchased total -->
+  <!-- Value already owned: recorded price of purchased items only -->
   <div class="stat-card">
     <div class="stat-card__header">
       <span class="stat-card__label">
-        Đã chi
+        Giá trị đã sở hữu
       </span>
       <span class="stat-card__icon" aria-hidden="true">
         ✓
@@ -588,11 +590,11 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumSpent">0</b>
 
     <p class="stat-card__description">
-      Tổng giá trị đã sở hữu
+      Tổng giá ghi nhận của món đã mua — chưa phải chi tiêu thực tế
     </p>
   </div>
 
-  <!-- Items count -->
+  <!-- Total items, always the whole collection -->
   <div class="stat-card">
     <div class="stat-card__header">
       <span class="stat-card__label">
@@ -606,10 +608,35 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumCount">0 món</b>
 
     <p class="stat-card__description">
-      Tổng số món trong wishlist
+      Tổng số món trong bộ sưu tập
     </p>
   </div>
 
+</div>
+
+<!-- V16.1 — Ownership progress: purchasedCount / totalCount.
+     Zero items resolves to 0%, never NaN. The track is a real
+     progressbar so assistive tech can read the same number. -->
+<div class="dv-progress" id="dvProgress">
+  <div class="dv-progress__head">
+    <span class="dv-progress__label">Tiến độ sở hữu</span>
+    <span class="dv-progress__value" id="dvProgressValue">0%</span>
+  </div>
+
+  <div class="dv-progress__track"
+       id="dvProgressTrack"
+       role="progressbar"
+       aria-label="Tiến độ sở hữu bộ sưu tập"
+       aria-valuemin="0"
+       aria-valuemax="100"
+       aria-valuenow="0"
+       aria-valuetext="0% — 0 trên 0 món đã sở hữu">
+    <span class="dv-progress__fill" id="dvProgressFill"></span>
+  </div>
+
+  <p class="dv-progress__caption" id="dvProgressCaption">
+    Chưa có món nào trong bộ sưu tập.
+  </p>
 </div>
 
 </section>
@@ -1345,6 +1372,98 @@ function handleSessionChange(uid){
 }
 
 /* ===================================================================
+   V16.1 — METRICS (single source of truth for every KPI)
+   -------------------------------------------------------------------
+   globalMetrics()   -> computed from the WHOLE `items` array.
+   filteredMetrics() -> computed from what is currently displayed.
+   Both go through computeMetrics(), so a KPI can never be defined twice
+   and can never drift from the other one.
+
+   Contract:
+     totalCount    items.length                       (whole collection)
+     ownedCount    status === "purchased"
+     pendingCount  everything else
+     ownedValue    Σ recorded price of purchased items
+     pendingValue  Σ price of every item still not purchased
+     trackedValue  ownedValue + pendingValue
+     progress      ownedCount / totalCount, 0 when totalCount === 0
+   Search / filter / sort must never move a global number.
+=================================================================== */
+
+function computeMetrics(list){
+  const arr = Array.isArray(list) ? list : [];
+
+  // Missing / negative / non-finite prices count as 0 so a bad import can
+  // never turn a KPI into NaN.
+  const priceOf = (it) => {
+    const n = Number(it && it.price);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  };
+
+  let ownedCount = 0, ownedValue = 0;
+  let pendingCount = 0, pendingValue = 0;
+
+  for(const it of arr){
+    if(it && it.status === "purchased"){
+      ownedCount++;
+      ownedValue += priceOf(it);
+    }else{
+      pendingCount++;
+      pendingValue += priceOf(it);
+    }
+  }
+
+  const totalCount = arr.length;
+  const progress = totalCount === 0 ? 0 : ownedCount / totalCount;
+
+  return {
+    totalCount,
+    ownedCount,
+    pendingCount,
+    ownedValue,
+    pendingValue,
+    trackedValue: ownedValue + pendingValue,
+    progress,
+    progressPercent: Math.round(progress * 100)
+  };
+}
+
+// Toàn bộ bộ sưu tập — không bao giờ phụ thuộc search/filter/sort.
+function globalMetrics(){
+  return computeMetrics(items);
+}
+
+// Tập đang hiển thị — dùng cho dòng "đang hiển thị x trên y món".
+function filteredMetrics(){
+  return computeMetrics(visibleItems());
+}
+
+// V16.1 — đổ metrics vào khối Ownership Progress. Chịu được thiếu phần tử
+// (dashboard có thể được dựng lại ở F2) và không bao giờ hiện NaN.
+function renderDashboardProgress(m){
+  const fill = $("dvProgressFill");
+  const track = $("dvProgressTrack");
+  const value = $("dvProgressValue");
+  const caption = $("dvProgressCaption");
+  if(!fill || !track || !value || !caption) return;
+
+  const percent = m.totalCount === 0 ? 0 : Math.round(m.progress * 100);
+
+  fill.style.width = percent + "%";
+  value.textContent = percent + "%";
+
+  track.setAttribute("aria-valuenow", String(percent));
+  track.setAttribute(
+    "aria-valuetext",
+    percent + "% — " + m.ownedCount + " trên " + m.totalCount + " món đã sở hữu"
+  );
+
+  caption.textContent = m.totalCount === 0
+    ? "Chưa có món nào trong bộ sưu tập."
+    : m.ownedCount + " trên " + m.totalCount + " món đã sở hữu.";
+}
+
+/* ===================================================================
    LOC + SAP XEP
    =================================================================== */
 function visibleItems(){
@@ -1441,15 +1560,18 @@ function render(){
       ? "Xóa bộ lọc"
       : "+ Thêm món đầu tiên";
   }
-  $("resultStatus").textContent = "Đang hiển thị " + list.length + " trên " + items.length + " món.";
+  // V16.1 — KPI luôn tính trên TOÀN BỘ bộ sưu tập. Search / filter / sort
+  // chỉ đổi tập đang hiển thị, không bao giờ đổi con số tổng.
+  const metrics = globalMetrics();
+  const shown = filteredMetrics();
 
-  // Tong tien: tach mon chua mua (con phai chi) va mon da mua (da chi)
-  const sum = (arr) => arr.reduce((s, it) => s + (Number(it.price) || 0), 0);
-  const pending = list.filter(it => it.status !== "purchased");
-  const bought  = list.filter(it => it.status === "purchased");
-  $("sumTotal").textContent = fmtMoney(sum(pending));
-  $("sumCount").textContent = list.length + " món";
-  $("sumSpent").textContent = fmtMoney(sum(bought));
+  $("sumTotal").textContent = fmtMoney(metrics.pendingValue);
+  $("sumSpent").textContent = fmtMoney(metrics.ownedValue);
+  $("sumCount").textContent = metrics.totalCount + " món";
+  renderDashboardProgress(metrics);
+
+  $("resultStatus").textContent =
+    "Đang hiển thị " + shown.totalCount + " trên " + metrics.totalCount + " món.";
 
   const frag = document.createDocumentFragment();
 

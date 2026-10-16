@@ -5,13 +5,13 @@
   "wishlist-cloud.js",
   "css"
  ],
- "fileCount": 52,
- "assetCount": 50,
+ "fileCount": 53,
+ "assetCount": 51,
  "platformFiles": [
   "_headers",
   "_redirects"
  ],
- "totalBytes": 394159,
+ "totalBytes": 404471,
  "files": [
   "_headers",
   "_redirects",
@@ -23,6 +23,7 @@
   "css/cinematic-v7-workspace.css",
   "css/collection-v3.css",
   "css/controls.css",
+  "css/dashboard-v16.css",
   "css/desktop-showroom-v6-gallery.css",
   "css/desktop-showroom-v6-hero.css",
   "css/desktop-showroom-v6-mobile.css",

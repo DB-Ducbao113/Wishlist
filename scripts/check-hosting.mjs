@@ -62,7 +62,11 @@ const report = {
     leaks: newLeaks,
   },
 };
-const ok = distExists && missingRuntime.length === 0 && newLeaks.length === 0 && cssCount === 46;
+// The expected CSS count is derived from the repo, never hard-coded: the
+// allowlist must publish exactly the stylesheets that exist under css/.
+const repoCssCount = readdirSync(join(ROOT, 'css')).filter(n => n.endsWith('.css')).length;
+report.new.repoCssCount = repoCssCount;
+const ok = distExists && missingRuntime.length === 0 && newLeaks.length === 0 && cssCount === repoCssCount;
 report.verdict = ok ? 'PASS — no repo internals published; all runtime assets present' : 'FAIL — see missingRuntime/leaks';
 
 writeFileSync(join(ROOT, 'docs', 'qa', 'dream-vault-v15', 'hosting-audit.json'), JSON.stringify(report, null, 1));

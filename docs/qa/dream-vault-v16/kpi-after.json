@@ -1,0 +1,22 @@
+{
+  "label": "after",
+  "root": "E:\\Buying Checklist",
+  "unfiltered": {
+    "sumTotal": "4.775.000 ₫",
+    "sumSpent": "1.500.000 ₫",
+    "sumCount": "50 món",
+    "resultStatus": "Đang hiển thị 50 trên 50 món."
+  },
+  "filteredByStatus": {
+    "sumTotal": "4.775.000 ₫",
+    "sumSpent": "1.500.000 ₫",
+    "sumCount": "50 món",
+    "resultStatus": "Đang hiển thị 12 trên 50 món."
+  },
+  "filteredBySearch": {
+    "sumTotal": "4.775.000 ₫",
+    "sumSpent": "1.500.000 ₫",
+    "sumCount": "50 món",
+    "resultStatus": "Đang hiển thị 11 trên 50 món."
+  }
+}

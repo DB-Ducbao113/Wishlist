@@ -1,0 +1,171 @@
+/* =====================================================================
+   DREAM VAULT V16.1 — DASHBOARD FOUNDATION
+   ---------------------------------------------------------------------
+   Additive only. The brand palette lives in css/dreamscape-v5-tokens.css
+   and stays the single source of truth; this file NAMES its dashboard
+   roles so every dashboard component can be built from tokens instead of
+   hard-coded values. No dark-purple reference theme is copied here.
+
+   Nothing in this file is required for F1 to work — the KPI metrics are
+   pure JS. It exists so F2 (Purchase Flow) and the dashboard build can be
+   assembled from a contract instead of ad-hoc styles.
+   ===================================================================== */
+
+:root {
+  /* ---- Brand roles (aliases; never redefine the palette) ---- */
+  --dv-bg:            var(--dream-bg);            /* #F8F6FF */
+  --dv-surface:       var(--dream-surface);       /* #FFFFFF */
+  --dv-surface-2:     var(--dream-surface-soft);  /* #F3EFFF */
+  --dv-accent:        var(--dream-accent);        /* #6850BC */
+  --dv-accent-hover:  var(--dream-accent-hover);  /* #543F9E */
+  --dv-highlight:     var(--dream-highlight);     /* #A88BF7 */
+  --dv-ink:           var(--dream-ink);           /* #19152C */
+  --dv-muted:         var(--dream-muted);         /* #625979 */
+  --dv-mist:          var(--dream-mist);          /* #DED5FF */
+  --dv-border:        var(--dream-border);        /* #E5DDF6 */
+  --dv-hairline:      var(--v11-hairline, #E5DDF6);
+
+  /* ---- Surfaces / elevation ---- */
+  --dv-radius-card:   var(--dream-radius-md);     /* 22px */
+  --dv-radius-inner:  var(--dream-radius-sm);     /* 16px */
+  --dv-radius-pill:   var(--dream-radius-pill);
+  --dv-elev-1:        var(--dream-shadow-soft);
+  --dv-elev-2:        var(--dream-shadow-glass);
+
+  /* ---- Typography ---- */
+  --dv-text-kpi:      clamp(22px, 2.2vw, 30px);
+  --dv-text-value:    15px;
+  --dv-text-caption:  12.5px;
+  --dv-text-label:    11px;
+  --dv-tracking-label: .12em;
+
+  /* ---- Spacing rhythm ---- */
+  --dv-gap-1: 8px;
+  --dv-gap-2: 12px;
+  --dv-gap-3: 16px;
+  --dv-gap-4: 24px;
+
+  /* ---- Motion ---- */
+  --dv-motion:   var(--dream-motion-normal);      /* 260ms */
+  --dv-ease-out: var(--dream-ease);
+
+  /* ---- Status semantics ----
+     Traceable to what the cards already render:
+       wish      badge.b-wish      -> immersive-v8-gallery.css (#6850BC)
+       saving    badge.b-saving    -> #8B7ED8
+       ordered   badge.b-ordered   -> --ex-highlight (#A88BF7)
+       purchased badge.b-purchased -> --ex-ink on rgba(25,21,44,.06)
+     plus the legacy chip fills in legacy.css for soft backgrounds. */
+  --dv-status-wish:        #6850BC;
+  --dv-status-saving:      #8B7ED8;
+  --dv-status-ordered:     #A88BF7;
+  --dv-status-purchased:   #19152C;
+  --dv-status-wish-soft:   #E8EDF1;
+  --dv-status-saving-soft: #DCECFF;
+  --dv-status-ordered-soft:#EFE4FF;
+  --dv-status-purchased-soft: #DFF3E6;
+
+  /* ---- Priority semantics ---- */
+  --dv-priority-low:       #9A93AD;
+  --dv-priority-medium:    #8B7ED8;
+  --dv-priority-high:      #B3261E;
+
+  /* ---- Data-visualisation ramp ----
+     Sequential lavender, ordered so that adjacent slices stay
+     distinguishable. Slot 1 is the accent so the primary metric reads as
+     "brand"; slot 5 is the lightest surface tint. */
+  --dv-chart-1: #6850BC;
+  --dv-chart-2: #8B7ED8;
+  --dv-chart-3: #A88BF7;
+  --dv-chart-4: #C7BEF2;
+  --dv-chart-5: #DED5FF;
+
+  /* ---- Positive/negative emphasis (never colour alone) ---- */
+  --dv-positive: #2F7D5B;
+  --dv-negative: #B3261E;
+}
+
+/* =====================================================================
+   KPI CARD CONTRACT
+   The markup already exists (.stat-card / __header / __label / __icon /
+   __value / __description). These rules only bind it to the tokens and
+   keep the numeric value optically stable while counts change.
+   ===================================================================== */
+
+body.dreamscape-v5 .stats-dashboard .stat-card__value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+body.dreamscape-v5 .stats-dashboard .stat-card__label {
+  text-transform: uppercase;
+  letter-spacing: var(--dv-tracking-label);
+}
+
+/* =====================================================================
+   OWNERSHIP PROGRESS
+   purchasedCount / totalCount. 0 items resolves to 0% (never NaN), and
+   the bar is a real progressbar for assistive tech.
+   ===================================================================== */
+
+.dv-progress {
+  margin-top: clamp(18px, 2vw, 26px);
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-progress__label {
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-progress__value {
+  font-size: var(--dv-text-kpi);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--dv-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.dv-progress__track {
+  position: relative;
+  height: 10px;
+  margin-top: var(--dv-gap-2);
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+  overflow: hidden;
+}
+
+.dv-progress__fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--dv-chart-1), var(--dv-chart-3));
+  transition: width var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-progress__caption {
+  margin: var(--dv-gap-2) 0 0;
+  font-size: var(--dv-text-caption);
+  color: var(--dv-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dv-progress__fill {
+    transition: none !important;
+  }
+}
