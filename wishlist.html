@@ -2161,7 +2161,7 @@ function init(){
     handleFile(file);
   });
 
-  $("form").addEventListener("submit", (e) => {
+  $("form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = $("fName").value.trim();
     const priceRaw = $("fPrice").value;
@@ -2186,7 +2186,7 @@ function init(){
 
     const link = normUrl($("fLink").value);
     const enteredImage = $("fImageUrl").value.trim();
-    const image = enteredImage ? normUrl(enteredImage) : pendingDataUrl;
+    let image = enteredImage ? normUrl(enteredImage) : pendingDataUrl;
     if($("fLink").value.trim() && !link){
       toast("Liên kết mua hàng không hợp lệ. Chỉ chấp nhận địa chỉ HTTP hoặc HTTPS.");
       $("fLink").focus(); return;
@@ -2196,6 +2196,20 @@ function init(){
       $("fImageUrl").focus(); return;
     }
 
+    if (image.startsWith("data:image/") && cloudSync?.user) {
+      const button = $("form").querySelector('button[type="submit"]');
+      if (button?.disabled) return;
+      if (button) button.disabled = true;
+      try {
+        toast("Đang tải ảnh lên Cloudinary...");
+        image = await cloudSync.uploadImage(image);
+      } catch (error) {
+        showCloudError("Upload ảnh thất bại: " + error.message + ". Ảnh vẫn được giữ trong form.");
+        return;
+      } finally {
+        if (button) button.disabled = false;
+      }
+    }
     const id = $("fId").value;
     const data = {
       name,
@@ -2269,7 +2283,7 @@ async function initializeCloudSync(){
   if(cloudSync) return cloudSync;
   if(cloudSyncPromise) return cloudSyncPromise;
   cloudSyncPromise = (async () => {
-    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=4");
+    const { initializeWishlistCloud } = await import("./wishlist-cloud.js?v=5");
     cloudSync = await initializeWishlistCloud({
       onStatus: (status, email = "") => {
         $("syncStatus").textContent = status;
