@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-10-16",
+  "project": "wishlist-787d2",
+  "method": "GET Firestore REST với ID token Google thật lấy từ phiên đang đăng nhập (chỉ đọc).",
+  "account": "<redacted: hhhhh…@gmail.com>",
+  "uid": "<redacted>",
+  "results": {
+    "authenticated_read_own_items": 200,
+    "authenticated_read_other_uid_items": 403,
+    "authenticated_read_other_uid_parent_doc": 403,
+    "authenticated_list_users": 403,
+    "anonymous_read_own_items": 403
+  },
+  "crossAccountIsolation": "VERIFIED — người dùng đã xác thực đọc được dữ liệu của chính mình (200) nhưng bị 403 với dữ liệu của uid khác; ẩn danh bị 403.",
+  "verdict": true
+}

@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-10-16",
+  "purpose": "Kiểm thử Google Login + sync trên production bằng profile Chrome thật (bản copy).",
+  "existingSession": {
+    "present": true,
+    "account": "<redacted: hhhhh…@gmail.com>",
+    "uid": "<redacted>",
+    "status": "Đã nhận dữ liệu từ máy chủ",
+    "localItems": 7
+  },
+  "syncVerification": {
+    "serverItemsForUidBeforeTest": 6,
+    "writeTest": "App thêm 1 món → document xuất hiện trên Firestore (admin read xác nhận) → sync write WORKS",
+    "readTest": "App nhận danh sách từ máy chủ → sync read WORKS",
+    "cleanup": "Món test đã được xoá khỏi Firestore; dữ liệu trở về 6 món"
+  },
+  "newSignInAttempt": {
+    "clicked": "#btnSignIn",
+    "popupUrl": "https://accounts.google.com/signin/oauth/error?...redirect_uri_mismatch...",
+    "redirectUri": "https://wishlist-787d2.web.app/__/auth/handler",
+    "clientId": "444123301601-i8di1kmj4em9jk2j7b8bg1o0mscjt37l.apps.googleusercontent.com",
+    "popupText": "Access blocked: This app's request is invalid. Error 400: redirect_uri_mismatch",
+    "verdict": "FAIL — đăng nhập Google MỚI bị chặn"
+  },
+  "rootCause": "authDomain trong wishlist-cloud.js = 'wishlist-787d2.web.app', nên OAuth dùng redirect URI 'https://wishlist-787d2.web.app/__/auth/handler'. URI này CHƯA được đăng ký trong Google OAuth client (auto-created) của project → Google từ chối.",
+  "impact": "P1: người dùng MỚI (hoặc sau khi đăng xuất/xoá phiên) KHÔNG thể đăng nhập Google. Phiên cũ vẫn hoạt động nên lỗi không lộ khi chỉ kiểm tra bằng tài khoản đã đăng nhập.",
+  "fixes": [
+    "Chính (không cần deploy lại): Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID (auto created by Google Service, id kết thúc ...mscjt37l) → Authorized redirect URIs → thêm 'https://wishlist-787d2.web.app/__/auth/handler' → Save.",
+    "Thay thế (cần sửa code + deploy lại): đổi authDomain về 'wishlist-787d2.firebaseapp.com' trong wishlist-cloud.js (handler mặc định đã được đăng ký sẵn)."
+  ]
+}

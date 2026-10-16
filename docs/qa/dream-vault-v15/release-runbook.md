@@ -58,6 +58,10 @@ firebase deploy --only firestore:rules --dry-run     # xem diff, KHÔNG áp dụ
 
 ## Gate 2 — Google Login/Logout & Sync đa thiết bị
 
+> 🔴 **TRẠNG THÁI HIỆN TẠI: NO-GO.** Đăng nhập Google MỚI trên production đang trả
+> `redirect_uri_mismatch` (P1) — xem `production-blocker-oauth.md`. Phải sửa P1 này trước khi Gate 2 có thể PASS.
+> (Sync read/write và cách ly UID đã VERIFIED với phiên cũ — xem `final-report.md` §9.3–9.4.)
+
 Chuẩn bị: 1 tài khoản Google test (được phép dùng).
 1. **Login**: mở site trên **máy A** → đăng nhập Google → thêm 1 món.
 2. **Sync sang máy B**: mở site trên **máy B** (khác trình duyệt/thiết bị) → đăng nhập **cùng tài khoản** → món vừa thêm xuất hiện.

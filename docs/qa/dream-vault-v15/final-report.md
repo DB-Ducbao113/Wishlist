@@ -16,13 +16,14 @@
 | Security (XSS, URL scheme, rò rỉ token) | **GO** |
 | Regression V9–V14 | **GO** — 303/303 |
 | Accessibility / Responsive / Performance (lab) | **GO** (không regression) |
-| Firebase Sync thật (login, đa thiết bị, xung đột) | **UNVERIFIED / HOLD** — luồng OAuth mở được tới Google; chưa có tài khoản nào đăng nhập nên Firestore chưa có dữ liệu sync |
-| Firestore Rules đã deploy trên production | **VERIFIED** — rules deploy khớp tuyệt đối với source; truy cập ẩn danh bị `403 PERMISSION_DENIED` |
+| Firebase Sync (read/write/cách ly) thật | **VERIFIED** — đọc/ghi sync hoạt động; token Google thật đọc dữ liệu của mình 200, uid khác 403 |
+| Google Login cho người dùng **mới** | **🔴 NO-GO — P1** — popup trả `redirect_uri_mismatch` |
+| Firestore Rules đã deploy trên production | **VERIFIED** — rules deploy khớp tuyệt đối với source; ẩn danh `403`; cách ly UID `403` |
 | URL production thật (HTTPS, headers, asset, 404 nội bộ, smoke) | **VERIFIED** — smoke 10/10 PASS; mọi đường dẫn nội bộ đều 404 |
 
-**P0 = 0. P1 = 1 (đã sửa).** Không có lỗi P0/P1 tồn đọng.
+**P0 = 0. P1 = 1 (ĐANG MỞ — Google OAuth `redirect_uri_mismatch`, xem §10).**
 
-> V15 RC **đã được deploy lên production** (`https://wishlist-787d2.web.app`). Verification production ở §9: Hosting allowlist, headers, Firestore Rules **VERIFIED**; **còn 1 gate**: Google Login + sync đa thiết bị thực tế (chưa có tài khoản nào đăng nhập). Do đó **Dream Vault 1.0 Stable vẫn HOLD** tới khi Gate 2 hoàn tất.
+> V15 RC **đã được deploy lên production** (`https://wishlist-787d2.web.app`). Verification production ở §9: Hosting, headers, Firestore Rules và sync read/write đều **VERIFIED** — nhưng **đăng nhập Google cho người dùng mới đang hỏng (P1)**. Do đó **Dream Vault 1.0 Stable = NO-GO** tới khi P1 ở §10 được sửa và xác minh lại.
 
 ---
 
@@ -62,12 +63,10 @@ Xác minh chỉ `wishlist.html`, `wishlist-cloud.js`, `css/**` được tham chi
 ### A3. Secrets
 Quét toàn repo: **không** có private key / service account / `.env` / token bị commit. Chuỗi `AIza...` duy nhất nằm trong `wishlist-cloud.js` là **Firebase Web API key** (công khai theo thiết kế, không phải bí mật).
 
-### A4. Firestore Rules — **UNVERIFIED**
-`firestore.rules` tĩnh: `allow read, write: if request.auth != null && request.auth.uid == userId;` cho `/users/{userId}/items/{itemId}` → đúng: bắt buộc đăng nhập, cách ly theo UID, default-deny cho mọi path khác. **Chưa** xác minh được:
-- Rules **đã deploy** có khớp source không (không truy cập production).
-- Hành vi thực tế (không có tài khoản test; không có JVM để chạy emulator).
-
-Đã cung cấp sẵn `scripts/test-firestore-rules.mjs` + hướng dẫn để owner tự chạy. Phân tích: `firestore-rules-static.json`.
+### A4. Firestore Rules — **VERIFIED trên production**
+`firestore.rules`: `allow read, write: if request.auth != null && request.auth.uid == userId;` cho `/users/{userId}/items/{itemId}` → bắt buộc đăng nhập, cách ly theo UID, default-deny cho mọi path khác.
+Đã xác minh trên production (xem §9.3): ruleset đã deploy khớp tuyệt đối source; và kiểm chứng thực tế bằng **ID token Google thật** — đọc dữ liệu của chính mình = **200**, đọc uid khác (items + parent doc) và list `users` = **403**, ẩn danh = **403**.
+Bằng chứng: `img/prod-firestore-rules.json`, `img/prod-rules-live.json`. Emulator cục bộ không chạy được (máy không có Java) → đã thay thế bằng kiểm chứng live trên production. `scripts/test-firestore-rules.mjs` vẫn kèm cho owner muốn chạy emulator.
 
 ### A5. HTTPS / headers
 Production = Firebase Hosting → HTTPS mặc định (không xác minh được ở localhost). Header phía localhost chỉ là `SimpleHTTP` (không có security header) — **không** đại diện production. Đã thêm 2 header an toàn vào config hosting; các header mạnh hơn (CSP, X-Frame-Options) **chưa bật** vì có thể phá auth/popup và không kiểm thử được production → khuyến nghị ở §7.
@@ -136,21 +135,22 @@ Không đổi CSS; V14 đã phủ 12 viewport không tràn. V15 tái xác nhận
 
 ## 6. Gate còn lại / đã xác minh
 
-**Còn HOLD (1 gate):**
-1. **Firebase Sync thật** — login Google, logout, đồng bộ đa thiết bị, xử lý xung đột/offline. *Đã xác minh được*: SDK Firebase 10.14.1 nạp từ gstatic, Identity Toolkit reachable, bấm "Đăng nhập" mở đúng `/__/auth/handler`. *Còn thiếu*: một tài khoản Google đăng nhập thật (2 thiết bị) — **Firestore `users` hiện rỗng**, chưa có dữ liệu sync.
+**🔴 Blocker còn lại (1):**
+1. **Google Login cho người dùng MỚI** — popup trả `redirect_uri_mismatch` (P1). Nguyên nhân + cách sửa: `production-blocker-oauth.md` và §10.
 
 **Đã xác minh trong review này:**
-2. **Firestore Rules trên production** — **VERIFIED**: rules đã deploy khớp tuyệt đối với `firestore.rules` trong repo (đọc qua Rules API); truy cập ẩn danh bị `403 PERMISSION_DENIED`. Cách ly theo UID được chứng minh bằng chính văn bản rules; kiểm chứng chéo 2 tài khoản thật vẫn khuyến nghị (emulator cần Java — máy này không có).
-3. **Production thật** — **VERIFIED**: `https://wishlist-787d2.web.app` (và `.firebaseapp.com`) HTTPS 200; headers HSTS + `nosniff` + Referrer-Policy; 46 CSS + `wishlist-cloud.js` 200; **mọi** đường dẫn nội bộ (`docs/`, `firebase.json`, `firestore.rules`, `.firebaserc`, `FIREBASE_SETUP.md`, `scripts/`, ảnh thừa) đều **404**. Smoke browser production 10/10 PASS.
+2. **Dữ liệu sync thật** — app đọc danh sách từ máy chủ và ghi lên Firestore (admin read xác nhận document xuất hiện); dữ liệu **cách ly theo UID** (ID token Google thật: đọc dữ liệu của mình 200, đọc uid khác 403).
+3. **Firestore Rules trên production** — rules deploy khớp tuyệt đối với `firestore.rules` repo; ẩn danh bị `403 PERMISSION_DENIED`.
+4. **Production thật** — HTTPS + headers (HSTS/nosniff/Referrer-Policy); 46 CSS + `wishlist-cloud.js` 200; mọi đường dẫn nội bộ **404**; smoke browser 10/10.
 
 **Chưa làm:**
-4. **Thiết bị thật / mạng yếu** — perf trên điện thoại thật, background-tab throttling, 50+ sản phẩm trên máy yếu.
+5. **Thiết bị thật / mạng yếu** — perf trên điện thoại thật, background-tab throttling, 50+ sản phẩm trên máy yếu.
 
 ---
 
 ## 7. Khuyến nghị trước/sau khi chuyển 1.0 Stable
 
-- **Trước cutover**: chạy `firebase emulators:exec --only firestore --project wishlist-787d2 "node scripts/test-firestore-rules.mjs"` (cần Java) → đối chiếu rules deploy; đăng nhập Google thử trên 2 thiết bị; deploy lên preview channel rồi kiểm tra header/HTTPS.
+- **Trước cutover**: **sửa P1 OAuth** (thêm redirect URI `https://wishlist-787d2.web.app/__/auth/handler` trong Google Cloud Console, hoặc đổi `authDomain` về `firebaseapp.com`) → rồi đăng nhập Google thử trên 2 thiết bị; đối chiếu rules deploy (`firebase emulators:exec ...` nếu có Java — máy này không có, đã thay bằng kiểm chứng live ở §9.3); deploy lên preview channel rồi kiểm tra header/HTTPS.
 - **Cân nhắc thêm** (không bắt buộc, cần test production trước khi bật): CSP tối thiểu (`default-src 'self'; script-src 'self' https://www.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com; frame-src https://wishlist-787d2.firebaseapp.com`), `X-Frame-Options`/`frame-ancestors`, siết shape dữ liệu trong Firestore rules.
 - Dọn asset thừa `image/` (5 file không tham chiếu) và thư mục rỗng `worker/` khi thuận tiện.
 
@@ -162,7 +162,11 @@ Không đổi CSS; V14 đã phủ 12 viewport không tràn. V15 tái xác nhận
 - `final-report.md` — báo cáo này.
 - `release-runbook.md` — runbook 6 bước đóng 3 release gate + checklist phát hành `ui-v15.0.0`.
 - `hosting-audit.json`, `hosting-manifest.json` — Workstream A.
-- `firestore-rules-static.json` — phân tích rules + phần UNVERIFIED.
+- `firestore-rules-static.json` — phân tích rules tĩnh (đã được kiểm chứng live ở §9.3).
+- `production-blocker-oauth.md` — P1 Google Login `redirect_uri_mismatch` + cách sửa. **ĐỌC TRƯỚC KHI PHÁT HÀNH.**
+- `img/prod-firestore-rules.json`, `img/prod-rules-live.json` — rules deploy + kiểm chứng cách ly UID bằng token thật.
+- `img/prod-login-detail.json` — chi tiết lỗi OAuth trên production (đã che email/uid).
+- `img/prod-browser.json`, `img/prod-auth-probe.json`, `img/production-hosting-paths.json` — smoke/hosting production.
 - `img/browser-qa.json` (15/15), `img/a11y.json`, `img/perf-vitals.json`, `img/render-50.json`, `img/static-headers.json`.
 - `img/geom-with-main.json`, `img/geom-without-main.json` — bất biến hình học của `<main>`.
 - `img/regression-v9.json` … `img/regression-v14.json` — 303/303.
@@ -211,21 +215,61 @@ Bằng chứng: `img/prod-browser.json`.
 ### 9.3 Firestore Rules production — VERIFIED
 Đọc ruleset đã deploy qua Rules API:
 `projects/wishlist-787d2/releases/cloud.firestore` → ruleset `dc7e9d94-445a-4ec9-b420-2b78ec93ee3f`.
-**Nội dung khớp tuyệt đối** với `firestore.rules` trong repo. Truy cập ẩn danh tới `/users/{uid}/items` (list/get) và `/users` → **403 PERMISSION_DENIED**.
-Bằng chứng: `img/prod-firestore-rules.json`.
+**Nội dung khớp tuyệt đối** với `firestore.rules` trong repo.
 
-### 9.4 Google Auth — luồng reachable, chưa đăng nhập
-SDK nạp từ `gstatic.com/firebasejs/10.14.1`; request tới `identitytoolkit.googleapis.com` thành công; bấm "Đăng nhập" mở popup tới `/__/auth/handler?apiKey=...`. **Chưa** hoàn tất đăng nhập (không có credential), **Firestore `users` rỗng** → Gate "sync thật" còn HOLD.
-Bằng chứng: `img/prod-auth-probe.json`.
+**Kiểm chứng cách ly tài khoản bằng ID token Google thật** (GET Firestore REST, chỉ đọc):
+
+| Truy vấn (có/không token) | Kết quả |
+|---|---|
+| Đọc `/users/{uid của mình}/items` (đã xác thực) | **200** |
+| Đọc `/users/{uid khác}/items` (đã xác thực) | **403** |
+| Đọc `/users/{uid khác}` parent doc | **403** |
+| List `/users` (đã xác thực) | **403** |
+| Đọc `/users/{uid}/items` (ẩn danh) | **403** |
+
+Bằng chứng: `img/prod-firestore-rules.json`, `img/prod-rules-live.json`.
+
+### 9.4 Google Auth — 🔴 đăng nhập MỚI HỎNG (P1)
+SDK nạp từ `gstatic.com/firebasejs/10.14.1`; bấm "Đăng nhập" mở popup tới `/__/auth/handler`. Tuy nhiên popup Google trả:
+
+> Access blocked: This app's request is invalid — **Error 400: redirect_uri_mismatch**
+
+Redirect URI bị từ chối: `https://wishlist-787d2.web.app/__/auth/handler` (do `authDomain` = `wishlist-787d2.web.app` chưa được đăng ký trong OAuth client).
+→ **Người dùng mới không thể đăng nhập.** Chi tiết + cách sửa: `production-blocker-oauth.md` và §10.
+
+Trong khi đó, **sync với phiên đã đăng nhập cũ hoạt động**: app đọc danh sách từ máy chủ (`Đã nhận dữ liệu từ máy chủ`), và bản ghi thêm mới đã xuất hiện trên Firestore (xác nhận qua admin read rồi dọn sạch).
+Bằng chứng: `img/prod-auth-probe.json`, `img/prod-login-detail.json`.
 
 ### 9.5 Tổng kết 6 bước
 | Bước | Trạng thái |
 |---|---|
 | 0. Sao lưu | ⚠️ Chưa có bằng chứng (nên xác nhận trước thao tác tiếp theo) |
-| 1. Firestore Rules (deployed + ẩn danh) | ✅ VERIFIED (chéo 2 tài khoản: khuyến nghị) |
-| 2. Google Login/Sync đa thiết bị | ⛔ UNVERIFIED — cần đăng nhập thật |
+| 1. Firestore Rules (deployed + ẩn danh + chéo 2 tài khoản) | ✅ **VERIFIED** (token thật: của mình 200 / uid khác 403) |
+| 2. Google Login/Sync | 🔴 **NO-GO** — sync OK, nhưng **đăng nhập mới hỏng** (`redirect_uri_mismatch`) |
 | 3. Build `dist/` + audit | ✅ VERIFIED (local 48/0; production chỉ runtime asset) |
 | 4. Deploy | ✅ Do chủ dự án thực hiện |
 | 5. Smoke production | ✅ 10/10 PASS |
-| 6. Tag `ui-v15.0.0` | ⏳ Chờ Gate 2 + phê duyệt GO |
+| 6. Tag `ui-v15.0.0` | ⛔ **HOLD** — chờ sửa P1 (§10) + phê duyệt GO |
+
+---
+
+## 10. P1 — Google Login `redirect_uri_mismatch` (blocker)
+
+**Mức độ**: P1 — chặn phát hành 1.0 Stable.
+**Nguyên nhân**: `wishlist-cloud.js` đặt `authDomain: "wishlist-787d2.web.app"` → Firebase Auth dùng
+`https://wishlist-787d2.web.app/__/auth/handler` làm OAuth redirect URI, nhưng URI này **chưa được đăng ký**
+trong Google OAuth 2.0 Client (auto-created) → Google từ chối.
+**Vì sao khó thấy**: tài khoản đã đăng nhập trước đó vẫn sync bình thường; lỗi chỉ lộ khi **đăng nhập mới**.
+
+**Cách sửa**
+- **A (khuyến nghị, không cần deploy lại)**: Google Cloud Console → APIs & Services → Credentials → OAuth 2.0
+  Client ID *(auto created by Google Service)* → Authorized redirect URIs → thêm
+  `https://wishlist-787d2.web.app/__/auth/handler` → Save.
+- **B (cần sửa code + deploy lại)**: đổi `authDomain` về `wishlist-787d2.firebaseapp.com` (handler mặc định
+  đã được đăng ký sẵn).
+
+**Xác minh sau khi sửa**: đăng xuất/ẩn danh → đăng nhập Google thành công; thêm món → có document trên Firestore;
+đăng nhập trên thiết bị thứ hai → thấy món đó.
+
+Chi tiết đầy đủ: `production-blocker-oauth.md`.
 
