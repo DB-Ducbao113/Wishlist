@@ -166,17 +166,19 @@ body.dreamscape-v5 .hero--v9 .hero-v3__primary {
 body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
   min-height: 44px;
   padding: 0 22px;
-  border: 1px solid rgba(124, 105, 198, .30);
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(124, 105, 198, .10);
+  /* Near-white fill + 1px lavender gradient border (light-minimal premium). */
+  background:
+    linear-gradient(#F7F3FD, #F7F3FD) padding-box,
+    linear-gradient(120deg, #8273CA, #B9A6F2) border-box;
   color: var(--v9-accent);
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: .09em;
   text-transform: uppercase;
-  box-shadow: 0 10px 24px rgba(84, 63, 158, .10);
+  box-shadow: 0 8px 20px rgba(84, 63, 158, .14);
   transition: background 160ms var(--v9-ease),
-    border-color 160ms var(--v9-ease),
     box-shadow 160ms var(--v9-ease);
 }
 
@@ -188,9 +190,10 @@ body.dreamscape-v5 .hero--v9 .hero-v3__secondary::after {
 
 @media (hover: hover) and (pointer: fine) {
   body.dreamscape-v5 .hero--v9 .hero-v3__secondary:hover {
-    background: rgba(124, 105, 198, .16);
-    border-color: rgba(124, 105, 198, .48);
-    box-shadow: 0 14px 30px rgba(84, 63, 158, .16);
+    background:
+      linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+      linear-gradient(120deg, #8273CA, #B9A6F2) border-box;
+    box-shadow: 0 14px 30px rgba(84, 63, 158, .20);
   }
 }
 

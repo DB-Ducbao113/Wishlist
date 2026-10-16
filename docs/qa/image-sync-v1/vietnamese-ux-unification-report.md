@@ -64,18 +64,21 @@ viewbar *"CHẾ ĐỘ HIỂN THỊ"* + *"Dạng lưới" / "Tập trung"*, QV pl
 
 ## 4. CTA "Khám phá bộ sưu tập" — trước/sau
 
-| Thuộc tính | Trước | Sau |
+Phương án viền được chủ dự án chọn: **D — nền gần trắng + viền gradient tím** (nhìn premium, đúng tinh thần light-minimal lavender).
+
+| Thuộc tính | Trước | Sau (phương án D) |
 |---|---|---|
 | `border-radius` | `0px` | `999px` (pill) |
-| `background` | `transparent` | `rgba(124,105,198,.10)` (lavender nhạt) |
-| `border` | `none` | `1px solid rgba(124,105,198,.30)` |
+| `background` | `transparent` | nền gần trắng `#F7F3FD` (lớp `padding-box`) |
+| `border` | `none` | `1px solid transparent` + viền **gradient** `#8273CA → #B9A6F2` (lớp `border-box`) |
 | `padding` | `0 6px` | `0 22px` |
 | Gạch chân `::after` | hiện (1px) | ẩn (`content:none`) |
-| `box-shadow` | — | `0 10px 24px rgba(84,63,158,.10)` |
+| `box-shadow` | — | `0 8px 20px rgba(84,63,158,.14)` |
 | `min-height` | `44px` | `44px` (giữ — không đổi chiều cao hàng CTA) |
-| Hover | gạch chân đậm | nền/viền/đổ bóng nhấn nhẹ |
+| Hover | gạch chân đậm | nền `#FFFFFF` + bóng đậm hơn `rgba(84,63,158,.20)` |
 
-Kiểm tra computed style thật trong trình duyệt tại 1440/768/375 → `radius: 999px`, nền lavender, gạch chân đã ẩn.
+Kiểm tra computed style thật trong trình duyệt → `radius: 999px`, `background-image: linear-gradient(#F7F3FD,#F7F3FD), linear-gradient(120deg,#8273CA,#B9A6F2)`, gạch chân đã ẩn.
+Đã render sẵn 6 phương án viền (A–F) để chủ dự án chọn trước khi áp dụng.
 
 ---
 
@@ -134,7 +137,7 @@ Thêm: **`v10 G1d`** trước đây yêu cầu `.sync-panel{display:flex}`. Comm
 | Tệp | Thay đổi |
 |---|---|
 | `wishlist.html` | Việt hoá 11 nhãn tĩnh còn lại + 4 nhãn do JS sinh (nhãn card, plaque, sceneNo, empty fallback). |
-| `css/premium-v9-signature.css` | `.hero--v9 .hero-v3__secondary` → pill bo tròn mềm; ẩn gạch chân `::after`; hover mới. |
+| `css/premium-v9-signature.css` | `.hero--v9 .hero-v3__secondary` → pill bo tròn mềm, nền gần trắng `#F7F3FD` + viền gradient tím `#8273CA→#B9A6F2`; ẩn gạch chân `::after`; hover mới. |
 | `css/cinematic-v7-mobile.css` | Việt hoá chuỗi `content` plaque (V8 đã tắt). |
 | `css/cinematic-v7-visual-overhaul.css` | Việt hoá chuỗi `content` plaque (V8 đã tắt). |
 | `docs/qa/image-sync-v1/vietnamese-ux-unification-report.md` | Báo cáo này. |
