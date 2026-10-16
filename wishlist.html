@@ -2222,14 +2222,25 @@ function init(){
     if($("fImageUrl").value.trim()) pendingDataUrl = "";
     updatePreview();
   });
+  let imageProcessing = Promise.resolve();
   $("fFile").addEventListener("change", (e) => {
     const file = e.target.files[0];
     e.target.value = "";
-    handleFile(file);
+    // Do not allow submit to race ahead of Safari's asynchronous image compression.
+    imageProcessing = handleFile(file);
   });
 
   $("form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    // Safari may still be decoding/compressing the chosen photo.
+    // Wait before capturing pendingDataUrl for the save/upload flow.
+    try {
+      await imageProcessing;
+    } catch (error) {
+      setFileError("Không thể xử lý ảnh. Hãy chọn lại ảnh trước khi lưu.");
+      return;
+    }
+    if (!$("fileErr").classList.contains("hidden")) return;
     let uploadedNow = false;
     const name = $("fName").value.trim();
     const priceRaw = $("fPrice").value;
