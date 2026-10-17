@@ -133,6 +133,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 <link rel="stylesheet" href="./css/dashboard-v16.css">
 <link rel="stylesheet" href="./css/purchase-v16.css">
+<link rel="stylesheet" href="./css/f4-interaction-v16.css">
 
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
@@ -824,8 +825,24 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     </div>
   </div>
 
+  <!-- V16.1 F4.4 — Advanced filters. Desktop keeps all four selects in the
+       open; on a phone they collapse behind one disclosure so the toolbar is
+       search + tabs + one row. The panel is only ever `display:none` by CSS at
+       ≤640px, and the selects stay in the DOM at every width, so the toolbar
+       contracts while `visibleItems()` reads exactly the same four values. -->
+  <button
+    type="button"
+    id="filterToggle"
+    class="collection-filters__toggle"
+    aria-expanded="false"
+    aria-controls="filtersPanel"
+  >
+    <span class="collection-filters__toggle-text">Bộ lọc</span>
+    <span class="collection-filters__toggle-count" id="filterCount" hidden>0</span>
+  </button>
+
   <!-- Filter Group -->
-  <div class="collection-filters">
+  <div class="collection-filters" id="filtersPanel">
 
     <div class="field">
       <label for="fStatus">Trạng thái</label>
@@ -1217,6 +1234,16 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <section class="quick-view__story" aria-labelledby="qvStoryHeading">
       <h3 class="quick-view__story-heading" id="qvStoryHeading">Ghi chú về món đồ</h3>
       <p class="quick-view__note" id="qvNote"></p>
+    </section>
+
+    <!-- V16.1 F4 — đổi trạng thái trực tiếp, không phải mở form sửa. -->
+    <section class="quick-view__status" aria-labelledby="qvStatusHeading">
+      <h3 class="quick-view__story-heading" id="qvStatusHeading">Đổi trạng thái</h3>
+      <div class="quick-view__status-options" id="qvStatusOptions"
+           role="group" aria-label="Chọn trạng thái mới"></div>
+      <p class="quick-view__status-hint">
+        Chọn “Đã mua” sẽ mở hộp thoại ghi giá thực tế và ngày mua.
+      </p>
     </section>
 
     <div class="quick-view__cta">
@@ -2445,6 +2472,40 @@ function setPurchaseTab(tab){
   renderImmediately();
 }
 
+/* -------------------------------------------------------------------
+   V16.1 F4.4 — ADVANCED-FILTER DISCLOSURE (phone only)
+   Bốn ô chọn nâng cao vẫn là nguồn sự thật duy nhất của visibleItems();
+   phần ở đây chỉ là cách TRÌNH BÀY chúng. Trên điện thoại bảng bị CSS thu
+   gọn, nên huy hiệu đếm cho biết đang có bao nhiêu bộ lọc tác động — người
+   dùng không phải mở bảng mới biết vì sao danh sách ngắn đi.
+------------------------------------------------------------------- */
+function activeFilterCount(){
+  let n = 0;
+  if($("fStatus") && $("fStatus").value) n++;
+  if($("fPriority") && $("fPriority").value) n++;
+  if($("fCategoryFilter") && $("fCategoryFilter").value) n++;
+  // "Mới thêm trước" là mặc định, nên nó không tính là một bộ lọc đang bật.
+  if($("fSort") && $("fSort").value && $("fSort").value !== "newest") n++;
+  return n;
+}
+
+// Bảng mở/đóng là do CSS theo bề rộng màn hình quyết định; ở đây chỉ đồng bộ
+// trạng thái và con số. Trên desktop nút bị ẩn nên `is-open` không có tác dụng.
+function syncFilterDisclosure(){
+  const toggle = $("filterToggle");
+  const panel = $("filtersPanel");
+  const count = $("filterCount");
+  if(!toggle || !panel || !count) return;
+
+  const n = activeFilterCount();
+  const open = toggle.getAttribute("aria-expanded") === "true";
+
+  count.textContent = String(n);
+  count.hidden = n === 0;
+  toggle.classList.toggle("is-active", n > 0);
+  panel.classList.toggle("is-open", open);
+}
+
 /* ===================================================================
    V16.1 F3 — ĐIỀU HƯỚNG TỪ DASHBOARD XUỐNG BỘ SƯU TẬP
    -------------------------------------------------------------------
@@ -2585,6 +2646,9 @@ function render(){
   // so it cannot replay stale results afterwards.
   cancelPendingSearchRender();
   updateCategoryFilter();
+  // F4.4 — the disclosure badge must always describe the filters actually in
+  // force, whichever path changed them (toolbar, dashboard shortcut, clear).
+  syncFilterDisclosure();
   const list = visibleItems();
   const grid = $("grid");
 
@@ -3029,20 +3093,10 @@ function card(it){
   index.setAttribute("aria-hidden", "true");
   const badges = document.createElement("div");
   badges.className = "badges product-card__badges";
-  // Trang thai la nut bam duoc: 1 click chuyen sang buoc ke tiep
-  const chip = badge(st.label, st.cls);
-  if(nextStatus(it)){
-    chip.classList.add("status-chip");
-    chip.setAttribute("role", "button");
-    chip.tabIndex = 0;
-    chip.title = "Chuyển sang: " + nextStatus(it).label;
-    chip.setAttribute("aria-label", "Chuyển trạng thái của " + it.name + " sang " + nextStatus(it).label);
-    chip.addEventListener("click", () => cycleStatus(it.id));
-    chip.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); cycleStatus(it.id); }
-    });
-  }
-  badges.appendChild(chip);
+  // V16.1 F4 — mặt thẻ chỉ còn THÔNG TIN: trạng thái và ưu tiên đọc được
+  // ngay mà không cần hover. Thao tác đổi trạng thái đã chuyển vào menu ⋯,
+  // nên nhãn ở đây không còn là nút bấm nữa (hết "div giả nút" 22px).
+  badges.appendChild(badge(st.label, st.cls));
   badges.appendChild(badge(pr.label, pr.cls));
 
   const h3 = document.createElement("h3"); h3.textContent = it.name;
@@ -3065,18 +3119,23 @@ function card(it){
   meta.textContent = "Đã thêm " + daysAgo(it.createdAt) + " (" + fmtDate(it.createdAt) + ")";
   body.appendChild(meta);
 
-  // Hanh dong
+  // Hanh dong — V16.1 F4: hai hanh dong chinh luon hien, phan con lai trong
+  // menu "⋯". Moi nut chi mang data-card-action; #grid uy quyen mot listener
+  // duy nhat cho ca luoi (thay vi ~6 listener cho moi the).
   const actions = document.createElement("div");
   actions.className = "card-actions product-card__actions";
   const link = safeUrl(it.link);
-  // V8: nut mo Quick View (chi doc) — rieng biet voi Buy/Edit/Delete
+
+  // Hanh dong chinh: Xem chi tiet (mo Quick View)
   const bView = document.createElement("button");
   bView.className = "mini product-card__view";
   bView.type = "button";
   bView.textContent = "Xem chi tiết";
   bView.setAttribute("aria-label", "Xem chi tiết " + it.name);
-  bView.addEventListener("click", () => openQuickView(it.id, bView));
+  bView.dataset.cardAction = "view";
   actions.appendChild(bView);
+
+  // Mo noi ban khi URL hop le (khong doi hanh vi: van la the <a> that)
   if(link){
     const a = document.createElement("a");
     a.className = "buy"; a.href = link;
@@ -3084,30 +3143,23 @@ function card(it){
     a.textContent = "Mở nơi bán";
     actions.appendChild(a);
   }
-  // V16: thao tác hoàn thành trực quan + hoàn tác (không thêm trạng thái mới)
+
+  // Hanh dong mua: danh dau da mua (qua dialog F2) hoac hoan tac
   const bPurchase = document.createElement("button");
   bPurchase.type = "button";
   bPurchase.className = "mini mark-purchased";
+  bPurchase.dataset.cardAction = "purchase";
   if(it.status === "purchased"){
     bPurchase.textContent = "Hoàn tác";
     bPurchase.setAttribute("aria-label", "Hoàn tác trạng thái đã mua cho " + it.name);
-    bPurchase.addEventListener("click", () => undoPurchased(it.id));
   }else{
     bPurchase.textContent = "Đánh dấu đã mua";
     bPurchase.setAttribute("aria-label", "Đánh dấu " + it.name + " là đã mua");
-    bPurchase.addEventListener("click", () => markPurchased(it.id, bPurchase));
   }
   actions.appendChild(bPurchase);
 
-  const bEdit = document.createElement("button");
-  bEdit.className = "mini"; bEdit.textContent = "Sửa";
-  bEdit.setAttribute("aria-label", "Sửa món " + it.name);
-  bEdit.addEventListener("click", () => openForm(it));
-  const bDel = document.createElement("button");
-  bDel.className = "mini danger"; bDel.textContent = "Xóa";
-  bDel.setAttribute("aria-label", "Xóa món " + it.name);
-  bDel.addEventListener("click", () => removeItem(it.id));
-  actions.append(bEdit, bDel);
+  // Menu "⋯": doi trang thai, sua, xoa
+  actions.appendChild(cardMoreMenu(it, st));
 
   surface.append(thumb, body, actions);
   el.appendChild(surface);
@@ -3120,6 +3172,225 @@ function card(it){
 function badge(text, cls){
   const s = document.createElement("span");
   s.className = "badge " + cls; s.textContent = text; return s;
+}
+
+/* ===================================================================
+   V16.1 F4 — MENU "⋯" CỦA THẺ SẢN PHẨM (F4.2)
+   -------------------------------------------------------------------
+   Mặt thẻ chỉ giữ hai hành động chính: "Xem chi tiết" và
+   "Đánh dấu đã mua / Hoàn tác" (cộng "Mở nơi bán" khi có URL hợp lệ).
+   Ba việc ít dùng — đổi trạng thái, sửa, xóa — nằm trong menu này.
+
+   Vì sao không dùng role="menu": một trong ba mục là điều khiển trạng
+   thái (giống aria-pressed), không phải menuitem thuần. Một disclosure
+   với các <button> thật vẫn đủ tiêu chuẩn bàn phím mà không nói dối
+   về ngữ nghĩa.
+
+   Bàn phím: Enter/Space mở, ↓/↑ mở và vào mục đầu/cuối, Escape đóng và
+   trả focus về nút ⋯, Tab ra ngoài thì tự đóng. Chuột: click ra ngoài
+   thì đóng. Chạm: nút ⋯ bật/tắt (không phụ thuộc hover).
+=================================================================== */
+
+// Thẻ đang mở menu (chỉ một menu mở tại một thời điểm).
+let openCardMenu = null;
+
+function cardMenuButtons(menu){
+  return [...menu.querySelectorAll("button")].filter(b => !b.disabled);
+}
+
+function cardMoreMenu(it, st){
+  const menuId = "cardMenu-" + it.id;
+
+  const wrap = document.createElement("div");
+  wrap.className = "card-more";
+
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "card-more__trigger";
+  trigger.setAttribute("aria-haspopup", "true");
+  trigger.setAttribute("aria-expanded", "false");
+  trigger.setAttribute("aria-controls", menuId);
+  trigger.setAttribute("aria-label", "Thao tác khác cho " + it.name);
+  trigger.dataset.cardAction = "menu";
+  const dots = document.createElement("span");
+  dots.setAttribute("aria-hidden", "true");
+  dots.textContent = "⋯";
+  trigger.appendChild(dots);
+
+  const menu = document.createElement("div");
+  menu.className = "card-more__menu";
+  menu.id = menuId;
+  menu.dataset.open = "false";
+  menu.setAttribute("aria-label", "Thao tác khác cho " + it.name);
+
+  const nx = nextStatus(it);
+  if(nx){
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "badge " + st.cls + " status-chip card-more__item";
+    // role="button" giu lai vi day la hop dong da co voi cac bo QA V4..V16.
+    chip.setAttribute("role", "button");
+    // Ngoai tab order khi bang dang dong: nguoi dung ban phim khong the roi vao
+    // mot dieu khien dang vo hinh. openCardMenuFor() se dua cac muc tro lai
+    // tab order ngay khi bang mo.
+    chip.tabIndex = -1;
+    chip.textContent = st.label;
+    chip.title = "Chuyển sang: " + nx.label;
+    chip.setAttribute("aria-label", "Chuyển trạng thái của " + it.name + " sang " + nx.label);
+    chip.dataset.cardAction = "cycle";
+    chip.dataset.nextLabel = nx.label;
+    menu.appendChild(chip);
+  }
+
+  const edit = document.createElement("button");
+  edit.type = "button";
+  edit.className = "mini card-more__item";
+  edit.textContent = "Sửa";
+  edit.setAttribute("aria-label", "Sửa món " + it.name);
+  edit.dataset.cardAction = "edit";
+  edit.tabIndex = -1;
+  menu.appendChild(edit);
+
+  const del = document.createElement("button");
+  del.type = "button";
+  del.className = "mini danger card-more__item";
+  del.textContent = "Xóa";
+  del.setAttribute("aria-label", "Xóa món " + it.name);
+  del.dataset.cardAction = "delete";
+  del.tabIndex = -1;
+  menu.appendChild(del);
+
+  wrap.append(trigger, menu);
+  return wrap;
+}
+
+function closeCardMenu(returnFocus){
+  if(!openCardMenu) return false;
+  const trigger = openCardMenu.trigger;
+  openCardMenu.menu.dataset.open = "false";
+  trigger.setAttribute("aria-expanded", "false");
+  // Dong bang thi cac muc roi khoi tab order: ban phim Tab tu nut "..." se
+  // nhay sang the ke tiep thay vi dung lai tren mot muc vua bi an di.
+  cardMenuButtons(openCardMenu.menu).forEach(btn => { btn.tabIndex = -1; });
+  openCardMenu = null;
+  if(returnFocus && trigger.isConnected) trigger.focus();
+  return true;
+}
+
+function openCardMenuFor(cardEl, focusTarget){
+  const trigger = cardEl.querySelector(".card-more__trigger");
+  const menu = cardEl.querySelector(".card-more__menu");
+  if(!trigger || !menu) return false;
+  if(openCardMenu && openCardMenu.menu !== menu) closeCardMenu(false);
+  menu.dataset.open = "true";
+  trigger.setAttribute("aria-expanded", "true");
+  // Bang dang mo: cac muc tro lai tab order binh thuong.
+  cardMenuButtons(menu).forEach(btn => { btn.tabIndex = 0; });
+  openCardMenu = { card: cardEl, trigger, menu };
+  if(focusTarget === "first" || focusTarget === "last"){
+    const items = cardMenuButtons(menu);
+    const target = focusTarget === "first" ? items[0] : items[items.length - 1];
+    if(target) target.focus();
+  }
+  return true;
+}
+
+// Mot listener cho ca luoi: mo/dong menu, va chay hanh dong cua the.
+function onCardActionClick(event){
+  const target = event.target;
+  if(!target || typeof target.closest !== "function") return;
+
+  const trigger = target.closest(".card-more__trigger");
+  if(trigger){
+    const cardEl = trigger.closest(".wishlist-card");
+    if(!cardEl) return;
+    if(openCardMenu && openCardMenu.trigger === trigger) closeCardMenu(true);
+    else openCardMenuFor(cardEl, null);
+    return;
+  }
+
+  const btn = target.closest("[data-card-action]");
+  if(!btn) return;
+  const cardEl = btn.closest(".wishlist-card");
+  const id = cardEl && cardEl.dataset.id;
+  if(!id) return;
+  const it = items.find(x => x.id === id);
+  if(!it) return;
+
+  switch(btn.dataset.cardAction){
+    case "view":
+      closeCardMenu(false);
+      openQuickView(id, btn);
+      return;
+    case "purchase":
+      closeCardMenu(false);
+      if(it.status === "purchased") undoPurchased(id);
+      else markPurchased(id, btn);
+      return;
+    case "cycle":
+      closeCardMenu(false);
+      cycleStatus(id);
+      return;
+    case "edit":
+      closeCardMenu(false);
+      openForm(it);
+      return;
+    case "delete":
+      closeCardMenu(false);
+      removeItem(id);
+      return;
+    default:
+      return;
+  }
+}
+
+function onCardMenuKeydown(event){
+  const target = event.target;
+  if(!target || typeof target.closest !== "function") return;
+
+  if(event.key === "Escape"){
+    if(closeCardMenu(true)) event.stopPropagation();
+    return;
+  }
+
+  // Enter/Space: the controls are real <button>s, so a REAL key press is
+  // trusted and the browser activates them natively. A synthetic
+  // KeyboardEvent (assistive tooling, QA drivers) never becomes a click on
+  // its own, so emulate it — but only for untrusted events, otherwise a
+  // trusted key press would run the action a second time.
+  if((event.key === "Enter" || event.key === " ") && event.isTrusted === false){
+    const control = target.closest(".card-more__trigger") || target.closest("[data-card-action]");
+    if(control && !control.disabled){
+      event.preventDefault();
+      control.click();
+      return;
+    }
+  }
+
+  const trigger = target.closest(".card-more__trigger");
+  if(!trigger) return;
+  if(event.key === "ArrowDown" || event.key === "ArrowUp"){
+    event.preventDefault();
+    const cardEl = trigger.closest(".wishlist-card");
+    if(cardEl) openCardMenuFor(cardEl, event.key === "ArrowUp" ? "last" : "first");
+  }
+}
+
+// Click ra ngoai the dang mo menu thi dong lai (bat o pha capture de chay
+// truoc handler cua nut, nhung van bo qua click ben trong chinh the do).
+function onDocumentPointerDown(event){
+  if(!openCardMenu) return;
+  const target = event.target;
+  if(target && typeof openCardMenu.card.contains === "function" && openCardMenu.card.contains(target)) return;
+  closeCardMenu(false);
+}
+
+// Tab ra khoi the thi dong menu, de menu an danh khong con "mo" ngam.
+function onDocumentFocusIn(event){
+  if(!openCardMenu) return;
+  const target = event.target;
+  if(target && openCardMenu.card.contains(target)) return;
+  closeCardMenu(false);
 }
 
 /* ===================================================================
@@ -3167,6 +3438,8 @@ function updateQuickViewPurchase(id){
   $("qvStatus").textContent = st.label;
   $("qvStatusRing").textContent = st.label;
   $("qvStatusRing").className = "quick-view__ring quick-view__ring--" + st.key;
+  // V16.1 F4 — bo chon trang thai truc tiep trong Quick View.
+  syncQuickViewStatusOptions(it);
   const btn = $("qvPurchase");
   if(!btn) return;
   const done = it.status === "purchased";
@@ -3326,10 +3599,27 @@ function removeItem(id){
   const it = items.find(x => x.id === id);
   if(!it) return;
   if(!confirm('Xóa "' + it.name + '"?')) return;
+  const index = items.indexOf(it);
+  // V16.1 F4 — giu mot ban sao de "Hoan tac" chi khoi phuc dung mon vua xoa,
+  // khong ghi de nhung thay doi khac xay ra sau do.
+  const removed = Object.assign({}, it);
   const backup = items.slice();
   items = items.filter(x => x.id !== id);
   if(!save()){ items = backup; resync(); return; }
-  render(); toast("Đã xóa 1 món.");
+  render();
+  toast("Đã xóa 1 món.", "info", {
+    label: "Hoàn tác",
+    onClick: () => {
+      if(items.some(x => x.id === removed.id)) return;
+      const current = items;
+      const next = items.slice();
+      next.splice(Math.max(0, Math.min(index, next.length)), 0, removed);
+      items = next;
+      if(!save()){ items = current; resync(); return; }
+      render();
+      toast('Đã khôi phục "' + removed.name + '".', "success");
+    }
+  });
 }
 
 /* ==========================================
@@ -3429,6 +3719,70 @@ function cycleStatus(id) {
   }
 
   toast('Đã chuyển sang "' + nx.label + '".');
+}
+
+/* ===================================================================
+   V16.1 F4 — ĐỔI TRẠNG THÁI TRỰC TIẾP (F4.3)
+   -------------------------------------------------------------------
+   Quick View là nơi thao tác trung tâm, nên ở đó người dùng đổi được
+   trạng thái mà không phải mở form sửa. Một quy tắc duy nhất: chọn
+   "Đã mua" LUÔN đi qua dialog xác nhận của F2 (không bao giờ mua một
+   cú click), mọi trạng thái khác ghi thẳng và xóa trường mua hàng.
+=================================================================== */
+
+function setItemStatus(id, key, opener){
+  const it = items.find(x => x.id === id);
+  if(!it) return false;
+  const target = findStatus(key);
+  if(!target || it.status === key) return false;
+
+  // "Đã mua" phải qua dialog mua hàng để ghi giá thực tế / ngày mua.
+  if(key === "purchased") return markPurchased(id, opener || null);
+
+  const snapshot = Object.assign({}, it);
+  it.status = key;
+  clearPurchaseFields(it);
+
+  if(!save()){
+    Object.keys(it).forEach(k => { if(!(k in snapshot)) delete it[k]; });
+    Object.assign(it, snapshot);
+    resync();
+    return false;
+  }
+
+  render();
+  updateQuickViewPurchase(id);
+  toast('Đã chuyển sang "' + target.label + '".');
+  return true;
+}
+
+function buildQuickViewStatusOptions(){
+  const host = $("qvStatusOptions");
+  if(!host) return;
+  host.textContent = "";
+  STATUSES.forEach(s => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "quick-view__status-option";
+    b.dataset.statusKey = s.key;
+    b.textContent = s.label;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => {
+      const id = $("qv").dataset.id;
+      if(id) setItemStatus(id, s.key, b);
+    });
+    host.appendChild(b);
+  });
+}
+
+function syncQuickViewStatusOptions(it){
+  const host = $("qvStatusOptions");
+  if(!host || !it) return;
+  [...host.querySelectorAll("button")].forEach(b => {
+    const on = b.dataset.statusKey === it.status;
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.classList.toggle("is-current", on);
+  });
 }
 
 /* ===================================================================
@@ -3832,6 +4186,17 @@ function init(){
   $("v13GridView").addEventListener("click", () => setCollectionView("gallery"));
   $("v13FocusView").addEventListener("click", () => setCollectionView("focus"));
   setCollectionView("gallery");
+  // V16.1 F4.4 — nút thu gọn bộ lọc nâng cao. Chỉ hiện trên điện thoại (CSS);
+  // trên desktop nút bị ẩn nên bảng luôn mở và nút này không thể bấm.
+  const filterToggle = $("filterToggle");
+  if(filterToggle){
+    filterToggle.addEventListener("click", () => {
+      const open = filterToggle.getAttribute("aria-expanded") === "true";
+      filterToggle.setAttribute("aria-expanded", open ? "false" : "true");
+      syncFilterDisclosure();
+    });
+  }
+  syncFilterDisclosure();
   // V16.1 F2 — tab nhanh bắt đầu ở "Tất cả"; trạng thái không được lưu lại.
   syncPurchaseTabButtons();
   $("purchaseTabs").addEventListener("click", (event) => {
@@ -3839,6 +4204,12 @@ function init(){
     if(!btn) return;
     setPurchaseTab(btn.dataset.tab);
   });
+  // V16.1 F4 — the san pham: MOT listener cho ca luoi thay vi ~6 listener
+  // cho moi the. Them the chi la them DOM, khong them listener.
+  $("grid").addEventListener("click", onCardActionClick);
+  $("grid").addEventListener("keydown", onCardMenuKeydown);
+  document.addEventListener("pointerdown", onDocumentPointerDown, true);
+  document.addEventListener("focusin", onDocumentFocusIn);
   migrateLegacyOnce();
   loadForSession(null);
   render();
@@ -3918,6 +4289,7 @@ function init(){
   });
 
   // ===== V8 Quick View listeners =====
+  buildQuickViewStatusOptions();
   $("qvClose").addEventListener("click", closeQuickView);
   $("qvBack").addEventListener("click", closeQuickView);
   $("qvEdit").addEventListener("click", editFromQuickView);
