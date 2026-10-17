@@ -1464,6 +1464,141 @@ function readPurchasedAt(it){
   return validPurchasedAt(it && it.purchasedAt);
 }
 
+/* ===================================================================
+   V16.1 F5 — SAVINGS FIELDS
+   -------------------------------------------------------------------
+   savingGoal and savedAmount are OPTIONAL, and they are independent of
+   the purchase fields: a goal exists *before* something is bought (that
+   is the whole point), and recording savings never marks an item as
+   bought.
+
+     savingGoal   finite safe integer > 0. ABSENT means "no goal". A goal
+                  of 0 is not a goal — it is treated as absent rather than
+                  displayed as a hollow "0/0 đã đạt".
+     savedAmount  finite safe integer >= 0. ABSENT means "chưa ghi nhận",
+                  which is not the same claim as a 0 the user typed on
+                  purpose; both read as "chưa để dành gì", but only an
+                  explicit 0 is ever written.
+
+   These are the ONLY readers and writers. Rows that arrive from an older
+   export, a hand-edited JSON file, or a Firestore document written by
+   something else resolve invalid values to "absent" instead of letting
+   NaN / Infinity / a negative number reach the UI, and are never written
+   back as a fake figure. Giá sản phẩm không bao giờ được dùng làm số đã
+   tiết kiệm, và không có chỗ nào tự trừ tiền khỏi món khác.
+================================================================== */
+
+function validSavingGoal(value){
+  if(value === undefined || value === null || value === "") return null;
+  const n = Number(value);
+  if(!Number.isFinite(n) || n <= 0) return null;
+  const rounded = Math.round(n);
+  return Number.isSafeInteger(rounded) && rounded > 0 ? rounded : null;
+}
+
+function validSavedAmount(value){
+  if(value === undefined || value === null || value === "") return null;
+  const n = Number(value);
+  if(!Number.isFinite(n) || n < 0) return null;
+  const rounded = Math.round(n);
+  return Number.isSafeInteger(rounded) ? rounded : null;
+}
+
+// Ghi cả hai trường bằng một luật duy nhất. Giá trị không hợp lệ bị XÓA khỏi
+// item thay vì lưu lại dưới dạng 0 / NaN.
+function setSavingsFields(it, opts = {}){
+  if(!it) return it;
+  const goal = validSavingGoal(opts.savingGoal);
+  const saved = validSavedAmount(opts.savedAmount);
+  if(goal === null) delete it.savingGoal; else it.savingGoal = goal;
+  if(saved === null) delete it.savedAmount; else it.savedAmount = saved;
+  return it;
+}
+
+function clearSavingsFields(it){
+  if(!it) return it;
+  delete it.savingGoal;
+  delete it.savedAmount;
+  return it;
+}
+
+function readSavingGoal(it){
+  return validSavingGoal(it && it.savingGoal);
+}
+
+function readSavedAmount(it){
+  return validSavedAmount(it && it.savedAmount);
+}
+
+// Số dùng cho phép tính: chưa ghi nhận = 0. Đây KHÔNG phải giá sản phẩm.
+function savedOf(it){
+  const saved = readSavedAmount(it);
+  return saved === null ? 0 : saved;
+}
+
+// Chỉ có tiến độ để nói tới khi mục tiêu hợp lệ > 0.
+function hasSavingGoal(it){
+  return readSavingGoal(it) !== null;
+}
+
+// Đạt hoặc vượt mục tiêu. Vượt thì KHÔNG cắt bớt dữ liệu — chỉ báo đã đạt.
+function savingsReached(it){
+  const goal = readSavingGoal(it);
+  return goal !== null && savedOf(it) >= goal;
+}
+
+// Số còn thiếu tới mục tiêu; null khi món không có mục tiêu.
+function savingsRemaining(it){
+  const goal = readSavingGoal(it);
+  if(goal === null) return null;
+  return Math.max(0, goal - savedOf(it));
+}
+
+// Tỷ lệ 0..1 cho thanh tiến độ, luôn kẹp lại để thanh không tràn.
+function savingsProgress(it){
+  const goal = readSavingGoal(it);
+  if(goal === null) return null;
+  return Math.max(0, Math.min(1, savedOf(it) / goal));
+}
+
+/* -------------------------------------------------------------------
+   F5.3 — Savings overview over the WHOLE collection (or any list).
+   Only items with a valid goal that are NOT purchased are counted: a
+   purchased item has already left the savings loop, so including it would
+   double-count it against "đã mua" and inflate every figure below.
+
+   remainingTotal is the SUM of each item's own gap. Over-saving on one
+   item deliberately does not cancel the gap on another — that would be an
+   implicit transfer between items, which this feature never does.
+
+   Returns plain numbers, never NaN / Infinity.
+------------------------------------------------------------------- */
+function computeSavings(list){
+  const arr = Array.isArray(list) ? list : [];
+  let goalCount = 0, goalTotal = 0, savedTotal = 0, remainingTotal = 0, readyCount = 0;
+
+  for(const it of arr){
+    if(!it || it.status === "purchased") continue;
+    const goal = readSavingGoal(it);
+    if(goal === null) continue;
+    const saved = savedOf(it);
+    goalCount++;
+    goalTotal += goal;
+    savedTotal += saved;
+    remainingTotal += Math.max(0, goal - saved);
+    if(saved >= goal) readyCount++;
+  }
+
+  return {
+    goalCount,
+    goalTotal,
+    savedTotal,
+    remainingTotal,
+    readyCount,
+    progress: goalTotal === 0 ? 0 : Math.min(1, savedTotal / goalTotal)
+  };
+}
+
 // Trạng thái để quay về khi hoàn tác. Ưu tiên previousStatus đã lưu (chính xác
 // tuyệt đối); dữ liệu cũ thiếu trường thì lùi một bậc trong STATUSES; cuối cùng
 // mới về mặc định "wish". Không bao giờ trả về "purchased".
@@ -4916,6 +5051,14 @@ function normalizeItem(raw){
     previousStatus: raw.previousStatus
   });
   if(item.status !== "purchased") clearPurchaseFields(item);
+  // V16.1 F5 — optional savings fields survive a round-trip the same way: a
+  // row without them stays without them, an invalid value is dropped rather
+  // than turned into 0 / NaN, and they are NOT tied to the status (a goal
+  // outlives the purchase, and being fully saved is never being bought).
+  setSavingsFields(item, {
+    savingGoal: raw.savingGoal,
+    savedAmount: raw.savedAmount
+  });
   return item;
 }
 
