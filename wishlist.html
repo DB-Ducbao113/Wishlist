@@ -640,6 +640,23 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   </p>
 </div>
 
+<!-- V16.1 F2 — secondary KPIs. "Giá trị đã sở hữu" above is the recorded list
+     price; these two are what was ACTUALLY recorded as paid. They are kept
+     apart on purpose: the two figures are never merged into one "spending"
+     number. Both are computed over the whole collection, so search, filter,
+     sort and the quick tabs cannot move them. -->
+<dl class="dv-metrics" id="dvMetrics">
+  <div class="dv-metrics__item">
+    <dt class="dv-metrics__label">Chi tiêu thực tế đã ghi nhận</dt>
+    <dd class="dv-metrics__value" id="dvActualSpent">0</dd>
+  </div>
+
+  <div class="dv-metrics__item">
+    <dt class="dv-metrics__label">Món đã mua chưa nhập giá thực tế</dt>
+    <dd class="dv-metrics__value" id="dvUnpriced">0 món</dd>
+  </div>
+</dl>
+
 </section>
 
 <!-- Search and filters: independent section -->
@@ -1752,6 +1769,40 @@ function renderDashboardProgress(m){
     : m.ownedCount + " trên " + m.totalCount + " món đã sở hữu.";
 }
 
+// V16.1 F2 — hai chỉ số phụ, cũng tính trên TOÀN BỘ bộ sưu tập.
+// "Chi tiêu thực tế đã ghi nhận" CHỈ cộng paidAmount hợp lệ; "Giá trị đã sở hữu"
+// ở trên vẫn là giá ghi nhận, và hai con số này không bao giờ được gộp làm một.
+function renderDashboardMetrics(m){
+  const spent = $("dvActualSpent");
+  const unpriced = $("dvUnpriced");
+  if(!spent || !unpriced) return;
+
+  if(m.pricedOwnedCount === 0){
+    spent.textContent = "Chưa ghi nhận";
+    spent.setAttribute("data-empty", "true");
+  }else{
+    spent.textContent = fmtMoney(m.actualSpent);
+    spent.removeAttribute("data-empty");
+  }
+
+  unpriced.textContent = m.unpricedOwnedCount === 0
+    ? "Không còn món nào"
+    : m.unpricedOwnedCount + " món";
+
+  // Đọc lên đầy đủ cho trình đọc màn hình, thay vì chỉ "0".
+  spent.setAttribute(
+    "aria-label",
+    m.pricedOwnedCount === 0
+      ? "Chi tiêu thực tế đã ghi nhận: chưa ghi nhận món nào"
+      : "Chi tiêu thực tế đã ghi nhận: " + fmtMoney(m.actualSpent) +
+        " trên " + m.pricedOwnedCount + " món"
+  );
+  unpriced.setAttribute(
+    "aria-label",
+    "Món đã mua chưa nhập giá thực tế: " + m.unpricedOwnedCount + " món"
+  );
+}
+
 /* ===================================================================
    LOC + SAP XEP
    =================================================================== */
@@ -1898,6 +1949,7 @@ function render(){
   $("sumSpent").textContent = fmtMoney(metrics.ownedValue);
   $("sumCount").textContent = metrics.totalCount + " món";
   renderDashboardProgress(metrics);
+  renderDashboardMetrics(metrics);
 
   $("resultStatus").textContent =
     "Đang hiển thị " + shown.totalCount + " trên " + metrics.totalCount + " món.";

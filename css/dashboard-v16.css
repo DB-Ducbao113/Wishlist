@@ -171,6 +171,58 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
 }
 
 /* =====================================================================
+   SECONDARY METRICS (V16.1 F2)
+   ---------------------------------------------------------------------
+   Read-only label/value pairs under the ownership progress bar. They are
+   deliberately plainer than the three KPI cards: recorded spending is not
+   the headline number, and it must never be confused with the owned value.
+   ===================================================================== */
+
+.dv-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--dv-gap-2);
+  margin: var(--dv-gap-3) 0 0;
+  padding: 0;
+}
+
+.dv-metrics__item {
+  min-width: 0;
+  padding: var(--dv-gap-2) var(--dv-gap-3);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface);
+}
+
+.dv-metrics__label {
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-metrics__value {
+  margin: 6px 0 0;
+  font-size: var(--dv-text-value);
+  font-weight: 700;
+  color: var(--dv-ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.dv-metrics__value[data-empty="true"] {
+  font-weight: 600;
+  color: var(--dv-muted);
+}
+
+@media (max-width: 430px) {
+  .dv-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* =====================================================================
    COLLECTION QUICK TABS (V16.1 F2)
    ---------------------------------------------------------------------
    A segmented control over the one `items` array. Same visual language as
