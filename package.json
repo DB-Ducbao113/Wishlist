@@ -1,0 +1,26 @@
+{
+  "name": "dream-vault",
+  "version": "16.1.0",
+  "description": "Dream Vault — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
+  "private": true,
+  "scripts": {
+    "qa": "node scripts/qa/run-all.js",
+    "qa:syntax": "node scripts/qa/syntax.js",
+    "qa:f1": "node scripts/qa/f1-check.js",
+    "qa:f2": "node scripts/qa/f2-check.js",
+    "qa:f3": "node scripts/qa/f3-check.js",
+    "qa:f4": "node scripts/qa/f4-check.js",
+    "qa:f5": "node scripts/qa/f5-check.js",
+    "qa:f6": "node scripts/qa/f6-check.js",
+    "qa:v16": "node scripts/qa/v16-qa.js",
+    "build": "node scripts/build-hosting.mjs",
+    "check:hosting": "node scripts/check-hosting.mjs"
+  },
+  "dependencies": {
+    "puppeteer-core": "25.13.0",
+    "lighthouse": "13.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
