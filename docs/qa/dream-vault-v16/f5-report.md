@@ -23,8 +23,9 @@ recommendation that pretends to know what the user can afford.
 | `3aa4070` | F5.1 - the optional savings fields and their compatibility rules (`wishlist.html`) |
 | `80c6aba` | F5.2 - the goal in the Add/Edit form and in the Quick View, plus the whole `css/f5-savings-v16.css` |
 | `0cadc68` | F5.3 + F5.4 - the savings overview, the `#fSavings` facet that makes every figure clickable, and the "what to look at next" widget |
-| `7899beb` | `chore(hosting)` - the F5 asset refresh (`docs/qa/dream-vault-v15/hosting-*.json`) |
-| _(this commit)_ | `docs(f5)` - this report, the suite/payload/Lighthouse artifacts and the screenshots |
+| `7899beb` | `chore(hosting)` - the F5 asset refresh: `css/f5-savings-v16.css` enters the published set (`docs/qa/dream-vault-v15/hosting-*.json`) |
+| `0bd8f43` | `docs(f5)` - this report, the suite/audit/payload/Lighthouse/render artifacts and the screenshots |
+| `bc55d7c` | `chore(hosting)` - the refresh that follows those assets (the repo-internals tally and the dist byte total both move; the published set and the gate verdict do not) |
 
 Each implementation commit's `wishlist.html` was syntax-gated on its own (the
 staged blob, not the working tree) before it was recorded, so every one of the
@@ -246,7 +247,7 @@ watched two devices agree.
 ### 2.3 The harness
 
 `v16_6-f5-check.js` (sections `A`..`F`, `--only=` to run one) writes
-`v16_6-out/f5-suite.json`. It drives the real app with a fixed 9-item fixture
+`v16_6-out/f5-suite.json`. It drives the real app with a fixed 8-item fixture
 (`g1`..`g8`) whose savings aggregates are computed by hand and asserted against
 `computeSavings()`: goals on the five unpurchased goal-bearing rows total
 `4.800.000 ₫`, recorded `1.350.000 ₫`, remaining `3.600.000 ₫`, 3 items already
@@ -371,7 +372,7 @@ possibly-hostile remote document.
 
 | Stored shape | What F5 does | Data lost? |
 | --- | --- | --- |
-| `{}` / legacy row, no savings keys | reads `null` / `0`, renders no progress anywhere, writes nothing back | **no** - byte-identical on save |
+| `{}` / legacy row, no savings keys | reads `null` / `0`, renders no progress anywhere, and normalize leaves the row with exactly the key set it arrived with - no savings key appears | **no** |
 | `{savingGoal: 1500000}` | goal only; "Đã tích lũy 0 ₫", remaining = the goal, 0 % bar | no |
 | `{savedAmount: 400000}` | amount only, **no goal**; no progress rendered (a valid goal `> 0` is required) | no |
 | `{savingGoal: 1000000, savedAmount: 400000}` | 40 %, "còn thiếu 600.000 ₫" | no |
@@ -426,6 +427,17 @@ row came from a working tree with CRLF line endings; `wishlist.html` at
 180 822 + 4 999 = **185 821 bytes = 181.5 KB** - the same tree, ±line endings.
 The table above normalises all four trees to LF so the F4 -> F5 delta is
 apples-to-apples. Anyone re-running this must use the same recipe.
+
+The same line-ending effect explains the other number that gets quoted around
+this milestone: `scripts/build-hosting.mjs` copies the **working tree**, so its
+`totalBytes` reads `575 092` for the F5 delivery. That figure is a different
+question from the `538.6 KB` above, for two reasons: it counts the working tree's
+CRLF endings rather than the stored LF bytes, and it counts three files the
+payload recipe does not - the ES-imported `wishlist-cloud.js` (11 838 B) and the
+two platform files `_headers` (88 B) and `_redirects` (23 B). Nothing in it
+contradicts anything above. What the security gate actually reports is unchanged:
+56 published files, 54 assets plus 2 platform files, `leakCount 0`, and the
+explicit allowlist (`wishlist.html`, `wishlist-cloud.js`, `css`) untouched.
 
 ### 6.2 What the two widgets cost at runtime
 
@@ -558,7 +570,7 @@ What this says, plainly:
 | F5.5 | F4 menu / Quick View / disclosure / quick actions intact | full F4 gate + the F4.1 audit | section 4 |
 | F5.6 | the enumerated scenarios | sections 3 and 5 | 97 checks |
 | F5.6 | rerun F1/F2/F3/F4 + V16 suites | section 4.1 | 662 pre-existing assertions, 0 FAIL |
-| F5.6 | hosting build + security gate + no private-file leak | `check-hosting.mjs` | PASS, 56 files, `leakCount 0` |
+| F5.6 | hosting build + security gate + no private-file leak | `check-hosting.mjs` | PASS, 56 files, 52 stylesheets, `leakCount 0` |
 | F5.6 | Lighthouse F4 vs F5 under equivalent conditions | section 6.3, both transports | desktop equal; mobile equal with compression, -3 raw |
 | F5.6 | state which points are mock-only | section 2.2 | the Firestore/auth/iPhone rows |
 
@@ -579,9 +591,9 @@ nothing in frame is still transparent).
 | `img/f5-desktop-form-savings.png` | the new "Mục tiêu tiết kiệm" section, prefilled from the item |
 | `img/f5-desktop-form-preview.png` | the live preview with an unfinished goal |
 | `img/f5-desktop-quickview.png` | the Quick View, unchanged except for the new block |
-| `img/f5-desktop-quickview-savings.png` | the Quick View savings block, 40 %, "còn thiếu 600.000 ₫" |
+| `img/f5-desktop-quickview-savings.png` | the Quick View savings block, 1.200.000 ₫ on 1.800.000 ₫, "Còn thiếu 600.000 ₫ tới mục tiêu", with Lưu tiết kiệm / Xóa mục tiêu |
 | `img/f5-desktop-quickview-reached.png` | the reached state: bar capped, "Đã đạt mục tiêu", still not bought |
-| `img/f5-desktop-filter-short.png` | `#fSavings = short` in the toolbar, and the cards it lands |
+| `img/f5-desktop-filter-short.png` | the TIẾT KIỆM facet set to "Chưa đạt" (`short`) beside Xóa bộ lọc, and the cards it lands - p09 first, then p06, p04, p03 |
 | `img/f5-mobile-390-widgets.png` | the two widgets stacked at 390 px |
 | `img/f5-mobile-390-quickview-savings.png` | the savings block inside the real Quick View sheet at 390 px |
 | `img/f5-mobile-390-form-savings.png` | the savings section inside the real dialog at 390 px |
