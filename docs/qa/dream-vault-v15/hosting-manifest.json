@@ -5,13 +5,13 @@
   "wishlist-cloud.js",
   "css"
  ],
- "fileCount": 53,
- "assetCount": 51,
+ "fileCount": 54,
+ "assetCount": 52,
  "platformFiles": [
   "_headers",
   "_redirects"
  ],
- "totalBytes": 404471,
+ "totalBytes": 444637,
  "files": [
   "_headers",
   "_redirects",
@@ -59,6 +59,7 @@
   "css/premium-v9-signature.css",
   "css/product-card.css",
   "css/product-v12-presentation.css",
+  "css/purchase-v16.css",
   "css/purchased-motion.css",
   "css/stats-v2.css",
   "css/stats.css",
