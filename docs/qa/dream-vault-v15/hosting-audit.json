@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-17T04:37:18.522Z",
+ "generatedAt": "2026-10-17T06:31:46.333Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
-  "publishedFileCount": 860,
-  "leakCount": 741,
+  "publishedFileCount": 879,
+  "leakCount": 758,
   "leakedSamples": [
    "docs/design/dream-vault-v11-sprint.md",
    "docs/design/dream-vault-v5-design.md",
@@ -47,19 +47,19 @@
    "docs/qa/dream-vault-v10/img/v10-dashboard-empty.jpg"
   ],
   "leakedCategories": {
-   "docs": 741,
+   "docs": 758,
    "config": 0
   }
  },
  "new": {
   "config": "public: \"dist\" built by scripts/build-hosting.mjs (explicit allowlist)",
   "distExists": true,
-  "publishedFileCount": 54,
-  "cssCount": 50,
+  "publishedFileCount": 55,
+  "cssCount": 51,
   "missingRuntime": [],
   "leakCount": 0,
   "leaks": [],
-  "repoCssCount": 50
+  "repoCssCount": 51
  },
  "verdict": "PASS — no repo internals published; all runtime assets present"
 }

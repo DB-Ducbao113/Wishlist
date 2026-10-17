@@ -5,13 +5,13 @@
   "wishlist-cloud.js",
   "css"
  ],
- "fileCount": 54,
- "assetCount": 52,
+ "fileCount": 55,
+ "assetCount": 53,
  "platformFiles": [
   "_headers",
   "_redirects"
  ],
- "totalBytes": 502337,
+ "totalBytes": 530169,
  "files": [
   "_headers",
   "_redirects",
@@ -37,6 +37,7 @@
   "css/dreamscape-v5-tokens.css",
   "css/editorial-v10-workspace.css",
   "css/empty-state.css",
+  "css/f4-interaction-v16.css",
   "css/gallery-v2.css",
   "css/gallery-v4.css",
   "css/gallery.css",
