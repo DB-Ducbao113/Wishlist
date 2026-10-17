@@ -1130,6 +1130,83 @@ const $ = (id) => document.getElementById(id);
 const findStatus   = (k) => STATUSES.find(s => s.key === k) || STATUSES[0];
 const findPriority = (k) => PRIORITIES.find(p => p.key === k) || PRIORITIES[1];
 
+/* ===================================================================
+   V16.1 F2 — PURCHASE FIELDS
+   -------------------------------------------------------------------
+   paidAmount, purchasedAt and previousStatus are all OPTIONAL. They are
+   only ever written when the user actually supplied the value:
+
+     paidAmount      finite, >= 0, safe integer. ABSENT when the user
+                     skipped the price — never coerced to 0, so "chưa
+                     nhập giá" can never be mistaken for "mua 0 đồng".
+     purchasedAt     finite epoch ms > 0. Never invented for a row that
+                     was already purchased before F2 existed.
+     previousStatus  a known, non-purchased status key. Used to undo
+                     exactly, instead of guessing from the status list.
+
+   Every read and every write goes through these helpers, so the rules
+   exist once (normalizeItem, the capture dialog, the edit form, undo).
+=================================================================== */
+
+function validPaidAmount(value){
+  if(value === undefined || value === null || value === "") return null;
+  const n = Number(value);
+  if(!Number.isFinite(n) || n < 0) return null;
+  const rounded = Math.round(n);
+  return Number.isSafeInteger(rounded) ? rounded : null;
+}
+
+function validPurchasedAt(value){
+  if(value === undefined || value === null || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
+}
+
+function validPreviousStatus(value){
+  if(typeof value !== "string" || value === "purchased") return null;
+  return STATUSES.some(s => s.key === value) ? value : null;
+}
+
+// Ghi cả ba trường bằng một luật duy nhất. Giá trị không hợp lệ bị XÓA khỏi
+// item thay vì lưu lại dưới dạng 0 / NaN.
+function setPurchaseFields(it, opts = {}){
+  if(!it) return it;
+  const paid = validPaidAmount(opts.paidAmount);
+  const at   = validPurchasedAt(opts.purchasedAt);
+  const prev = validPreviousStatus(opts.previousStatus);
+  if(paid === null) delete it.paidAmount; else it.paidAmount = paid;
+  if(at   === null) delete it.purchasedAt; else it.purchasedAt = at;
+  if(prev === null) delete it.previousStatus; else it.previousStatus = prev;
+  return it;
+}
+
+function clearPurchaseFields(it){
+  if(!it) return it;
+  delete it.paidAmount;
+  delete it.purchasedAt;
+  delete it.previousStatus;
+  return it;
+}
+
+function readPaidAmount(it){
+  return validPaidAmount(it && it.paidAmount);
+}
+
+function readPurchasedAt(it){
+  return validPurchasedAt(it && it.purchasedAt);
+}
+
+// Trạng thái để quay về khi hoàn tác. Ưu tiên previousStatus đã lưu (chính xác
+// tuyệt đối); dữ liệu cũ thiếu trường thì lùi một bậc trong STATUSES; cuối cùng
+// mới về mặc định "wish". Không bao giờ trả về "purchased".
+function restoreStatusKey(it){
+  const saved = validPreviousStatus(it && it.previousStatus);
+  if(saved) return saved;
+  const i = STATUSES.findIndex(s => s.key === (it && it.status));
+  if(i > 0) return STATUSES[i - 1].key;
+  return DEFAULT_STATUS;
+}
+
 // Anh thay the (SVG inline, khong can file ngoai) khi thieu anh / anh loi
 const PLACEHOLDER =
   "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -1380,14 +1457,23 @@ function handleSessionChange(uid){
    and can never drift from the other one.
 
    Contract:
-     totalCount    items.length                       (whole collection)
-     ownedCount    status === "purchased"
-     pendingCount  everything else
-     ownedValue    Σ recorded price of purchased items
-     pendingValue  Σ price of every item still not purchased
-     trackedValue  ownedValue + pendingValue
-     progress      ownedCount / totalCount, 0 when totalCount === 0
+     totalCount         items.length                       (whole collection)
+     ownedCount         status === "purchased"
+     pendingCount       everything else
+     ownedValue         Σ recorded price of purchased items
+     pendingValue       Σ price of every item still not purchased
+     actualSpent        Σ paidAmount of purchased items that HAVE one
+     pricedOwnedCount   purchased items with a recorded paidAmount
+     unpricedOwnedCount purchased items with no paidAmount (skipped)
+     hasActualSpending  pricedOwnedCount > 0
+     ownershipRate      ownedCount / totalCount (same as progress)
+     trackedValue       ownedValue + pendingValue
+     progress           ownedCount / totalCount, 0 when totalCount === 0
    Search / filter / sort must never move a global number.
+
+   F2 adds actualSpent / unpricedOwnedCount. ownedValue is NOT actual
+   spending: it is the recorded list price. The two must never be merged
+   into one figure.
 =================================================================== */
 
 function computeMetrics(list){
@@ -1402,11 +1488,21 @@ function computeMetrics(list){
 
   let ownedCount = 0, ownedValue = 0;
   let pendingCount = 0, pendingValue = 0;
+  let pricedOwnedCount = 0, unpricedOwnedCount = 0, actualSpent = 0;
 
   for(const it of arr){
     if(it && it.status === "purchased"){
       ownedCount++;
       ownedValue += priceOf(it);
+      // null means "the user skipped the price" — that item is counted, but
+      // it contributes nothing to actual spending.
+      const paid = readPaidAmount(it);
+      if(paid === null){
+        unpricedOwnedCount++;
+      }else{
+        pricedOwnedCount++;
+        actualSpent += paid;
+      }
     }else{
       pendingCount++;
       pendingValue += priceOf(it);
@@ -1422,6 +1518,11 @@ function computeMetrics(list){
     pendingCount,
     ownedValue,
     pendingValue,
+    actualSpent,
+    pricedOwnedCount,
+    unpricedOwnedCount,
+    hasActualSpending: pricedOwnedCount > 0,
+    ownershipRate: progress,
     trackedValue: ownedValue + pendingValue,
     progress,
     progressPercent: Math.round(progress * 100)
@@ -2987,7 +3088,7 @@ function normalizeItem(raw){
   const priority = PRIORITIES.some(p => p.key === raw.priority) ? raw.priority : DEFAULT_PRIORITY;
   const createdAt = Number.isFinite(Number(raw.createdAt)) ? Number(raw.createdAt) : Date.now();
   const str = (v) => (typeof v === "string" ? v : "");
-  return {
+  const item = {
     id: str(raw.id) || "it-" + Date.now() + "-" + Math.random().toString(36).slice(2,7),
     name: name,
     price: Number.isFinite(price) && price >= 0 ? Math.round(price) : 0,
@@ -2999,6 +3100,17 @@ function normalizeItem(raw){
     note: str(raw.note).slice(0, 500),
     createdAt: createdAt
   };
+  // V16.1 F2 — optional purchase fields survive a round-trip, and are never
+  // invented: a legacy row without them stays without them. A row that is not
+  // purchased cannot carry them, so an inconsistent import cannot resurrect a
+  // purchase that was already undone.
+  setPurchaseFields(item, {
+    paidAmount: raw.paidAmount,
+    purchasedAt: raw.purchasedAt,
+    previousStatus: raw.previousStatus
+  });
+  if(item.status !== "purchased") clearPurchaseFields(item);
+  return item;
 }
 
 function exportJson(){
