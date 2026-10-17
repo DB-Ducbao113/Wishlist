@@ -292,3 +292,125 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
     text-align: center;
   }
 }
+
+/* =====================================================================
+   V16.1 F3.1 — DASHBOARD INFORMATION ARCHITECTURE
+   ---------------------------------------------------------------------
+   The command center keeps the F1/F2 blocks exactly where they are and
+   adds the structure the new insight panels need:
+
+     1. heading + "Thêm món"           (.overview-heading + .dv-add)
+     2. KPI cards                      (.stats-dashboard, .dv-metrics)
+     3. ownership progress             (.dv-grid--split › .dv-col--progress)
+        status distribution            (.dv-col--dist, added in F3.3)
+     4. category + priority            (.dv-grid--insight, F3.4)
+     5. quick actions                  (.dv-actions, F3.5)
+
+   The heading is the only pre-existing block that has to change shape:
+   it becomes a wrap row so the action can sit on the title's baseline
+   without disturbing the eyebrow / title stack.
+   ===================================================================== */
+
+@media (min-width: 768px) {
+  body.dreamscape-v5 .overview-heading {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: var(--dv-gap-3);
+  }
+
+  /* The eyebrow keeps a row of its own; the title and the action share
+     the next one. This needs no wrapper element, so the existing
+     eyebrow / number / title contract is untouched. */
+  body.dreamscape-v5 .overview-heading > .overview-heading__eyebrow {
+    flex: 1 0 100%;
+  }
+
+  body.dreamscape-v5 .overview-heading > .overview-heading__title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .overview-heading > .dv-add {
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+}
+
+/* ---- Dashboard call to action -------------------------------------- */
+
+.dv-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dv-gap-1);
+  margin: 0;
+  padding: 9px 18px 9px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-accent);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 12px 24px -14px rgba(104, 80, 188, .85);
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-add__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .2);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dv-add:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-add:hover {
+    background: var(--dv-accent-hover);
+  }
+}
+
+.dv-add:active {
+  transform: translateY(1px);
+}
+
+/* ---- Section grid --------------------------------------------------
+   Every column can shrink, so a long money string or a chart label can
+   never widen the panel and cause horizontal overflow at 320px. */
+
+.dv-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--dv-gap-3);
+  margin-top: var(--dv-gap-3);
+}
+
+.dv-grid > * {
+  min-width: 0;
+}
+
+/* Inside the grid the spacing belongs to the grid, not to the block. */
+.dv-col--progress .dv-progress {
+  margin-top: 0;
+}
+
+@media (min-width: 1200px) {
+  .dv-grid--split {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--dv-gap-4);
+  }
+}
+

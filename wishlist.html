@@ -539,10 +539,11 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 </section>
 
   <!-- Statistics: independent section -->
-<section class="panel dashboard-panel dashboard-panel--v2" data-dv-section
+<section class="panel dashboard-panel dashboard-panel--v2 dv-dash" data-dv-section
          aria-label="Tổng quan wishlist">
 
-  <!-- V10 — Editorial overview heading -->
+  <!-- V10 — Editorial overview heading. V16.1 F3 adds the dashboard's own
+       "Thêm món" action so the command center can create without leaving. -->
   <div class="overview-heading">
     <p class="overview-heading__eyebrow">
       <span class="overview-heading__no">01</span>
@@ -552,6 +553,11 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <h2 class="overview-heading__title">
       Giá trị những giấc mơ của bạn
     </h2>
+
+    <button type="button" class="dv-add" id="dvAddItem">
+      <span class="dv-add__mark" aria-hidden="true">+</span>
+      <span class="dv-add__label">Thêm món</span>
+    </button>
   </div>
 
   <!-- Dashboard Statistics -->
@@ -615,6 +621,31 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </div>
 
+<!-- V16.1 F2 — secondary KPIs. "Giá trị đã sở hữu" above is the recorded list
+     price; these two are what was ACTUALLY recorded as paid. They are kept
+     apart on purpose: the two figures are never merged into one "spending"
+     number. Both are computed over the whole collection, so search, filter,
+     sort and the quick tabs cannot move them. -->
+<dl class="dv-metrics" id="dvMetrics">
+  <div class="dv-metrics__item">
+    <dt class="dv-metrics__label">Chi tiêu thực tế đã ghi nhận</dt>
+    <dd class="dv-metrics__value" id="dvActualSpent">0</dd>
+  </div>
+
+  <div class="dv-metrics__item">
+    <dt class="dv-metrics__label">Món đã mua chưa nhập giá thực tế</dt>
+    <dd class="dv-metrics__value" id="dvUnpriced">0 món</dd>
+  </div>
+</dl>
+
+<!-- V16.1 F3 — Ownership Progress and Status Distribution share one row:
+     both answer "where does the collection stand", so they are read
+     together. Under 1200px the grid collapses and they stack in source
+     order, which keeps the reading order correct for assistive tech. -->
+<div class="dv-grid dv-grid--split">
+
+  <div class="dv-col dv-col--progress">
+
 <!-- V16.1 — Ownership progress: purchasedCount / totalCount.
      Zero items resolves to 0%, never NaN. The track is a real
      progressbar so assistive tech can read the same number. -->
@@ -640,22 +671,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   </p>
 </div>
 
-<!-- V16.1 F2 — secondary KPIs. "Giá trị đã sở hữu" above is the recorded list
-     price; these two are what was ACTUALLY recorded as paid. They are kept
-     apart on purpose: the two figures are never merged into one "spending"
-     number. Both are computed over the whole collection, so search, filter,
-     sort and the quick tabs cannot move them. -->
-<dl class="dv-metrics" id="dvMetrics">
-  <div class="dv-metrics__item">
-    <dt class="dv-metrics__label">Chi tiêu thực tế đã ghi nhận</dt>
-    <dd class="dv-metrics__value" id="dvActualSpent">0</dd>
-  </div>
+  </div><!-- /.dv-col--progress -->
 
-  <div class="dv-metrics__item">
-    <dt class="dv-metrics__label">Món đã mua chưa nhập giá thực tế</dt>
-    <dd class="dv-metrics__value" id="dvUnpriced">0 món</dd>
-  </div>
-</dl>
+</div><!-- /.dv-grid--split -->
 
 </section>
 
@@ -3175,6 +3193,10 @@ function init(){
   }
 
   $("btnAdd").addEventListener("click", () => openForm(null));
+  // V16.1 F3 — the dashboard's own create action. Same entry point as every
+  // other "Thêm món" affordance, so there is still exactly one form.
+  const dvAddItem = $("dvAddItem");
+  if(dvAddItem) dvAddItem.addEventListener("click", () => openForm(null));
   $("heroAddWish").addEventListener(
     "click",
     () => openForm(null)
