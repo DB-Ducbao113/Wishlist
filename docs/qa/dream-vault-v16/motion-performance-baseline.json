@@ -1,0 +1,32 @@
+{
+  "milestone": "MOTION-01",
+  "label": "F6.1 performance baseline (unchanged by MOTION-01)",
+  "generatedAt": "2026-10-17",
+  "source": "docs/qa/dream-vault-v16/f6-baseline.json",
+  "note": "MOTION-01 commits no code, so the baseline is the F6.1 measurement unchanged. MOTION-02..05 must not regress these numbers.",
+  "lighthouse": {
+    "repeats": 3,
+    "dist": {
+      "raw":  { "desktop": { "perf": [63,63,63], "LCP": [3496,3458,3516], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [550,550,550], "requests": [2,2,2] },
+                "mobile":  { "perf": [84,84,84], "LCP": [3453,3453,3453], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [550,550,550], "requests": [2,2,2] } },
+      "gzip": { "desktop": { "perf": [89,91,89], "LCP": [1435,1396,1514], "CLS": [0,0,0], "TBT": [33,19,83], "transferKB": [124,124,124], "requests": [2,2,2] },
+                "mobile":  { "perf": [99,100,100], "LCP": [1418,1483,1386], "CLS": [0,0,0], "TBT": [79,7,0], "transferKB": [124,124,124], "requests": [2,2,2] } }
+    },
+    "a11y": 100, "bestPractices": 100, "seo": 100
+  },
+  "render": {
+    "0":   { "firstRenderMed": 1,  "forcedMed": 1,  "ltMax": 52,  "fcp": 280, "lcp": 280, "cls": 0,     "nodes": 531 },
+    "1":   { "firstRenderMed": 2,  "forcedMed": 1,  "ltMax": 75,  "fcp": 324, "lcp": 324, "cls": 0.002, "nodes": 605 },
+    "12":  { "firstRenderMed": 6,  "forcedMed": 4,  "ltMax": 103, "fcp": 288, "lcp": 288, "cls": 0.002, "nodes": 946 },
+    "50":  { "firstRenderMed": 18, "forcedMed": 11, "ltMax": 142, "fcp": 300, "lcp": 300, "cls": 0.002, "nodes": 1924 },
+    "100": { "firstRenderMed": 37, "forcedMed": 21, "ltMax": 180, "fcp": 312, "lcp": 312, "cls": 0.002, "nodes": 3212 }
+  },
+  "perCardMs": 0.28,
+  "listenersPerCard": 12,
+  "intersectionObservers": 1,
+  "animateCallsAtLoad": 0,
+  "payload": { "htmlRaw": 211.6, "htmlGzip": 59.7, "cssRaw": 337.6, "cssGzip": 62.8, "cssFiles": 1,
+    "totalRaw": 549.2, "totalGzip": 122.5, "requests": 2 },
+  "renderBaseline": "docs/qa/dream-vault-v16/f6-render-baseline.json",
+  "lighthouseBaseline": "v16_6-out/f6-lighthouse-f6-dist-gzip.json"
+}

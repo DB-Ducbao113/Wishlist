@@ -988,10 +988,6 @@ const DISCLOSURE = () => {
     const measure = async (port, seed) => {
     const s = await newScenario(browser, { guestItems: seed }, { width: 1440, port });
     const m = await s.page.metrics();
-    // V16.1 F6.3 - time one explicit render() after the page has settled,
-    // instead of taking the worst value from the load-time __renders array,
-    // which is subject to a hook-timing race (see f6-baseline.md). The
-    // assertion threshold is unchanged.
     const r = await s.page.evaluate(() => {
       const t = performance.now();
       render();

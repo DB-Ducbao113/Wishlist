@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-17T10:43:28.947Z",
+ "generatedAt": "2026-10-17T12:27:41.231Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
-  "publishedFileCount": 1721,
-  "leakCount": 1555,
+  "publishedFileCount": 1733,
+  "leakCount": 1567,
   "leakedSamples": [
    "docs/design/dream-vault-v11-sprint.md",
    "docs/design/dream-vault-v5-design.md",
@@ -47,7 +47,7 @@
    "docs/qa/dream-vault-v10/img/v10-dashboard-empty.jpg"
   ],
   "leakedCategories": {
-   "docs": 794,
+   "docs": 806,
    "config": 3
   }
  },
