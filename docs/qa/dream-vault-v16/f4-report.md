@@ -21,8 +21,8 @@ asserted.
 | --- | --- |
 | `0cd7c8b` | F4.2 - F4.6: the card action model, the Quick View status hub, delete-undo, the Collection filter disclosure and the delegated card controller (`wishlist.html` + `css/f4-interaction-v16.css`) |
 | `b8e4b11` | `chore(hosting)` - the F4 asset refresh |
-| `_this commit_` | `docs(f4)` - this report, the audit/suite/Lighthouse artifacts and the screenshots |
-| `_next commit_` | `docs(f4)` - pin the delivery SHA |
+| `820b221` | `docs(f4)` - this report, the audit/suite/Lighthouse artifacts and the screenshots |
+| _(this commit)_ | `docs(f4)` - pins the F4.6 delivery SHA in the table above |
 
 The parent is `93ef2c1` (F3 HEAD). `develop` and `main` are untouched at
 `9d14bea`; the PR is still open against `develop`.
