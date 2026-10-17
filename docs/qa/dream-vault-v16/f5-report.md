@@ -25,6 +25,7 @@ recommendation that pretends to know what the user can afford.
 | `0cadc68` | F5.3 + F5.4 - the savings overview, the `#fSavings` facet that makes every figure clickable, and the "what to look at next" widget |
 | `7899beb` | `chore(hosting)` - the F5 asset refresh: `css/f5-savings-v16.css` enters the published set (`docs/qa/dream-vault-v15/hosting-*.json`) |
 | `0bd8f43` | `docs(f5)` - this report, the suite/audit/payload/Lighthouse/render artifacts and the screenshots |
+| `14004f8` | `docs(f5)` - the corrections to this report, and the re-captured filter screenshot |
 | `bc55d7c` | `chore(hosting)` - the refresh that follows those assets (the repo-internals tally and the dist byte total both move; the published set and the gate verdict do not) |
 
 Each implementation commit's `wishlist.html` was syntax-gated on its own (the
