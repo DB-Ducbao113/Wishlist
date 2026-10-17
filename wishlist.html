@@ -3275,8 +3275,11 @@ function render(){
 
   // V16 — staggered scroll reveal, once per product id: search / filter /
   // render never replay it, but genuinely new items still animate in.
+  console.log("DEBUG render: grid children =", grid.children.length, "DVReveal =", typeof window.DVReveal, "revealedIds =", [...revealedGridIds].join(","));
+  console.log("DBG render children=" + grid.children.length + " DVReveal=" + typeof window.DVReveal + " ids=" + [...revealedGridIds].join(","));
   revealGridCards(grid);
 }
+  console.log("DEBUG after revealGridCards: data-dv-reveal =", grid.querySelector(".wishlist-card") && grid.querySelector(".wishlist-card").hasAttribute("data-dv-reveal"));
 
 /* ==========================================
    V16 — Product card scroll reveal
@@ -4980,6 +4983,7 @@ function init(){
     syncWorkspaceNav();
     scheduleWorkspaceIndicator();
   }, { passive: true });
+
   // Font xong (hoặc đổi font/ngôn ngữ) là bề rộng chữ đổi -> đo lại pill.
   if(document.fonts && document.fonts.ready){
     document.fonts.ready.then(scheduleWorkspaceIndicator).catch(() => {});
