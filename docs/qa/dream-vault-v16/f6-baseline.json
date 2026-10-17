@@ -1,0 +1,73 @@
+{
+  "milestone": "F6.1",
+  "label": "F5 delivery tree (4852b13) - the F6 baseline",
+  "generatedAt": "2026-10-17",
+  "static": {
+    "cssFiles": 52,
+    "cssRawBytesWorkingTree": 343504,
+    "htmlBytesWorkingTree": 219639,
+    "htmlBytesLF": 213826,
+    "cloudJsBytes": 11838,
+    "linkTagsInHead": 52,
+    "linkTagsTotal": 52,
+    "renderBlockingCssRequests": 52,
+    "urlReferencesInCss": 0,
+    "importRulesInCss": 0,
+    "mediaQueries": 210,
+    "keyframes": 14,
+    "duplicateSelectorsAcrossSheets": 124,
+    "duplicateSelectorLineBytes": 14027,
+    "concatenation": {
+      "raw": 345721,
+      "gzip": 65038,
+      "separateRaw": 343504,
+      "separateGzipSum": 93337,
+      "gzipSaving": 28299,
+      "gzipSavingPercent": 30.3,
+      "requestReduction": 51,
+      "safeBecause": "0 url() references and 0 @import rules, so no relative path or import-order dependency exists to break"
+    }
+  },
+  "render": {
+    "runs": 3,
+    "note": "firstRender is the initial paint; 'forced' is three explicit render() calls after load. The app issues no re-render while idle, so a steady-state number has to be forced.",
+    "table": {
+      "0":  { "firstRenderMed": 1,  "forcedMed": 1,  "ltCount": "1,0,0",   "ltMax": "52,0,0",     "fcp": 280, "lcp": 280, "cls": 0,     "clsMax": 0,     "nodes": 531 },
+      "1":  { "firstRenderMed": 2,  "forcedMed": 1,  "ltCount": "1,1,1",   "ltMax": "59,57,75",   "fcp": 324, "lcp": 324, "cls": 0.002, "clsMax": 0.002, "nodes": 605 },
+      "12": { "firstRenderMed": 6,  "forcedMed": 4,  "ltCount": "1,1,1",   "ltMax": "98,92,103",  "fcp": 288, "lcp": 288, "cls": 0.002, "clsMax": 0.002, "nodes": 946 },
+      "50": { "firstRenderMed": 18, "forcedMed": 11, "ltCount": "1,1,1",   "ltMax": "120,126,142","fcp": 300, "lcp": 300, "cls": 0.002, "clsMax": 0.002, "nodes": 1924 },
+      "100":{ "firstRenderMed": 37, "forcedMed": 21, "ltCount": "1,1,3",   "ltMax": "180,162,157","fcp": 312, "lcp": 312, "cls": 0.002, "clsMax": 0.002, "nodes": 3212 }
+    },
+    "perCardMs": 0.28,
+    "listenersPerCard": 12,
+    "intersectionObservers": 1,
+    "animateCallsAtLoad": 0,
+    "updateCategoryFilterMs": 0
+  },
+  "lighthouse": {
+    "repeats": 3,
+    "source": {
+      "raw":   { "desktop": { "perf": [58,58,58], "LCP": [4688,4664,4664], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [561,561,561], "requests": [53,53,53] },
+                 "mobile":  { "perf": [71,71,71], "LCP": [4663,4664,4670], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [561,561,561], "requests": [53,53,53] } },
+      "gzip":  { "desktop": { "perf": [71,71,71], "LCP": [2594,2574,2573], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [162,162,162], "requests": [53,53,53] },
+                 "mobile":  { "perf": [93,93,93], "LCP": [2569,2582,2586], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [162,162,162], "requests": [53,53,53] } }
+    },
+    "dist": {
+      "raw":   { "desktop": { "perf": [58,58,58], "LCP": [4691,4670,4667], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [561,561,561], "requests": [53,53,53] },
+                 "mobile":  { "perf": [71,71,71], "LCP": [4674,4676,4670], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [561,561,561], "requests": [53,53,53] } },
+      "gzip":  { "desktop": { "perf": [70,71,71], "LCP": [2635,2596,2577], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [162,162,162], "requests": [53,53,53] },
+                 "mobile":  { "perf": [93,93,93], "LCP": [2580,2578,2575], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [162,162,162], "requests": [53,53,53] } }
+    },
+    "a11y": 100, "bestPractices": 100, "seo": 100,
+    "note": "dist and source measure the same within noise; dist is the CRLF working-tree copy, source is the repo."
+  },
+  "findings": [
+    "F6-N1: 52 render-blocking CSS requests in <head>. This is the single largest payload cost and the only one with a safe, large lever.",
+    "F6-N2: concatenating the 52 sheets at build time saves 28,299 gzip bytes (30.3%) and 51 requests, and is safe because there are 0 url() references and 0 @import rules.",
+    "F6-N3: 124 duplicate selectors across sheets are intentional milestone layering, not dead code. Merging them would break the cascade.",
+    "F6-N4: render() costs 0.28 ms/item; 1 long task at every size, growing 52 ms -> 180 ms with item count.",
+    "F6-N5: 12 listeners per card, constant; 1 IntersectionObserver for the whole page; 0 animate() calls at load. The runtime is already healthy.",
+    "F6-N6: updateCategoryFilter() costs 0 ms at 12/50/100 items. P2-4 is a cleanliness note, not a performance problem.",
+    "F6-N7: CLS is 0.002 (the reveal animation), TBT is 0 ms, a11y/BP/SEO are 100 in every run."
+  ]
+}
