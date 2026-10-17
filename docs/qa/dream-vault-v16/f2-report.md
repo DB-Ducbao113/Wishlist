@@ -267,11 +267,20 @@ node scripts/check-hosting.mjs
   verdict: PASS — no repo internals published; all runtime assets present
 ```
 
-For contrast, the same gate reports what the **old** `firebase.json` would have
-published: 842 files with **723 leaked** repo internals (`docs/**`, design
-prototypes, baseline PNGs, QA screenshots). The allowlist build is why
-`docs/qa/dream-vault-v16/img/f2-*.png` in this commit can never reach the
-public site.
+For contrast, the same gate reports what the **old** `firebase.json` config would
+have published. On the F2 tree that is **860 files with 741 leaked** repo
+internals (`docs/**`, design prototypes, baseline PNGs, QA screenshots) — up
+from F1's 842 / 723 precisely because this commit adds the evidence: the 15
+F2 screenshots, plus F1's 3, all sit under `docs/qa/**`. In other words, the
+very artefacts that document the work would have shipped to the public site
+without the allowlist. The allowlist build is why
+`docs/qa/dream-vault-v16/img/f2-*.png` can never be fetched from the hosted app.
+
+`dist/` is unchanged by those additions: the build reads only
+`wishlist.html`, `wishlist-cloud.js` and `css/`, so `hosting-manifest.json`
+stays at 54 files while `hosting-audit.json` (which also simulates the old
+config over the whole repo) legitimately grows. Both regenerated files are
+committed with F2.6.
 
 `scripts/check-hosting.mjs` was not modified in F2 — it already derives
 `repoCssCount` from `css/*.css` since F1, so the 50th stylesheet is covered
