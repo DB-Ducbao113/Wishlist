@@ -1871,9 +1871,53 @@ const dvTextCache = new WeakMap();
 function setDashText(el, text){
   if(!el) return false;
   if(dvTextCache.get(el) === text) return false;
+  const firstPaint = dvTextCache.get(el) === undefined;
   dvTextCache.set(el, text);
   el.textContent = text;
+  // V16.1 F3.6 — con số đổi thì tự nó nhích lên một nhịp rất nhẹ. Đây KHÔNG
+  // phải hiệu ứng đếm số: không có con số giả nào chạy qua, chỉ có đúng giá trị
+  // thật vừa hiện ra. Chỉ transform/opacity nên không gây layout, và bị tắt
+  // hoàn toàn khi người dùng chọn giảm chuyển động.
+  if(!firstPaint) dvNudge(el);
   return true;
+}
+
+// Một nhịp nhích 240ms cho một phần tử văn bản. Không đụng tới nội dung.
+function dvNudge(el){
+  if(!el || typeof el.animate !== "function") return;
+  if(dvPrefersReducedMotion()) return;
+  el.animate(
+    [
+      { opacity: .62, transform: "translateY(2px)" },
+      { opacity: 1, transform: "none" }
+    ],
+    { duration: 240, easing: "cubic-bezier(.2,.7,.3,1)" }
+  );
+}
+
+// Một lần mờ dần cho biểu đồ khi số liệu đổi. Cũng chỉ transform/opacity.
+function dvFadeOnce(el){
+  if(!el || typeof el.animate !== "function") return;
+  if(dvPrefersReducedMotion()) return;
+  el.animate(
+    [{ opacity: .55 }, { opacity: 1 }],
+    { duration: 240, easing: "cubic-bezier(.2,.7,.3,1)" }
+  );
+}
+
+function dvPrefersReducedMotion(){
+  return typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+// V16.1 F3.6 — thanh dữ liệu dài ra bằng transform:scaleX(), không phải bằng
+// width. scaleX() chạy trên compositor nên đổi số không kéo theo layout mỗi
+// khung hình; rãnh cha đã overflow:hidden nên bo góc vẫn đúng.
+function dvSetFill(bar, ratio){
+  const fill = bar && bar.firstChild;
+  if(!fill) return;
+  const value = Number.isFinite(ratio) ? Math.max(0, Math.min(1, ratio)) : 0;
+  fill.style.setProperty("--dv-fill", String(value));
 }
 
 function setDashAttr(el, name, value){
@@ -1997,6 +2041,7 @@ function renderDashboardStatus(m){
   const signature = STATUSES.map(s => s.key + ":" + counts[s.key]).join("|") +
     "|u:" + unclassified + "|t:" + m.totalCount + "|a:" + active;
   if(signature === dvDistSignature) return;
+  const firstPaint = dvDistSignature === "";
   dvDistSignature = signature;
 
   setDashText(total, m.totalCount + " món");
@@ -2086,6 +2131,10 @@ function renderDashboardStatus(m){
   }
 
   legend.replaceChildren(...rows);
+
+  // V16.1 F3.6 — độ dài phân đoạn là dữ liệu nên nó đổi tức thời; cảm giác
+  // chuyển động đến từ một lần mờ dần trên chính thanh.
+  if(!firstPaint) dvFadeOnce(bar);
 }
 
 /* ===================================================================
@@ -2178,6 +2227,7 @@ function renderDashboardBreakdown(m){
     "|o:" + (other ? other.count + "/" + other.parts : 0) +
     "|t:" + m.totalCount + "|a:" + active;
   if(signature === dvBreakdownSignature) return;
+  const firstPaint = dvBreakdownSignature === "";
   dvBreakdownSignature = signature;
 
   const rows = main.map(bucket => {
@@ -2192,7 +2242,7 @@ function renderDashboardBreakdown(m){
     name.textContent = bucket.name;
 
     const bar = dvBar("dv-breakdown__bar");
-    bar.firstChild.style.width = shareOf(bucket.count, m.totalCount) + "%";
+    dvSetFill(bar, bucket.count / m.totalCount);
 
     const value = document.createElement("span");
     value.className = "dv-breakdown__value";
@@ -2211,7 +2261,7 @@ function renderDashboardBreakdown(m){
     name.textContent = other.name + " (" + other.parts + " danh mục)";
 
     const bar = dvBar("dv-breakdown__bar");
-    bar.firstChild.style.width = shareOf(other.count, m.totalCount) + "%";
+    dvSetFill(bar, other.count / m.totalCount);
 
     const value = document.createElement("span");
     value.className = "dv-breakdown__value";
@@ -2222,6 +2272,10 @@ function renderDashboardBreakdown(m){
   }
 
   rowsHost.replaceChildren(...rows);
+
+  // V16.1 F3.6 — cùng một kiểu chuyển động với thanh trạng thái: một lần mờ
+  // dần, không animate từng thanh.
+  if(!firstPaint) dvFadeOnce(rowsHost);
 }
 
 function renderDashboardPriority(m){
@@ -2253,6 +2307,7 @@ function renderDashboardPriority(m){
   const signature = stats.map(s => s.key + ":" + s.count + ":" + s.pendingValue).join("|") +
     "|a:" + active;
   if(signature === dvPrioritySignature) return;
+  const firstPaint = dvPrioritySignature === "";
   dvPrioritySignature = signature;
 
   // Mức ưu tiên CAO NHẤT đang thực sự có món được viền accent — nếu mức "Cao"
@@ -2286,7 +2341,7 @@ function renderDashboardPriority(m){
     count.textContent = stat.count + " món";
 
     const bar = dvBar("dv-priority__bar");
-    bar.firstChild.style.width = shareOf(stat.pendingValue, maxValue) + "%";
+    dvSetFill(bar, stat.pendingValue / maxValue);
 
     const value = document.createElement("span");
     value.className = "dv-priority__value";
@@ -2297,6 +2352,8 @@ function renderDashboardPriority(m){
     btn.append(name, count, bar, value);
     return btn;
   }));
+
+  if(!firstPaint) dvFadeOnce(rowsHost);
 }
 
 /* ===================================================================

@@ -102,6 +102,27 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
   letter-spacing: var(--dv-tracking-label);
 }
 
+/* V16.1 F3.6 — AA CONTRAST ON THE DOMINANT CARD
+   The first card is the one KPI painted on a gradient, and its label and
+   description are small text, so they need 4.5:1 — not the 3:1 that large
+   text needs. Measured worst case before this rule: 2.7:1 (the label sits in
+   the top-left corner, where the white glow lifted the gradient furthest).
+   The palette is unchanged: the gradient now runs from --dream-accent-hover
+   to --dream-accent, both already in the Light Lavender set, the white glow
+   drops from .28 to .10, and the two small lines go full white. Measured
+   worst case after: 4.9:1. The rules below mirror the editorial selectors
+   exactly so the cascade needs no !important. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+  background:
+    radial-gradient(ellipse 130% 120% at 8% 4%, rgba(255, 255, 255, .10), transparent 56%),
+    linear-gradient(152deg, #543F9E 0%, #5E48AD 52%, #6850BC 100%);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__label,
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__description {
+  color: #FFFFFF;
+}
+
 /* =====================================================================
    OWNERSHIP PROGRESS
    purchasedCount / totalCount. 0 items resolves to 0% (never NaN), and
@@ -510,7 +531,9 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
   flex: 0 1 0%;
   min-width: 4px;
   border-radius: var(--dv-radius-pill);
-  transition: flex-grow var(--dv-motion) var(--dv-ease-out);
+  /* V16.1 F3.6 — tỉ lệ phân đoạn là dữ liệu nên nó đổi tức thời; cảm giác
+     chuyển động do một lần mờ dần trên cả thanh (transform/opacity, không
+     animate flex-grow nên không đẩy layout mỗi khung hình). */
 }
 
 .dv-dist__seg[data-status="wish"]      { background: var(--dv-status-wish); }
@@ -776,11 +799,15 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
 
 .dv-breakdown__bar-fill {
   display: block;
+  width: 100%;
   height: 100%;
-  min-width: 3px;
-  border-radius: var(--dv-radius-pill);
+  /* V16.1 F3.6 — độ dài chạy bằng transform:scaleX() (compositor) chứ không
+     phải width; rãnh cha đã overflow:hidden nên bo góc vẫn đúng và không cần
+     bo góc riêng cho phần đầy. */
+  transform-origin: left center;
+  transform: scaleX(var(--dv-fill, 0));
   background: var(--dv-accent);
-  transition: width var(--dv-motion) var(--dv-ease-out);
+  transition: transform var(--dv-motion) var(--dv-ease-out);
 }
 
 .dv-breakdown__row[aria-pressed="true"] {
@@ -863,10 +890,11 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
 
 .dv-priority__bar-fill {
   display: block;
+  width: 100%;
   height: 100%;
-  min-width: 0;
-  border-radius: var(--dv-radius-pill);
-  transition: width var(--dv-motion) var(--dv-ease-out);
+  transform-origin: left center;
+  transform: scaleX(var(--dv-fill, 0));
+  transition: transform var(--dv-motion) var(--dv-ease-out);
 }
 
 .dv-priority__item[data-priority="low"] .dv-priority__bar-fill    { background: var(--dv-priority-low); }
@@ -1070,8 +1098,19 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dv-actions__btn {
+  .dv-actions__btn,
+  .dv-breakdown__bar-fill,
+  .dv-priority__bar-fill,
+  .dv-breakdown__row,
+  .dv-priority__item,
+  .dv-dist__item,
+  .dv-add {
     transition: none;
+  }
+
+  /* Not decoration, but with motion off the button should not move at all. */
+  .dv-add:active {
+    transform: none;
   }
 }
 

@@ -1,0 +1,1682 @@
+[
+  {
+    "id": "DIST-01",
+    "area": "structure",
+    "entry": ".dv-dist legend",
+    "expected": "four rows, in wish -> saving -> ordered -> purchased order",
+    "name": "S1 STATUS · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish\",\"saving\",\"ordered\",\"purchased\"]"
+  },
+  {
+    "id": "DIST-02",
+    "area": "structure",
+    "entry": ".dv-dist row tag",
+    "expected": "the four status rows are real <button> elements",
+    "name": "S1 STATUS · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"BUTTON:wish\",\"BUTTON:saving\",\"BUTTON:ordered\",\"BUTTON:purchased\"]"
+  },
+  {
+    "id": "DIST-03",
+    "area": "structure",
+    "entry": "row text",
+    "expected": "every row states its label, count and share as text (colour is never the only signal)",
+    "name": "S1 STATUS · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[[\"Muốn mua\",\"3 món\",\"30%\"],[\"Đang để dành\",\"2 món\",\"20%\"],[\"Đã đặt hàng\",\"1 món\",\"10%\"],[\"Đã mua\",\"4 món\",\"40%\"]]"
+  },
+  {
+    "id": "DIST-04",
+    "area": "structure",
+    "entry": "row accessible name",
+    "expected": "the button name reads label + count + share",
+    "name": "S1 STATUS · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tag\":\"BUTTON\",\"status\":\"wish\",\"pressed\":\"false\",\"staticRow\":false,\"name\":\"Muốn mua\",\"count\":\"3 món\",\"share\":\"30%\"}"
+  },
+  {
+    "id": "DIST-05",
+    "area": "counts",
+    "entry": "legend counts",
+    "expected": "wish 3, saving 2, ordered 1, purchased 4",
+    "name": "S1 STATUS · counts",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish=3 món\",\"saving=2 món\",\"ordered=1 món\",\"purchased=4 món\"]"
+  },
+  {
+    "id": "DIST-06",
+    "area": "counts",
+    "entry": "legend shares",
+    "expected": "share is a fraction of the whole collection, and sums to 100",
+    "name": "S1 STATUS · counts",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish=30%\",\"saving=20%\",\"ordered=10%\",\"purchased=40%\"]"
+  },
+  {
+    "id": "DIST-07",
+    "area": "counts",
+    "entry": ".dv-dist__total",
+    "expected": "states the collection size the shares are taken from",
+    "name": "S1 STATUS · counts",
+    "pass": true,
+    "gate": true,
+    "actual": "\"10 món\""
+  },
+  {
+    "id": "DIST-08",
+    "area": "counts",
+    "entry": "bar segments",
+    "expected": "one segment per non-empty status, in the same order as the legend",
+    "name": "S1 STATUS · counts",
+    "pass": true,
+    "gate": true,
+    "actual": "[{\"status\":\"wish\",\"grow\":\"3\"},{\"status\":\"saving\",\"grow\":\"2\"},{\"status\":\"ordered\",\"grow\":\"1\"},{\"status\":\"purchased\",\"grow\":\"4\"}]"
+  },
+  {
+    "id": "DIST-09",
+    "area": "counts",
+    "entry": "segment widths",
+    "expected": "each segment carries its exact count, so widths cannot drift from rounding",
+    "name": "S1 STATUS · counts",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"3\",\"2\",\"1\",\"4\"]"
+  },
+  {
+    "id": "DIST-10",
+    "area": "a11y",
+    "entry": "#dvDistBar",
+    "expected": "is role=\"img\" with a text alternative naming every status, count and share",
+    "name": "S1 STATUS · a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Phân bố trạng thái: Muốn mua 3 món, 30%; Đang để dành 2 món, 20%; Đã đặt hàng 1 món, 10%; Đã mua 4 món, 40%\""
+  },
+  {
+    "id": "DIST-11",
+    "area": "a11y",
+    "entry": "segment elements",
+    "expected": "segments are decorative (the bar label already carries the data)",
+    "name": "S1 STATUS · a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "DIST-12",
+    "area": "interaction",
+    "entry": "click a legend row",
+    "expected": "#fStatus is set to that status",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "\"purchased\""
+  },
+  {
+    "id": "DIST-13",
+    "area": "interaction",
+    "entry": "click a legend row",
+    "expected": "the collection shows exactly those items",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"count\":4,\"ids\":[\"p4\",\"p3\",\"p2\",\"p1\"],\"statuses\":[\"purchased\",\"purchased\",\"purchased\",\"purchased\"]}"
+  },
+  {
+    "id": "DIST-14",
+    "area": "interaction",
+    "entry": "click a legend row",
+    "expected": "pressed state follows the filter, and only on that row",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish=false\",\"saving=false\",\"ordered=false\",\"purchased=true\"]"
+  },
+  {
+    "id": "DIST-15",
+    "area": "interaction",
+    "entry": "click a legend row",
+    "expected": "the quick tab returns to \"Tất cả\" so the two views cannot contradict each other",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"all\":\"true\",\"pending\":\"false\",\"owned\":\"false\"}"
+  },
+  {
+    "id": "DIST-16",
+    "area": "interaction",
+    "entry": "click a legend row",
+    "expected": "focus moves to the collection so a keyboard user is not left behind",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "DIST-17",
+    "area": "interaction",
+    "entry": "dashboard click",
+    "expected": "never edits an item and never writes storage",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"itemsChanged\":false,\"storageChanged\":false}"
+  },
+  {
+    "id": "DIST-18",
+    "area": "invariants",
+    "entry": "dashboard click",
+    "expected": "every KPI keeps the same value — filtering never re-sums the collection",
+    "name": "S1 STATUS · invariants",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"8.700.000 ₫\",\"spent\":\"5.500.000 ₫\",\"count\":\"10 món\",\"progress\":\"40%\",\"actualSpent\":\"3.600.000 ₫\",\"unpriced\":\"2 món\",\"caption\":\"4 trên 10 món đã sở hữu.\",\"ariaNow\":\"40\",\"result\":\"Đang hiển thị 10 trên 10 món.\"},\"after\":{\"total\":\"8.700.000 ₫\",\"spent\":\"5.500.000 ₫\",\"count\":\"10 món\",\"progress\":\"40%\",\"actualSpent\":\"3.600.000 ₫\",\"unpriced\":\"2 món\",\"caption\":\"4 trên 10 món đã sở hữu.\",\"ariaNow\":\"40\",\"result\":\"Đang hiển thị 4 trên 10 món.\"}}"
+  },
+  {
+    "id": "DIST-19",
+    "area": "interaction",
+    "entry": "click the active row again",
+    "expected": "clears the filter (toggle off)",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"status\":\"\",\"cards\":10}"
+  },
+  {
+    "id": "DIST-20",
+    "area": "interaction",
+    "entry": "change #fStatus directly",
+    "expected": "the legend pressed state follows the select",
+    "name": "S1 STATUS · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish=false\",\"saving=true\",\"ordered=false\",\"purchased=false\"]"
+  },
+  {
+    "id": "DIST-21",
+    "area": "errors",
+    "entry": "S1 scenario",
+    "expected": "no console errors",
+    "name": "S1 STATUS · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "DIST-30",
+    "area": "zero items",
+    "entry": "empty state",
+    "expected": "keeps ONE empty track (no segments) and the message, instead of four zero rows",
+    "name": "S2 EMPTY · zero items",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"bar\":false,\"legend\":true,\"empty\":false,\"segs\":0}"
+  },
+  {
+    "id": "DIST-31",
+    "area": "zero items",
+    "entry": "bar label",
+    "expected": "says there is nothing to distribute",
+    "name": "S2 EMPTY · zero items",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"label\":\"Phân bố trạng thái: chưa có món nào\",\"text\":\"Chưa có món nào để phân bố.\"}"
+  },
+  {
+    "id": "DIST-32",
+    "area": "zero items",
+    "entry": "shares",
+    "expected": "no divide-by-zero: percentages stay finite and 0",
+    "name": "S2 EMPTY · zero items",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "DIST-33",
+    "area": "zero items",
+    "entry": "total",
+    "expected": "reads 0 món, never \"NaN món\"",
+    "name": "S2 EMPTY · zero items",
+    "pass": true,
+    "gate": true,
+    "actual": "\"0 món\""
+  },
+  {
+    "id": "DIST-34",
+    "area": "zero items",
+    "entry": "KPI band",
+    "expected": "all figures stay finite and the progress caption is the empty one",
+    "name": "S2 EMPTY · zero items",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"0 ₫\",\"spent\":\"0 ₫\",\"count\":\"0 món\",\"progress\":\"0%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"Không còn món nào\",\"caption\":\"Chưa có món nào trong bộ sưu tập.\",\"ariaNow\":\"0\",\"result\":\"Đang hiển thị 0 trên 0 món.\"}"
+  },
+  {
+    "id": "DIST-35",
+    "area": "zero items",
+    "entry": "errors",
+    "expected": "no console errors",
+    "name": "S2 EMPTY · zero items",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "DIST-36",
+    "area": "degenerate",
+    "entry": "single purchased item",
+    "expected": "shares read 100% for the only status present",
+    "name": "S2 EMPTY · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish=0%\",\"saving=0%\",\"ordered=0%\",\"purchased=100%\"]"
+  },
+  {
+    "id": "DIST-37",
+    "area": "degenerate",
+    "entry": "statuses with 0 items",
+    "expected": "still appear in the legend, so the four states are always discoverable",
+    "name": "S2 EMPTY · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish=0 món\",\"saving=0 món\",\"ordered=0 món\",\"purchased=1 món\"]"
+  },
+  {
+    "id": "DIST-38",
+    "area": "degenerate",
+    "entry": "statuses with 0 items",
+    "expected": "produce no bar segment (nothing invisible to read)",
+    "name": "S2 EMPTY · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "[{\"status\":\"purchased\",\"grow\":\"1\"}]"
+  },
+  {
+    "id": "DIST-39",
+    "area": "degenerate",
+    "entry": "clicking an empty status",
+    "expected": "leaves every global KPI figure untouched",
+    "name": "S2 EMPTY · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"0 ₫\",\"spent\":\"2.200.000 ₫\",\"count\":\"1 món\",\"progress\":\"100%\",\"actualSpent\":\"2.000.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 1 món đã sở hữu.\",\"ariaNow\":\"100\",\"result\":\"Đang hiển thị 1 trên 1 món.\"},\"after\":{\"total\":\"0 ₫\",\"spent\":\"2.200.000 ₫\",\"count\":\"1 món\",\"progress\":\"100%\",\"actualSpent\":\"2.000.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 1 món đã sở hữu.\",\"ariaNow\":\"100\",\"result\":\"Đang hiển thị 0 trên 1 món.\"}}"
+  },
+  {
+    "id": "DIST-40",
+    "area": "degenerate",
+    "entry": "clicking an empty status",
+    "expected": "tells the user there is nothing in that state",
+    "name": "S2 EMPTY · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Không có món nào ở trạng thái “Muốn mua”.\""
+  },
+  {
+    "id": "DIST-41",
+    "area": "degenerate",
+    "entry": "errors",
+    "expected": "no console errors",
+    "name": "S2 EMPTY · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "DIST-42",
+    "area": "legacy status",
+    "entry": "an unreadable status",
+    "expected": "is not silently dropped: it is reported as one extra bucket",
+    "name": "S2 EMPTY · legacy status",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"11 món\",\"rows\":[\"wish\",\"saving\",\"ordered\",\"purchased\",\"other\"]}"
+  },
+  {
+    "id": "DIST-43",
+    "area": "legacy status",
+    "entry": "the extra bucket",
+    "expected": "is a plain row, not a button, because no filter exists for it",
+    "name": "S2 EMPTY · legacy status",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tag\":\"SPAN\",\"status\":null,\"pressed\":null,\"staticRow\":true,\"name\":\"Chưa xác định\",\"count\":\"1 món\",\"share\":\"9%\"}"
+  },
+  {
+    "id": "DIST-44",
+    "area": "legacy status",
+    "entry": "the bar",
+    "expected": "covers the whole collection including the unreadable row",
+    "name": "S2 EMPTY · legacy status",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"3\",\"2\",\"1\",\"4\",\"1\"]"
+  },
+  {
+    "id": "DIST-45",
+    "area": "legacy status",
+    "entry": "shares",
+    "expected": "are still taken from the full collection size",
+    "name": "S2 EMPTY · legacy status",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"27%\",\"18%\",\"9%\",\"36%\",\"9%\"]"
+  },
+  {
+    "id": "DIST-46",
+    "area": "legacy status",
+    "entry": "the four filterable rows",
+    "expected": "still work; the extra bucket is not clickable",
+    "name": "S2 EMPTY · legacy status",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "DIST-47",
+    "area": "legacy status",
+    "entry": "errors",
+    "expected": "no console errors",
+    "name": "S2 EMPTY · legacy status",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "DIST-M1-w320",
+    "area": "layout 320",
+    "entry": "page",
+    "expected": "no horizontal overflow",
+    "name": "S3 MOBILE · layout 320",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"sw\":320,\"iw\":320}"
+  },
+  {
+    "id": "DIST-M2-w320",
+    "area": "layout 320",
+    "entry": ".dv-dist",
+    "expected": "fits the viewport, keeps all four rows, and no row spills out",
+    "name": "S3 MOBILE · layout 320",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":320,\"innerWidth\":320,\"width\":260,\"barWidth\":222,\"rowCount\":4,\"overflowing\":0,\"minRowHeight\":39}"
+  },
+  {
+    "id": "DIST-M3-w320",
+    "area": "layout 320",
+    "entry": "legend rows",
+    "expected": "stay at a comfortable tap height (>= 38px)",
+    "name": "S3 MOBILE · layout 320",
+    "pass": true,
+    "gate": true,
+    "actual": "39"
+  },
+  {
+    "id": "DIST-M4-w320",
+    "area": "errors",
+    "entry": "layout 320",
+    "expected": "no console errors",
+    "name": "S3 MOBILE · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "DIST-M1-w375",
+    "area": "layout 375",
+    "entry": "page",
+    "expected": "no horizontal overflow",
+    "name": "S3 MOBILE · layout 375",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"sw\":375,\"iw\":375}"
+  },
+  {
+    "id": "DIST-M2-w375",
+    "area": "layout 375",
+    "entry": ".dv-dist",
+    "expected": "fits the viewport, keeps all four rows, and no row spills out",
+    "name": "S3 MOBILE · layout 375",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":375,\"innerWidth\":375,\"width\":315,\"barWidth\":277,\"rowCount\":4,\"overflowing\":0,\"minRowHeight\":39}"
+  },
+  {
+    "id": "DIST-M3-w375",
+    "area": "layout 375",
+    "entry": "legend rows",
+    "expected": "stay at a comfortable tap height (>= 38px)",
+    "name": "S3 MOBILE · layout 375",
+    "pass": true,
+    "gate": true,
+    "actual": "39"
+  },
+  {
+    "id": "DIST-M4-w375",
+    "area": "errors",
+    "entry": "layout 375",
+    "expected": "no console errors",
+    "name": "S3 MOBILE · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "DIST-M1-w430",
+    "area": "layout 430",
+    "entry": "page",
+    "expected": "no horizontal overflow",
+    "name": "S3 MOBILE · layout 430",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"sw\":430,\"iw\":430}"
+  },
+  {
+    "id": "DIST-M2-w430",
+    "area": "layout 430",
+    "entry": ".dv-dist",
+    "expected": "fits the viewport, keeps all four rows, and no row spills out",
+    "name": "S3 MOBILE · layout 430",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":430,\"innerWidth\":430,\"width\":370,\"barWidth\":332,\"rowCount\":4,\"overflowing\":0,\"minRowHeight\":39}"
+  },
+  {
+    "id": "DIST-M3-w430",
+    "area": "layout 430",
+    "entry": "legend rows",
+    "expected": "stay at a comfortable tap height (>= 38px)",
+    "name": "S3 MOBILE · layout 430",
+    "pass": true,
+    "gate": true,
+    "actual": "39"
+  },
+  {
+    "id": "DIST-M4-w430",
+    "area": "errors",
+    "entry": "layout 430",
+    "expected": "no console errors",
+    "name": "S3 MOBILE · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "BREAK-01",
+    "area": "ranking",
+    "entry": ".dv-breakdown rows",
+    "expected": "ranked by item count, descending",
+    "name": "S4 BREAKDOWN · ranking",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Alpha\",\"Beta\",\"Gamma\",\"Delta\",\"Epsilon\",\"Zeta\",\"Khác (2 danh mục)\"]"
+  },
+  {
+    "id": "BREAK-02",
+    "area": "ranking",
+    "entry": ".dv-breakdown rows",
+    "expected": "at most six real categories, then one \"Khác\" aggregate",
+    "name": "S4 BREAKDOWN · ranking",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Alpha\",\"Beta\",\"Gamma\",\"Delta\",\"Epsilon\",\"Zeta\",\"other\"]"
+  },
+  {
+    "id": "BREAK-03",
+    "area": "ranking",
+    "entry": "the aggregate",
+    "expected": "reports how many categories it folded together, and is not a button",
+    "name": "S4 BREAKDOWN · ranking",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tag\":\"DIV\",\"category\":null,\"staticRow\":true,\"pressed\":null,\"name\":\"Khác (2 danh mục)\",\"value\":\"3 món\",\"fill\":\"8%\",\"fillScale\":0.083}"
+  },
+  {
+    "id": "BREAK-04",
+    "area": "values",
+    "entry": "row values",
+    "expected": "are text (\"N món\"), not only bar length",
+    "name": "S4 BREAKDOWN · values",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"8 món\",\"7 món\",\"6 món\",\"5 món\",\"4 món\",\"3 món\",\"3 món\"]"
+  },
+  {
+    "id": "BREAK-05",
+    "area": "values",
+    "entry": "bar fill",
+    "expected": "is the share of the whole collection (8/36 -> 22%), not of the largest row",
+    "name": "S4 BREAKDOWN · values",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"22%\",\"19%\",\"17%\",\"14%\",\"11%\",\"8%\",\"8%\"]"
+  },
+  {
+    "id": "BREAK-06",
+    "area": "structure",
+    "entry": "row elements",
+    "expected": "every filterable row is a real <button>",
+    "name": "S4 BREAKDOWN · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"BUTTON\",\"BUTTON\",\"BUTTON\",\"BUTTON\",\"BUTTON\",\"BUTTON\",\"DIV\"]"
+  },
+  {
+    "id": "BREAK-07",
+    "area": "motion",
+    "entry": "bar geometry",
+    "expected": "is drawn with transform:scaleX (not width) at the row's real share",
+    "name": "S4 BREAKDOWN · motion",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"22%/0.222\",\"19%/0.194\",\"17%/0.167\",\"14%/0.139\",\"11%/0.111\",\"8%/0.083\",\"8%/0.083\"]"
+  },
+  {
+    "id": "BREAK-08",
+    "area": "errors",
+    "entry": "S4 scenario",
+    "expected": "no console errors",
+    "name": "S4 BREAKDOWN · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "BREAK-10",
+    "area": "uncategorised",
+    "entry": "items with no category",
+    "expected": "fold into one \"Chưa phân loại\" bucket, ranked with the rest",
+    "name": "S4 BREAKDOWN · uncategorised",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Nhóm A=6 món\",\"Chưa phân loại=2 món\",\"Nhóm B=2 món\"]"
+  },
+  {
+    "id": "BREAK-11",
+    "area": "uncategorised",
+    "entry": "#fCategoryFilter",
+    "expected": "offers the same bucket as a real option, so the dashboard uses the existing filter",
+    "name": "S4 BREAKDOWN · uncategorised",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"option\":{\"value\":\"__uncategorised__\",\"label\":\"Chưa phân loại\"},\"row\":\"__uncategorised__\"}"
+  },
+  {
+    "id": "BREAK-12",
+    "area": "uncategorised",
+    "entry": "clicking it",
+    "expected": "shows exactly the uncategorised items",
+    "name": "S4 BREAKDOWN · uncategorised",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filter\":\"__uncategorised__\",\"ids\":[\"p4\",\"p3\"]}"
+  },
+  {
+    "id": "BREAK-13",
+    "area": "uncategorised",
+    "entry": "clicking it",
+    "expected": "marks only that row as the active filter",
+    "name": "S4 BREAKDOWN · uncategorised",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Nhóm A=false\",\"Chưa phân loại=true\",\"Nhóm B=false\"]"
+  },
+  {
+    "id": "BREAK-14",
+    "area": "invariants",
+    "entry": "dashboard click",
+    "expected": "leaves every global KPI untouched",
+    "name": "S4 BREAKDOWN · invariants",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"8.700.000 ₫\",\"spent\":\"5.500.000 ₫\",\"count\":\"10 món\",\"progress\":\"40%\",\"actualSpent\":\"3.600.000 ₫\",\"unpriced\":\"2 món\",\"caption\":\"4 trên 10 món đã sở hữu.\",\"ariaNow\":\"40\",\"result\":\"Đang hiển thị 10 trên 10 món.\"},\"after\":{\"total\":\"8.700.000 ₫\",\"spent\":\"5.500.000 ₫\",\"count\":\"10 món\",\"progress\":\"40%\",\"actualSpent\":\"3.600.000 ₫\",\"unpriced\":\"2 món\",\"caption\":\"4 trên 10 món đã sở hữu.\",\"ariaNow\":\"40\",\"result\":\"Đang hiển thị 2 trên 10 món.\"}}"
+  },
+  {
+    "id": "BREAK-15",
+    "area": "uncategorised",
+    "entry": "clicking again",
+    "expected": "clears the filter",
+    "name": "S4 BREAKDOWN · uncategorised",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filter\":\"\",\"cards\":10}"
+  },
+  {
+    "id": "BREAK-16",
+    "area": "named category",
+    "entry": "clicking a category",
+    "expected": "sets the existing category filter and shows its items",
+    "name": "S4 BREAKDOWN · named category",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filter\":\"Nhóm B\",\"ids\":[\"p2\",\"p1\"]}"
+  },
+  {
+    "id": "BREAK-17",
+    "area": "named category",
+    "entry": "the select",
+    "expected": "keeps the filter the dashboard applied (no second mechanism)",
+    "name": "S4 BREAKDOWN · named category",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "BREAK-18",
+    "area": "errors",
+    "entry": "S4 scenario",
+    "expected": "no console errors",
+    "name": "S4 BREAKDOWN · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "BREAK-20",
+    "area": "degenerate",
+    "entry": "zero items",
+    "expected": "the block is hidden, not left as an empty shell",
+    "name": "S4 BREAKDOWN · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"breakdown\":true,\"priority\":true}"
+  },
+  {
+    "id": "BREAK-21",
+    "area": "degenerate",
+    "entry": "one category",
+    "expected": "the only bar reads 100%",
+    "name": "S4 BREAKDOWN · degenerate",
+    "pass": true,
+    "gate": true,
+    "actual": "[{\"tag\":\"BUTTON\",\"category\":\"Alpha\",\"staticRow\":false,\"pressed\":\"false\",\"name\":\"Alpha\",\"value\":\"8 món\",\"fill\":\"100%\",\"fillScale\":1}]"
+  },
+  {
+    "id": "PRIO-01",
+    "area": "structure",
+    "entry": ".dv-priority rows",
+    "expected": "three chips, in low -> medium -> high order, all real buttons",
+    "name": "S5 PRIORITY · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"BUTTON:low\",\"BUTTON:medium\",\"BUTTON:high\"]"
+  },
+  {
+    "id": "PRIO-02",
+    "area": "structure",
+    "entry": "chip text",
+    "expected": "shows both the count and the pending value as text",
+    "name": "S5 PRIORITY · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[[\"low\",\"2 món\",\"1.000.000 ₫ chưa mua\"],[\"medium\",\"3 món\",\"3.000.000 ₫ chưa mua\"],[\"high\",\"0 món\",\"Không còn giá trị chưa mua\"]]"
+  },
+  {
+    "id": "PRIO-03",
+    "area": "a11y",
+    "entry": "accessible name",
+    "expected": "reads \"Ưu tiên {label}: {count} món, {money}\"",
+    "name": "S5 PRIORITY · a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Ưu tiên Thấp: 2 món, 1.000.000 ₫\",\"Ưu tiên Trung bình: 3 món, 3.000.000 ₫\",\"Ưu tiên Cao: 0 món, 0 ₫\"]"
+  },
+  {
+    "id": "PRIO-04",
+    "area": "emphasis",
+    "entry": "the highest rank PRESENT",
+    "expected": "gets the accent outline - \"Cao\" is empty here, so \"Trung bình\" takes it",
+    "name": "S5 PRIORITY · emphasis",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=null\",\"medium=true\",\"high=null\"]"
+  },
+  {
+    "id": "PRIO-05",
+    "area": "states",
+    "entry": "a priority with no items",
+    "expected": "is aria-disabled (still readable by keyboard) and cannot be activated",
+    "name": "S5 PRIORITY · states",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=null\",\"medium=null\",\"high=true\"]"
+  },
+  {
+    "id": "PRIO-06",
+    "area": "values",
+    "entry": "bar length",
+    "expected": "is the pending value relative to the largest pending value",
+    "name": "S5 PRIORITY · values",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=33%\",\"medium=100%\",\"high=0%\"]"
+  },
+  {
+    "id": "PRIO-06b",
+    "area": "motion",
+    "entry": "bar geometry",
+    "expected": "is drawn with transform:scaleX, full for the largest and empty for a zero one",
+    "name": "S5 PRIORITY · motion",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=0.333\",\"medium=1\",\"high=0\"]"
+  },
+  {
+    "id": "PRIO-07",
+    "area": "values",
+    "entry": "a priority with items but no pending value",
+    "expected": "says so in words instead of showing a bare 0",
+    "name": "S5 PRIORITY · values",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tag\":\"BUTTON\",\"priority\":\"medium\",\"emphasis\":\"true\",\"disabled\":null,\"pressed\":\"false\",\"label\":\"Ưu tiên Trung bình: 3 món, 0 ₫\",\"name\":\"Trung bình\",\"count\":\"3 món\",\"value\":\"Không còn giá trị chưa mua\",\"fill\":\"0%\",\"fillScale\":0}"
+  },
+  {
+    "id": "PRIO-08",
+    "area": "interaction",
+    "entry": "clicking an aria-disabled chip",
+    "expected": "does nothing at all",
+    "name": "S5 PRIORITY · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filter\":\"\",\"cards\":5,\"toast\":null}"
+  },
+  {
+    "id": "PRIO-09",
+    "area": "interaction",
+    "entry": "clicking a chip",
+    "expected": "sets the existing priority filter and shows exactly those items",
+    "name": "S5 PRIORITY · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filter\":\"medium\",\"ids\":[\"m3\",\"m2\",\"m1\"]}"
+  },
+  {
+    "id": "PRIO-10",
+    "area": "interaction",
+    "entry": "clicking a chip",
+    "expected": "marks only that chip as pressed",
+    "name": "S5 PRIORITY · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=false\",\"medium=true\",\"high=false\"]"
+  },
+  {
+    "id": "PRIO-11",
+    "area": "invariants",
+    "entry": "clicking a chip",
+    "expected": "leaves every global KPI untouched",
+    "name": "S5 PRIORITY · invariants",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"4.000.000 ₫\",\"spent\":\"500.000 ₫\",\"count\":\"5 món\",\"progress\":\"20%\",\"actualSpent\":\"400.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 5 món đã sở hữu.\",\"ariaNow\":\"20\",\"result\":\"Đang hiển thị 5 trên 5 món.\"},\"after\":{\"total\":\"4.000.000 ₫\",\"spent\":\"500.000 ₫\",\"count\":\"5 món\",\"progress\":\"20%\",\"actualSpent\":\"400.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 5 món đã sở hữu.\",\"ariaNow\":\"20\",\"result\":\"Đang hiển thị 3 trên 5 món.\"}}"
+  },
+  {
+    "id": "PRIO-12",
+    "area": "interaction",
+    "entry": "clicking again",
+    "expected": "clears the filter",
+    "name": "S5 PRIORITY · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filter\":\"\",\"cards\":5}"
+  },
+  {
+    "id": "PRIO-13",
+    "area": "interaction",
+    "entry": "changing #fPriority directly",
+    "expected": "the chips follow the select",
+    "name": "S5 PRIORITY · interaction",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=true\",\"medium=false\",\"high=false\"]"
+  },
+  {
+    "id": "PRIO-14",
+    "area": "errors",
+    "entry": "S5 scenario",
+    "expected": "no console errors",
+    "name": "S5 PRIORITY · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "INS-M1-w320",
+    "area": "layout 320",
+    "entry": "page",
+    "expected": "no horizontal overflow",
+    "name": "S6 MOBILE-INSIGHT · layout 320",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"sw\":320,\"iw\":320}"
+  },
+  {
+    "id": "INS-M2-w320",
+    "area": "layout 320",
+    "entry": ".dv-breakdown + .dv-priority",
+    "expected": "fit the viewport and stack in one column without spilling",
+    "name": "S6 MOBILE-INSIGHT · layout 320",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":320,\"innerWidth\":320,\"maxPanelWidth\":260,\"rowCount\":10,\"spill\":0,\"minRowHeight\":52}"
+  },
+  {
+    "id": "INS-M3-w320",
+    "area": "layout 320",
+    "entry": "rows",
+    "expected": "stay at a comfortable tap height (>= 38px)",
+    "name": "S6 MOBILE-INSIGHT · layout 320",
+    "pass": true,
+    "gate": true,
+    "actual": "52"
+  },
+  {
+    "id": "INS-M4-w320",
+    "area": "errors",
+    "entry": "layout 320",
+    "expected": "no console errors",
+    "name": "S6 MOBILE-INSIGHT · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "INS-M1-w375",
+    "area": "layout 375",
+    "entry": "page",
+    "expected": "no horizontal overflow",
+    "name": "S6 MOBILE-INSIGHT · layout 375",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"sw\":375,\"iw\":375}"
+  },
+  {
+    "id": "INS-M2-w375",
+    "area": "layout 375",
+    "entry": ".dv-breakdown + .dv-priority",
+    "expected": "fit the viewport and stack in one column without spilling",
+    "name": "S6 MOBILE-INSIGHT · layout 375",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":375,\"innerWidth\":375,\"maxPanelWidth\":315,\"rowCount\":10,\"spill\":0,\"minRowHeight\":52}"
+  },
+  {
+    "id": "INS-M3-w375",
+    "area": "layout 375",
+    "entry": "rows",
+    "expected": "stay at a comfortable tap height (>= 38px)",
+    "name": "S6 MOBILE-INSIGHT · layout 375",
+    "pass": true,
+    "gate": true,
+    "actual": "52"
+  },
+  {
+    "id": "INS-M4-w375",
+    "area": "errors",
+    "entry": "layout 375",
+    "expected": "no console errors",
+    "name": "S6 MOBILE-INSIGHT · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "INS-M1-w430",
+    "area": "layout 430",
+    "entry": "page",
+    "expected": "no horizontal overflow",
+    "name": "S6 MOBILE-INSIGHT · layout 430",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"sw\":430,\"iw\":430}"
+  },
+  {
+    "id": "INS-M2-w430",
+    "area": "layout 430",
+    "entry": ".dv-breakdown + .dv-priority",
+    "expected": "fit the viewport and stack in one column without spilling",
+    "name": "S6 MOBILE-INSIGHT · layout 430",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":430,\"innerWidth\":430,\"maxPanelWidth\":370,\"rowCount\":10,\"spill\":0,\"minRowHeight\":52}"
+  },
+  {
+    "id": "INS-M3-w430",
+    "area": "layout 430",
+    "entry": "rows",
+    "expected": "stay at a comfortable tap height (>= 38px)",
+    "name": "S6 MOBILE-INSIGHT · layout 430",
+    "pass": true,
+    "gate": true,
+    "actual": "52"
+  },
+  {
+    "id": "INS-M4-w430",
+    "area": "errors",
+    "entry": "layout 430",
+    "expected": "no console errors",
+    "name": "S6 MOBILE-INSIGHT · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "ACT-01",
+    "area": "structure",
+    "entry": ".dv-actions",
+    "expected": "offers exactly the seven contracted actions",
+    "name": "S7 ACTIONS · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"dvActionAdd=+ Thêm món mới\",\"dvActionPending=Xem món chưa mua\",\"dvActionOwned=Xem món đã mua\",\"dvActionHigh=Xem món ưu tiên cao\",\"dvActionClear=Xóa bộ lọc\",\"dvActionExport=Xuất JSON\",\"dvActionImport=Nhập JSON\",\"dvActionBuy=Đánh dấu đã mua\"]"
+  },
+  {
+    "id": "ACT-02",
+    "area": "structure",
+    "entry": "action elements",
+    "expected": "every one is a real <button> with a visible text label (no icon-only control)",
+    "name": "S7 ACTIONS · structure",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"BUTTON:+ Thêm món mới\",\"BUTTON:Xem món chưa mua\",\"BUTTON:Xem món đã mua\",\"BUTTON:Xem món ưu tiên cao\",\"BUTTON:Xóa bộ lọc\",\"BUTTON:Xuất JSON\",\"BUTTON:Nhập JSON\",\"BUTTON:Đánh dấu đã mua\"]"
+  },
+  {
+    "id": "ACT-03",
+    "area": "a11y",
+    "entry": "the primary action",
+    "expected": "says what it does in words, and its + mark is decorative only",
+    "name": "S7 ACTIONS · a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "\"+ Thêm món mới\""
+  },
+  {
+    "id": "ACT-04",
+    "area": "add",
+    "entry": "Thêm món mới",
+    "expected": "opens the existing add form (not a copy of it)",
+    "name": "S7 ACTIONS · add",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"open\":true,\"title\":\"Thêm món\",\"fId\":\"\",\"focused\":\"fName\"}"
+  },
+  {
+    "id": "ACT-05",
+    "area": "add",
+    "entry": "Thêm món mới",
+    "expected": "creates nothing on its own",
+    "name": "S7 ACTIONS · add",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":5,\"focused\":\"fName\"}"
+  },
+  {
+    "id": "ACT-06",
+    "area": "view",
+    "entry": "Xem món chưa mua",
+    "expected": "selects the existing Chưa mua tab and shows only unpurchased items",
+    "name": "S7 ACTIONS · view",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tabs\":{\"all\":\"false\",\"pending\":\"true\",\"owned\":\"false\"},\"ids\":[\"l2\",\"l1\",\"m2\",\"m1\"]}"
+  },
+  {
+    "id": "ACT-07",
+    "area": "view",
+    "entry": "Xem món chưa mua",
+    "expected": "clears a leftover status filter that would have contradicted the button",
+    "name": "S7 ACTIONS · view",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"q\":\"\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\"}"
+  },
+  {
+    "id": "ACT-08",
+    "area": "invariants",
+    "entry": "a view action",
+    "expected": "leaves every global KPI untouched",
+    "name": "S7 ACTIONS · invariants",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"4.000.000 ₫\",\"spent\":\"500.000 ₫\",\"count\":\"5 món\",\"progress\":\"20%\",\"actualSpent\":\"400.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 5 món đã sở hữu.\",\"ariaNow\":\"20\",\"result\":\"Đang hiển thị 5 trên 5 món.\"},\"after\":{\"total\":\"4.000.000 ₫\",\"spent\":\"500.000 ₫\",\"count\":\"5 món\",\"progress\":\"20%\",\"actualSpent\":\"400.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 5 món đã sở hữu.\",\"ariaNow\":\"20\",\"result\":\"Đang hiển thị 4 trên 5 món.\"}}"
+  },
+  {
+    "id": "ACT-09",
+    "area": "a11y",
+    "entry": "a view action",
+    "expected": "moves focus to the collection",
+    "name": "S7 ACTIONS · a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "ACT-10",
+    "area": "view",
+    "entry": "Xem món đã mua",
+    "expected": "selects the Đã mua tab and shows only purchased items",
+    "name": "S7 ACTIONS · view",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tabs\":{\"all\":\"false\",\"pending\":\"false\",\"owned\":\"true\"},\"ids\":[\"m3\"]}"
+  },
+  {
+    "id": "ACT-11",
+    "area": "view",
+    "entry": "Xem món ưu tiên cao",
+    "expected": "sets the existing priority filter to high",
+    "name": "S7 ACTIONS · view",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"q\":\"\",\"status\":\"\",\"priority\":\"high\",\"category\":\"\",\"sort\":\"newest\"}"
+  },
+  {
+    "id": "ACT-12",
+    "area": "view",
+    "entry": "Xem món ưu tiên cao",
+    "expected": "with no high-priority item: no results, and it says so",
+    "name": "S7 ACTIONS · view",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":0,\"toast\":\"Không có món nào ở mức ưu tiên “Cao”.\"}"
+  },
+  {
+    "id": "ACT-13",
+    "area": "clear",
+    "entry": "Xóa bộ lọc",
+    "expected": "clears every filter through the same clear button the toolbar already uses",
+    "name": "S7 ACTIONS · clear",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"filters\":{\"q\":\"\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\"},\"tabs\":{\"all\":\"true\",\"pending\":\"false\",\"owned\":\"false\"},\"cards\":5}"
+  },
+  {
+    "id": "ACT-14",
+    "area": "clear",
+    "entry": "Xóa bộ lọc",
+    "expected": "leaves the search box alone (that is a deliberate query, not a filter)",
+    "name": "S7 ACTIONS · clear",
+    "pass": true,
+    "gate": true,
+    "actual": "\"\""
+  },
+  {
+    "id": "ACT-15",
+    "area": "invariants",
+    "entry": "every view + clear action",
+    "expected": "never edited an item",
+    "name": "S7 ACTIONS · invariants",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"changed\":false}"
+  },
+  {
+    "id": "ACT-16",
+    "area": "invariants",
+    "entry": "every view + clear action",
+    "expected": "never changed a global KPI",
+    "name": "S7 ACTIONS · invariants",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"4.000.000 ₫\",\"spent\":\"500.000 ₫\",\"count\":\"5 món\",\"progress\":\"20%\",\"actualSpent\":\"400.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 5 món đã sở hữu.\",\"ariaNow\":\"20\",\"result\":\"Đang hiển thị 5 trên 5 món.\"},\"after\":{\"total\":\"4.000.000 ₫\",\"spent\":\"500.000 ₫\",\"count\":\"5 món\",\"progress\":\"20%\",\"actualSpent\":\"400.000 ₫\",\"unpriced\":\"Không còn món nào\",\"caption\":\"1 trên 5 món đã sở hữu.\",\"ariaNow\":\"20\",\"result\":\"Đang hiển thị 5 trên 5 món.\"}}"
+  },
+  {
+    "id": "ACT-17",
+    "area": "export",
+    "entry": "Xuất JSON",
+    "expected": "runs the existing export handler (its own toast, its own file)",
+    "name": "S7 ACTIONS · export",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đã xuất 5 món ra tệp JSON.\""
+  },
+  {
+    "id": "ACT-18",
+    "area": "export",
+    "entry": "Xuất JSON",
+    "expected": "created no item and wrote no storage",
+    "name": "S7 ACTIONS · export",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":5}"
+  },
+  {
+    "id": "ACT-19",
+    "area": "import",
+    "entry": "Nhập JSON",
+    "expected": "opens the existing #importFile picker instead of re-implementing import",
+    "name": "S7 ACTIONS · import",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "ACT-20",
+    "area": "purchase",
+    "entry": "the purchase short-cut",
+    "expected": "is visible and names the exact item it would mark",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"buy\":{\"id\":\"dvActionBuy\",\"tag\":\"BUTTON\",\"hidden\":false,\"text\":\"Đánh dấu đã mua\",\"ariaLabel\":\"Đánh dấu đã mua: Món m2\"},\"note\":\"Gợi ý tiếp theo: Món m2 — ưu tiên trung bình.\"}"
+  },
+  {
+    "id": "ACT-21",
+    "area": "purchase",
+    "entry": "the suggestion",
+    "expected": "never points at an item that is already bought",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "ACT-22",
+    "area": "purchase",
+    "entry": "clicking the purchase short-cut",
+    "expected": "does NOT buy: it opens the F2 confirmation dialog",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pd\":true,\"m2\":\"saving\"}"
+  },
+  {
+    "id": "ACT-23",
+    "area": "purchase",
+    "entry": "the confirmation dialog",
+    "expected": "arrives empty, so the user still chooses the amount and date",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"open\":true,\"amount\":\"\",\"date\":\"2026-10-17\"}"
+  },
+  {
+    "id": "ACT-24",
+    "area": "purchase",
+    "entry": "confirming",
+    "expected": "is the only way an item becomes purchased",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"m2\",\"name\":\"Món m2\",\"price\":2000000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"X\",\"note\":\"\",\"createdAt\":1700000000002,\"paidAmount\":1990000,\"purchasedAt\":1779210000000,\"previousStatus\":\"saving\"}"
+  },
+  {
+    "id": "ACT-25",
+    "area": "purchase",
+    "entry": "after the purchase",
+    "expected": "the suggestion advances to the next item",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":\"Gợi ý tiếp theo: Món m2 — ưu tiên trung bình.\",\"after\":\"Gợi ý tiếp theo: Món m1 — ưu tiên trung bình.\"}"
+  },
+  {
+    "id": "ACT-26",
+    "area": "errors",
+    "entry": "S7 scenario",
+    "expected": "no console errors",
+    "name": "S7 ACTIONS · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "ACT-27",
+    "area": "purchase",
+    "entry": "with nothing left to buy",
+    "expected": "the short-cut hides itself rather than failing on click",
+    "name": "S7 ACTIONS · purchase",
+    "pass": true,
+    "gate": true,
+    "actual": "[{\"id\":\"dvActionBuy\",\"tag\":\"BUTTON\",\"hidden\":true,\"text\":\"Đánh dấu đã mua\",\"ariaLabel\":null}]"
+  },
+  {
+    "id": "ACT-28",
+    "area": "errors",
+    "entry": "S7 empty-purchase scenario",
+    "expected": "no console errors",
+    "name": "S7 ACTIONS · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "MOT-01",
+    "area": "kpi",
+    "entry": "adding an item",
+    "expected": "shows the final number in the same frame - there is no count-up animation",
+    "name": "S8 MOTION · kpi",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":\"10 món\",\"after\":\"11 món\",\"real\":11}"
+  },
+  {
+    "id": "MOT-02",
+    "area": "kpi",
+    "entry": "the KPI transition",
+    "expected": "touches opacity and transform only, never the content",
+    "name": "S8 MOTION · kpi",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"animated\":1,\"props\":[\"offset\",\"easing\",\"composite\",\"transform\",\"opacity\",\"computedOffset\"]}"
+  },
+  {
+    "id": "MOT-03",
+    "area": "chart",
+    "entry": "the breakdown bars",
+    "expected": "are redrawn at the new share immediately",
+    "name": "S8 MOTION · chart",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scale\":0.545455}"
+  },
+  {
+    "id": "MOT-04",
+    "area": "chart",
+    "entry": ".dv-breakdown__bar-fill",
+    "expected": "animates transform, not width, so no layout runs per frame",
+    "name": "S8 MOTION · chart",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"property\":\"transform\",\"duration\":\"0.26s\",\"reveal\":false}"
+  },
+  {
+    "id": "MOT-05",
+    "area": "chart",
+    "entry": ".dv-dist__seg",
+    "expected": "does not animate its flex-grow (the length is the data)",
+    "name": "S8 MOTION · chart",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"property\":\"all\",\"duration\":\"0s\",\"reveal\":false}"
+  },
+  {
+    "id": "MOT-06",
+    "area": "chart",
+    "entry": "#dvProgressFill",
+    "expected": "keeps the documented width transition of the V16 progress bar",
+    "name": "S8 MOTION · chart",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"property\":\"width\",\"duration\":\"0.26s\",\"reveal\":false}"
+  },
+  {
+    "id": "MOT-07",
+    "area": "reveal",
+    "entry": "with motion allowed",
+    "expected": "the V16 section reveal is active",
+    "name": "S8 MOTION · reveal",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"motionClass\":true,\"panel\":{\"reveal\":true,\"opacity\":\"0\"}}"
+  },
+  {
+    "id": "MOT-08",
+    "area": "action",
+    "entry": ".dv-actions__btn",
+    "expected": "has a transition when motion is allowed",
+    "name": "S8 MOTION · action",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"property\":\"background, border-color, color\",\"duration\":\"0.26s, 0.26s, 0.26s\",\"reveal\":false}"
+  },
+  {
+    "id": "MOT-09",
+    "area": "errors",
+    "entry": "S8 scenario",
+    "expected": "no console errors",
+    "name": "S8 MOTION · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "MOT-10",
+    "area": "reduced",
+    "entry": "a data change",
+    "expected": "creates no animation at all",
+    "name": "S8 MOTION · reduced",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"animated\":0,\"props\":[]}"
+  },
+  {
+    "id": "MOT-11",
+    "area": "reduced",
+    "entry": "data still updates",
+    "expected": "the number and the bar are correct even with motion off",
+    "name": "S8 MOTION · reduced",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"after\":\"11 món\",\"real\":11,\"scale\":0.545455}"
+  },
+  {
+    "id": "MOT-12",
+    "area": "reduced",
+    "entry": "the reveal decoration",
+    "expected": "is switched off entirely",
+    "name": "S8 MOTION · reduced",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"motionClass\":false}"
+  },
+  {
+    "id": "MOT-13",
+    "area": "reduced",
+    "entry": ".dv-actions__btn",
+    "expected": "has no transition",
+    "name": "S8 MOTION · reduced",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"property\":\"none\",\"duration\":\"0s\",\"reveal\":false}"
+  },
+  {
+    "id": "MOT-14",
+    "area": "reduced",
+    "entry": ".dv-breakdown__bar-fill",
+    "expected": "has no transition",
+    "name": "S8 MOTION · reduced",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"property\":\"none\",\"duration\":\"0s\",\"reveal\":false}"
+  },
+  {
+    "id": "MOT-15",
+    "area": "reduced",
+    "entry": "the dashboard panel",
+    "expected": "is fully visible and not staged for a reveal",
+    "name": "S8 MOTION · reduced",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"reveal\":true,\"opacity\":\"1\"}"
+  },
+  {
+    "id": "MOT-16",
+    "area": "errors",
+    "entry": "S8 reduced-motion scenario",
+    "expected": "no console errors",
+    "name": "S8 MOTION · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "A11Y-01",
+    "area": "contrast",
+    "entry": "text in the dashboard",
+    "expected": "meets 4.5:1 everywhere (WCAG AA, body text)",
+    "name": "S9 A11Y · contrast",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"failing\":[],\"resolved\":11}"
+  },
+  {
+    "id": "A11Y-02",
+    "area": "contrast",
+    "entry": "the dominant gradient KPI card",
+    "expected": "still reaches 4.5:1 for its white label at every stop (worst case)",
+    "name": "S9 A11Y · contrast",
+    "pass": true,
+    "gate": true,
+    "actual": "4.88"
+  },
+  {
+    "id": "A11Y-03",
+    "area": "contrast",
+    "entry": "the secondary metrics",
+    "expected": "labels and hints meet 4.5:1",
+    "name": "S9 A11Y · contrast",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"label\":6.51,\"hint\":6.51}"
+  },
+  {
+    "id": "A11Y-P1",
+    "area": "probe",
+    "entry": "contrast measurements",
+    "expected": "reported for the record",
+    "name": "A11Y measured ratios",
+    "pass": true,
+    "gate": false,
+    "actual": "[\"metricLabel=6.51\",\"metricHint=6.51\",\"progressCaption=6.51\",\"distShare=6.51\",\"breakdownValue=6.51\",\"breakdownName=17.72\",\"priorityValue=6.51\",\"actionLead=6.51\",\"actionNote=6.51\",\"actionButton=6.07\",\"kpiGradient=4.88\",\"emptyAction=6.07\"]"
+  },
+  {
+    "id": "A11Y-04",
+    "area": "semantics",
+    "entry": "every interactive element in the dashboard",
+    "expected": "is a real <button>, never a clickable div",
+    "name": "S9 A11Y · semantics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"divs\":[],\"controls\":19}"
+  },
+  {
+    "id": "A11Y-05",
+    "area": "names",
+    "entry": "every dashboard button",
+    "expected": "has an accessible name (text or aria-label)",
+    "name": "S9 A11Y · names",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "A11Y-06",
+    "area": "keyboard",
+    "entry": "every new control",
+    "expected": "is focusable",
+    "name": "S9 A11Y · keyboard",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "A11Y-07",
+    "area": "focus",
+    "entry": "every new control",
+    "expected": "defines a :focus-visible ring",
+    "name": "S9 A11Y · focus",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"rings\":{\".dv-actions__btn\":true,\".dv-breakdown__row\":true,\".dv-priority__item\":true,\".dv-dist__item\":true,\".dv-add\":true},\"seen\":[\"button:focus-visible, a:focus-visible\",\".status-chip:focus-visible\",\":focus-visible\",\":where(button, a, input, select, textarea, summary, [role=\\\"button\\\"]):focus-visible\",\".nav-more summary:focus-visible\",\".product-dialog input:focus-visible, .product-dialog select:focus-visible, .product-dialog textarea:focus-visible, .product-dialog button:focus-visible\"],\"sheets\":{\"count\":50,\"rules\":952},\"sample\":[\"*\",\"html, body\",\"body\",\"button\",\"button:hover\",\"button:active\",\"button:focus-visible, a:focus-visible\",\"button.primary\",\"button.primary:hover\",\"button.ghost\",\"button.danger\",\"button.danger:hover\"],\"hrefs\":[\"legacy.css\",\"tokens.css\",\"base.css\",\"layout.css\",\"navigation.css\",\"hero.css\",\"hero-v2.css\",\"stats.css\",\"stats-v2.css\",\"controls.css\",\"product-card.css\",\"grid-entrance.css\",\"purchased-motion.css\",\"gallery.css\",\"gallery-v2.css\",\"dialog.css\",\"empty-state.css\",\"toast.css\",\"polish-v2.css\",\"homepage-v3.css\"]}"
+  },
+  {
+    "id": "A11Y-08",
+    "area": "targets",
+    "entry": "the legend, breakdown, priority and action rows",
+    "expected": "are at least 24px tall",
+    "name": "S9 A11Y · targets",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "A11Y-09",
+    "area": "charts",
+    "entry": "the status bar",
+    "expected": "is a labelled role=\"img\" whose segments are hidden from the reading order",
+    "name": "S9 A11Y · charts",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"role\":\"img\",\"label\":\"Phân bố trạng thái: Muốn mua 3 món, 30%; Đang để dành 2 món,\",\"hiddenSegments\":true}"
+  },
+  {
+    "id": "A11Y-10",
+    "area": "contrast",
+    "entry": "#emptyAction in the no-results state",
+    "expected": "meets 4.5:1 (P2-2 fixed, or left alone if it already passed)",
+    "name": "S9 A11Y · contrast",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"ratio\":6.07,\"font\":\"15px/400\"}"
+  },
+  {
+    "id": "A11Y-11",
+    "area": "errors",
+    "entry": "S9 scenario",
+    "expected": "no console errors",
+    "name": "S9 A11Y · errors",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "SCALE-01",
+    "area": "1 product",
+    "entry": "the KPI count",
+    "expected": "reads \"1 món\" (not \"1 móns\" or \"0\")",
+    "name": "S10 SCALE · 1 product",
+    "pass": true,
+    "gate": true,
+    "actual": "\"1 món\""
+  },
+  {
+    "id": "SCALE-02",
+    "area": "1 product",
+    "entry": "the progress caption",
+    "expected": "reads \"0 trên 1 món đã sở hữu.\"",
+    "name": "S10 SCALE · 1 product",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"caption\":\"0 trên 1 món đã sở hữu.\",\"progress\":\"0%\"}"
+  },
+  {
+    "id": "SCALE-03",
+    "area": "1 product",
+    "entry": "the panels",
+    "expected": "each show their single row instead of hiding",
+    "name": "S10 SCALE · 1 product",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"breakdownRows\":1,\"priorityRows\":3,\"segments\":1}"
+  },
+  {
+    "id": "SCALE-04",
+    "area": "1 product",
+    "entry": "errors",
+    "expected": "no console errors",
+    "name": "S10 SCALE · 1 product",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "SCALE-05",
+    "area": "50 products",
+    "entry": "the KPI count and value",
+    "expected": "are correct at scale",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"count\":\"50 món\",\"total\":\"18.000.000 ₫\",\"expected\":\"18.000.000 ₫\",\"metrics\":{\"totalCount\":50,\"ownedCount\":12,\"pendingCount\":38,\"ownedValue\":6000000,\"pendingValue\":18000000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":12,\"hasActualSpending\":false,\"ownershipRate\":0.24,\"trackedValue\":24000000,\"progress\":0.24,\"progressPercent\":24}}"
+  },
+  {
+    "id": "SCALE-06",
+    "area": "50 products",
+    "entry": "ownership",
+    "expected": "is 12/50 = 24%",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"progress\":\"24%\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"rate\":0.24}"
+  },
+  {
+    "id": "SCALE-07",
+    "area": "50 products",
+    "entry": "the category panel",
+    "expected": "still caps at six real rows plus one \"Khác\" that holds the rest",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Nhóm E=6 món\",\"Nhóm D=6 món\",\"Nhóm C=6 món\",\"Nhóm B=6 món\",\"Nhóm A=6 món\",\"Chưa phân loại=5 món\",\"Khác (3 danh mục)=15 món\"]"
+  },
+  {
+    "id": "SCALE-08",
+    "area": "50 products",
+    "entry": "the priority panel",
+    "expected": "shows all three ranks",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"low=17 món\",\"medium=17 món\",\"high=16 món\"]"
+  },
+  {
+    "id": "SCALE-09",
+    "area": "50 products",
+    "entry": "typing a search",
+    "expected": "narrows the grid but leaves every KPI untouched",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":11,\"before\":{\"total\":\"18.000.000 ₫\",\"spent\":\"6.000.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"12 món\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"result\":\"Đang hiển thị 50 trên 50 món.\"},\"after\":{\"total\":\"18.000.000 ₫\",\"spent\":\"6.000.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"12 món\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"result\":\"Đang hiển thị 11 trên 50 món.\"}}"
+  },
+  {
+    "id": "SCALE-10",
+    "area": "50 products",
+    "entry": "changing the sort",
+    "expected": "reorders the grid but leaves every KPI untouched",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":{\"total\":\"18.000.000 ₫\",\"spent\":\"6.000.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"12 món\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"result\":\"Đang hiển thị 50 trên 50 món.\"},\"after\":{\"total\":\"18.000.000 ₫\",\"spent\":\"6.000.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"12 món\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"result\":\"Đang hiển thị 50 trên 50 món.\"}}"
+  },
+  {
+    "id": "SCALE-11",
+    "area": "50 products",
+    "entry": "filtering by status",
+    "expected": "narrows the grid and leaves every KPI untouched",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":13,\"before\":{\"total\":\"18.000.000 ₫\",\"spent\":\"6.000.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"12 món\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"result\":\"Đang hiển thị 50 trên 50 món.\"},\"after\":{\"total\":\"18.000.000 ₫\",\"spent\":\"6.000.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"12 món\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"result\":\"Đang hiển thị 13 trên 50 món.\"}}"
+  },
+  {
+    "id": "SCALE-12",
+    "area": "50 products",
+    "entry": "at 1280px",
+    "expected": "nothing overflows horizontally",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":1280,\"innerWidth\":1280,\"widest\":1200.609375}"
+  },
+  {
+    "id": "SCALE-13",
+    "area": "50 products",
+    "entry": "errors",
+    "expected": "no console errors",
+    "name": "S10 SCALE · 50 products",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+    "id": "SCALE-14",
+    "area": "50 products at 390px",
+    "entry": "the whole dashboard",
+    "expected": "does not overflow horizontally",
+    "name": "S10 SCALE · 50 products at 390px",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":390,\"innerWidth\":390,\"widest\":360}"
+  },
+  {
+    "id": "SCALE-15",
+    "area": "50 products at 390px",
+    "entry": "errors",
+    "expected": "no console errors",
+    "name": "S10 SCALE · 50 products at 390px",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  }
+]

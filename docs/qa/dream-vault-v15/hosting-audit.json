@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T01:50:36.851Z",
+ "generatedAt": "2026-10-17T04:37:18.522Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
   "publishedFileCount": 860,
