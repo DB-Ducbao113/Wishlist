@@ -732,6 +732,51 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </div><!-- /.dv-grid--insight -->
 
+  <!-- V16.1 F5.3 / F5.4 — Savings overview and "what to look at next". Both
+       read the one `items` array and keep no tally of their own. Every savings
+       figure is a real <button> that only SETS the filters the toolbar already
+       has (through applyDashboardFilter), and the suggestion button only opens
+       the Quick View — neither can edit an item, change a status or mark
+       anything as bought. Both widgets hide themselves entirely when they have
+       nothing to say, so the dashboard never grows an empty shell. -->
+  <div class="dv-grid dv-grid--f5">
+
+    <section class="dv-savings" id="dvSavings" aria-labelledby="dvSavingsTitle">
+      <div class="dv-savings__head">
+        <h3 class="dv-savings__title" id="dvSavingsTitle">Mục tiêu tiết kiệm</h3>
+        <span class="dv-savings__hint">Món chưa mua</span>
+      </div>
+
+      <div class="dv-savings__bar" id="dvSavingsBar" role="progressbar"
+           aria-label="Tiến độ tiết kiệm tổng"
+           aria-valuemin="0" aria-valuemax="100"
+           aria-valuenow="0" aria-valuetext="0%">
+        <span class="dv-savings__bar-fill" id="dvSavingsBarFill"></span>
+      </div>
+
+      <div class="dv-savings__rows" id="dvSavingsRows"></div>
+
+      <p class="dv-savings__empty" id="dvSavingsEmpty">
+        Chưa có món nào được đặt mục tiêu tiết kiệm. Mở một món để đặt mục tiêu
+        và theo dõi tại đây.
+      </p>
+    </section>
+
+    <section class="dv-insights" id="dvInsights" aria-labelledby="dvInsightsTitle">
+      <div class="dv-insights__head">
+        <h3 class="dv-insights__title" id="dvInsightsTitle">Nên xem tiếp</h3>
+        <span class="dv-insights__hint">Từ dữ liệu của bạn</span>
+      </div>
+
+      <div class="dv-insights__rows" id="dvInsightsRows"></div>
+
+      <p class="dv-insights__empty" id="dvInsightsEmpty">
+        Chưa có món nào đang chờ mua.
+      </p>
+    </section>
+
+  </div><!-- /.dv-grid--f5 -->
+
   <!-- V16.1 F3.5 — Quick Actions. Pure navigation: every button either sets a
        filter the toolbar already has, opens the one existing form, or
        delegates to the existing export/import handlers. Nothing here copies
@@ -875,6 +920,21 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         <option value="price-desc">Giá giảm dần</option>
         <option value="priority-desc">Ưu tiên cao trước</option>
         <option value="priority-asc">Ưu tiên thấp trước</option>
+      </select>
+    </div>
+
+    <!-- V16.1 F5.3 — the savings facet. It is just another predicate inside
+         visibleItems(), so a dashboard figure can point at exactly the set of
+         items it counted instead of inventing a second filtering mechanism.
+         Values are defined once in SAVINGS_FILTERS. -->
+    <div class="field">
+      <label for="fSavings">Tiết kiệm</label>
+      <select id="fSavings">
+        <option value="">Tất cả</option>
+        <option value="goal">Đang có mục tiêu</option>
+        <option value="saving">Đã để dành</option>
+        <option value="short">Chưa đạt mục tiêu</option>
+        <option value="ready">Đã đạt mục tiêu</option>
       </select>
     </div>
 
@@ -2616,6 +2676,235 @@ function renderDashboardPriority(m){
 }
 
 /* ===================================================================
+   V16.1 F5.3 — SAVINGS OVERVIEW
+   -------------------------------------------------------------------
+   Reads computeSavings(items): only valid goals on unpurchased items, so a
+   goal is never counted twice against "đã mua". Every row is a real
+   <button> that only SETS the savings facet plus the "Chưa mua" tab, so the
+   figure you tapped is exactly the set you land on — the same discipline the
+   F3 shortcuts already follow. No row can edit an item.
+
+   The widget removes itself when no item has a goal: a card full of zeros
+   would be density without information.
+   =================================================================== */
+
+let dvSavingsSignature = "";
+
+function dvSavingsRow(label, value, note, filterValue){
+  const row = document.createElement("button");
+  row.type = "button";
+  row.className = "dv-savings__row";
+  if(filterValue) row.dataset.savings = filterValue;
+
+  const name = document.createElement("span");
+  name.className = "dv-savings__name";
+  name.textContent = label;
+
+  const val = document.createElement("span");
+  val.className = "dv-savings__value";
+  val.textContent = value;
+
+  const sub = document.createElement("span");
+  sub.className = "dv-savings__note";
+  sub.textContent = note;
+
+  row.appendChild(name);
+  row.appendChild(val);
+  row.appendChild(sub);
+  row.setAttribute("aria-label", label + ": " + value + ". " + note);
+  return row;
+}
+
+function renderDashboardSavings(){
+  const host = $("dvSavings");
+  const rowsHost = $("dvSavingsRows");
+  const empty = $("dvSavingsEmpty");
+  const bar = $("dvSavingsBar");
+  if(!host || !rowsHost || !empty || !bar) return;
+
+  const s = computeSavings(items);
+
+  if(s.goalCount === 0){
+    host.hidden = true;
+    rowsHost.replaceChildren();
+    empty.hidden = false;
+    dvSavingsSignature = "";
+    return;
+  }
+  host.hidden = false;
+  empty.hidden = true;
+
+  const signature = [
+    s.goalCount, s.goalTotal, s.savedTotal, s.remainingTotal, s.readyCount
+  ].join("|");
+  if(signature === dvSavingsSignature) return;
+  const firstPaint = dvSavingsSignature === "";
+  dvSavingsSignature = signature;
+
+  const percent = Math.round(s.progress * 100);
+  dvSetFill(bar, s.progress);
+  setDashAttr(bar, "aria-valuenow", String(percent));
+  setDashAttr(
+    bar,
+    "aria-valuetext",
+    percent + "% — đã để dành " + fmtMoney(s.savedTotal) +
+      " trên " + fmtMoney(s.goalTotal)
+  );
+
+  rowsHost.replaceChildren(
+    dvSavingsRow("Mục tiêu đang theo dõi", fmtMoney(s.goalTotal),
+      s.goalCount + " món có mục tiêu", "goal"),
+    dvSavingsRow("Đã tích lũy", fmtMoney(s.savedTotal),
+      "Do bạn tự ghi nhận", "saving"),
+    dvSavingsRow("Còn thiếu", fmtMoney(s.remainingTotal),
+      "Tổng khoảng cách tới mục tiêu", "short"),
+    dvSavingsRow("Đủ tiền, chưa mua", s.readyCount + " món",
+      "Đã đạt mục tiêu tiết kiệm", "ready")
+  );
+
+  if(!firstPaint) dvFadeOnce(rowsHost);
+}
+
+/* ===================================================================
+   V16.1 F5.4 — "NÊN XEM TIẾP"
+   -------------------------------------------------------------------
+   A short, deterministic and explainable list built only from data the user
+   already entered. No scoring model, no AI, no price-watching:
+
+     hạng 1  chưa mua + mức ưu tiên cao
+     hạng 2  chưa mua + đã đạt mục tiêu tiết kiệm
+     hạng 3  chưa mua + có mục tiêu và còn thiếu ít nhất
+     hạng 4  chưa mua, còn lại — để widget vẫn hữu ích khi chưa có dữ liệu
+             tiết kiệm nào (lý do hiển thị đúng là "Chưa mua")
+
+   Trong cùng một hạng, thứ tự ổn định theo createdAt rồi tới id, nên kết quả
+   không phụ thuộc vào thứ tự mảng tình cờ có. Widget không tự đổi trạng thái,
+   không tự đánh dấu đã mua và không bao giờ khẳng định người dùng "đủ khả
+   năng" chi trả: nó chỉ dẫn tới Quick View của món đó.
+   =================================================================== */
+
+const DV_INSIGHT_LIMIT = 4;
+let dvInsightsSignature = "";
+
+function savingsRank(it){
+  if(!it || it.status === "purchased") return null;
+  if(it.priority === "high") return 1;
+  if(savingsReached(it)) return 2;
+  if(hasSavingGoal(it)) return 3;
+  return 4;
+}
+
+function insightReason(it, rank){
+  if(rank === 1){
+    return savingsReached(it)
+      ? "Ưu tiên cao · đã đạt mục tiêu tiết kiệm"
+      : "Ưu tiên cao";
+  }
+  if(rank === 2) return "Đã đạt mục tiêu tiết kiệm";
+  if(rank === 3){
+    const remaining = savingsRemaining(it);
+    return "Còn thiếu " + fmtMoney(remaining === null ? 0 : remaining) + " tới mục tiêu";
+  }
+  return "Chưa mua";
+}
+
+function buildInsights(list){
+  const ranked = [];
+  for(const it of Array.isArray(list) ? list : []){
+    const rank = savingsRank(it);
+    if(rank === null) continue;
+    ranked.push({ it: it, rank: rank, gap: savingsRemaining(it) });
+  }
+
+  ranked.sort((a, b) => {
+    if(a.rank !== b.rank) return a.rank - b.rank;
+    // Chỉ hạng 3 mới có khái niệm "gần nhất"; hạng khác giữ luật ổn định.
+    if(a.rank === 3){
+      const ag = a.gap === null ? Infinity : a.gap;
+      const bg = b.gap === null ? Infinity : b.gap;
+      if(ag !== bg) return ag - bg;
+    }
+    const at = a.it.createdAt || 0, bt = b.it.createdAt || 0;
+    if(at !== bt) return at - bt;
+    const aid = String(a.it.id || ""), bid = String(b.it.id || "");
+    if(aid === bid) return 0;
+    return aid < bid ? -1 : 1;
+  });
+
+  return ranked.slice(0, DV_INSIGHT_LIMIT);
+}
+
+function renderDashboardInsights(){
+  const host = $("dvInsights");
+  const rowsHost = $("dvInsightsRows");
+  const empty = $("dvInsightsEmpty");
+  if(!host || !rowsHost || !empty) return;
+
+  const picks = buildInsights(items);
+
+  if(picks.length === 0){
+    host.hidden = true;
+    rowsHost.replaceChildren();
+    empty.hidden = false;
+    dvInsightsSignature = "";
+    return;
+  }
+  host.hidden = false;
+  empty.hidden = true;
+
+  const signature = picks.map(p => {
+    const gap = savingsRemaining(p.it);
+    // name and price are rendered, so they belong in the signature too —
+    // otherwise renaming or repricing a suggested item would leave the stale
+    // text on screen.
+    return [p.it.id, p.it.name, p.it.price, p.rank, p.it.priority || "",
+      gap === null ? "" : gap].join(":");
+  }).join("|");
+  if(signature === dvInsightsSignature) return;
+  const firstPaint = dvInsightsSignature === "";
+  dvInsightsSignature = signature;
+
+  rowsHost.replaceChildren(...picks.map(p => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dv-insights__row";
+    btn.dataset.insightId = p.it.id;
+
+    const name = document.createElement("span");
+    name.className = "dv-insights__name";
+    name.textContent = p.it.name;
+
+    const price = document.createElement("span");
+    price.className = "dv-insights__price";
+    price.textContent = fmtMoney(p.it.price);
+
+    const reason = document.createElement("span");
+    reason.className = "dv-insights__reason";
+    reason.textContent = insightReason(p.it, p.rank);
+
+    // Nút nói rõ nó làm gì. aria-label gộp cả lý do và giá, vì thuộc tính này
+    // thay thế toàn bộ tên đọc được của nút — trình đọc màn hình phải nghe được
+    // đúng thông tin mà người nhìn thấy.
+    const go = document.createElement("span");
+    go.className = "dv-insights__go";
+    go.textContent = "Xem món";
+
+    btn.appendChild(name);
+    btn.appendChild(price);
+    btn.appendChild(reason);
+    btn.appendChild(go);
+    btn.setAttribute(
+      "aria-label",
+      "Xem món " + p.it.name + " — " + reason.textContent +
+        ". Giá ghi nhận " + fmtMoney(p.it.price)
+    );
+    return btn;
+  }));
+
+  if(!firstPaint) dvFadeOnce(rowsHost);
+}
+
+/* ===================================================================
    V16.1 F3.5 — THAO TÁC NHANH
    -------------------------------------------------------------------
    Hợp đồng: docs/qa/dream-vault-v16/dashboard-foundation.md §4.6.
@@ -2686,6 +2975,10 @@ function renderDashboardActions(){
 const PURCHASE_TABS = ["all", "pending", "owned"];
 let purchaseTab = "all";
 
+// V16.1 F5.3 — the four savings predicates #fSavings can carry. Declared once
+// so visibleItems(), the dashboard rows and the clear-filter path cannot drift.
+const SAVINGS_FILTERS = ["goal", "saving", "short", "ready"];
+
 function syncPurchaseTabButtons(){
   const host = $("purchaseTabs");
   if(!host) return;
@@ -2716,6 +3009,7 @@ function activeFilterCount(){
   if($("fStatus") && $("fStatus").value) n++;
   if($("fPriority") && $("fPriority").value) n++;
   if($("fCategoryFilter") && $("fCategoryFilter").value) n++;
+  if($("fSavings") && $("fSavings").value) n++;
   // "Mới thêm trước" là mặc định, nên nó không tính là một bộ lọc đang bật.
   if($("fSort") && $("fSort").value && $("fSort").value !== "newest") n++;
   return n;
@@ -2770,7 +3064,7 @@ function dashboardScrollToCollection(){
   catch(error){ /* trình duyệt cũ hơn: bỏ qua, việc cuộn đã xảy ra */ }
 }
 
-// patch: { status?, priority?, category?, tab? }
+// patch: { status?, priority?, category?, savings?, tab? }
 //   — chỉ đặt đúng những khía cạnh được truyền vào, nên các bộ lọc khác người
 //     dùng đang chọn vẫn nguyên vẹn.
 // opts.resetFacets: xoá những khía cạnh KHÔNG được nêu. Dành cho Quick Action,
@@ -2786,6 +3080,7 @@ function applyDashboardFilter(patch, emptyMessage, opts){
   if(reset || has("status"))   $("fStatus").value = has("status") ? patch.status : "";
   if(reset || has("priority")) $("fPriority").value = has("priority") ? patch.priority : "";
   if(reset || has("category")) $("fCategoryFilter").value = has("category") ? patch.category : "";
+  if(reset || has("savings"))  $("fSavings").value = has("savings") ? patch.savings : "";
 
   // Ý định ở đây là "cho tôi xem phần này", nên tab nhanh phải về "Tất cả" trừ
   // khi chính Quick Action đã chọn một tab; nếu không, chọn "Đã mua" lúc đang ở
@@ -2805,6 +3100,7 @@ function visibleItems(){
   const q = $("q").value.trim().toLowerCase();
   const st = $("fStatus").value, pr = $("fPriority").value;
   const category = $("fCategoryFilter").value;
+  const savings = $("fSavings") ? $("fSavings").value : "";
   const sort = $("fSort").value;
 
   let list = items.filter(it => {
@@ -2813,6 +3109,17 @@ function visibleItems(){
     if(purchaseTab === "owned" && it.status !== "purchased") return false;
     if(st && it.status !== st) return false;
     if(pr && it.priority !== pr) return false;
+    // V16.1 F5.3 — the savings facet is orthogonal: it asks a question about
+    // the item's own savings fields and nothing else, so it stays true for a
+    // purchased row too. The dashboard rows combine it with the "Chưa mua"
+    // tab instead of hiding the row from the filter.
+    if(savings === "goal" && !hasSavingGoal(it)) return false;
+    // "Đã để dành" is scoped to items that actually contribute to the "Đã tích
+    // lũy" figure: no goal means no contribution, so the landing set matches
+    // what was summed.
+    if(savings === "saving" && !(hasSavingGoal(it) && savedOf(it) > 0)) return false;
+    if(savings === "short" && !(hasSavingGoal(it) && !savingsReached(it))) return false;
+    if(savings === "ready" && !savingsReached(it)) return false;
     // V16.1 F3.4 — "Chưa phân loại" là một lựa chọn THẬT trong #fCategoryFilter,
     // nên dashboard trỏ tới đúng bộ lọc đang có thay vì dựng cơ chế lọc thứ hai.
     if(category === UNCATEGORISED){
@@ -2931,6 +3238,8 @@ function render(){
   renderDashboardStatus(metrics);
   renderDashboardBreakdown(metrics);
   renderDashboardPriority(metrics);
+  renderDashboardSavings();
+  renderDashboardInsights();
   renderDashboardActions();
 
   $("resultStatus").textContent =
@@ -4967,7 +5276,7 @@ function init(){
     "input",
     scheduleSearchRender
   );
-  ["fStatus","fPriority","fCategoryFilter","fSort"]
+  ["fStatus","fPriority","fCategoryFilter","fSavings","fSort"]
     .forEach(id => {
       $(id).addEventListener(
         "change",
@@ -5053,6 +5362,41 @@ function init(){
         { priority: already ? "" : prio.key },
         already ? "" : "Không có món nào ở mức ưu tiên “" + prio.label + "”."
       );
+    });
+  }
+
+  // V16.1 F5.3 — mỗi con số trong khối tiết kiệm là một nút CHỈ đặt bộ lọc
+  // đang có (#fSavings + tab "Chưa mua"), nên con số vừa bấm đúng bằng tập
+  // hợp sẽ hiện ra. Không nút nào sửa món hay đổi trạng thái.
+  const savingsRows = $("dvSavingsRows");
+  if(savingsRows){
+    savingsRows.addEventListener("click", (event) => {
+      const btn = event.target && event.target.closest
+        ? event.target.closest(".dv-savings__row[data-savings]")
+        : null;
+      if(!btn) return;
+      const value = btn.dataset.savings;
+      if(!SAVINGS_FILTERS.includes(value)) return;
+
+      const already = $("fSavings").value === value && purchaseTab === "pending";
+      applyDashboardFilter(
+        already ? { savings: "", tab: "all" } : { savings: value, tab: "pending" },
+        already ? "" : "Không có món nào khớp mục tiêu tiết kiệm này.",
+        { resetFacets: true }
+      );
+    });
+  }
+
+  // V16.1 F5.4 — "Nên xem tiếp": mỗi hàng chỉ mở Quick View của đúng món đó.
+  // Không tự đánh dấu đã mua, không đổi trạng thái, không đổi bộ lọc.
+  const insightsRows = $("dvInsightsRows");
+  if(insightsRows){
+    insightsRows.addEventListener("click", (event) => {
+      const btn = event.target && event.target.closest
+        ? event.target.closest("[data-insight-id]")
+        : null;
+      if(!btn) return;
+      openQuickView(btn.dataset.insightId, btn);
     });
   }
 
@@ -5221,7 +5565,7 @@ function syncWorkspaceNav(){
 function resetTransientUi(){
   cancelPendingSearchRender();
   const q = $("q"); if(q) q.value = "";
-  ["fStatus","fPriority","fCategoryFilter"].forEach(id => {
+  ["fStatus","fPriority","fCategoryFilter","fSavings"].forEach(id => {
     const el = $(id); if(el) el.value = "";
   });
   const sort = $("fSort"); if(sort) sort.value = "newest";
