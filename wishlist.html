@@ -703,6 +703,33 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </div><!-- /.dv-grid--split -->
 
+<!-- V16.1 F3.4 — Category breakdown + priority widget. Both read the one
+     `items` array; neither keeps a tally of its own. Each row of the
+     breakdown is a real <button> that only sets the existing #fCategoryFilter
+     (which is why "Chưa phân loại" is a real option in that select), and each
+     priority chip only sets #fPriority. Neither can touch an item. -->
+<div class="dv-grid dv-grid--insight">
+
+  <section class="dv-breakdown" id="dvBreakdown" aria-labelledby="dvBreakdownTitle">
+    <div class="dv-breakdown__head">
+      <h3 class="dv-breakdown__title" id="dvBreakdownTitle">Danh mục</h3>
+      <span class="dv-breakdown__hint">Theo số món</span>
+    </div>
+
+    <div class="dv-breakdown__rows" id="dvBreakdownRows"></div>
+  </section>
+
+  <section class="dv-priority" id="dvPriority" aria-labelledby="dvPriorityTitle">
+    <div class="dv-priority__head">
+      <h3 class="dv-priority__title" id="dvPriorityTitle">Mức ưu tiên</h3>
+      <span class="dv-priority__hint">Theo giá trị chưa mua</span>
+    </div>
+
+    <div class="dv-priority__rows" id="dvPriorityRows"></div>
+  </section>
+
+</div><!-- /.dv-grid--insight -->
+
 </section>
 
 <!-- Search and filters: independent section -->
@@ -1291,6 +1318,11 @@ const PRIORITIES = [
 const DEFAULT_STATUS = "wish";
 const DEFAULT_PRIORITY = "medium";
 
+// V16.1 F3.4 — giá trị dành riêng cho nhóm "Chưa phân loại" trong
+// #fCategoryFilter. Nó là một <option> thật của ô chọn, không phải một cơ chế
+// lọc thứ hai, nên dashboard chỉ cần đặt select về giá trị này.
+const UNCATEGORISED = "__uncategorised__";
+
 // Gioi han anh upload (localStorage chi ~5MB)
 const MAX_IMAGE_DIM = 1000;          // canh dai toi da sau khi thu nho (px)
 const JPEG_QUALITY = 0.8;
@@ -1728,15 +1760,19 @@ function handleSessionChange(uid){
    into one figure.
 =================================================================== */
 
+// V16.1 F3.4 — một quy tắc giá duy nhất cho toàn ứng dụng: thiếu / âm /
+// không hữu hạn đều tính là 0, nên không widget nào có thể biến KPI thành NaN.
+// computeMetrics() và hai widget danh mục / ưu tiên dùng chung hàm này thay vì
+// mỗi nơi tự đếm lại một kiểu.
+function itemPrice(it){
+  const n = Number(it && it.price);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
 function computeMetrics(list){
   const arr = Array.isArray(list) ? list : [];
 
-  // Missing / negative / non-finite prices count as 0 so a bad import can
-  // never turn a KPI into NaN.
-  const priceOf = (it) => {
-    const n = Number(it && it.price);
-    return Number.isFinite(n) && n > 0 ? n : 0;
-  };
+  const priceOf = itemPrice;
 
   let ownedCount = 0, ownedValue = 0;
   let pendingCount = 0, pendingValue = 0;
@@ -1930,9 +1966,10 @@ function renderDashboardStatus(m){
 
   setDashText(total, m.totalCount + " món");
 
-  // Rỗng thì không chia cho 0, và cũng không vẽ một thanh rỗng vô nghĩa.
+  // Rỗng thì không chia cho 0. Đúng hợp đồng §4.3: giữ lại MỘT rãnh
+  // --dv-surface-2 trống (không phân đoạn) kèm lời nhắn, thay vì bốn dòng 0.
   if(m.totalCount === 0){
-    bar.hidden = true;
+    bar.hidden = false;
     legend.hidden = true;
     empty.hidden = false;
     bar.replaceChildren();
@@ -2014,6 +2051,217 @@ function renderDashboardStatus(m){
   }
 
   legend.replaceChildren(...rows);
+}
+
+/* ===================================================================
+   V16.1 F3.4 — DANH MỤC & MỨC ƯU TIÊN
+   -------------------------------------------------------------------
+   Hợp đồng: docs/qa/dream-vault-v16/dashboard-foundation.md §4.4 và §4.5.
+
+   Danh mục: gom `items` theo category (món không có danh mục gộp vào một
+   nhóm "Chưa phân loại"), xếp theo số món rồi tới giá trị chưa mua, lấy tối
+   đa SÁU hàng chính; phần còn lại gộp thành "Khác". Độ dài thanh là tỷ lệ
+   trên tổng số món, và con số luôn hiện bằng chữ.
+
+   Ưu tiên: số món + giá trị chưa mua cho mỗi mức, thanh dài theo giá trị
+   chưa mua — đúng câu hỏi "nên mua gì tiếp" — và mức cao nhất ĐANG có món
+   được viền accent. Mức không có món nào thì aria-disabled (vẫn tới được
+   bằng bàn phím để biết nó rỗng, nhưng không bấm được).
+
+   Cả hai khối đều tự giấu mình khi bộ sưu tập rỗng, và mỗi khối có dấu vân
+   tay riêng nên việc gõ tìm kiếm không dựng lại DOM.
+   =================================================================== */
+const DV_BREAKDOWN_ROWS = 6;
+let dvBreakdownSignature = "";
+let dvPrioritySignature = "";
+
+function dvBar(className){
+  const bar = document.createElement("span");
+  bar.className = className;
+  bar.setAttribute("aria-hidden", "true");
+  const fill = document.createElement("span");
+  fill.className = className + "-fill";
+  bar.appendChild(fill);
+  return bar;
+}
+
+function renderDashboardBreakdown(m){
+  const host = $("dvBreakdown");
+  const rowsHost = $("dvBreakdownRows");
+  if(!host || !rowsHost) return;
+
+  // Rỗng thì bỏ hẳn khối chứ không để lại một cái vỏ rỗng (§4.4).
+  if(m.totalCount === 0){
+    host.hidden = true;
+    rowsHost.replaceChildren();
+    dvBreakdownSignature = "";
+    return;
+  }
+  host.hidden = false;
+
+  const buckets = [];
+  const byKey = new Map();
+  for(const it of items){
+    const raw = (it.category || "").trim();
+    const key = raw || UNCATEGORISED;
+    let bucket = byKey.get(key);
+    if(!bucket){
+      bucket = {
+        key,
+        name: raw || "Chưa phân loại",
+        uncategorised: !raw,
+        other: false,
+        count: 0,
+        pendingValue: 0
+      };
+      byKey.set(key, bucket);
+      buckets.push(bucket);
+    }
+    bucket.count++;
+    if(it.status !== "purchased") bucket.pendingValue += itemPrice(it);
+  }
+
+  buckets.sort((a, b) =>
+    b.count - a.count ||
+    b.pendingValue - a.pendingValue ||
+    a.name.localeCompare(b.name, CURRENCY_LOCALE));
+
+  const main = buckets.slice(0, DV_BREAKDOWN_ROWS);
+  const rest = buckets.slice(DV_BREAKDOWN_ROWS);
+  const other = rest.length ? {
+    key: "__other__",
+    name: "Khác",
+    uncategorised: false,
+    other: true,
+    parts: rest.length,
+    count: rest.reduce((n, b) => n + b.count, 0),
+    pendingValue: rest.reduce((n, b) => n + b.pendingValue, 0)
+  } : null;
+
+  const active = $("fCategoryFilter") ? $("fCategoryFilter").value : "";
+  const signature = buckets.map(b => b.key + ":" + b.count).join("|") +
+    "|o:" + (other ? other.count + "/" + other.parts : 0) +
+    "|t:" + m.totalCount + "|a:" + active;
+  if(signature === dvBreakdownSignature) return;
+  dvBreakdownSignature = signature;
+
+  const rows = main.map(bucket => {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "dv-breakdown__row";
+    el.dataset.category = bucket.uncategorised ? UNCATEGORISED : bucket.key;
+    el.setAttribute("aria-pressed", active === el.dataset.category ? "true" : "false");
+
+    const name = document.createElement("span");
+    name.className = "dv-breakdown__name";
+    name.textContent = bucket.name;
+
+    const bar = dvBar("dv-breakdown__bar");
+    bar.firstChild.style.width = shareOf(bucket.count, m.totalCount) + "%";
+
+    const value = document.createElement("span");
+    value.className = "dv-breakdown__value";
+    value.textContent = bucket.count + " món";
+
+    el.append(name, bar, value);
+    return el;
+  });
+
+  if(other){
+    const el = document.createElement("div");
+    el.className = "dv-breakdown__row dv-breakdown__row--static";
+
+    const name = document.createElement("span");
+    name.className = "dv-breakdown__name";
+    name.textContent = other.name + " (" + other.parts + " danh mục)";
+
+    const bar = dvBar("dv-breakdown__bar");
+    bar.firstChild.style.width = shareOf(other.count, m.totalCount) + "%";
+
+    const value = document.createElement("span");
+    value.className = "dv-breakdown__value";
+    value.textContent = other.count + " món";
+
+    el.append(name, bar, value);
+    rows.push(el);
+  }
+
+  rowsHost.replaceChildren(...rows);
+}
+
+function renderDashboardPriority(m){
+  const host = $("dvPriority");
+  const rowsHost = $("dvPriorityRows");
+  if(!host || !rowsHost) return;
+
+  const stats = PRIORITIES.map(p => ({ key: p.key, label: p.label, rank: p.rank, count: 0, pendingValue: 0 }));
+  const byKey = new Map(stats.map(s => [s.key, s]));
+  for(const it of items){
+    const stat = byKey.get(it && it.priority);
+    if(!stat) continue;
+    stat.count++;
+    if(it.status !== "purchased") stat.pendingValue += itemPrice(it);
+  }
+
+  const rowsTotal = stats.reduce((n, s) => n + s.count, 0);
+
+  // Không món nào thì giấu hẳn widget (§4.5).
+  if(rowsTotal === 0){
+    host.hidden = true;
+    rowsHost.replaceChildren();
+    dvPrioritySignature = "";
+    return;
+  }
+  host.hidden = false;
+
+  const active = $("fPriority") ? $("fPriority").value : "";
+  const signature = stats.map(s => s.key + ":" + s.count + ":" + s.pendingValue).join("|") +
+    "|a:" + active;
+  if(signature === dvPrioritySignature) return;
+  dvPrioritySignature = signature;
+
+  // Mức ưu tiên CAO NHẤT đang thực sự có món được viền accent — nếu mức "Cao"
+  // rỗng thì "Trung bình" nhận viền, chứ không viền vào một mức rỗng.
+  let emphasisKey = null;
+  let emphasisRank = -Infinity;
+  stats.forEach(s => {
+    if(s.count > 0 && s.rank > emphasisRank){ emphasisRank = s.rank; emphasisKey = s.key; }
+  });
+
+  const maxValue = Math.max(...stats.map(s => s.pendingValue), 1);
+
+  rowsHost.replaceChildren(...stats.map(stat => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dv-priority__item";
+    btn.dataset.priority = stat.key;
+    if(stat.key === emphasisKey) btn.dataset.emphasis = "true";
+    if(stat.count === 0) btn.setAttribute("aria-disabled", "true");
+    btn.setAttribute("aria-pressed", active === stat.key ? "true" : "false");
+    // Hợp đồng §4.5 chốt đúng dạng tên đọc lên này.
+    btn.setAttribute("aria-label",
+      "Ưu tiên " + stat.label + ": " + stat.count + " món, " + fmtMoney(stat.pendingValue));
+
+    const name = document.createElement("span");
+    name.className = "dv-priority__name";
+    name.textContent = stat.label;
+
+    const count = document.createElement("span");
+    count.className = "dv-priority__count";
+    count.textContent = stat.count + " món";
+
+    const bar = dvBar("dv-priority__bar");
+    bar.firstChild.style.width = shareOf(stat.pendingValue, maxValue) + "%";
+
+    const value = document.createElement("span");
+    value.className = "dv-priority__value";
+    value.textContent = stat.pendingValue > 0
+      ? fmtMoney(stat.pendingValue) + " chưa mua"
+      : "Không còn giá trị chưa mua";
+
+    btn.append(name, count, bar, value);
+    return btn;
+  }));
 }
 
 /* ===================================================================
@@ -2114,7 +2362,13 @@ function visibleItems(){
     if(purchaseTab === "owned" && it.status !== "purchased") return false;
     if(st && it.status !== st) return false;
     if(pr && it.priority !== pr) return false;
-    if(category && (it.category || "") !== category) return false;
+    // V16.1 F3.4 — "Chưa phân loại" là một lựa chọn THẬT trong #fCategoryFilter,
+    // nên dashboard trỏ tới đúng bộ lọc đang có thay vì dựng cơ chế lọc thứ hai.
+    if(category === UNCATEGORISED){
+      if((it.category || "").trim()) return false;
+    }else if(category && (it.category || "") !== category){
+      return false;
+    }
     if(q){
       const hay = [it.name, it.category, it.note].join(" ").toLowerCase();
       if(!hay.includes(q)) return false;
@@ -2221,6 +2475,8 @@ function render(){
   renderDashboardProgress(metrics);
   renderDashboardMetrics(metrics);
   renderDashboardStatus(metrics);
+  renderDashboardBreakdown(metrics);
+  renderDashboardPriority(metrics);
 
   $("resultStatus").textContent =
     "Đang hiển thị " + shown.totalCount + " trên " + metrics.totalCount + " món.";
@@ -3392,7 +3648,16 @@ function updateCategoryFilter(){
     .sort((a, b) => a.localeCompare(b, CURRENCY_LOCALE));
   select.replaceChildren(new Option("Tất cả", ""));
   categories.forEach(category => select.add(new Option(category, category)));
-  select.value = categories.includes(selected) ? selected : "";
+
+  // V16.1 F3.4 — "Chưa phân loại" chỉ xuất hiện khi THẬT SỰ có món chưa gắn
+  // danh mục. Nó là một lựa chọn thật trong ô chọn, nên hàng "Chưa phân loại"
+  // trên dashboard lọc được bằng đúng bộ lọc đang có, và người dùng cũng tự
+  // chọn được nó từ thanh công cụ.
+  const hasUncategorised = items.some(it => !(it.category || "").trim());
+  if(hasUncategorised) select.add(new Option("Chưa phân loại", UNCATEGORISED));
+
+  const known = categories.concat(hasUncategorised ? [UNCATEGORISED] : []);
+  select.value = known.includes(selected) ? selected : "";
 }
 
 // V13: view state is ephemeral UI only; do not persist or alter product data.
@@ -3751,6 +4016,49 @@ function init(){
       applyDashboardFilter(
         { status: already ? "" : status.key },
         already ? "" : "Không có món nào ở trạng thái “" + status.label + "”."
+      );
+    });
+  }
+
+  // V16.1 F3.4 — danh mục và mức ưu tiên: cùng một kiểu uỷ quyền, vì các hàng
+  // được dựng lại mỗi khi số liệu đổi.
+  const breakdownRows = $("dvBreakdownRows");
+  if(breakdownRows){
+    breakdownRows.addEventListener("click", (event) => {
+      const btn = event.target && event.target.closest
+        ? event.target.closest(".dv-breakdown__row[data-category]")
+        : null;
+      if(!btn) return;
+
+      const value = btn.dataset.category;
+      const already = $("fCategoryFilter").value === value;
+      const nameEl = btn.querySelector(".dv-breakdown__name");
+      const label = nameEl ? nameEl.textContent : "danh mục này";
+      applyDashboardFilter(
+        { category: already ? "" : value },
+        already ? "" : "Không có món nào trong “" + label + "”."
+      );
+    });
+  }
+
+  const priorityRows = $("dvPriorityRows");
+  if(priorityRows){
+    priorityRows.addEventListener("click", (event) => {
+      const btn = event.target && event.target.closest
+        ? event.target.closest(".dv-priority__item")
+        : null;
+      if(!btn) return;
+      // aria-disabled chứ không phải disabled: vẫn tới được bằng bàn phím để
+      // biết mức đó rỗng, nhưng không bấm được.
+      if(btn.getAttribute("aria-disabled") === "true") return;
+
+      const prio = PRIORITIES.find(p => p.key === btn.dataset.priority);
+      if(!prio) return;
+
+      const already = $("fPriority").value === prio.key;
+      applyDashboardFilter(
+        { priority: already ? "" : prio.key },
+        already ? "" : "Không có món nào ở mức ưu tiên “" + prio.label + "”."
       );
     });
   }

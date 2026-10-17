@@ -429,7 +429,15 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
 }
 
 /* Inside the grid the spacing belongs to the grid, not to the block. */
+.dv-col--progress {
+  display: flex;
+}
+
 .dv-col--progress .dv-progress {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin-top: 0;
 }
 
@@ -639,5 +647,279 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
   outline: 2px solid var(--dv-accent);
   outline-offset: 4px;
   border-radius: var(--dv-radius-card);
+}
+
+/* =====================================================================
+   V16.1 F3.4 — CATEGORY BREAKDOWN + PRIORITY WIDGET
+   ---------------------------------------------------------------------
+   Both panels are the same card as .dv-progress and .dv-dist, so the whole
+   dashboard reads as one surface family. Each row is: a name line with its
+   value, then the bar underneath — a shape that survives 320px without
+   shrinking either number into illegibility.
+   ===================================================================== */
+
+@media (min-width: 900px) {
+  .dv-grid--insight {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--dv-gap-4);
+  }
+}
+
+.dv-breakdown,
+.dv-priority {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-2);
+  height: 100%;
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+/* A hidden panel must not leave its half of the grid behind. */
+.dv-breakdown[hidden],
+.dv-priority[hidden] {
+  display: none;
+}
+
+.dv-breakdown__head,
+.dv-priority__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-breakdown__title,
+.dv-priority__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-breakdown__hint,
+.dv-priority__hint {
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-muted);
+}
+
+/* ---- Category breakdown ------------------------------------------- */
+
+.dv-breakdown__rows,
+.dv-priority__rows {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+
+.dv-breakdown__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name value"
+    "bar  bar";
+  align-items: center;
+  gap: 6px var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+/* The "Khác" aggregate has no single filter behind it. */
+.dv-breakdown__row--static {
+  cursor: default;
+}
+
+.dv-breakdown__name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-breakdown__value {
+  grid-area: value;
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-breakdown__bar {
+  grid-area: bar;
+  display: block;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-breakdown__bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 3px;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-accent);
+  transition: width var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-breakdown__row[aria-pressed="true"] {
+  border-color: var(--dv-accent);
+  background: rgba(104, 80, 188, .09);
+}
+
+.dv-breakdown__row[aria-pressed="true"] .dv-breakdown__name,
+.dv-breakdown__row[aria-pressed="true"] .dv-breakdown__value {
+  color: var(--dv-accent);
+}
+
+/* ---- Priority widget ---------------------------------------------- */
+
+.dv-priority__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name  count"
+    "bar   bar"
+    "value value";
+  align-items: center;
+  gap: 5px var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-priority__name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-priority__name::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 3px;
+  vertical-align: baseline;
+  background: var(--dv-mist);
+}
+
+.dv-priority__item[data-priority="low"] .dv-priority__name::before    { background: var(--dv-priority-low); }
+.dv-priority__item[data-priority="medium"] .dv-priority__name::before { background: var(--dv-priority-medium); }
+.dv-priority__item[data-priority="high"] .dv-priority__name::before   { background: var(--dv-priority-high); }
+
+.dv-priority__count {
+  grid-area: count;
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-priority__bar {
+  grid-area: bar;
+  display: block;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-priority__bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: var(--dv-radius-pill);
+  transition: width var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-priority__item[data-priority="low"] .dv-priority__bar-fill    { background: var(--dv-priority-low); }
+.dv-priority__item[data-priority="medium"] .dv-priority__bar-fill { background: var(--dv-priority-medium); }
+.dv-priority__item[data-priority="high"] .dv-priority__bar-fill   { background: var(--dv-priority-high); }
+
+.dv-priority__value {
+  grid-area: value;
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* The highest rank that actually has items gets the accent outline. */
+.dv-priority__item[data-emphasis="true"] {
+  border-color: var(--dv-accent);
+}
+
+.dv-priority__item[aria-pressed="true"] {
+  border-color: var(--dv-accent);
+  background: rgba(104, 80, 188, .09);
+}
+
+.dv-priority__item[aria-pressed="true"] .dv-priority__value {
+  color: var(--dv-accent);
+}
+
+/* aria-disabled, not disabled: the row stays reachable by keyboard so its
+   "0 món" can be read, but it cannot be activated. */
+.dv-priority__item[aria-disabled="true"] {
+  cursor: default;
+  opacity: .62;
+}
+
+/* ---- Shared row states -------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-breakdown__row:not(.dv-breakdown__row--static):hover,
+  .dv-priority__item:not([aria-disabled="true"]):hover {
+    background: var(--dv-surface-2);
+  }
+
+  .dv-breakdown__row[aria-pressed="true"]:hover,
+  .dv-priority__item[aria-pressed="true"]:hover {
+    background: rgba(104, 80, 188, .14);
+  }
+}
+
+.dv-breakdown__row:focus-visible,
+.dv-priority__item:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 1px;
 }
 
