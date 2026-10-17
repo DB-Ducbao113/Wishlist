@@ -20,11 +20,27 @@
 | F2.3 | `a1f618d` | `fix(purchase): make undo restore the exact previous status` |
 | F2.4 | `30b5724` | `feat(collection): add the quick tabs and tab-aware purchase feedback` |
 | F2.5 | `076da13` | `feat(dashboard): surface recorded spending and the unpriced counter` |
-| F2.6 | *this commit* | `docs(f2): add the F2 QA gate, screenshots and report` |
+| F2.6 | `1d761d6` | `docs(f2): add the F2 QA gate, screenshots and report` |
 
-Branch chain: `… → 39b7eed → 2305a0f → ba84fbf → 30b424b → a1f618d → 30b5724 → 076da13 → F2.6`.
+Branch chain: `… → 39b7eed → 2305a0f → ba84fbf → 30b424b → a1f618d → 30b5724 → 076da13 → 1d761d6`.
 `2305a0f` is the F1 tip and the baseline every "before" figure below is measured against.
 Nothing was pushed before the F2 work was green.
+
+_(`1d761d6` is pinned by a follow-up `docs(f2)` commit that changes this report
+and nothing else — the exact pattern F1 used with `2305a0f`. No history rewrite,
+no force-push, no extra branch.)_
+
+`git show --stat 1d761d6` — 20 files changed, 2442 insertions(+), 8 deletions(-):
+
+```
+ docs/qa/dream-vault-v16/f2-audit-results.json      | 1682 ++++  (new)
+ docs/qa/dream-vault-v16/f2-report.md               |  720 ++++  (new)
+ docs/qa/dream-vault-v16/f2-lighthouse.json         |   31 +    (new)
+ docs/qa/dream-vault-v16/img/f2-desktop-*.png       | Bin      (new, 7 files)
+ docs/qa/dream-vault-v16/img/f2-mobile-*.png        | Bin      (new, 8 files)
+ docs/qa/dream-vault-v15/hosting-manifest.json      |    7 +-   (regenerated 53 -> 54 files)
+ docs/qa/dream-vault-v15/hosting-audit.json         |   10 +-   (regenerated, still PASS)
+```
 
 ### 0.2 Files
 
