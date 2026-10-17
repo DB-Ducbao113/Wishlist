@@ -1,5 +1,12 @@
-// V15 hosting audit — prove what the OLD config would publish vs the NEW allowlist.
+// V16 hosting audit — prove what the OLD config would publish vs the NEW allowlist.
 // Run: node scripts/check-hosting.mjs
+//
+// V16.1 F6.2: the CSS invariant is now byte-exact, not a file count. The old
+// check asserted "dist publishes exactly the stylesheets that exist under
+// css/". The build now publishes ONE generated file, so the invariant became
+// stronger: dist/css/app.css must be byte-identical to the concatenation of
+// every repo stylesheet in the order wishlist.html links them, and no other
+// CSS may be published at all.
 import { readdirSync, statSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
@@ -37,8 +44,25 @@ const distFiles = distExists ? walk(OUT).map(rel).filter(r => r !== 'dist') : []
 const distInner = distFiles.map(r => r.replace(/^dist\//, ''));
 const newLeaks = distInner.filter(r => SENSITIVE.test(r));
 const requiredRuntime = ['wishlist.html', 'wishlist-cloud.js'];
-const cssCount = distInner.filter(r => /^css\/.*\.css$/.test(r)).length;
 const missingRuntime = requiredRuntime.filter(r => !distInner.includes(r));
+
+// --- the CSS invariant: byte-exact, not a count ---
+const repoCss = readdirSync(join(ROOT, 'css')).filter(n => n.endsWith('.css'));
+const html = readFileSync(join(ROOT, 'wishlist.html'), 'utf8');
+const order = [...html.matchAll(/<link[^>]+href=["']?(\.\/css\/[^"'\s>]+\.css)/gi)]
+  .map(m => m[1].replace(/^\.\//, ''));
+const expectedCss = order.map(f => '/* ==== ' + f + ' ==== */\n' + readFileSync(join(ROOT, f), 'utf8')).join('\n') + '\n';
+const appCssPath = join(OUT, 'css', 'app.css');
+const appCss = existsSync(appCssPath) ? readFileSync(appCssPath, 'utf8') : null;
+const publishedCss = distInner.filter(r => /^css\/.*\.css$/.test(r));
+const strayCss = publishedCss.filter(r => r !== 'css/app.css');
+const cssByteIdentical = appCss === expectedCss;
+const htmlLinksAppCss = existsSync(join(OUT, 'wishlist.html'))
+  ? /href=["']?css\/app\.css/.test(readFileSync(join(OUT, 'wishlist.html'), 'utf8'))
+  : false;
+const htmlLinksNoSourceSheet = existsSync(join(OUT, 'wishlist.html'))
+  ? !/href=["']?\.\/css\/[^"'\s>]+\.css/.test(readFileSync(join(OUT, 'wishlist.html'), 'utf8'))
+  : false;
 
 const report = {
   generatedAt: new Date().toISOString(),
@@ -53,21 +77,36 @@ const report = {
     },
   },
   new: {
-    config: 'public: "dist" built by scripts/build-hosting.mjs (explicit allowlist)',
+    config: 'public: "dist" built by scripts/build-hosting.mjs (explicit allowlist + generated css/app.css)',
     distExists,
     publishedFileCount: distInner.length,
-    cssCount,
+    cssCount: publishedCss.length,
     missingRuntime,
     leakCount: newLeaks.length,
     leaks: newLeaks,
+    cssInvariant: {
+      repoStylesheetCount: repoCss.length,
+      linkedStylesheetCount: order.length,
+      everyRepoSheetLinked: order.length === repoCss.length && repoCss.every(f => order.some(o => o.endsWith('/' + f))),
+      appCssExists: appCss !== null,
+      appCssByteIdenticalToSourceConcatenation: cssByteIdentical,
+      strayCssFilesPublished: strayCss,
+      publishedHtmlLinksAppCss: htmlLinksAppCss,
+      publishedHtmlLinksNoSourceSheet: htmlLinksNoSourceSheet
+    }
   },
 };
-// The expected CSS count is derived from the repo, never hard-coded: the
-// allowlist must publish exactly the stylesheets that exist under css/.
-const repoCssCount = readdirSync(join(ROOT, 'css')).filter(n => n.endsWith('.css')).length;
-report.new.repoCssCount = repoCssCount;
-const ok = distExists && missingRuntime.length === 0 && newLeaks.length === 0 && cssCount === repoCssCount;
-report.verdict = ok ? 'PASS — no repo internals published; all runtime assets present' : 'FAIL — see missingRuntime/leaks';
+const cssOk = order.length === repoCss.length
+  && repoCss.every(f => order.some(o => o.endsWith('/' + f)))
+  && appCss !== null
+  && cssByteIdentical
+  && strayCss.length === 0
+  && htmlLinksAppCss
+  && htmlLinksNoSourceSheet;
+const ok = distExists && missingRuntime.length === 0 && newLeaks.length === 0 && cssOk;
+report.verdict = ok
+  ? 'PASS — no repo internals published; all runtime assets present; css/app.css is the exact concatenation of every linked source sheet'
+  : 'FAIL — see missingRuntime/leaks/cssInvariant';
 
 writeFileSync(join(ROOT, 'docs', 'qa', 'dream-vault-v15', 'hosting-audit.json'), JSON.stringify(report, null, 1));
 console.log(JSON.stringify(report, null, 1));
