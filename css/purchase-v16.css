@@ -1,0 +1,321 @@
+/* =====================================================================
+   DREAM VAULT V16.1 — PURCHASE FLOW 2.0
+   ---------------------------------------------------------------------
+   Additive. Covers the purchase capture dialog, the purchase block in the
+   add/edit form, the Quick View purchase rows and the toast action.
+
+   Palette: the Light Lavender system only. Colours come from the existing
+   --dream-* tokens via css/dreamscape-v5-tokens.css; nothing new is
+   invented and the dark-purple reference theme is not copied.
+   ===================================================================== */
+
+/* =====================================================================
+   PURCHASE CAPTURE DIALOG
+   A short, focused confirm dialog. It is a native <dialog>, so Escape and
+   the focus trap come from the platform.
+   ===================================================================== */
+
+dialog.purchase-dialog {
+  width: min(560px, calc(100% - 28px));
+  max-width: 560px;
+  max-height: min(92dvh, 760px);
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--dv-border, #E5DDF6);
+  border-radius: 28px;
+  background: var(--dv-surface, #FFFFFF);
+  color: var(--dv-ink, #19152C);
+  box-shadow: 0 38px 100px rgba(38, 24, 96, .20);
+}
+
+.purchase-dialog::backdrop {
+  background: rgba(21, 16, 46, .54);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.purchase-dialog #pdForm {
+  display: flex;
+  flex-direction: column;
+  max-height: min(92dvh, 760px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 30px 32px 26px;
+}
+
+.purchase-dialog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.purchase-dialog__eyebrow {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .23em;
+  text-transform: uppercase;
+  color: var(--dv-accent, #6850BC);
+}
+
+.purchase-dialog__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  line-height: 1.15;
+  letter-spacing: -.045em;
+}
+
+.purchase-dialog__close {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--dv-border, #E5DDF6);
+  border-radius: var(--dv-radius-pill, 999px);
+  background: var(--dv-surface-2, #F3EFFF);
+  color: var(--dv-muted, #625979);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .purchase-dialog__close:hover {
+    background: var(--dv-mist, #DED5FF);
+    border-color: var(--dv-highlight, #A88BF7);
+  }
+}
+
+.purchase-dialog__hint {
+  margin: 14px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--dv-muted, #625979);
+}
+
+/* Facts: what is being marked, and what it was listed at. */
+.purchase-dialog__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--dv-border, #E5DDF6);
+  border-radius: var(--dv-radius-inner, 16px);
+  background: var(--dv-surface-2, #F3EFFF);
+}
+
+.purchase-dialog__fact dt {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--dv-muted, #625979);
+}
+
+.purchase-dialog__fact dd {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.purchase-dialog__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.purchase-dialog .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.purchase-dialog .field label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--dv-muted, #625979);
+}
+
+.purchase-dialog .field input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--dv-border, #E5DDF6);
+  border-radius: 12px;
+  background: var(--dv-surface, #FFFFFF);
+  color: var(--dv-ink, #19152C);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.purchase-dialog .field input:focus-visible {
+  outline: 2px solid var(--dv-accent, #6850BC);
+  outline-offset: 2px;
+  border-color: var(--dv-accent, #6850BC);
+}
+
+.purchase-dialog .field input[aria-invalid="true"] {
+  border-color: var(--dv-negative, #B3261E);
+}
+
+.purchase-dialog .err {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--dv-negative, #B3261E);
+}
+
+.purchase-dialog__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.purchase-dialog__foot button {
+  min-width: 0;
+  padding: 11px 18px;
+  border-radius: var(--dv-radius-pill, 999px);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Loading / disabled / error states. The write itself is synchronous, but
+   the button reports the state it is in rather than lying about being
+   idle, and a disabled button can never be double-submitted. */
+.purchase-dialog__foot button[disabled] {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.purchase-dialog__foot .primary[aria-busy="true"] {
+  position: relative;
+  color: transparent;
+}
+
+.purchase-dialog__foot .primary[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, .45);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: dv-spin 640ms linear infinite;
+}
+
+@keyframes dv-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =====================================================================
+   PURCHASE BLOCK IN THE ADD / EDIT FORM
+   ===================================================================== */
+
+.product-dialog__section-hint {
+  margin: -8px 0 18px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #625979;
+}
+
+.product-dialog__section--purchase {
+  background: linear-gradient(180deg, rgba(243, 239, 255, .65), transparent);
+}
+
+/* =====================================================================
+   QUICK VIEW — purchase rows, only shown once a purchase is recorded
+   ===================================================================== */
+
+.quick-view__meta-item--purchase dd {
+  color: var(--dv-accent, #6850BC);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   TOAST WITH AN ACTION
+   The action is a real button, so it is reachable by keyboard and by
+   screen readers instead of being a clickable span.
+   ===================================================================== */
+
+.toast--with-action {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+}
+
+.toast__text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.toast__action {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 255, 255, .38);
+  border-radius: var(--dv-radius-pill, 999px);
+  background: rgba(255, 255, 255, .14);
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.toast__action:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toast__action:hover {
+    background: rgba(255, 255, 255, .26);
+  }
+}
+
+@media (max-width: 430px) {
+  .purchase-dialog #pdForm {
+    padding: 24px 20px 22px;
+  }
+
+  .purchase-dialog__facts,
+  .purchase-dialog__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .purchase-dialog__foot {
+    flex-direction: column-reverse;
+  }
+
+  .purchase-dialog__foot button {
+    width: 100%;
+  }
+
+  .toast--with-action {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .purchase-dialog__foot .primary[aria-busy="true"]::after {
+    animation-duration: 1400ms;
+  }
+}

@@ -132,6 +132,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/motion-v16.css">
 
 <link rel="stylesheet" href="./css/dashboard-v16.css">
+<link rel="stylesheet" href="./css/purchase-v16.css">
 
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
@@ -917,6 +918,36 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
       </section>
 
+      <!-- V16.1 F2 — purchase detail. Only meaningful while the status is
+           "Đã mua": it is toggled from the status select, never hidden by JS
+           guessing. Leaving "Giá thực tế" empty is a valid, explicit choice
+           (the item counts as owned but not as recorded spending). -->
+      <section class="product-dialog__section product-dialog__section--purchase hidden"
+               id="purchaseSection"
+               aria-label="Chi tiết mua hàng">
+
+        <h3>Chi tiết mua hàng</h3>
+
+        <p class="product-dialog__section-hint">
+          Chỉ dùng khi trạng thái là “Đã mua”. Để trống giá thực tế nếu bạn
+          chưa muốn ghi — món vẫn được tính là đã sở hữu.
+        </p>
+
+        <div class="row product-dialog__row">
+          <div class="field">
+            <label for="fPaidAmount">Giá thực tế (VND)</label>
+            <input id="fPaidAmount" type="number" min="0" step="1000"
+                   placeholder="Để trống nếu chưa ghi">
+          </div>
+
+          <div class="field">
+            <label for="fPurchasedAt">Ngày mua</label>
+            <input id="fPurchasedAt" type="date">
+          </div>
+        </div>
+
+      </section>
+
       <section class="product-dialog__section"
                aria-label="Hình ảnh và liên kết">
 
@@ -1034,6 +1065,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         <dt>Thêm ngày</dt>
         <dd id="qvDate">—</dd>
       </div>
+      <!-- V16.1 F2 — only rendered once a purchase has been recorded. -->
+      <div class="quick-view__meta-item quick-view__meta-item--purchase" id="qvPaidItem" hidden>
+        <dt>Giá thực tế</dt>
+        <dd id="qvPaid">—</dd>
+      </div>
+      <div class="quick-view__meta-item quick-view__meta-item--purchase" id="qvPurchasedItem" hidden>
+        <dt>Ngày mua</dt>
+        <dd id="qvPurchasedAt">—</dd>
+      </div>
     </dl>
 
     <section class="quick-view__story" aria-labelledby="qvStoryHeading">
@@ -1054,6 +1094,64 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <p class="quick-view__hint" aria-hidden="true">ESC để đóng · TAB để di chuyển</p>
     </div>
   </div>
+</dialog>
+
+<!-- ============================================================
+     V16.1 F2 — Purchase capture. A separate native <dialog> so it can sit
+     on top of the Quick View without stacking inside it. Nothing is
+     written until the user confirms or explicitly skips the price.
+     ============================================================ -->
+<dialog id="pd" class="purchase-dialog" aria-labelledby="pdTitle" aria-describedby="pdHint">
+  <form id="pdForm" method="dialog" novalidate>
+
+    <div class="purchase-dialog__head">
+      <div>
+        <p class="purchase-dialog__eyebrow">GHI NHẬN ĐÃ MUA</p>
+        <h2 id="pdTitle" class="purchase-dialog__title">Xác nhận đã mua</h2>
+      </div>
+
+      <button type="button" id="pdClose" class="purchase-dialog__close"
+              aria-label="Đóng hộp thoại">×</button>
+    </div>
+
+    <p class="purchase-dialog__hint" id="pdHint">
+      Giá thực tế là tùy chọn. Nếu bỏ qua giá, món vẫn được đánh dấu đã mua
+      nhưng không được cộng vào chi tiêu thực tế.
+    </p>
+
+    <dl class="purchase-dialog__facts">
+      <div class="purchase-dialog__fact">
+        <dt>Món đồ</dt>
+        <dd id="pdName">—</dd>
+      </div>
+      <div class="purchase-dialog__fact">
+        <dt>Giá dự kiến</dt>
+        <dd id="pdPrice">—</dd>
+      </div>
+    </dl>
+
+    <div class="row purchase-dialog__row">
+      <div class="field">
+        <label for="pdAmount">Giá thực tế (VND)</label>
+        <input id="pdAmount" type="number" min="0" step="1000"
+               inputmode="numeric" placeholder="Để trống nếu chưa muốn ghi">
+      </div>
+
+      <div class="field">
+        <label for="pdDate">Ngày mua</label>
+        <input id="pdDate" type="date">
+      </div>
+    </div>
+
+    <p class="err hidden" id="pdError" role="alert"></p>
+
+    <div class="purchase-dialog__foot">
+      <button type="button" class="ghost" id="pdCancel">Hủy</button>
+      <button type="button" class="ghost" id="pdSkip">Bỏ qua giá</button>
+      <button type="submit" class="primary" id="pdConfirm">Xác nhận</button>
+    </div>
+
+  </form>
 </dialog>
 
 <!-- Dream Vault V7 — decorative hero motion pause.
@@ -1241,10 +1339,63 @@ function daysAgo(ts){
   if(d === 1) return "1 ngày trước";
   return d + " ngày trước";
 }
+
+/* ===================================================================
+   V16.1 F2 — NGAY MUA <-> <input type="date">
+   The purchase date is stored as epoch ms but edited as a local calendar
+   date. Both directions go through these two functions, so a date never
+   shifts by a timezone when it round-trips.
+=================================================================== */
+function epochToDateInput(epoch){
+  const t = validPurchasedAt(epoch);
+  if(t === null) return "";
+  const d = new Date(t);
+  if(isNaN(d.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
+
+function dateInputToEpoch(value){
+  const s = String(value == null ? "" : value).trim();
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if(!m) return null;
+  const y = Number(m[1]), mo = Number(m[2]), day = Number(m[3]);
+  if(mo < 1 || mo > 12 || day < 1 || day > 31) return null;
+  const d = new Date(y, mo - 1, day);
+  // Reject overflow such as 2026-02-31.
+  if(d.getFullYear() !== y || d.getMonth() !== mo - 1 || d.getDate() !== day) return null;
+  const t = d.getTime();
+  return Number.isFinite(t) ? t : null;
+}
+
+function todayDateInput(){
+  return epochToDateInput(Date.now());
+}
 let activeToast = null;
 let toastTimeout = null;
 
-function toast(msg, type = "info") {
+function dismissToast(el){
+  if(el) el.remove();
+  if(activeToast === el) activeToast = null;
+}
+
+// A toast must be mounted inside the topmost modal, because the browser paints
+// the top layer (and its ::backdrop) above the rest of the document: a toast
+// appended to <body> while a dialog is open is invisible. F2 adds #pd; #qv is
+// included because undoing from Quick View had the same problem before.
+function toastHostElement(){
+  const pd = $("pd");
+  if(pd && pd.open) return pd;
+  const dlg = $("dlg");
+  if(dlg && dlg.open) return dlg;
+  const qv = $("qv");
+  if(qv && qv.open) return qv;
+  return document.body;
+}
+
+// toast(msg, type)                    -> plain toast
+// toast(msg, type, { label, onClick }) -> toast with a real action button
+function toast(msg, type = "info", action = null) {
   if (toastTimeout !== null) {
     clearTimeout(toastTimeout);
     toastTimeout = null;
@@ -1272,23 +1423,48 @@ function toast(msg, type = "info") {
   );
 
   el.setAttribute("aria-atomic", "true");
-  el.textContent = msg;
 
-  // Preserve original dialog top-layer behavior.
-  const host = $("dlg").open
-    ? $("dlg")
-    : document.body;
+  const usableAction =
+    action &&
+    typeof action.label === "string" &&
+    typeof action.onClick === "function";
 
-  host.appendChild(el);
+  if (usableAction) {
+    el.classList.add("toast--with-action");
+
+    const text = document.createElement("span");
+    text.className = "toast__text";
+    text.textContent = msg;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toast__action";
+    btn.textContent = action.label;
+    btn.addEventListener("click", () => {
+      dismissToast(el);
+      if (toastTimeout !== null) {
+        clearTimeout(toastTimeout);
+        toastTimeout = null;
+      }
+      action.onClick();
+    });
+
+    el.append(text, btn);
+  } else {
+    el.textContent = msg;
+  }
+
+  toastHostElement().appendChild(el);
   activeToast = el;
 
+  // A toast the user is expected to act on stays a little longer.
   toastTimeout = setTimeout(() => {
     if (activeToast === el) {
       el.remove();
       activeToast = null;
     }
     toastTimeout = null;
-  }, 3200);
+  }, usableAction ? 6000 : 3200);
 }
 // Chi chap nhan http/https de tranh javascript:/data:text khi gan vao href
 function safeUrl(u){
@@ -2129,7 +2305,7 @@ function card(it){
   }else{
     bPurchase.textContent = "Đánh dấu đã mua";
     bPurchase.setAttribute("aria-label", "Đánh dấu " + it.name + " là đã mua");
-    bPurchase.addEventListener("click", () => markPurchased(it.id));
+    bPurchase.addEventListener("click", () => markPurchased(it.id, bPurchase));
   }
   actions.appendChild(bPurchase);
 
@@ -2212,6 +2388,21 @@ function updateQuickViewPurchase(id){
       : "Đánh dấu " + it.name + " là đã mua"
   );
   btn.classList.toggle("is-undo", done);
+
+  // V16.1 F2 — chi tiết mua hàng chỉ hiện khi thực sự có dữ liệu để đọc.
+  const paidItem = $("qvPaidItem");
+  const atItem = $("qvPurchasedItem");
+  const paid = it.status === "purchased" ? readPaidAmount(it) : null;
+  const at = it.status === "purchased" ? readPurchasedAt(it) : null;
+
+  if(paidItem){
+    paidItem.hidden = paid === null;
+    if(paid !== null) $("qvPaid").textContent = fmtMoney(paid);
+  }
+  if(atItem){
+    atItem.hidden = at === null;
+    if(at !== null) $("qvPurchasedAt").textContent = fmtDate(at);
+  }
 }
 
 function openQuickView(id, opener){
@@ -2446,15 +2637,193 @@ function statusBefore(it){
   return i > 0 ? STATUSES[i - 1] : null;
 }
 
-function markPurchased(id){
+/* ===================================================================
+   V16.1 F2 — PURCHASE CAPTURE
+   -------------------------------------------------------------------
+   The card button, the Quick View button and the edit form all funnel
+   through applyPurchase(), so "đã mua" means exactly one thing in one
+   place. Nothing is written until the user confirms, or explicitly
+   chooses to skip the price.
+=================================================================== */
+
+let pdItemId = null;   // món mà dialog đang mở đang hỏi tới
+let pdOpener = null;   // phần tử cần trả focus về khi dialog đóng
+let pdBusy = false;    // đang ghi, chặn gửi trùng
+
+// Ghi trạng thái đã mua kèm trường mua hàng. Trả về false nếu không ghi được.
+function applyPurchase(id, opts = {}){
   const it = items.find(x => x.id === id);
-  if(!it || it.status === "purchased") return;
-  const backup = it.status;
+  if(!it || it.status === "purchased") return false;
+
+  const previousStatus = validPreviousStatus(opts.previousStatus) || it.status;
+  const snapshot = Object.assign({}, it);
+
   it.status = "purchased";
-  if(!save()){ it.status = backup; resync(); return; }
+  setPurchaseFields(it, {
+    paidAmount: opts.paidAmount,
+    purchasedAt: opts.purchasedAt,
+    previousStatus: previousStatus
+  });
+
+  if(!save()){
+    // Khôi phục nguyên trạng, kể cả các trường mua hàng cũ (nếu có).
+    Object.keys(it).forEach(k => { if(!(k in snapshot)) delete it[k]; });
+    Object.assign(it, snapshot);
+    resync();
+    return false;
+  }
+
   render();
   animatePurchasedTransition(it.id);
-  toast('Đã đánh dấu "' + it.name + '" là đã mua.');
+  return true;
+}
+
+function setPurchaseError(message){
+  const box = $("pdError");
+  if(!box) return;
+  box.textContent = message || "";
+  box.classList.toggle("hidden", !message);
+  const amount = $("pdAmount");
+  if(amount) amount.setAttribute("aria-invalid", message ? "true" : "false");
+}
+
+function purchaseDraftFromDialog(){
+  const amountRaw = ($("pdAmount").value || "").trim();
+  const dateRaw = ($("pdDate").value || "").trim();
+  return {
+    amountRaw: amountRaw,
+    dateRaw: dateRaw,
+    // null = người dùng để trống, tức là "chưa ghi giá" (khác hẳn 0 đồng).
+    paidAmount: amountRaw === "" ? null : validPaidAmount(amountRaw),
+    purchasedAt: dateRaw === "" ? null : dateInputToEpoch(dateRaw)
+  };
+}
+
+// Kiểm tra ngay khi gõ: nút Xác nhận bị khóa đúng lúc giá trị không thể lưu,
+// và lý do được đọc lên ở #pdError.
+function syncPurchaseConfirmState(){
+  const draft = purchaseDraftFromDialog();
+  let message = "";
+
+  if(draft.amountRaw !== "" && draft.paidAmount === null){
+    message = "Giá thực tế phải là số không âm và không quá lớn.";
+  }else if(draft.dateRaw !== "" && draft.purchasedAt === null){
+    message = "Ngày mua không hợp lệ.";
+  }
+
+  setPurchaseError(message);
+
+  const btn = $("pdConfirm");
+  if(btn) btn.disabled = !!message || pdBusy;
+
+  return message === "";
+}
+
+function openPurchaseDialog(id, opener){
+  const it = items.find(x => x.id === id);
+  if(!it || it.status === "purchased") return false;
+
+  const pd = $("pd");
+  if(!pd || pd.open || pdBusy) return false;
+
+  pdItemId = id;
+  pdOpener = (opener && opener.isConnected) ? opener : null;
+
+  $("pdName").textContent = it.name || "(Món đồ chưa đặt tên)";
+  $("pdPrice").textContent = fmtMoney(it.price);
+  $("pdAmount").value = "";
+  $("pdDate").value = todayDateInput();
+  pdBusy = false;
+  // Khai báo trạng thái rỗng một cách tường minh cho trình đọc màn hình.
+  $("pdConfirm").setAttribute("aria-busy", "false");
+  syncPurchaseConfirmState();
+
+  pd.showModal();
+  $("pdAmount").focus();
+  return true;
+}
+
+function closePurchaseDialog(){
+  const pd = $("pd");
+  if(pd && pd.open) pd.close();
+}
+
+// Trả focus về nút vừa bấm. Sau khi mua, nút cũ đã bị render() thay thế nên
+// phải tìm lại nút "Hoàn tác" của đúng thẻ đó.
+function focusAfterPurchase(id){
+  const card = [...$("grid").children].find(el => el.dataset.id === String(id));
+  const target = card && (card.querySelector(".mark-purchased") || card.querySelector(".product-card__view"));
+  if(target && target.isConnected){ target.focus(); return; }
+  const qv = $("qv");
+  if(qv.open && $("qvPurchase").isConnected){ $("qvPurchase").focus(); return; }
+  const grid = $("grid");
+  if(grid && typeof grid.focus === "function") grid.focus();
+}
+
+// Thông báo thành công sau khi mua (F2.4 mở rộng thêm hành động "Xem đã mua").
+function purchaseSuccessToast(id, name, opts = {}){
+  const msg = opts.skippedPrice
+    ? 'Đã đánh dấu "' + name + '" là đã mua — chưa ghi giá thực tế.'
+    : 'Đã ghi "' + name + '": ' + fmtMoney(opts.paidAmount) + '.';
+
+  toast(msg, "success", {
+    label: "Hoàn tác",
+    onClick: () => undoPurchased(id)
+  });
+}
+
+function commitPurchase(fields){
+  if(!pdItemId || pdBusy) return;
+
+  const id = pdItemId;
+  const it = items.find(x => x.id === id);
+  const name = it ? it.name : "";
+  const skippedPrice = fields.paidAmount === null || fields.paidAmount === undefined;
+
+  pdBusy = true;
+  const btn = $("pdConfirm");
+  if(btn){ btn.disabled = true; btn.setAttribute("aria-busy", "true"); }
+
+  const ok = applyPurchase(id, fields);
+
+  pdBusy = false;
+  if(btn){ btn.setAttribute("aria-busy", "false"); btn.disabled = false; }
+
+  if(!ok){
+    // save() đã hiện thông báo lỗi; giữ dialog mở để người dùng thử lại.
+    syncPurchaseConfirmState();
+    return;
+  }
+
+  closePurchaseDialog();
+  updateQuickViewPurchase(id);
+  purchaseSuccessToast(id, name, { skippedPrice: skippedPrice, paidAmount: fields.paidAmount });
+}
+
+function confirmPurchase(){
+  if(!pdItemId || pdBusy) return;
+  if(!syncPurchaseConfirmState()){ $("pdAmount").focus(); return; }
+  const draft = purchaseDraftFromDialog();
+  commitPurchase({ paidAmount: draft.paidAmount, purchasedAt: draft.purchasedAt });
+}
+
+// "Bỏ qua giá": vẫn ghi nhận đã mua + ngày mua, nhưng KHÔNG ghi paidAmount,
+// nên món này không bao giờ bị cộng vào chi tiêu thực tế.
+function skipPurchase(){
+  if(!pdItemId || pdBusy) return;
+  const draft = purchaseDraftFromDialog();
+  if(draft.dateRaw !== "" && draft.purchasedAt === null){
+    syncPurchaseConfirmState();
+    return;
+  }
+  setPurchaseError("");
+  commitPurchase({ paidAmount: null, purchasedAt: draft.purchasedAt });
+}
+
+// Nút "Đánh dấu đã mua" LUÔN mở dialog xác nhận — dữ liệu chỉ đổi khi người
+// dùng thực sự xác nhận, hoặc chọn "Bỏ qua giá".
+function markPurchased(id, opener){
+  return openPurchaseDialog(id, opener);
 }
 
 function undoPurchased(id){
@@ -2467,6 +2836,14 @@ function undoPurchased(id){
   if(!save()){ it.status = backup; resync(); return; }
   render();
   toast('Đã hoàn tác "' + it.name + '" về "' + prev.label + '".');
+}
+
+// V16.1 F2 — khối "Chi tiết mua hàng" chỉ có nghĩa khi trạng thái là Đã mua.
+function syncPurchaseSection(){
+  const section = $("purchaseSection");
+  if(!section) return;
+  const isPurchased = $("fStatus2").value === "purchased";
+  section.classList.toggle("hidden", !isPurchased);
 }
 
 function openForm(item, draft = null){
@@ -2482,6 +2859,10 @@ function openForm(item, draft = null){
   $("fLink").value      = values.link || "";
   $("fImageUrl").value  = editing && !/^data:/.test(item.image || "") ? (item.image || "") : "";
   $("fNote").value      = values.note || "";
+  // Để trống khi chưa có dữ liệu: món cũ mua từ trước F2 không được gán ngày giả.
+  $("fPaidAmount").value = editing && readPaidAmount(item) !== null ? String(readPaidAmount(item)) : "";
+  $("fPurchasedAt").value = editing ? epochToDateInput(readPurchasedAt(item)) : "";
+  syncPurchaseSection();
   pendingDataUrl        = editing && /^data:/.test(item.image || "") ? item.image : "";
   $("fFile").value      = "";
   setFileError("");
@@ -2644,6 +3025,8 @@ function init(){
   $("btnImageRetry").addEventListener("click", () => {
     if(typeof imageRetryAction === "function") imageRetryAction();
   });
+  // V16.1 F2 — chọn "Đã mua" trong form thì mở khối chi tiết mua hàng.
+  $("fStatus2").addEventListener("change", syncPurchaseSection);
   if(location.protocol === "https:" || location.hostname === "localhost"){
     initializeCloudSync().catch(error => showCloudError(error.message));
   }
@@ -2703,9 +3086,14 @@ function init(){
     if(!id) return;
     const it = items.find(x => x.id === id);
     if(!it) return;
-    if(it.status === "purchased") undoPurchased(id);
-    else markPurchased(id);
-    updateQuickViewPurchase(id);
+    if(it.status === "purchased"){
+      undoPurchased(id);
+      updateQuickViewPurchase(id);
+      return;
+    }
+    // Chưa mua: mở dialog xác nhận, xếp TRÊN Quick View để giữ nguyên ngữ
+    // cảnh (không đóng panel rồi bắt người dùng tìm lại món).
+    openPurchaseDialog(id, $("qvPurchase"));
   });
   // Escape (native cancel) cũng rơi vào "close" này → trả focus ổn định.
   // Không trả focus nếu dialog form đang mở (đã mở từ QV) hoặc node đã bị
@@ -2716,6 +3104,31 @@ function init(){
     if(!opener || !opener.isConnected) return;
     if($("dlg").open) return;
     opener.focus();
+  });
+
+  /* ---- V16.1 F2 — purchase capture dialog ------------------------------ */
+  $("pdForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    confirmPurchase();
+  });
+  $("pdAmount").addEventListener("input", syncPurchaseConfirmState);
+  $("pdDate").addEventListener("input", syncPurchaseConfirmState);
+  $("pdSkip").addEventListener("click", skipPurchase);
+  $("pdCancel").addEventListener("click", closePurchaseDialog);
+  $("pdClose").addEventListener("click", closePurchaseDialog);
+  // Không cho Escape đóng giữa lúc đang ghi.
+  $("pd").addEventListener("cancel", (event) => {
+    if(pdBusy) event.preventDefault();
+  });
+  $("pd").addEventListener("close", () => {
+    const id = pdItemId;
+    const opener = pdOpener;
+    pdItemId = null;
+    pdOpener = null;
+    pdBusy = false;
+    // Nút mở cũ đã bị render() thay thế sau khi mua → tìm lại theo data-id.
+    if(opener && opener.isConnected){ opener.focus(); return; }
+    if(id) focusAfterPurchase(id);
   });
 
   $("btnClearImg").addEventListener("click", () => {
@@ -2816,13 +3229,58 @@ function init(){
       category: $("fCategory").value.trim(),
       note: $("fNote").value.trim()
     };
+
+    // V16.1 F2 — chi tiết mua hàng chỉ được đọc khi trạng thái là "Đã mua".
+    // Để trống = không ghi trường, KHÔNG ghi 0 và KHÔNG gán ngày giả.
+    let paidAmount = null;
+    let purchasedAt = null;
+    if(data.status === "purchased"){
+      const paidRaw = ($("fPaidAmount").value || "").trim();
+      const atRaw = ($("fPurchasedAt").value || "").trim();
+      if(paidRaw !== ""){
+        paidAmount = validPaidAmount(paidRaw);
+        if(paidAmount === null){
+          toast("Giá thực tế phải là số không âm và không quá lớn.");
+          $("fPaidAmount").focus(); return;
+        }
+      }
+      if(atRaw !== ""){
+        purchasedAt = dateInputToEpoch(atRaw);
+        if(purchasedAt === null){
+          toast("Ngày mua không hợp lệ.");
+          $("fPurchasedAt").focus(); return;
+        }
+      }
+    }
+
     const backup = items.slice();
     if(id){
       const i = items.findIndex(x => x.id === id);
-      if(i > -1) items[i] = Object.assign({}, items[i], data);
+      if(i > -1){
+        const prev = items[i];
+        const wasPurchased = prev.status === "purchased";
+        const next = Object.assign({}, prev, data);
+        if(data.status === "purchased"){
+          setPurchaseFields(next, {
+            paidAmount: paidAmount,
+            purchasedAt: purchasedAt,
+            // Chỉ ghi mốc quay về khi ĐỔI trạng thái trong form này; món đã
+            // mua sẵn thì giữ nguyên previousStatus cũ (hoặc để trống).
+            previousStatus: wasPurchased ? prev.previousStatus : prev.status
+          });
+        }else{
+          // Rời khỏi "Đã mua" thì dữ liệu mua hàng không còn nghĩa.
+          clearPurchaseFields(next);
+        }
+        items[i] = next;
+      }
     }else{
-      items.push(Object.assign({ id: "it-" + Date.now() + "-" + Math.random().toString(36).slice(2,7),
-        createdAt: Date.now() }, data));
+      const fresh = Object.assign({ id: "it-" + Date.now() + "-" + Math.random().toString(36).slice(2,7),
+        createdAt: Date.now() }, data);
+      if(data.status === "purchased"){
+        setPurchaseFields(fresh, { paidAmount: paidAmount, purchasedAt: purchasedAt, previousStatus: DEFAULT_STATUS });
+      }
+      items.push(fresh);
     }
     // Bug 1: luu that bai thi khoi phuc du lieu cu va khong bao thanh cong
     if(!save()){ items = backup; resync(); return; }
