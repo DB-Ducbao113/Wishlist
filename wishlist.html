@@ -2323,6 +2323,10 @@ function renderDashboardMetrics(m){
    này, và cũng không làm mất focus đang nằm trong chú giải.
    =================================================================== */
 let dvDistSignature = "";
+// V16.1 F6.3 — the active filter marker is tracked apart from the data
+// signature, so moving aria-pressed between legend buttons re-renders without
+// replaying the fade. The fade is reserved for real data changes.
+let dvDistActive = "";
 
 function dvCell(className, text){
   const el = document.createElement("span");
@@ -2357,11 +2361,13 @@ function renderDashboardStatus(m){
   const unclassified = Math.max(0, m.totalCount - classified);
   const active = $("fStatus") ? $("fStatus").value : "";
 
-  const signature = STATUSES.map(s => s.key + ":" + counts[s.key]).join("|") +
-    "|u:" + unclassified + "|t:" + m.totalCount + "|a:" + active;
-  if(signature === dvDistSignature) return;
+  const dataSignature = STATUSES.map(s => s.key + ":" + counts[s.key]).join("|") +
+    "|u:" + unclassified + "|t:" + m.totalCount;
+  if(dataSignature === dvDistSignature && active === dvDistActive) return;
   const firstPaint = dvDistSignature === "";
-  dvDistSignature = signature;
+  const dataChanged = dataSignature !== dvDistSignature;
+  dvDistSignature = dataSignature;
+  dvDistActive = active;
 
   setDashText(total, m.totalCount + " món");
 
@@ -2452,8 +2458,9 @@ function renderDashboardStatus(m){
   legend.replaceChildren(...rows);
 
   // V16.1 F3.6 — độ dài phân đoạn là dữ liệu nên nó đổi tức thời; cảm giác
-  // chuyển động đến từ một lần mờ dần trên chính thanh.
-  if(!firstPaint) dvFadeOnce(bar);
+  // chuyển động đến từ một lần mờ dần trên chính thanh. F6.3: chỉ mờ dần khi
+  // DỮ LIỆU đổi, không phải khi chỉ đổi bộ lọc đang chọn.
+  if(!firstPaint && dataChanged) dvFadeOnce(bar);
 }
 
 /* ===================================================================
@@ -2476,7 +2483,11 @@ function renderDashboardStatus(m){
    =================================================================== */
 const DV_BREAKDOWN_ROWS = 6;
 let dvBreakdownSignature = "";
+// V16.1 F6.3 — see dvDistActive above: the active marker is tracked apart from
+// the data signature so a filter change re-renders without replaying the fade.
+let dvBreakdownActive = "";
 let dvPrioritySignature = "";
+let dvPriorityActive = "";
 
 function dvBar(className){
   const bar = document.createElement("span");
@@ -2542,12 +2553,14 @@ function renderDashboardBreakdown(m){
   } : null;
 
   const active = $("fCategoryFilter") ? $("fCategoryFilter").value : "";
-  const signature = buckets.map(b => b.key + ":" + b.count).join("|") +
+  const dataSignature = buckets.map(b => b.key + ":" + b.count).join("|") +
     "|o:" + (other ? other.count + "/" + other.parts : 0) +
-    "|t:" + m.totalCount + "|a:" + active;
-  if(signature === dvBreakdownSignature) return;
+    "|t:" + m.totalCount;
+  if(dataSignature === dvBreakdownSignature && active === dvBreakdownActive) return;
   const firstPaint = dvBreakdownSignature === "";
-  dvBreakdownSignature = signature;
+  const dataChanged = dataSignature !== dvBreakdownSignature;
+  dvBreakdownSignature = dataSignature;
+  dvBreakdownActive = active;
 
   const rows = main.map(bucket => {
     const el = document.createElement("button");
@@ -2593,8 +2606,8 @@ function renderDashboardBreakdown(m){
   rowsHost.replaceChildren(...rows);
 
   // V16.1 F3.6 — cùng một kiểu chuyển động với thanh trạng thái: một lần mờ
-  // dần, không animate từng thanh.
-  if(!firstPaint) dvFadeOnce(rowsHost);
+  // dần, không animate từng thanh. F6.3: chỉ khi dữ liệu đổi.
+  if(!firstPaint && dataChanged) dvFadeOnce(rowsHost);
 }
 
 function renderDashboardPriority(m){
@@ -2623,11 +2636,12 @@ function renderDashboardPriority(m){
   host.hidden = false;
 
   const active = $("fPriority") ? $("fPriority").value : "";
-  const signature = stats.map(s => s.key + ":" + s.count + ":" + s.pendingValue).join("|") +
-    "|a:" + active;
-  if(signature === dvPrioritySignature) return;
+  const dataSignature = stats.map(s => s.key + ":" + s.count + ":" + s.pendingValue).join("|");
+  if(dataSignature === dvPrioritySignature && active === dvPriorityActive) return;
   const firstPaint = dvPrioritySignature === "";
-  dvPrioritySignature = signature;
+  const dataChanged = dataSignature !== dvPrioritySignature;
+  dvPrioritySignature = dataSignature;
+  dvPriorityActive = active;
 
   // Mức ưu tiên CAO NHẤT đang thực sự có món được viền accent — nếu mức "Cao"
   // rỗng thì "Trung bình" nhận viền, chứ không viền vào một mức rỗng.
@@ -2672,7 +2686,9 @@ function renderDashboardPriority(m){
     return btn;
   }));
 
-  if(!firstPaint) dvFadeOnce(rowsHost);
+  // F6.3: chỉ mờ dần khi DỮ LIỆU ưu tiên đổi, không phải khi người dùng chỉ
+  // bật/tắt bộ lọc ưu tiên đang chọn.
+  if(!firstPaint && dataChanged) dvFadeOnce(rowsHost);
 }
 
 /* ===================================================================
