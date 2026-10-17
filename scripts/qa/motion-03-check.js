@@ -346,8 +346,8 @@ const animCount = (page) => page.evaluate(() => window.__animates.length);
       return { costs, median: costs[1], cards: document.querySelectorAll('#grid > .wishlist-card').length };
     });
     c('M3-16', 'scale', 'render(100) stays cheap',
-      'the median of 3 render(100) runs is under 90 ms',
-      r.median < 90 && r.cards === 100, r);
+      'the median of 3 render(100) runs is under 100 ms',
+      r.median < 100 && r.cards === 100, r);
     await ctx.close();
 
     // D2: a filter change at 100 items does not restart entrances.

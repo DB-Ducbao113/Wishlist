@@ -3182,7 +3182,16 @@ function cancelPendingSearchRender() {
   }
 }
 
+// V16.2 MOTION-03B — mark the next render() as a filter/sort change so the
+// surviving cards get FLIP'd. Search typing sets 'instant' (no FLIP) to avoid
+// visual noise on every keystroke.
+function setFlipPending(mode){
+  flipPending = (mode === 'flip');
+  flipOldRects = null;
+}
+
 function scheduleSearchRender() {
+  setFlipPending('instant');
   cancelPendingSearchRender();
 
   searchRenderTimer = setTimeout(() => {
@@ -3275,7 +3284,18 @@ function render(){
 
   // V16 — staggered scroll reveal, once per product id: search / filter /
   // render never replay it, but genuinely new items still animate in.
+  // V16.2 MOTION-03B — capture old rects BEFORE rebuilding, so surviving
+  // cards can be FLIP'd from their old position to the new one.
+  const oldRects = flipPending ? (flipOldRects || captureCardRects()) : null;
+  flipPending = false;
+  flipOldRects = null;
   revealGridCards(grid);
+  if(oldRects && oldRects.size > 0){
+    // two rAFs: let the browser commit the new layout before measuring
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { flipSurvivingCards(oldRects); });
+    });
+  }
 }
 
 /* ==========================================
@@ -4935,12 +4955,71 @@ function updateCategoryFilter(){
 }
 
 // V13: view state is ephemeral UI only; do not persist or alter product data.
+// V16.2 MOTION-03B — FLIP for the gallery/focus switch and for filter/sort.
+// Captures card rectangles BEFORE the layout changes, then animates surviving
+// cards from their old position to the new one. New cards keep the existing
+// reveal behaviour; removed cards are simply gone (no ghost, no stale transform).
+let flipPending = false;
+let flipOldRects = null;
+// V16.2 MOTION-03B — in-flight FLIP animations, so a rapid toggle can cancel
+// them instead of letting two animations fight over the same element.
+let flipAnimations = [];
+
+function captureCardRects(){
+  const rects = new Map();
+  document.querySelectorAll('#grid > .wishlist-card').forEach(card => {
+    const r = card.getBoundingClientRect();
+    rects.set(card.dataset.id, { x: r.left, y: r.top, w: r.width, h: r.height });
+  });
+  return rects;
+}
+
+function flipSurvivingCards(oldRects){
+  if(!oldRects || oldRects.size === 0) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // cancel any in-flight FLIP before starting a new one
+  flipAnimations.forEach(a => { try { a.cancel(); } catch (e) {} });
+  flipAnimations = [];
+  const cards = document.querySelectorAll('#grid > .wishlist-card');
+  const work = [];
+  cards.forEach(card => {
+    const id = card.dataset.id;
+    const old = oldRects.get(id);
+    if(!old) return; // new card: handled by revealGridCards
+    const r = card.getBoundingClientRect();
+    const dx = old.x - r.left;
+    const dy = old.y - r.top;
+    if(Math.abs(dx) < 1 && Math.abs(dy) < 1) return; // no movement
+    work.push({ card, dx, dy });
+  });
+  // Cap at 40 cards to keep the cost bounded on 50-100 item lists.
+  if(work.length > 40) return;
+  work.forEach(({ card, dx, dy }) => {
+    try {
+      const a = card.animate(
+        [{ transform: 'translate(' + dx + 'px, ' + dy + 'px)' },
+         { transform: 'translate(0px, 0px)' }],
+        { duration: 260, easing: 'cubic-bezier(.22, .68, .24, 1)', fill: 'none' }
+      );
+      flipAnimations.push(a);
+    } catch (e) { /* ignore */ }
+  });
+}
+
 function setCollectionView(mode){
+  // capture BEFORE the layout changes
+  const oldRects = captureCardRects();
   const focus = mode === "focus";
   const grid = $("grid");
   grid.dataset.v13View = focus ? "focus" : "gallery";
   $("v13GridView").setAttribute("aria-pressed", String(!focus));
   $("v13FocusView").setAttribute("aria-pressed", String(focus));
+  // animate surviving cards from their old position to the new one
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      flipSurvivingCards(oldRects);
+    });
+  });
 }
 function init(){
   buildSelects();
@@ -5304,7 +5383,7 @@ function init(){
     .forEach(id => {
       $(id).addEventListener(
         "change",
-        renderImmediately
+        () => { setFlipPending('flip'); renderImmediately(); }
       );
     });
 
