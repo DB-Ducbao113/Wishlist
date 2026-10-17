@@ -169,3 +169,74 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
     transition: none !important;
   }
 }
+
+/* =====================================================================
+   COLLECTION QUICK TABS (V16.1 F2)
+   ---------------------------------------------------------------------
+   A segmented control over the one `items` array. Same visual language as
+   the gallery / focus switch already in use, so it reads as one toolbar.
+   ===================================================================== */
+
+.dv-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: var(--dv-gap-3) 0 var(--dv-gap-2);
+  padding: 5px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.dv-tabs__tab {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--dv-radius-pill);
+  padding: 9px 18px;
+  background: transparent;
+  color: var(--dv-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              color var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-tabs__tab:focus-visible {
+  outline: 2px solid var(--dv-accent);
+  outline-offset: 2px;
+}
+
+.dv-tabs__tab.is-active,
+.dv-tabs__tab[aria-pressed="true"] {
+  background: var(--dv-surface);
+  border-color: var(--dv-border);
+  color: var(--dv-accent);
+  box-shadow: var(--dv-elev-1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-tabs__tab:not(.is-active):hover {
+    background: rgba(255, 255, 255, .62);
+    color: var(--dv-accent);
+  }
+}
+
+@media (max-width: 430px) {
+  .dv-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dv-tabs__tab {
+    padding: 9px 6px;
+    text-align: center;
+  }
+}

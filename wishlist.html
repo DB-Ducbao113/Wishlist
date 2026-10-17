@@ -770,6 +770,18 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <span class="list-heading__decoration"
           aria-hidden="true">✦</span>
   </div>
+
+  <!-- V16.1 F2 — Collection quick tabs. This is a VIEW over the one `items`
+       array, never a second list: it is just another predicate inside
+       visibleItems(), so search, advanced filters, sort and the gallery / focus
+       modes keep working exactly as before. The state is UI-only and is never
+       persisted, so it can never touch the user's data. -->
+  <div class="dv-tabs" id="purchaseTabs" role="group" aria-label="Lọc nhanh theo tình trạng mua">
+    <button type="button" id="tabAll" class="dv-tabs__tab" data-tab="all" aria-pressed="true">Tất cả</button>
+    <button type="button" id="tabPending" class="dv-tabs__tab" data-tab="pending" aria-pressed="false">Chưa mua</button>
+    <button type="button" id="tabOwned" class="dv-tabs__tab" data-tab="owned" aria-pressed="false">Đã mua</button>
+  </div>
+
   <div class="v13-viewbar" data-dv-section role="group" aria-label="Chế độ hiển thị bộ sưu tập">
     <span class="v13-viewbar__label">CHẾ ĐỘ HIỂN THỊ</span>
     <div class="v13-viewbar__switch" role="group" aria-label="Chọn chế độ xem">
@@ -1743,6 +1755,34 @@ function renderDashboardProgress(m){
 /* ===================================================================
    LOC + SAP XEP
    =================================================================== */
+
+/* ===================================================================
+   V16.1 F2 — COLLECTION QUICK TABS
+   Ba tab "Tất cả / Chưa mua / Đã mua" chỉ là MỘT VỊ TỪ trên chính mảng
+   `items`. Không có danh sách thứ hai, không ghi vào dữ liệu người dùng:
+   trạng thái tab chỉ thuộc giao diện (giống chế độ xem lưới / tập trung).
+=================================================================== */
+const PURCHASE_TABS = ["all", "pending", "owned"];
+let purchaseTab = "all";
+
+function syncPurchaseTabButtons(){
+  const host = $("purchaseTabs");
+  if(!host) return;
+  host.querySelectorAll(".dv-tabs__tab").forEach(btn => {
+    const on = btn.dataset.tab === purchaseTab;
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.classList.toggle("is-active", on);
+  });
+}
+
+// setPurchaseTab() là điểm vào duy nhất — tab, toast và (ở F3) Dashboard
+// Quick Actions đều gọi hàm này, nên không có lối điều hướng thứ hai.
+function setPurchaseTab(tab){
+  purchaseTab = PURCHASE_TABS.includes(tab) ? tab : "all";
+  syncPurchaseTabButtons();
+  renderImmediately();
+}
+
 function visibleItems(){
   const q = $("q").value.trim().toLowerCase();
   const st = $("fStatus").value, pr = $("fPriority").value;
@@ -1750,6 +1790,9 @@ function visibleItems(){
   const sort = $("fSort").value;
 
   let list = items.filter(it => {
+    // Tab nhanh — cùng nguồn dữ liệu `items`, ghép AND với lọc nâng cao.
+    if(purchaseTab === "pending" && it.status === "purchased") return false;
+    if(purchaseTab === "owned" && it.status !== "purchased") return false;
     if(st && it.status !== st) return false;
     if(pr && it.priority !== pr) return false;
     if(category && (it.category || "") !== category) return false;
@@ -1825,17 +1868,26 @@ function render(){
   empty.classList.toggle("hidden", !isEmpty);
 
   if (isEmpty) {
-    $("emptyTitle").textContent = hasItems
-      ? "Không tìm thấy món phù hợp"
-      : "Bộ sưu tập của bạn bắt đầu từ đây.";
+    // V16.1 F2 — tab nhanh có câu chữ riêng, để "0 kết quả" luôn nói đúng lý do.
+    const tabEmpty = hasItems && purchaseTab !== "all";
 
-    $("emptyDescription").textContent = hasItems
-      ? "Thử đổi từ khóa hoặc xóa bộ lọc để xem lại các món đồ."
-      : "Lưu những món đồ bạn yêu thích và bắt đầu bộ sưu tập của riêng mình.";
+    $("emptyTitle").textContent = !hasItems
+      ? "Bộ sưu tập của bạn bắt đầu từ đây."
+      : (tabEmpty
+          ? (purchaseTab === "pending"
+              ? "Không còn món nào đang chờ mua."
+              : "Chưa có món nào được đánh dấu đã mua.")
+          : "Không tìm thấy món phù hợp");
 
-    $("emptyAction").textContent = hasItems
-      ? "Xóa bộ lọc"
-      : "+ Thêm món đầu tiên";
+    $("emptyDescription").textContent = !hasItems
+      ? "Lưu những món đồ bạn yêu thích và bắt đầu bộ sưu tập của riêng mình."
+      : (tabEmpty
+          ? "Chuyển sang tab “Tất cả” để xem toàn bộ bộ sưu tập."
+          : "Thử đổi từ khóa hoặc xóa bộ lọc để xem lại các món đồ.");
+
+    $("emptyAction").textContent = !hasItems
+      ? "+ Thêm món đầu tiên"
+      : (tabEmpty ? "Xem tất cả" : "Xóa bộ lọc");
   }
   // V16.1 — KPI luôn tính trên TOÀN BỘ bộ sưu tập. Search / filter / sort
   // chỉ đổi tập đang hiển thị, không bao giờ đổi con số tổng.
@@ -2767,11 +2819,21 @@ function focusAfterPurchase(id){
   if(grid && typeof grid.focus === "function") grid.focus();
 }
 
-// Thông báo thành công sau khi mua (F2.4 mở rộng thêm hành động "Xem đã mua").
+// Thông báo thành công sau khi mua.
+// Đang ở tab "Chưa mua" thì thẻ vừa rời danh sách: mời người dùng sang tab
+// "Đã mua" (KHÔNG tự nhảy), còn lại thì mời Hoàn tác.
 function purchaseSuccessToast(id, name, opts = {}){
   const msg = opts.skippedPrice
     ? 'Đã đánh dấu "' + name + '" là đã mua — chưa ghi giá thực tế.'
     : 'Đã ghi "' + name + '": ' + fmtMoney(opts.paidAmount) + '.';
+
+  if(purchaseTab === "pending"){
+    toast(msg, "success", {
+      label: "Xem đã mua",
+      onClick: () => setPurchaseTab("owned")
+    });
+    return;
+  }
 
   toast(msg, "success", {
     label: "Hoàn tác",
@@ -3023,6 +3085,13 @@ function init(){
   $("v13GridView").addEventListener("click", () => setCollectionView("gallery"));
   $("v13FocusView").addEventListener("click", () => setCollectionView("focus"));
   setCollectionView("gallery");
+  // V16.1 F2 — tab nhanh bắt đầu ở "Tất cả"; trạng thái không được lưu lại.
+  syncPurchaseTabButtons();
+  $("purchaseTabs").addEventListener("click", (event) => {
+    const btn = event.target.closest ? event.target.closest(".dv-tabs__tab") : null;
+    if(!btn) return;
+    setPurchaseTab(btn.dataset.tab);
+  });
   migrateLegacyOnce();
   loadForSession(null);
   render();
@@ -3082,9 +3151,13 @@ function init(){
   $("emptyAction").addEventListener("click", () => {
     if (items.length === 0) {
       openForm(null);
-    } else {
-      $("btnClearFilter").click();
+      return;
     }
+    if (purchaseTab !== "all") {
+      setPurchaseTab("all");
+      return;
+    }
+    $("btnClearFilter").click();
   });
   $("btnCancel").addEventListener("click", () => $("dlg").close());
   document.querySelector(
@@ -3327,6 +3400,9 @@ function init(){
   $("btnClearFilter").addEventListener("click", () => {
     $("q").value = ""; $("fStatus").value = ""; $("fPriority").value = "";
     $("fCategoryFilter").value = ""; $("fSort").value = "newest";
+    // "Xóa bộ lọc" là nút xóa-tất-cả, nên tab nhanh cũng phải về "Tất cả".
+    purchaseTab = "all";
+    syncPurchaseTabButtons();
     renderImmediately();
   });
 
