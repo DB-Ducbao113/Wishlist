@@ -730,6 +730,41 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </div><!-- /.dv-grid--insight -->
 
+  <!-- V16.1 F3.5 — Quick Actions. Pure navigation: every button either sets a
+       filter the toolbar already has, opens the one existing form, or
+       delegates to the existing export/import handlers. Nothing here copies
+       CRUD or import/export code, and nothing here can edit an item. The one
+       purchase shortcut deliberately opens the F2 confirmation dialog —
+       there is no one-click purchase on this dashboard. -->
+  <section class="dv-actions" id="dvActions" aria-labelledby="dvActionsTitle">
+    <div class="dv-actions__head">
+      <h3 class="dv-actions__title" id="dvActionsTitle">Những gì nên làm tiếp</h3>
+      <p class="dv-actions__lead">
+        Lọc nhanh bộ sưu tập, thêm món mới hoặc sao lưu dữ liệu.
+      </p>
+    </div>
+
+    <div class="dv-actions__grid">
+      <button type="button" class="dv-actions__btn dv-actions__btn--primary" id="dvActionAdd">
+        <span class="dv-actions__glyph" aria-hidden="true">+</span>
+        Thêm món mới
+      </button>
+
+      <button type="button" class="dv-actions__btn" id="dvActionPending">Xem món chưa mua</button>
+      <button type="button" class="dv-actions__btn" id="dvActionOwned">Xem món đã mua</button>
+      <button type="button" class="dv-actions__btn" id="dvActionHigh">Xem món ưu tiên cao</button>
+      <button type="button" class="dv-actions__btn" id="dvActionClear">Xóa bộ lọc</button>
+      <button type="button" class="dv-actions__btn" id="dvActionExport">Xuất JSON</button>
+      <button type="button" class="dv-actions__btn" id="dvActionImport">Nhập JSON</button>
+
+      <button type="button" class="dv-actions__btn dv-actions__btn--buy" id="dvActionBuy" hidden>
+        Đánh dấu đã mua
+      </button>
+    </div>
+
+    <p class="dv-actions__note" id="dvActionsNote" hidden></p>
+  </section>
+
 </section>
 
 <!-- Search and filters: independent section -->
@@ -2265,6 +2300,64 @@ function renderDashboardPriority(m){
 }
 
 /* ===================================================================
+   V16.1 F3.5 — THAO TÁC NHANH
+   -------------------------------------------------------------------
+   Hợp đồng: docs/qa/dream-vault-v16/dashboard-foundation.md §4.6.
+
+   Khối này KHÔNG sở hữu nghiệp vụ nào. Mỗi nút hoặc đặt một bộ lọc đang có,
+   hoặc gọi đúng hàm đã tồn tại (openForm, exportJson, nút Xoá bộ lọc), nên
+   không có bản sao CRUD / nhập / xuất nào ở đây. Và tuyệt đối không có nút
+   nào mua một món chỉ bằng một cú bấm: lối tắt mua duy nhất mở đúng hộp thoại
+   xác nhận của F2 (openPurchaseDialog).
+   =================================================================== */
+let dvActionsSignature = "";
+
+// Món CHƯA mua có mức ưu tiên cao nhất — gợi ý "mua gì tiếp". Cùng mức thì
+// lấy món mới thêm trước, đúng thứ tự sắp xếp mặc định của bộ sưu tập.
+function highestPriorityPending(){
+  let best = null;
+  let bestRank = -Infinity;
+
+  for(const it of items){
+    if(!it || it.status === "purchased") continue;
+    const rank = findPriority(it.priority).rank;
+    if(rank > bestRank || (rank === bestRank && (it.createdAt || 0) > (best.createdAt || 0))){
+      best = it;
+      bestRank = rank;
+    }
+  }
+
+  return best;
+}
+
+function renderDashboardActions(){
+  const buyBtn = $("dvActionBuy");
+  const note = $("dvActionsNote");
+  if(!buyBtn || !note) return;
+
+  const target = highestPriorityPending();
+  const signature = target ? target.id + "|" + target.name + "|" + target.priority : "";
+  if(signature === dvActionsSignature) return;
+  dvActionsSignature = signature;
+
+  // Không còn món nào chưa mua thì lối tắt mua tự rút lui, chứ không hiện ra
+  // rồi báo lỗi khi bấm.
+  if(!target){
+    buyBtn.hidden = true;
+    note.hidden = true;
+    note.textContent = "";
+    return;
+  }
+
+  buyBtn.hidden = false;
+  buyBtn.setAttribute("aria-label", "Đánh dấu đã mua: " + target.name);
+
+  note.hidden = false;
+  note.textContent = "Gợi ý tiếp theo: " + target.name +
+    " — ưu tiên " + findPriority(target.priority).label.toLowerCase() + ".";
+}
+
+/* ===================================================================
    LOC + SAP XEP
    =================================================================== */
 
@@ -2327,19 +2420,27 @@ function dashboardScrollToCollection(){
   catch(error){ /* trình duyệt cũ hơn: bỏ qua, việc cuộn đã xảy ra */ }
 }
 
-// patch: { status?, priority?, category? } — chỉ đặt đúng những khía cạnh
-// được truyền vào, nên các bộ lọc khác người dùng đang chọn vẫn nguyên vẹn.
+// patch: { status?, priority?, category?, tab? }
+//   — chỉ đặt đúng những khía cạnh được truyền vào, nên các bộ lọc khác người
+//     dùng đang chọn vẫn nguyên vẹn.
+// opts.resetFacets: xoá những khía cạnh KHÔNG được nêu. Dành cho Quick Action,
+//   vì nhãn của chúng là một ý định tuyệt đối ("Xem món chưa mua") — để sót lại
+//   bộ lọc danh mục cũ sẽ cho ra một tập khác hẳn điều nút hứa.
 // Trả về số món khớp để nơi gọi phản hồi khi không có kết quả.
-function applyDashboardFilter(patch, emptyMessage){
+function applyDashboardFilter(patch, emptyMessage, opts){
   if(!patch) return 0;
-  if(Object.prototype.hasOwnProperty.call(patch, "status"))   $("fStatus").value = patch.status;
-  if(Object.prototype.hasOwnProperty.call(patch, "priority")) $("fPriority").value = patch.priority;
-  if(Object.prototype.hasOwnProperty.call(patch, "category")) $("fCategoryFilter").value = patch.category;
 
-  // Ý định ở đây là "cho tôi xem phần này", nên tab nhanh phải về "Tất cả";
-  // nếu không, chọn "Đã mua" lúc đang ở tab "Chưa mua" sẽ ra rỗng một cách
-  // rất khó hiểu.
-  purchaseTab = "all";
+  const reset = !!(opts && opts.resetFacets);
+  const has = (key) => Object.prototype.hasOwnProperty.call(patch, key);
+
+  if(reset || has("status"))   $("fStatus").value = has("status") ? patch.status : "";
+  if(reset || has("priority")) $("fPriority").value = has("priority") ? patch.priority : "";
+  if(reset || has("category")) $("fCategoryFilter").value = has("category") ? patch.category : "";
+
+  // Ý định ở đây là "cho tôi xem phần này", nên tab nhanh phải về "Tất cả" trừ
+  // khi chính Quick Action đã chọn một tab; nếu không, chọn "Đã mua" lúc đang ở
+  // tab "Chưa mua" sẽ ra rỗng một cách rất khó hiểu.
+  purchaseTab = PURCHASE_TABS.includes(patch.tab) ? patch.tab : "all";
   syncPurchaseTabButtons();
 
   renderImmediately();
@@ -2477,6 +2578,7 @@ function render(){
   renderDashboardStatus(metrics);
   renderDashboardBreakdown(metrics);
   renderDashboardPriority(metrics);
+  renderDashboardActions();
 
   $("resultStatus").textContent =
     "Đang hiển thị " + shown.totalCount + " trên " + metrics.totalCount + " món.";
@@ -4062,6 +4164,68 @@ function init(){
       );
     });
   }
+
+  // V16.1 F3.5 — thao tác nhanh. Mỗi nút chỉ định tuyến tới một entry point đã
+  // có; không nút nào sửa món, và nút mua phải đi qua hộp thoại xác nhận.
+  const dvAction = (id, handler) => {
+    const el = $(id);
+    if(el) el.addEventListener("click", handler);
+  };
+
+  // Mở đúng form thêm món đang có (không có form thứ hai).
+  dvAction("dvActionAdd", () => openForm(null));
+
+  dvAction("dvActionPending", () => {
+    applyDashboardFilter(
+      { tab: "pending" },
+      "Không có món nào đang chờ mua.",
+      { resetFacets: true }
+    );
+  });
+
+  dvAction("dvActionOwned", () => {
+    applyDashboardFilter(
+      { tab: "owned" },
+      "Chưa có món nào được đánh dấu đã mua.",
+      { resetFacets: true }
+    );
+  });
+
+  dvAction("dvActionHigh", () => {
+    applyDashboardFilter(
+      { priority: "high" },
+      "Không có món nào ở mức ưu tiên “Cao”.",
+      { resetFacets: true }
+    );
+  });
+
+  // Bấm hộ nút Xoá bộ lọc của thanh công cụ: một định nghĩa duy nhất cho việc
+  // "xoá sạch bộ lọc", không có bản sao thứ hai ở dashboard.
+  dvAction("dvActionClear", () => {
+    const clear = $("btnClearFilter");
+    if(clear) clear.click();
+    dashboardScrollToCollection();
+  });
+
+  // Xuất / nhập: gọi đúng hai nút đang có trong menu Công cụ. Nút nhập mở hộp
+  // chọn tệp qua đúng #btnImport → #importFile → importJson().
+  dvAction("dvActionExport", () => {
+    const btn = $("btnExport");
+    if(btn) btn.click();
+  });
+
+  dvAction("dvActionImport", () => {
+    const btn = $("btnImport");
+    if(btn) btn.click();
+  });
+
+  // Lối tắt mua DUY NHẤT trên dashboard. Nó KHÔNG mua: nó mở đúng hộp thoại
+  // xác nhận của F2, nơi người dùng vẫn phải chọn ngày và xác nhận.
+  dvAction("dvActionBuy", (event) => {
+    const target = highestPriorityPending();
+    if(!target) return;
+    markPurchased(target.id, event.currentTarget);
+  });
 
   $("btnExport").addEventListener("click", exportJson);
   $("btnImport").addEventListener("click", () => $("importFile").click());

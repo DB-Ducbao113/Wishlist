@@ -923,3 +923,155 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
   outline-offset: 1px;
 }
 
+/* =====================================================================
+   V16.1 F3.5 — QUICK ACTIONS
+   ---------------------------------------------------------------------
+   Every entry is a real <button> with a visible text label (no icon-only
+   buttons), at least 44px tall, in one card so the "what next" block reads
+   as one group. Only "Thêm món mới" is filled: it is the one action that
+   creates something. Nothing here is destructive, and the purchase
+   short-cut is outlined rather than filled so it never looks like a
+   one-click buy.
+   ===================================================================== */
+
+.dv-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-3);
+  padding: clamp(18px, 1.8vw, 26px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-actions__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dv-actions__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-actions__lead {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.5;
+  color: var(--dv-muted);
+}
+
+.dv-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: var(--dv-gap-2);
+}
+
+.dv-actions__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 11px 16px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface-2);
+  color: var(--dv-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out),
+              color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-actions__glyph {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* The only filled action: it creates the one thing the dashboard is for. */
+.dv-actions__btn--primary {
+  border-color: var(--dv-accent);
+  background: var(--dv-accent);
+  color: #FFFFFF;
+}
+
+/* Outlined, not filled: this button opens a confirmation, it does not buy. */
+.dv-actions__btn--buy {
+  border-color: var(--dv-accent);
+  background: var(--dv-surface);
+  color: var(--dv-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-actions__btn:hover {
+    border-color: var(--dv-accent);
+    background: var(--dv-surface);
+  }
+
+  .dv-actions__btn--primary:hover {
+    border-color: var(--dv-accent-hover);
+    background: var(--dv-accent-hover);
+    color: #FFFFFF;
+  }
+
+  .dv-actions__btn--buy:hover {
+    background: var(--dv-surface-2);
+  }
+}
+
+.dv-actions__btn:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 2px;
+}
+
+.dv-actions__note {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.5;
+  color: var(--dv-muted);
+  overflow-wrap: anywhere;
+}
+
+/* A class selector would otherwise beat the UA [hidden] rule. */
+.dv-actions__btn[hidden],
+.dv-actions__note[hidden] {
+  display: none;
+}
+
+/* At 320px a single column of eight buttons is a very long scroll, so the
+   grid tightens to two columns and the primary action keeps the full row. */
+@media (max-width: 480px) {
+  .dv-actions__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dv-actions__btn--primary,
+  .dv-actions__btn--buy {
+    grid-column: 1 / -1;
+  }
+
+  .dv-actions__btn {
+    padding: 10px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dv-actions__btn {
+    transition: none;
+  }
+}
+
