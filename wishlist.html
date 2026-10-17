@@ -134,6 +134,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/dashboard-v16.css">
 <link rel="stylesheet" href="./css/purchase-v16.css">
 <link rel="stylesheet" href="./css/f4-interaction-v16.css">
+<link rel="stylesheet" href="./css/f5-savings-v16.css">
 
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
@@ -1103,6 +1104,47 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
       </section>
 
+      <!-- V16.1 F5 — savings goal. Independent of "Chi tiết mua hàng": the
+           goal normally exists BEFORE the purchase, so this section is always
+           shown. Both fields are optional and an empty field means "no goal /
+           chưa ghi nhận" — never 0, and never the list price. -->
+      <section class="product-dialog__section product-dialog__section--savings"
+               id="savingsSection"
+               aria-label="Mục tiêu tiết kiệm">
+
+        <h3>Mục tiêu tiết kiệm</h3>
+
+        <p class="product-dialog__section-hint">
+          Không bắt buộc. Đây là số tiền bạn tự để dành cho riêng món này —
+          không phải giá bán, và không tự động trừ vào món nào khác.
+        </p>
+
+        <div class="row product-dialog__row">
+          <div class="field">
+            <label for="fSavingGoal">Mục tiêu tiết kiệm (VND)</label>
+            <input id="fSavingGoal" type="number" min="0" step="1000"
+                   placeholder="Để trống nếu không đặt mục tiêu">
+          </div>
+
+          <div class="field">
+            <label for="fSavedAmount">Đã để dành (VND)</label>
+            <input id="fSavedAmount" type="number" min="0" step="1000"
+                   placeholder="Để trống nếu chưa ghi">
+          </div>
+        </div>
+
+        <div class="savings-preview" id="fSavingPreview" hidden>
+          <div class="savings-preview__track" id="fSavingTrack" role="progressbar"
+               aria-label="Tiến độ tiết kiệm"
+               aria-valuemin="0" aria-valuemax="100"
+               aria-valuenow="0" aria-valuetext="0%">
+            <span class="savings-preview__fill" id="fSavingFill"></span>
+          </div>
+          <p class="savings-preview__text" id="fSavingText"></p>
+        </div>
+
+      </section>
+
       <section class="product-dialog__section"
                aria-label="Hình ảnh và liên kết">
 
@@ -1244,6 +1286,58 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <p class="quick-view__status-hint">
         Chọn “Đã mua” sẽ mở hộp thoại ghi giá thực tế và ngày mua.
       </p>
+    </section>
+
+    <!-- V16.1 F5 — the savings goal, edited in place. The Quick View is where
+         a "how much have I put aside" decision is actually made, so the goal
+         and the amount saved are readable and editable here without opening
+         the edit form. This is a display plus one plain form: it never changes
+         the item's status, and "đã tiết kiệm đủ" is never shown as "đã mua". -->
+    <section class="quick-view__savings" id="qvSavings" aria-labelledby="qvSavingsHeading">
+      <h3 class="quick-view__story-heading" id="qvSavingsHeading">Mục tiêu tiết kiệm</h3>
+
+      <div class="qv-savings__summary" id="qvSavingsSummary" hidden>
+        <div class="qv-savings__figures">
+          <span class="qv-savings__saved" id="qvSavingsSaved">0 ₫</span>
+          <span class="qv-savings__of" aria-hidden="true">/</span>
+          <span class="qv-savings__goal" id="qvSavingsGoal">0 ₫</span>
+          <span class="qv-savings__badge" id="qvSavingsBadge" hidden>Đã đạt mục tiêu</span>
+        </div>
+
+        <div class="qv-savings__track" id="qvSavingsTrack" role="progressbar"
+             aria-label="Tiến độ tiết kiệm cho món này"
+             aria-valuemin="0" aria-valuemax="100"
+             aria-valuenow="0" aria-valuetext="0%">
+          <span class="qv-savings__fill" id="qvSavingsFill"></span>
+        </div>
+
+        <p class="qv-savings__remaining" id="qvSavingsRemaining"></p>
+      </div>
+
+      <p class="qv-savings__empty" id="qvSavingsEmpty">
+        Chưa đặt mục tiêu tiết kiệm cho món này.
+      </p>
+
+      <div class="qv-savings__form">
+        <div class="qv-savings__field">
+          <label for="qvSavingGoal">Mục tiêu (VND)</label>
+          <input id="qvSavingGoal" type="number" min="0" step="1000"
+                 placeholder="Để trống nếu không đặt">
+        </div>
+
+        <div class="qv-savings__field">
+          <label for="qvSavedAmount">Đã để dành (VND)</label>
+          <input id="qvSavedAmount" type="number" min="0" step="1000"
+                 placeholder="Để trống nếu chưa ghi">
+        </div>
+
+        <div class="qv-savings__actions">
+          <button type="button" id="qvSavingsSave"
+                  class="quick-view__btn quick-view__btn--glass">Lưu tiết kiệm</button>
+          <button type="button" id="qvSavingsReset"
+                  class="quick-view__btn quick-view__btn--ghost" hidden>Xóa mục tiêu</button>
+        </div>
+      </div>
     </section>
 
     <div class="quick-view__cta">
@@ -2076,7 +2170,10 @@ function dvPrefersReducedMotion(){
 // width. scaleX() chạy trên compositor nên đổi số không kéo theo layout mỗi
 // khung hình; rãnh cha đã overflow:hidden nên bo góc vẫn đúng.
 function dvSetFill(bar, ratio){
-  const fill = bar && bar.firstChild;
+  // firstElementChild, not firstChild: bars written as markup carry whitespace
+  // text nodes, and a text node has no style. dvBar()-built bars have exactly
+  // one element child, so both paths land on the same node.
+  const fill = bar && bar.firstElementChild;
   if(!fill) return;
   const value = Number.isFinite(ratio) ? Math.max(0, Math.min(1, ratio)) : 0;
   fill.style.setProperty("--dv-fill", String(value));
@@ -3603,6 +3700,132 @@ function updateQuickViewPurchase(id){
   }
 }
 
+/* ===================================================================
+   V16.1 F5.2 — SAVINGS IN THE QUICK VIEW
+   -------------------------------------------------------------------
+   The Quick View owns the savings decision in place: read the progress,
+   set or change the goal, record an amount, or reset the goal after an
+   explicit confirmation. Everything funnels through setSavingsFields(),
+   so exactly one place decides what a valid goal is and what a valid
+   saved amount is — and the same primitive the import path uses.
+
+   Nothing here changes the item's status. "Đã để dành đủ" and "Đã mua"
+   are two different facts and are never merged.
+================================================================== */
+
+function updateQuickViewSavings(id){
+  const it = items.find(x => x.id === id);
+  if(!it) return;
+
+  const goal = readSavingGoal(it);
+  const storedSaved = readSavedAmount(it);
+
+  // Nạp lại đúng giá trị đang lưu. Chỉ gọi khi mở Quick View hoặc ngay sau khi
+  // ghi, nên không bao giờ ghi đè chữ người dùng đang gõ.
+  const goalInput = $("qvSavingGoal");
+  const savedInput = $("qvSavedAmount");
+  if(goalInput) goalInput.value = goal === null ? "" : String(goal);
+  if(savedInput) savedInput.value = storedSaved === null ? "" : String(storedSaved);
+
+  const summary = $("qvSavingsSummary");
+  const empty = $("qvSavingsEmpty");
+  const badge = $("qvSavingsBadge");
+  const track = $("qvSavingsTrack");
+  const fill = $("qvSavingsFill");
+  const remaining = $("qvSavingsRemaining");
+  const reset = $("qvSavingsReset");
+
+  // Không có mục tiêu hợp lệ > 0 thì không có gì để hiển thị tiến độ.
+  if(goal === null){
+    if(summary) summary.hidden = true;
+    if(empty) empty.hidden = false;
+    if(reset) reset.hidden = true;
+    return;
+  }
+
+  if(summary) summary.hidden = false;
+  if(empty) empty.hidden = true;
+  if(reset) reset.hidden = false;
+
+  const saved = storedSaved === null ? 0 : storedSaved;
+  const ratio = Math.max(0, Math.min(1, saved / goal));
+  const percent = Math.round(ratio * 100);
+  const reached = saved >= goal;
+
+  setDashText($("qvSavingsSaved"), fmtMoney(saved));
+  setDashText($("qvSavingsGoal"), fmtMoney(goal));
+
+  if(fill) fill.style.setProperty("--savings-fill", String(ratio));
+  if(track){
+    setDashAttr(track, "aria-valuenow", String(percent));
+    setDashAttr(
+      track,
+      "aria-valuetext",
+      percent + "% — " + fmtMoney(saved) + " trên " + fmtMoney(goal)
+    );
+  }
+  if(badge) badge.hidden = !reached;
+  if(remaining){
+    setDashText(
+      remaining,
+      reached
+        ? "Bạn đã để dành đủ " + fmtMoney(goal) + ". Món này vẫn chưa được đánh dấu là đã mua."
+        : "Còn thiếu " + fmtMoney(goal - saved) + " tới mục tiêu."
+    );
+  }
+}
+
+function saveQuickViewSavings(){
+  const qv = $("qv");
+  const it = items.find(x => x.id === (qv && qv.dataset.id));
+  if(!it) return;
+
+  const parsed = readSavingsInputs($("qvSavingGoal"), $("qvSavedAmount"));
+  if(parsed.field){
+    toast(parsed.message);
+    parsed.field.focus();
+    return;
+  }
+
+  const snapshot = Object.assign({}, it);
+  setSavingsFields(it, { savingGoal: parsed.goal, savedAmount: parsed.saved });
+
+  if(!save()){
+    Object.keys(it).forEach(k => { if(!(k in snapshot)) delete it[k]; });
+    Object.assign(it, snapshot);
+    resync();
+    return;
+  }
+
+  render();
+  updateQuickViewSavings(it.id);
+  toast("Đã lưu mục tiêu tiết kiệm.", "success");
+}
+
+function resetQuickViewSavings(){
+  const qv = $("qv");
+  const it = items.find(x => x.id === (qv && qv.dataset.id));
+  if(!it || !hasSavingGoal(it)) return;
+
+  // Xóa mục tiêu là xóa cả hai trường: giữ lại số đã để dành mà không có mục
+  // tiêu sẽ là một con số không còn chỗ để đọc. Hỏi trước, không tự làm.
+  if(!confirm('Xóa mục tiêu tiết kiệm của "' + it.name + '"? Số tiền đã để dành cũng sẽ bị xóa.')) return;
+
+  const snapshot = Object.assign({}, it);
+  clearSavingsFields(it);
+
+  if(!save()){
+    Object.keys(it).forEach(k => { if(!(k in snapshot)) delete it[k]; });
+    Object.assign(it, snapshot);
+    resync();
+    return;
+  }
+
+  render();
+  updateQuickViewSavings(it.id);
+  toast("Đã xóa mục tiêu tiết kiệm.");
+}
+
 function openQuickView(id, opener){
   // Không bao giờ chồng modal: form Thêm/Sửa đang mở thì bỏ qua
   if($("dlg").open) return;
@@ -3665,6 +3888,8 @@ function openQuickView(id, opener){
 
   qv.dataset.id = it.id;
   updateQuickViewPurchase(it.id);
+  // V16.1 F5 — nạp mục tiêu tiết kiệm của đúng món này khi mở.
+  updateQuickViewSavings(it.id);
   // Chỉ trả focus về opener nếu node đó còn tồn tại sau khi re-render
   qvOpener = (opener && opener.isConnected) ? opener : null;
   qv.showModal();
@@ -4157,6 +4382,77 @@ function syncPurchaseSection(){
   section.classList.toggle("hidden", !isPurchased);
 }
 
+/* V16.1 F5.2 — read a (goal, saved) pair out of two inputs.
+   Runs once for the form and once for the Quick View, so the two surfaces
+   cannot validate differently. "0" in the goal field is not an error: it is
+   the user saying "no goal", which is exactly what setSavingsFields() and the
+   importer already do with a 0. Anything else unusable IS an error and comes
+   back with the field to focus, so nothing is written half-validated. */
+function readSavingsInputs(goalEl, savedEl){
+  const raw = (el) => (el && typeof el.value === "string" ? el.value.trim() : "");
+  const goalRaw = raw(goalEl);
+  const savedRaw = raw(savedEl);
+
+  let goal = null;
+  if(goalRaw !== ""){
+    goal = validSavingGoal(goalRaw);
+    if(goal === null && Number(goalRaw) !== 0){
+      return {
+        goal: null, saved: null, field: goalEl,
+        message: "Mục tiêu tiết kiệm phải là số lớn hơn 0 và không quá lớn. Nhập 0 nghĩa là không đặt mục tiêu."
+      };
+    }
+  }
+
+  let saved = null;
+  if(savedRaw !== ""){
+    saved = validSavedAmount(savedRaw);
+    if(saved === null){
+      return {
+        goal: null, saved: null, field: savedEl,
+        message: "Số đã để dành phải là số không âm và không quá lớn."
+      };
+    }
+  }
+
+  return { goal: goal, saved: saved, field: null, message: "" };
+}
+
+/* V16.1 F5.2 — bản xem trước tiến độ trong form.
+   Chỉ hiện khi có mục tiêu hợp lệ > 0: không có mục tiêu thì không có gì để
+   so, và một thanh "0/0" sẽ là một con số giả. Số đã để dành khi bỏ trống
+   được đọc là 0 (chưa ghi nhận), KHÔNG phải giá bán. */
+function syncFormSavingsPreview(){
+  const preview = $("fSavingPreview");
+  const track = $("fSavingTrack");
+  const fill = $("fSavingFill");
+  const text = $("fSavingText");
+  if(!preview || !track || !fill || !text) return;
+
+  const goal = validSavingGoal($("fSavingGoal").value);
+  const typedSaved = validSavedAmount($("fSavedAmount").value);
+  const saved = typedSaved === null ? 0 : typedSaved;
+
+  if(goal === null){
+    preview.hidden = true;
+    fill.style.setProperty("--savings-fill", "0");
+    return;
+  }
+
+  preview.hidden = false;
+  const ratio = Math.max(0, Math.min(1, saved / goal));
+  const percent = Math.round(ratio * 100);
+  fill.style.setProperty("--savings-fill", String(ratio));
+  track.setAttribute("aria-valuenow", String(percent));
+  track.setAttribute(
+    "aria-valuetext",
+    percent + "% — " + fmtMoney(saved) + " trên " + fmtMoney(goal)
+  );
+  text.textContent = saved >= goal
+    ? "Đã đạt mục tiêu tiết kiệm (" + fmtMoney(saved) + " trên " + fmtMoney(goal) + ")."
+    : "Còn thiếu " + fmtMoney(goal - saved) + " để đạt " + fmtMoney(goal) + ".";
+}
+
 function openForm(item, draft = null){
   const editing = !!item;
   const values = item || draft || {};
@@ -4173,7 +4469,12 @@ function openForm(item, draft = null){
   // Để trống khi chưa có dữ liệu: món cũ mua từ trước F2 không được gán ngày giả.
   $("fPaidAmount").value = editing && readPaidAmount(item) !== null ? String(readPaidAmount(item)) : "";
   $("fPurchasedAt").value = editing ? epochToDateInput(readPurchasedAt(item)) : "";
+  // V16.1 F5 — mục tiêu tiết kiệm: để trống khi chưa có dữ liệu. Ô nhập được
+  // nạp đúng giá trị đang lưu, nên bỏ trống thật sự là người dùng đã xóa.
+  $("fSavingGoal").value = editing && readSavingGoal(item) !== null ? String(readSavingGoal(item)) : "";
+  $("fSavedAmount").value = editing && readSavedAmount(item) !== null ? String(readSavedAmount(item)) : "";
   syncPurchaseSection();
+  syncFormSavingsPreview();
   pendingDataUrl        = editing && /^data:/.test(item.image || "") ? item.image : "";
   $("fFile").value      = "";
   setFileError("");
@@ -4428,6 +4729,9 @@ function init(){
   $("qvClose").addEventListener("click", closeQuickView);
   $("qvBack").addEventListener("click", closeQuickView);
   $("qvEdit").addEventListener("click", editFromQuickView);
+  // V16.1 F5 — quản lý tiết kiệm ngay trong Quick View (không mở dialog chồng).
+  $("qvSavingsSave").addEventListener("click", saveQuickViewSavings);
+  $("qvSavingsReset").addEventListener("click", resetQuickViewSavings);
   // V16 — ESC cũng phải chạy animation thoát (dialog gốc đóng tức thì).
   // Sự kiện "close" bên dưới vẫn lo việc trả focus.
   $("qv").addEventListener("cancel", (event) => {
@@ -4606,6 +4910,17 @@ function init(){
       }
     }
 
+    // V16.1 F5 — mục tiêu tiết kiệm. Độc lập với trạng thái: món có thể được
+    // đặt mục tiêu TRƯỚC khi mua, và việc mua không xóa số đã để dành. Bỏ trống
+    // = không ghi trường (không ghi 0, không lấy giá sản phẩm làm số tiết kiệm).
+    const savingsIn = readSavingsInputs($("fSavingGoal"), $("fSavedAmount"));
+    if(savingsIn.field){
+      toast(savingsIn.message);
+      savingsIn.field.focus(); return;
+    }
+    const savingGoal = savingsIn.goal;
+    const savedAmount = savingsIn.saved;
+
     const backup = items.slice();
     if(id){
       const i = items.findIndex(x => x.id === id);
@@ -4625,6 +4940,10 @@ function init(){
           // Rời khỏi "Đã mua" thì dữ liệu mua hàng không còn nghĩa.
           clearPurchaseFields(next);
         }
+        // V16.1 F5 — mục tiêu tiết kiệm độc lập với trạng thái, nên được ghi
+        // ở cả hai nhánh và KHÔNG bị xóa khi rời "Đã mua". Ô nhập đã được nạp
+        // giá trị đang lưu, nên để trống ở đây là người dùng đã xóa thật.
+        setSavingsFields(next, { savingGoal: savingGoal, savedAmount: savedAmount });
         items[i] = next;
       }
     }else{
@@ -4633,6 +4952,7 @@ function init(){
       if(data.status === "purchased"){
         setPurchaseFields(fresh, { paidAmount: paidAmount, purchasedAt: purchasedAt, previousStatus: DEFAULT_STATUS });
       }
+      setSavingsFields(fresh, { savingGoal: savingGoal, savedAmount: savedAmount });
       items.push(fresh);
     }
     // Bug 1: luu that bai thi khoi phuc du lieu cu va khong bao thanh cong
@@ -4655,9 +4975,16 @@ function init(){
       );
     });
 
+  // V16.1 F5.2 — bản xem trước tiến độ tiết kiệm cập nhật ngay khi gõ, không
+  // chờ Lưu: người dùng thấy trước mình còn thiếu bao nhiêu.
+  ["fSavingGoal","fSavedAmount"].forEach(id => {
+    const el = $(id);
+    if(el) el.addEventListener("input", syncFormSavingsPreview);
+  });
+
   $("btnClearFilter").addEventListener("click", () => {
     $("q").value = ""; $("fStatus").value = ""; $("fPriority").value = "";
-    $("fCategoryFilter").value = ""; $("fSort").value = "newest";
+    $("fCategoryFilter").value = ""; $("fSavings").value = ""; $("fSort").value = "newest";
     // "Xóa bộ lọc" là nút xóa-tất-cả, nên tab nhanh cũng phải về "Tất cả".
     purchaseTab = "all";
     syncPurchaseTabButtons();

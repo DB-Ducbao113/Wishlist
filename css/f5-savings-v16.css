@@ -1,0 +1,458 @@
+/* =====================================================================
+   DREAM VAULT V16.1 — F5 SAVINGS & PRODUCT INTELLIGENCE
+   ---------------------------------------------------------------------
+   Additive only. The brand palette stays in dreamscape-v5-tokens.css and
+   the dashboard roles stay in dashboard-v16.css, so every value below is
+   one of those tokens (--dv-*). This file names no new colour, adds no
+   font, and ships no chart: a savings bar is the same lavender bar the F3
+   breakdown already draws, and the only motion is the dashboard's own
+   240 ms fade (dvFadeOnce) plus a transform transition on the fills.
+
+   Four surfaces:
+     1. savings progress preview inside the Add/Edit form
+     2. savings block inside the Quick View
+     3. savings overview widget on the dashboard      (F5.3)
+     4. "Nên xem tiếp" shortlist                       (F5.4)
+
+   Everything is a fluid single column by 320px; every bar is
+   overflow:hidden with a scaleX() fill, so a long money string can widen a
+   text line but never the panel.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. FORM — SAVINGS PROGRESS PREVIEW
+   Only rendered while a valid goal (> 0) is in the field; without a goal
+   there is nothing honest to compare, so the block stays [hidden].
+--------------------------------------------------------------------- */
+
+.savings-preview {
+  margin-top: var(--dv-gap-2);
+}
+
+.savings-preview[hidden] {
+  display: none;
+}
+
+.savings-preview__track {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.savings-preview__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  /* scaleX() instead of width: the fill runs on the compositor, and the
+     parent already clips, so the rounding stays correct. */
+  transform-origin: left center;
+  transform: scaleX(var(--savings-fill, 0));
+  background: linear-gradient(90deg, var(--dv-chart-1), var(--dv-chart-3));
+  transition: transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.savings-preview__text {
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--dv-ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------------------
+   2. QUICK VIEW — SAVINGS BLOCK
+   Read the progress, set or change the goal, record an amount, reset after
+   a confirmation. Recording savings is never shown as buying the item, so
+   the "đã đạt mục tiêu" badge is deliberately a savings badge and not a
+   purchase state.
+--------------------------------------------------------------------- */
+
+.quick-view__savings {
+  margin: 4px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(104, 80, 188, .16);
+}
+
+.qv-savings__summary {
+  margin-top: 10px;
+}
+
+.qv-savings__figures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.qv-savings__saved {
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #6850bc;
+  font-variant-numeric: tabular-nums;
+}
+
+.qv-savings__of {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9a93ad;
+}
+
+.qv-savings__goal {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4a4460;
+  font-variant-numeric: tabular-nums;
+}
+
+.qv-savings__badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(47, 125, 91, .14);
+  color: var(--dv-positive);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.qv-savings__track {
+  height: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .12);
+}
+
+.qv-savings__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transform-origin: left center;
+  transform: scaleX(var(--savings-fill, 0));
+  background: linear-gradient(90deg, #6850bc, #a88bf7);
+  transition: transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.qv-savings__remaining {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  font-weight: 650;
+  line-height: 1.5;
+  color: #4a4460;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.qv-savings__empty {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #9a93ad;
+}
+
+.qv-savings__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.qv-savings__field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+}
+
+.qv-savings__field label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #625979;
+}
+
+.qv-savings__field input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid rgba(104, 80, 188, .28);
+  border-radius: 12px;
+  background: #fff;
+  color: #19152c;
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.qv-savings__field input:focus-visible {
+  outline: 2px solid #6850bc;
+  outline-offset: 2px;
+}
+
+.qv-savings__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* The two actions stay a comfortable 44px target without competing with the
+   panel's primary CTA. */
+.qv-savings__actions .quick-view__btn {
+  min-height: 44px;
+  flex: 1 1 auto;
+}
+
+/* ---------------------------------------------------------------------
+   3. DASHBOARD — SAVINGS OVERVIEW + "NÊN XEM TIẾP"
+   Two more cards in the same surface family as .dv-breakdown / .dv-priority.
+   auto-fit (not a fixed 2-column track) is what makes a single visible
+   widget stretch across the row instead of leaving an empty column behind:
+   a [hidden] sibling is display:none and therefore simply not counted.
+--------------------------------------------------------------------- */
+
+.dv-grid--f5 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+
+@media (min-width: 900px) {
+  .dv-grid--f5 {
+    gap: var(--dv-gap-4);
+  }
+}
+
+.dv-savings,
+.dv-insights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-2);
+  height: 100%;
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+/* A hidden panel must not leave its half of the grid behind. */
+.dv-savings[hidden],
+.dv-insights[hidden] {
+  display: none;
+}
+
+.dv-savings__head,
+.dv-insights__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-savings__title,
+.dv-insights__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-savings__hint,
+.dv-insights__hint {
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-muted);
+}
+
+/* ---- Savings overview rows ---------------------------------------- */
+
+.dv-savings__bar {
+  display: block;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-savings__bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--dv-fill, 0));
+  background: linear-gradient(90deg, var(--dv-chart-1), var(--dv-chart-3));
+  transition: transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-savings__rows,
+.dv-insights__rows {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+
+.dv-savings__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name value"
+    "note note";
+  align-items: baseline;
+  gap: 3px var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--dv-radius-inner);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-savings__name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-savings__value {
+  grid-area: value;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dv-accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-savings__note {
+  grid-area: note;
+  min-width: 0;
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-muted);
+  overflow-wrap: anywhere;
+}
+
+/* ---- "Nên xem tiếp" rows ------------------------------------------ */
+
+.dv-insights__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name   price"
+    "reason go";
+  align-items: baseline;
+  gap: 3px var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-insights__name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-insights__price {
+  grid-area: price;
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-insights__reason {
+  grid-area: reason;
+  min-width: 0;
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-accent);
+  overflow-wrap: anywhere;
+}
+
+/* The visible "Xem món" affordance. The whole row is the button, so this is
+   a label rather than a nested control. */
+.dv-insights__go {
+  grid-area: go;
+  font-size: var(--dv-text-caption);
+  font-weight: 800;
+  color: var(--dv-ink);
+  white-space: nowrap;
+}
+
+.dv-insights__row:hover .dv-insights__go,
+.dv-insights__row:focus-visible .dv-insights__go {
+  color: var(--dv-accent);
+}
+
+/* ---- Empty copy (only ever visible when the panel itself is visible) */
+
+.dv-savings__empty,
+.dv-insights__empty {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.6;
+  color: var(--dv-muted);
+}
+
+/* ---- Shared row states -------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-savings__row:hover {
+    background: var(--dv-surface-2);
+  }
+
+  .dv-insights__row:hover {
+    border-color: var(--dv-accent);
+    background: var(--dv-surface-2);
+  }
+}
+
+.dv-savings__row:focus-visible,
+.dv-insights__row:focus-visible {
+  outline: 2px solid var(--dv-accent);
+  outline-offset: 2px;
+}
+
+/* ---- Reduced motion ------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .savings-preview__fill,
+  .qv-savings__fill,
+  .dv-savings__bar-fill,
+  .dv-savings__row,
+  .dv-insights__row {
+    transition: none !important;
+  }
+}
