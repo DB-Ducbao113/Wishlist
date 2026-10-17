@@ -675,6 +675,32 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   </div><!-- /.dv-col--progress -->
 
+  <div class="dv-col dv-col--dist">
+
+    <!-- V16.1 F3.3 — Status distribution. Built from the same `items` array as
+         every other number here; there is no second tally anywhere.
+         Each legend row is a real <button> that only SETS the existing status
+         filter — it never edits an item. Colour is never the only signal: the
+         row carries its label, its count and its share as text, and the
+         selected state is carried by aria-pressed as well. -->
+    <section class="dv-dist" id="dvDist" aria-labelledby="dvDistTitle">
+      <div class="dv-dist__head">
+        <h3 class="dv-dist__title" id="dvDistTitle">Phân bố trạng thái</h3>
+        <span class="dv-dist__total" id="dvDistTotal">0 món</span>
+      </div>
+
+      <div class="dv-dist__bar" id="dvDistBar" role="img"
+           aria-label="Phân bố trạng thái: chưa có món nào"></div>
+
+      <ul class="dv-dist__legend" id="dvDistLegend"></ul>
+
+      <p class="dv-dist__empty" id="dvDistEmpty">
+        Chưa có món nào để phân bố.
+      </p>
+    </section>
+
+  </div><!-- /.dv-col--dist -->
+
 </div><!-- /.dv-grid--split -->
 
 </section>
@@ -685,6 +711,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   id="collection"
   class="panel collection-panel collection-panel--v3 v11-rail"
   aria-labelledby="collection-controls-title"
+  tabindex="-1"
 >
 
   <div class="collection-panel__heading" data-dv-section>
@@ -1850,6 +1877,146 @@ function renderDashboardMetrics(m){
 }
 
 /* ===================================================================
+   V16.1 F3.3 — PHÂN BỐ TRẠNG THÁI
+   -------------------------------------------------------------------
+   Bốn trạng thái luôn có mặt trong chú giải, kể cả khi đếm bằng 0, theo
+   đúng thứ tự "càng về sau càng sang phải" của STATUSES. Trạng thái không
+   nhận ra (dữ liệu cũ trong localStorage) gộp thành một dòng "Chưa xác
+   định" không bấm được — không có bộ lọc nào cho nó, nên nó không giả vờ
+   là bấm được.
+
+   Dấu vân tay bên dưới khiến việc gõ tìm kiếm không dựng lại DOM của khối
+   này, và cũng không làm mất focus đang nằm trong chú giải.
+   =================================================================== */
+let dvDistSignature = "";
+
+function dvCell(className, text){
+  const el = document.createElement("span");
+  el.className = className;
+  el.textContent = text;
+  return el;
+}
+
+function dvSwatch(statusKey){
+  const el = document.createElement("span");
+  el.className = "dv-dist__swatch";
+  el.setAttribute("aria-hidden", "true");
+  if(statusKey) el.dataset.status = statusKey;
+  return el;
+}
+
+function renderDashboardStatus(m){
+  const bar = $("dvDistBar");
+  const legend = $("dvDistLegend");
+  const empty = $("dvDistEmpty");
+  const total = $("dvDistTotal");
+  if(!bar || !legend || !empty || !total) return;
+
+  const counts = {};
+  STATUSES.forEach(s => { counts[s.key] = 0; });
+  for(const it of items){
+    const key = it && it.status;
+    if(key && Object.prototype.hasOwnProperty.call(counts, key)) counts[key]++;
+  }
+
+  const classified = STATUSES.reduce((sum, s) => sum + counts[s.key], 0);
+  const unclassified = Math.max(0, m.totalCount - classified);
+  const active = $("fStatus") ? $("fStatus").value : "";
+
+  const signature = STATUSES.map(s => s.key + ":" + counts[s.key]).join("|") +
+    "|u:" + unclassified + "|t:" + m.totalCount + "|a:" + active;
+  if(signature === dvDistSignature) return;
+  dvDistSignature = signature;
+
+  setDashText(total, m.totalCount + " món");
+
+  // Rỗng thì không chia cho 0, và cũng không vẽ một thanh rỗng vô nghĩa.
+  if(m.totalCount === 0){
+    bar.hidden = true;
+    legend.hidden = true;
+    empty.hidden = false;
+    bar.replaceChildren();
+    legend.replaceChildren();
+    bar.setAttribute("aria-label", "Phân bố trạng thái: chưa có món nào");
+    return;
+  }
+
+  bar.hidden = false;
+  legend.hidden = false;
+  empty.hidden = true;
+
+  // Thanh phân đoạn: flex-grow bằng đúng số đếm nên tỷ lệ chính xác, không bị
+  // sai lệch do làm tròn phần trăm hiển thị.
+  const segments = [];
+  const described = [];
+  STATUSES.forEach(s => {
+    const count = counts[s.key];
+    if(count <= 0) return;
+    const seg = document.createElement("span");
+    seg.className = "dv-dist__seg";
+    seg.dataset.status = s.key;
+    seg.style.flexGrow = String(count);
+    seg.setAttribute("aria-hidden", "true");
+    segments.push(seg);
+    described.push(s.label + " " + count + " món, " + shareOf(count, m.totalCount) + "%");
+  });
+  if(unclassified > 0){
+    const seg = document.createElement("span");
+    seg.className = "dv-dist__seg dv-dist__seg--other";
+    seg.style.flexGrow = String(unclassified);
+    seg.setAttribute("aria-hidden", "true");
+    segments.push(seg);
+    described.push("Chưa xác định " + unclassified + " món, " +
+      shareOf(unclassified, m.totalCount) + "%");
+  }
+  bar.replaceChildren(...segments);
+  bar.setAttribute("aria-label", "Phân bố trạng thái: " + described.join("; "));
+
+  // Chú giải: mỗi dòng là một nút thật, chỉ ĐẶT bộ lọc trạng thái. Tên đọc
+  // lên đã gồm nhãn + số món + tỷ lệ, nên màu sắc không bao giờ là dấu hiệu
+  // duy nhất; aria-pressed mang trạng thái đang chọn.
+  const rows = STATUSES.map(s => {
+    const count = counts[s.key];
+    const li = document.createElement("li");
+    li.className = "dv-dist__legend-item";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dv-dist__item";
+    btn.dataset.status = s.key;
+    btn.setAttribute("aria-pressed", active === s.key ? "true" : "false");
+    btn.append(
+      dvSwatch(s.key),
+      dvCell("dv-dist__name", s.label),
+      dvCell("dv-dist__count", count + " món"),
+      dvCell("dv-dist__share", shareOf(count, m.totalCount) + "%")
+    );
+
+    li.appendChild(btn);
+    return li;
+  });
+
+  if(unclassified > 0){
+    const li = document.createElement("li");
+    li.className = "dv-dist__legend-item";
+
+    const row = document.createElement("span");
+    row.className = "dv-dist__item dv-dist__item--static";
+    row.append(
+      dvSwatch(""),
+      dvCell("dv-dist__name", "Chưa xác định"),
+      dvCell("dv-dist__count", unclassified + " món"),
+      dvCell("dv-dist__share", shareOf(unclassified, m.totalCount) + "%")
+    );
+
+    li.appendChild(row);
+    rows.push(li);
+  }
+
+  legend.replaceChildren(...rows);
+}
+
+/* ===================================================================
    LOC + SAP XEP
    =================================================================== */
 
@@ -1878,6 +2045,61 @@ function setPurchaseTab(tab){
   purchaseTab = PURCHASE_TABS.includes(tab) ? tab : "all";
   syncPurchaseTabButtons();
   renderImmediately();
+}
+
+/* ===================================================================
+   V16.1 F3 — ĐIỀU HƯỚNG TỪ DASHBOARD XUỐNG BỘ SƯU TẬP
+   -------------------------------------------------------------------
+   Mọi lối tắt trên dashboard (phân bố trạng thái, danh mục, mức ưu tiên,
+   thao tác nhanh) đều đi qua đúng hai hàm dưới đây. Chúng chỉ ĐẶT bộ lọc
+   đang có rồi cuộn tới vùng kết quả: không sửa món nào, không đổi trạng
+   thái mua, và tuyệt đối không tự mua món nào.
+   =================================================================== */
+
+// Tỷ lệ phần trăm an toàn: danh sách rỗng trả 0, không bao giờ NaN.
+function shareOf(count, total){
+  if(!total || !Number.isFinite(total)) return 0;
+  return Math.round(count / total * 100);
+}
+
+function dashboardScrollToCollection(){
+  const target = $("collection");
+  if(!target) return;
+
+  const reduce = typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({
+    behavior: reduce ? "auto" : "smooth",
+    block: "start"
+  });
+
+  // Đưa focus tới vùng kết quả: người dùng bàn phím không bị bỏ quên ở
+  // dashboard sau khi trang tự cuộn. preventScroll để không cuộn hai lần.
+  try{ target.focus({ preventScroll: true }); }
+  catch(error){ /* trình duyệt cũ hơn: bỏ qua, việc cuộn đã xảy ra */ }
+}
+
+// patch: { status?, priority?, category? } — chỉ đặt đúng những khía cạnh
+// được truyền vào, nên các bộ lọc khác người dùng đang chọn vẫn nguyên vẹn.
+// Trả về số món khớp để nơi gọi phản hồi khi không có kết quả.
+function applyDashboardFilter(patch, emptyMessage){
+  if(!patch) return 0;
+  if(Object.prototype.hasOwnProperty.call(patch, "status"))   $("fStatus").value = patch.status;
+  if(Object.prototype.hasOwnProperty.call(patch, "priority")) $("fPriority").value = patch.priority;
+  if(Object.prototype.hasOwnProperty.call(patch, "category")) $("fCategoryFilter").value = patch.category;
+
+  // Ý định ở đây là "cho tôi xem phần này", nên tab nhanh phải về "Tất cả";
+  // nếu không, chọn "Đã mua" lúc đang ở tab "Chưa mua" sẽ ra rỗng một cách
+  // rất khó hiểu.
+  purchaseTab = "all";
+  syncPurchaseTabButtons();
+
+  renderImmediately();
+
+  const found = visibleItems().length;
+  dashboardScrollToCollection();
+  if(found === 0 && emptyMessage) toast(emptyMessage);
+  return found;
 }
 
 function visibleItems(){
@@ -1998,6 +2220,7 @@ function render(){
   setDashText($("sumCount"), metrics.totalCount + " món");
   renderDashboardProgress(metrics);
   renderDashboardMetrics(metrics);
+  renderDashboardStatus(metrics);
 
   $("resultStatus").textContent =
     "Đang hiển thị " + shown.totalCount + " trên " + metrics.totalCount + " món.";
@@ -3509,6 +3732,28 @@ function init(){
     syncPurchaseTabButtons();
     renderImmediately();
   });
+
+  // V16.1 F3.3 — chú giải phân bố trạng thái. Uỷ quyền một listener cho cả
+  // danh sách, vì các dòng được dựng lại mỗi khi số liệu đổi. Bấm lần nữa vào
+  // dòng đang chọn để bỏ lọc.
+  const distLegend = $("dvDistLegend");
+  if(distLegend){
+    distLegend.addEventListener("click", (event) => {
+      const btn = event.target && event.target.closest
+        ? event.target.closest(".dv-dist__item[data-status]")
+        : null;
+      if(!btn) return;
+
+      const status = STATUSES.find(s => s.key === btn.dataset.status);
+      if(!status) return;
+
+      const already = $("fStatus").value === status.key;
+      applyDashboardFilter(
+        { status: already ? "" : status.key },
+        already ? "" : "Không có món nào ở trạng thái “" + status.label + "”."
+      );
+    });
+  }
 
   $("btnExport").addEventListener("click", exportJson);
   $("btnImport").addEventListener("click", () => $("importFile").click());

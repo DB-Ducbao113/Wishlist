@@ -440,3 +440,204 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
   }
 }
 
+/* =====================================================================
+   V16.1 F3.3 — STATUS DISTRIBUTION
+   ---------------------------------------------------------------------
+   A segmented bar plus a legend. The bar is role="img" with a full text
+   alternative, every legend row is a real <button> with aria-pressed, and
+   the row text (label + count + share) carries the meaning — the swatch is
+   decorative. Segment colours reuse --dv-status-*, the same values the
+   status badges on the cards already use, so the chart and the cards speak
+   one colour language instead of two.
+   ===================================================================== */
+
+.dv-dist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-2);
+  height: 100%;
+  margin-top: 0;
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-dist__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-dist__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-dist__total {
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dv-dist__bar {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-dist__seg {
+  flex: 0 1 0%;
+  min-width: 4px;
+  border-radius: var(--dv-radius-pill);
+  transition: flex-grow var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-dist__seg[data-status="wish"]      { background: var(--dv-status-wish); }
+.dv-dist__seg[data-status="saving"]    { background: var(--dv-status-saving); }
+.dv-dist__seg[data-status="ordered"]   { background: var(--dv-status-ordered); }
+.dv-dist__seg[data-status="purchased"] { background: var(--dv-status-purchased); }
+.dv-dist__seg--other                   { background: var(--dv-mist); }
+
+.dv-dist__legend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dv-dist__legend-item {
+  min-width: 0;
+}
+
+.dv-dist__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+/* The "unclassified" row has no filter behind it, so it is a plain row and
+   does not pretend to be clickable. */
+.dv-dist__item--static {
+  cursor: default;
+}
+
+.dv-dist__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--dv-mist);
+}
+
+.dv-dist__swatch[data-status="wish"]      { background: var(--dv-status-wish); }
+.dv-dist__swatch[data-status="saving"]    { background: var(--dv-status-saving); }
+.dv-dist__swatch[data-status="ordered"]   { background: var(--dv-status-ordered); }
+.dv-dist__swatch[data-status="purchased"] { background: var(--dv-status-purchased); }
+
+.dv-dist__name {
+  min-width: 0;
+  font-weight: 700;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-dist__count,
+.dv-dist__share {
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-dist__share {
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Selected state: surface + border + weight, never colour alone — and
+   aria-pressed="true" carries the same fact for assistive tech. */
+.dv-dist__item[aria-pressed="true"] {
+  border-color: var(--dv-accent);
+  background: rgba(104, 80, 188, .09);
+}
+
+.dv-dist__item[aria-pressed="true"] .dv-dist__name {
+  color: var(--dv-accent);
+}
+
+.dv-dist__item[aria-pressed="true"] .dv-dist__count,
+.dv-dist__item[aria-pressed="true"] .dv-dist__share {
+  color: var(--dv-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-dist__item:not(.dv-dist__item--static):hover {
+    background: var(--dv-surface-2);
+  }
+
+  .dv-dist__item[aria-pressed="true"]:hover {
+    background: rgba(104, 80, 188, .14);
+  }
+}
+
+.dv-dist__item:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 1px;
+}
+
+.dv-dist__empty {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.6;
+  color: var(--dv-muted);
+}
+
+/* A class selector would otherwise beat the UA [hidden] rule. */
+.dv-dist__bar[hidden],
+.dv-dist__legend[hidden],
+.dv-dist__empty[hidden] {
+  display: none;
+}
+
+/* The dashboard short-cut scrolls the collection into view and moves focus
+   there. The panel must not grow a ring for a programmatic move, but a
+   keyboard user should still see where focus went. */
+#collection[tabindex="-1"]:focus {
+  outline: none;
+}
+
+#collection[tabindex="-1"]:focus-visible {
+  outline: 2px solid var(--dv-accent);
+  outline-offset: 4px;
+  border-radius: var(--dv-radius-card);
+}
+
