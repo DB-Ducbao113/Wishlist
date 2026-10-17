@@ -630,11 +630,13 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   <div class="dv-metrics__item">
     <dt class="dv-metrics__label">Chi tiêu thực tế đã ghi nhận</dt>
     <dd class="dv-metrics__value" id="dvActualSpent">0</dd>
+    <dd class="dv-metrics__hint">Chỉ cộng những món bạn đã nhập giá thực tế.</dd>
   </div>
 
   <div class="dv-metrics__item">
     <dt class="dv-metrics__label">Món đã mua chưa nhập giá thực tế</dt>
     <dd class="dv-metrics__value" id="dvUnpriced">0 món</dd>
+    <dd class="dv-metrics__hint">Đã mua nhưng chưa ghi giá thực tế.</dd>
   </div>
 </dl>
 
@@ -1762,6 +1764,27 @@ function filteredMetrics(){
   return computeMetrics(visibleItems());
 }
 
+// V16.1 F3.2 — chỉ ghi vào DOM khi giá trị THẬT SỰ đổi.
+// render() cũng chạy khi người dùng đang gõ tìm kiếm (debounce 120ms), nên ghi
+// lại những con số không đổi vừa tốn style recalc vừa khiến trình đọc màn hình
+// đọc lại vô ích. Đây là hàng rào duy nhất và dùng chung cho mọi chỉ số dashboard.
+const dvTextCache = new WeakMap();
+
+function setDashText(el, text){
+  if(!el) return false;
+  if(dvTextCache.get(el) === text) return false;
+  dvTextCache.set(el, text);
+  el.textContent = text;
+  return true;
+}
+
+function setDashAttr(el, name, value){
+  if(!el) return false;
+  if(el.getAttribute(name) === value) return false;
+  el.setAttribute(name, value);
+  return true;
+}
+
 // V16.1 — đổ metrics vào khối Ownership Progress. Chịu được thiếu phần tử
 // (dashboard có thể được dựng lại ở F2) và không bao giờ hiện NaN.
 function renderDashboardProgress(m){
@@ -1773,18 +1796,21 @@ function renderDashboardProgress(m){
 
   const percent = m.totalCount === 0 ? 0 : Math.round(m.progress * 100);
 
+  // Hình học thì luôn đặt lại: rẻ, và bảo đảm đúng sau khi tab bị ẩn/hiện.
   fill.style.width = percent + "%";
-  value.textContent = percent + "%";
 
-  track.setAttribute("aria-valuenow", String(percent));
-  track.setAttribute(
+  setDashText(value, percent + "%");
+
+  setDashAttr(track, "aria-valuenow", String(percent));
+  setDashAttr(
+    track,
     "aria-valuetext",
     percent + "% — " + m.ownedCount + " trên " + m.totalCount + " món đã sở hữu"
   );
 
-  caption.textContent = m.totalCount === 0
+  setDashText(caption, m.totalCount === 0
     ? "Chưa có món nào trong bộ sưu tập."
-    : m.ownedCount + " trên " + m.totalCount + " món đã sở hữu.";
+    : m.ownedCount + " trên " + m.totalCount + " món đã sở hữu.");
 }
 
 // V16.1 F2 — hai chỉ số phụ, cũng tính trên TOÀN BỘ bộ sưu tập.
@@ -1796,26 +1822,28 @@ function renderDashboardMetrics(m){
   if(!spent || !unpriced) return;
 
   if(m.pricedOwnedCount === 0){
-    spent.textContent = "Chưa ghi nhận";
-    spent.setAttribute("data-empty", "true");
+    setDashText(spent, "Chưa ghi nhận");
+    setDashAttr(spent, "data-empty", "true");
   }else{
-    spent.textContent = fmtMoney(m.actualSpent);
+    setDashText(spent, fmtMoney(m.actualSpent));
     spent.removeAttribute("data-empty");
   }
 
-  unpriced.textContent = m.unpricedOwnedCount === 0
+  setDashText(unpriced, m.unpricedOwnedCount === 0
     ? "Không còn món nào"
-    : m.unpricedOwnedCount + " món";
+    : m.unpricedOwnedCount + " món");
 
   // Đọc lên đầy đủ cho trình đọc màn hình, thay vì chỉ "0".
-  spent.setAttribute(
+  setDashAttr(
+    spent,
     "aria-label",
     m.pricedOwnedCount === 0
       ? "Chi tiêu thực tế đã ghi nhận: chưa ghi nhận món nào"
       : "Chi tiêu thực tế đã ghi nhận: " + fmtMoney(m.actualSpent) +
         " trên " + m.pricedOwnedCount + " món"
   );
-  unpriced.setAttribute(
+  setDashAttr(
+    unpriced,
     "aria-label",
     "Món đã mua chưa nhập giá thực tế: " + m.unpricedOwnedCount + " món"
   );
@@ -1963,9 +1991,11 @@ function render(){
   const metrics = globalMetrics();
   const shown = filteredMetrics();
 
-  $("sumTotal").textContent = fmtMoney(metrics.pendingValue);
-  $("sumSpent").textContent = fmtMoney(metrics.ownedValue);
-  $("sumCount").textContent = metrics.totalCount + " món";
+  // V16.1 F3.2 — mọi chỉ số đều ghi qua setDashText(), nên một lần render do
+  // tìm kiếm không chạm vào DOM của dashboard khi con số không đổi.
+  setDashText($("sumTotal"), fmtMoney(metrics.pendingValue));
+  setDashText($("sumSpent"), fmtMoney(metrics.ownedValue));
+  setDashText($("sumCount"), metrics.totalCount + " món");
   renderDashboardProgress(metrics);
   renderDashboardMetrics(metrics);
 

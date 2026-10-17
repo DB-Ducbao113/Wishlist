@@ -182,16 +182,22 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--dv-gap-2);
-  margin: var(--dv-gap-3) 0 0;
+  margin: var(--dv-gap-2) 0 0;
   padding: 0;
 }
 
+/* V16.1 F3.2 — the two secondary figures belong to the same KPI band as the
+   three cards above: same surface, radius and elevation, so all six numbers
+   read as one family instead of "three cards plus two footnotes". */
 .dv-metrics__item {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  padding: var(--dv-gap-2) var(--dv-gap-3);
+  padding: var(--dv-gap-3);
   border: 1px solid var(--dv-border);
   border-radius: var(--dv-radius-inner);
   background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
 }
 
 .dv-metrics__label {
@@ -203,16 +209,36 @@ body.dreamscape-v5 .stats-dashboard .stat-card__label {
 }
 
 .dv-metrics__value {
-  margin: 6px 0 0;
-  font-size: var(--dv-text-value);
-  font-weight: 700;
+  margin: var(--dv-gap-2) 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.015em;
+  line-height: 1.15;
   color: var(--dv-ink);
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 
+/* Recorded spending is one of the two numbers the user came for, so it takes
+   the brand accent. It is still plain text with its label directly above, so
+   colour is never the only thing carrying the meaning. */
+.dv-metrics__item:first-child .dv-metrics__value {
+  color: var(--dv-accent);
+}
+
+/* "Chưa ghi nhận" is a sentence, not a figure: it steps down to muted so it
+   can never be misread as a large amount of money. */
 .dv-metrics__value[data-empty="true"] {
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--dv-muted);
+}
+
+.dv-metrics__hint {
+  margin: var(--dv-gap-1) 0 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.5;
   color: var(--dv-muted);
 }
 
