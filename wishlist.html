@@ -3275,11 +3275,8 @@ function render(){
 
   // V16 — staggered scroll reveal, once per product id: search / filter /
   // render never replay it, but genuinely new items still animate in.
-  console.log("DEBUG render: grid children =", grid.children.length, "DVReveal =", typeof window.DVReveal, "revealedIds =", [...revealedGridIds].join(","));
-  console.log("DBG render children=" + grid.children.length + " DVReveal=" + typeof window.DVReveal + " ids=" + [...revealedGridIds].join(","));
   revealGridCards(grid);
 }
-  console.log("DEBUG after revealGridCards: data-dv-reveal =", grid.querySelector(".wishlist-card") && grid.querySelector(".wishlist-card").hasAttribute("data-dv-reveal"));
 
 /* ==========================================
    V16 — Product card scroll reveal
@@ -4984,6 +4981,13 @@ function init(){
     scheduleWorkspaceIndicator();
   }, { passive: true });
 
+  // V16.2 MOTION-02 — start the hero motion after the page is built. Deferred
+  // via setTimeout so it never competes with the initial render or the cloud
+  // session handshake.
+  if(document.querySelector(".hero--v9")){
+    setTimeout(setupHeroMotion, 120);
+  }
+
   // Font xong (hoặc đổi font/ngôn ngữ) là bề rộng chữ đổi -> đo lại pill.
   if(document.fonts && document.fonts.ready){
     document.fonts.ready.then(scheduleWorkspaceIndicator).catch(() => {});
@@ -5528,6 +5532,133 @@ function applySyncState(kind, email = ""){
 // Pill được định vị tuyệt đối nên không bao giờ tạo layout shift, và hình học
 // được đo lại mỗi khi: đổi mục active, resize, hoặc font tải xong (đổi ngôn
 // ngữ / font làm bề rộng chữ thay đổi).
+// V16.2 MOTION-02 — hero cinematic scroll + pointer depth + magnetic CTA.
+// One rAF for scroll, one rAF per pointer surface. Reduced motion and touch
+// devices are handled inside the setup and by the CSS media queries.
+let heroMotionRaf = null;
+let heroTargetBg = 0, heroTargetMid = 0, heroTargetFg = 0;
+let heroCurrentBg = 0, heroCurrentMid = 0, heroCurrentFg = 0;
+let heroPointerX = 0, heroPointerY = 0, heroPointerCx = 0, heroPointerCy = 0;
+let heroPointerRaf = null;
+let heroCtaX = 0, heroCtaY = 0, heroCtaCx = 0, heroCtaCy = 0;
+let heroCtaRaf = null;
+
+function scheduleHeroMotion(){
+  if(heroMotionRaf !== null) return;
+  heroMotionRaf = requestAnimationFrame(() => {
+    heroMotionRaf = null;
+    const hero = document.querySelector(".hero--v9");
+    if(!hero || !hero.isConnected) return;
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      hero.style.setProperty("--hero-bg-y", "0px");
+      hero.style.setProperty("--hero-mid-y", "0px");
+      hero.style.setProperty("--hero-fg-y", "0px");
+      return;
+    }
+    const rect = hero.getBoundingClientRect();
+    const heroH = rect.height || 1;
+    const progress = Math.max(0, Math.min(1, -rect.top / heroH));
+    heroTargetBg = progress * 12;
+    heroTargetMid = progress * 22;
+    heroTargetFg = progress * 7;
+
+    heroCurrentBg += (heroTargetBg - heroCurrentBg) * 0.14;
+    heroCurrentMid += (heroTargetMid - heroCurrentMid) * 0.14;
+    heroCurrentFg += (heroTargetFg - heroCurrentFg) * 0.14;
+    hero.style.setProperty("--hero-bg-y", heroCurrentBg.toFixed(2) + "px");
+    hero.style.setProperty("--hero-mid-y", heroCurrentMid.toFixed(2) + "px");
+    hero.style.setProperty("--hero-fg-y", heroCurrentFg.toFixed(2) + "px");
+    if(Math.abs(heroTargetBg - heroCurrentBg) > 0.05 ||
+       Math.abs(heroTargetMid - heroCurrentMid) > 0.05 ||
+       Math.abs(heroTargetFg - heroCurrentFg) > 0.05){
+      heroMotionRaf = requestAnimationFrame(() => {
+        heroMotionRaf = null;
+        scheduleHeroMotion();
+      });
+    }
+  });
+}
+
+function setupHeroPointerDepth(){
+  if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const hero = document.querySelector(".hero--v9");
+  const visual = hero && hero.querySelector(".hero__visual");
+  if(!hero || !visual) return;
+
+  const apply = () => {
+    heroPointerCx += (heroPointerX - heroPointerCx) * 0.16;
+    heroPointerCy += (heroPointerY - heroPointerCy) * 0.16;
+    hero.style.setProperty("--hero-pointer-x", heroPointerCx.toFixed(2) + "px");
+    hero.style.setProperty("--hero-pointer-y", heroPointerCy.toFixed(2) + "px");
+    if(Math.abs(heroPointerX - heroPointerCx) > 0.1 || Math.abs(heroPointerY - heroPointerCy) > 0.1){
+      heroPointerRaf = requestAnimationFrame(apply);
+    } else {
+      heroPointerRaf = null;
+    }
+  };
+
+  hero.addEventListener("pointermove", (e) => {
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = hero.getBoundingClientRect();
+    const nx = (e.clientX - rect.left) / rect.width - 0.5;
+    const ny = (e.clientY - rect.top) / rect.height - 0.5;
+    heroPointerX = Math.max(-8, Math.min(8, nx * 8));
+    heroPointerY = Math.max(-8, Math.min(8, ny * 8));
+    if(heroPointerRaf === null) heroPointerRaf = requestAnimationFrame(apply);
+  }, { passive: true });
+
+  const reset = () => {
+    heroPointerX = 0; heroPointerY = 0;
+    if(heroPointerRaf === null) heroPointerRaf = requestAnimationFrame(apply);
+  };
+  hero.addEventListener("pointerleave", reset);
+}
+
+function setupHeroMagneticCta(){
+  if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cta = document.querySelector(".hero-v3__primary");
+  if(!cta) return;
+
+  const apply = () => {
+    heroCtaCx += (heroCtaX - heroCtaCx) * 0.22;
+    heroCtaCy += (heroCtaY - heroCtaCy) * 0.22;
+    cta.style.transform = "translate3d(" + heroCtaCx.toFixed(2) + "px," + heroCtaCy.toFixed(2) + "px,0)";
+    if(Math.abs(heroCtaX - heroCtaCx) > 0.1 || Math.abs(heroCtaY - heroCtaCy) > 0.1){
+      heroCtaRaf = requestAnimationFrame(apply);
+    } else {
+      heroCtaRaf = null;
+    }
+  };
+
+  cta.addEventListener("pointermove", (e) => {
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = cta.getBoundingClientRect();
+    const nx = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+    const ny = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+    heroCtaX = Math.max(-5, Math.min(5, nx * 5));
+    heroCtaY = Math.max(-5, Math.min(5, ny * 5));
+    if(heroCtaRaf === null) heroCtaRaf = requestAnimationFrame(apply);
+  }, { passive: true });
+
+  const reset = () => {
+    heroCtaX = 0; heroCtaY = 0;
+    if(heroCtaRaf === null) heroCtaRaf = requestAnimationFrame(apply);
+  };
+  cta.addEventListener("pointerleave", reset);
+  cta.addEventListener("blur", reset);
+}
+
+function setupHeroMotion(){
+  const hero = document.querySelector(".hero--v9");
+  if(!hero) return;
+  window.addEventListener("scroll", scheduleHeroMotion, { passive: true });
+  scheduleHeroMotion();
+  setupHeroPointerDepth();
+  setupHeroMagneticCta();
+}
+
 let activeWorkspaceNavId = "";
 let workspaceNavIndicatorRaf = null;
 
@@ -5569,6 +5700,15 @@ function syncWorkspaceNav(){
     const rect = collection.getBoundingClientRect();
     if(rect.top <= window.innerHeight * 0.5) active = "collection";
   }
+  // V16.2 MOTION-02 — header elevation on scroll. Decoupled from the active
+  // nav item: the elevation follows the scroll position, not the section in
+  // view, so a page that is scrolled but still shows "top" as active still
+  // elevates.
+  const header = document.querySelector(".site-header");
+  if(header){
+    header.classList.toggle("site-header--scrolled", window.scrollY > 60);
+  }
+
   if(active === activeWorkspaceNavId) return;
   activeWorkspaceNavId = active;
   links.forEach(link => {

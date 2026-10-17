@@ -282,3 +282,73 @@ body.dreamscape-v5 .hero--v9 .hero-v3__primary {
     transform: none !important;
   }
 }
+
+/* =====================================================================
+   V16.2 — Hero cinematic scroll + pointer depth (MOTION-02)
+   Additive only. Three movement depths via the CSS `translate` property
+   (independent of `transform`, so the hero-enter entrance animation keeps
+   ownership of `transform` and the two compose instead of fighting).
+   ===================================================================== */
+
+body.dreamscape-v5 .hero--v9 {
+  --hero-bg-y: 0px;
+  --hero-mid-y: 0px;
+  --hero-fg-y: 0px;
+  --hero-pointer-x: 0px;
+  --hero-pointer-y: 0px;
+  position: relative;
+}
+
+body.dreamscape-v5 .hero--v9::before {
+  content: "";
+  position: absolute;
+  inset: -24px 0 0 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 62% 46% at 50% 32%,
+    rgba(168, 139, 247, .22), transparent 72%);
+  translate: 0 var(--hero-bg-y);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__visual {
+  translate: var(--hero-pointer-x) var(--hero-mid-y);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__content {
+  translate: 0 calc(var(--hero-fg-y) + var(--hero-pointer-y));
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+  transition: background var(--v9-ease) 160ms,
+    box-shadow var(--v9-ease) 160ms;
+  will-change: transform;
+}
+
+.site-header.site-header--scrolled {
+  background: rgba(248, 246, 255, .92);
+  box-shadow: 0 1px 0 rgba(104, 80, 188, .10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9::before,
+  body.dreamscape-v5 .hero--v9 .hero__content,
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    translate: none !important;
+  }
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    transform: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .hero--v9 .hero__visual,
+  body.dreamscape-v5 .hero--v9 .hero__content {
+    translate: none !important;
+  }
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    transform: none !important;
+  }
+}
