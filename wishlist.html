@@ -2605,13 +2605,24 @@ function cycleStatus(id) {
   if (!nx) return;
 
   const previousStatus = it.status;
+  const snapshot = Object.assign({}, it);
 
   // Update application state
   it.status = nx.key;
 
+  // V16.1 F2 — giu nguyen bat bien "truong mua hang chi co tren mon da mua".
+  // Di vong qua chip trang thai van ghi moc quay ve, de Hoan tac chinh xac;
+  // KHONG tu gan gia thuc te hay ngay mua (do la viec cua dialog mua hang).
+  if (nx.key === "purchased") {
+    setPurchaseFields(it, { previousStatus: previousStatus });
+  } else {
+    clearPurchaseFields(it);
+  }
+
   // Persist data before showing celebration
   if (!save()) {
-    it.status = previousStatus;
+    Object.keys(it).forEach(k => { if(!(k in snapshot)) delete it[k]; });
+    Object.assign(it, snapshot);
     resync();
     return;
   }
@@ -2630,13 +2641,6 @@ function cycleStatus(id) {
   toast('Đã chuyển sang "' + nx.label + '".');
 }
 
-// Đánh dấu đã mua trực tiếp + hoàn tác về bước trước trong STATUSES.
-// Không tạo trạng thái dữ liệu mới.
-function statusBefore(it){
-  const i = STATUSES.findIndex(s => s.key === it.status);
-  return i > 0 ? STATUSES[i - 1] : null;
-}
-
 /* ===================================================================
    V16.1 F2 — PURCHASE CAPTURE
    -------------------------------------------------------------------
@@ -2645,6 +2649,9 @@ function statusBefore(it){
    place. Nothing is written until the user confirms, or explicitly
    chooses to skip the price.
 =================================================================== */
+
+// Đánh dấu đã mua trực tiếp + hoàn tác về bước trước trong STATUSES.
+// Không tạo trạng thái dữ liệu mới.
 
 let pdItemId = null;   // món mà dialog đang mở đang hỏi tới
 let pdOpener = null;   // phần tử cần trả focus về khi dialog đóng
@@ -2826,16 +2833,31 @@ function markPurchased(id, opener){
   return openPurchaseDialog(id, opener);
 }
 
+// Hoàn tác: trả về ĐÚNG previousStatus đã lưu (dữ liệu cũ thiếu trường thì lùi
+// một bậc), và xóa paidAmount / purchasedAt / previousStatus của giao dịch vừa
+// hoàn tác. Ảnh, ghi chú, giá dự kiến và liên kết không bị chạm tới, và không
+// món nào khác bị ảnh hưởng.
 function undoPurchased(id){
   const it = items.find(x => x.id === id);
-  if(!it || it.status !== "purchased") return;
-  const prev = statusBefore(it);
-  if(!prev) return;
-  const backup = it.status;
-  it.status = prev.key;
-  if(!save()){ it.status = backup; resync(); return; }
+  if(!it || it.status !== "purchased") return false;
+
+  const restored = restoreStatusKey(it);
+  const snapshot = Object.assign({}, it);
+
+  it.status = restored;
+  clearPurchaseFields(it);
+
+  if(!save()){
+    Object.keys(it).forEach(k => { if(!(k in snapshot)) delete it[k]; });
+    Object.assign(it, snapshot);
+    resync();
+    return false;
+  }
+
   render();
-  toast('Đã hoàn tác "' + it.name + '" về "' + prev.label + '".');
+  updateQuickViewPurchase(id);
+  toast('Đã hoàn tác "' + it.name + '" về "' + findStatus(restored).label + '".');
+  return true;
 }
 
 // V16.1 F2 — khối "Chi tiết mua hàng" chỉ có nghĩa khi trạng thái là Đã mua.
