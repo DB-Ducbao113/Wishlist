@@ -783,8 +783,10 @@ async function s2_undo(browser) {
   await sleep(200);
   await page.evaluate(() => { const id = document.getElementById('qv').dataset.id; });
   // QV was opened for u3 before the state change; refresh it
-  await page.evaluate(() => { closeQuickView(); });
-  await sleep(300);
+  // closeQuickView() returns a Promise that resolves when the exit animation
+  // has actually finished, so awaiting it is deterministic instead of guessing
+  // a sleep that the main thread might not honour under load.
+  await page.evaluate(() => closeQuickView());
   await page.evaluate(() => {
     const el = [...document.querySelectorAll('#grid .wishlist-card')].find(e => e.dataset.id === 'u3');
     el.querySelector('.product-card__view').click();
