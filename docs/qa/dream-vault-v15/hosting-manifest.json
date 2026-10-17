@@ -5,13 +5,13 @@
   "wishlist-cloud.js",
   "css"
  ],
- "fileCount": 55,
- "assetCount": 53,
+ "fileCount": 56,
+ "assetCount": 54,
  "platformFiles": [
   "_headers",
   "_redirects"
  ],
- "totalBytes": 530169,
+ "totalBytes": 573984,
  "files": [
   "_headers",
   "_redirects",
@@ -38,6 +38,7 @@
   "css/editorial-v10-workspace.css",
   "css/empty-state.css",
   "css/f4-interaction-v16.css",
+  "css/f5-savings-v16.css",
   "css/gallery-v2.css",
   "css/gallery-v4.css",
   "css/gallery.css",
