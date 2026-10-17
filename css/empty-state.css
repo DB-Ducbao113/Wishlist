@@ -85,6 +85,22 @@
   border-color: #6252d1;
 }
 
+/* V16.1 F3.6 — P2-2. Measured on the real page: 15px/400 inherited dark text
+   on --color-accent (#7565e8) is 4.4:1, just under the 4.5:1 AA floor for body
+   text. White on the dashboard accent (#6850BC) is 4.9:1, and hovering to
+   #543F9E is 8.1:1. A fixed id selector also means nothing downstream can
+   accidentally repaint it. */
+#emptyAction {
+  background: #6850BC;
+  border-color: #6850BC;
+  color: #FFFFFF;
+}
+
+#emptyAction:hover {
+  background: #543F9E;
+  border-color: #543F9E;
+}
+
 @media (max-width: 640px) {
   #empty.wishlist-empty {
     min-height: 320px;

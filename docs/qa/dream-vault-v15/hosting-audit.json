@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-15T16:56:12.445Z",
+ "generatedAt": "2026-10-17T15:35:57.077Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
-  "publishedFileCount": 751,
-  "leakCount": 647,
+  "publishedFileCount": 1737,
+  "leakCount": 1567,
   "leakedSamples": [
    "docs/design/dream-vault-v11-sprint.md",
    "docs/design/dream-vault-v5-design.md",
@@ -47,18 +47,28 @@
    "docs/qa/dream-vault-v10/img/v10-dashboard-empty.jpg"
   ],
   "leakedCategories": {
-   "docs": 647,
-   "config": 0
+   "docs": 806,
+   "config": 3
   }
  },
  "new": {
-  "config": "public: \"dist\" built by scripts/build-hosting.mjs (explicit allowlist)",
+  "config": "public: \"dist\" built by scripts/build-hosting.mjs (explicit allowlist + generated css/app.css)",
   "distExists": true,
-  "publishedFileCount": 48,
-  "cssCount": 46,
+  "publishedFileCount": 5,
+  "cssCount": 1,
   "missingRuntime": [],
   "leakCount": 0,
-  "leaks": []
+  "leaks": [],
+  "cssInvariant": {
+   "repoStylesheetCount": 52,
+   "linkedStylesheetCount": 52,
+   "everyRepoSheetLinked": true,
+   "appCssExists": true,
+   "appCssByteIdenticalToSourceConcatenation": true,
+   "strayCssFilesPublished": [],
+   "publishedHtmlLinksAppCss": true,
+   "publishedHtmlLinksNoSourceSheet": true
+  }
  },
- "verdict": "PASS — no repo internals published; all runtime assets present"
+ "verdict": "PASS — no repo internals published; all runtime assets present; css/app.css is the exact concatenation of every linked source sheet"
 }

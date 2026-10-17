@@ -1,0 +1,594 @@
+{
+  "generatedAt": "2026-10-17T06:40:17.968Z",
+  "repo": "E:\\Buying Checklist",
+  "pass": 65,
+  "fail": 0,
+  "total": 65,
+  "results": [
+    {
+      "id": "F4-2-01",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "render",
+      "expected": "one card per item",
+      "pass": true,
+      "actual": "5"
+    },
+    {
+      "id": "F4-2-02",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "face w1 (valid link)",
+      "expected": "Xem chi tiết + Mở nơi bán + Đánh dấu đã mua on the face, then the ⋯ disclosure last",
+      "pass": true,
+      "actual": "{\"face\":[\"BUTTON:Xem chi tiết\",\"A:Mở nơi bán\",\"BUTTON:Đánh dấu đã mua\"],\"cardMore\":\"DIV\",\"children\":4}"
+    },
+    {
+      "id": "F4-2-03",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "face w2 (no link)",
+      "expected": "no Mở nơi bán when the URL is absent",
+      "pass": true,
+      "actual": "{\"hasBuy\":false,\"face\":[\"BUTTON:Xem chi tiết\",\"BUTTON:Đánh dấu đã mua\"]}"
+    },
+    {
+      "id": "F4-2-04",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "face hierarchy",
+      "expected": "no status chip / Sửa / Xóa left on the card face",
+      "pass": true,
+      "actual": "[\"BUTTON:Xem chi tiết\",\"A:Mở nơi bán\",\"BUTTON:Đánh dấu đã mua\"]"
+    },
+    {
+      "id": "F4-2-05",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "status readability",
+      "expected": "status + priority still readable as plain badges",
+      "pass": true,
+      "actual": "{\"badges\":2,\"role\":null}"
+    },
+    {
+      "id": "F4-2-06",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "purchased card",
+      "expected": "purchased shows Hoàn tác and keeps its ⋯ menu",
+      "pass": true,
+      "actual": "[\"Sửa\",\"Xóa\"]"
+    },
+    {
+      "id": "F4-2-07",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "trigger target",
+      "expected": "⋯ trigger is at least 44x44",
+      "pass": true,
+      "actual": "{\"x\":588,\"y\":4821,\"w\":44,\"h\":44,\"right\":632,\"bottom\":4865}"
+    },
+    {
+      "id": "F4-2-08",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "panel targets",
+      "expected": "every panel item is at least 44px tall",
+      "pass": true,
+      "actual": "[44,44,44]"
+    },
+    {
+      "id": "F4-2-09",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "panel text fit",
+      "expected": "no panel item clips its own text",
+      "pass": true,
+      "actual": "[0,0,0]"
+    },
+    {
+      "id": "F4-2-10",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "panel closed by default",
+      "expected": "opacity 0 + pointer-events none, but still laid out",
+      "pass": true,
+      "actual": "{\"opacity\":\"0\",\"pe\":\"none\",\"display\":\"flex\",\"open\":\"false\"}"
+    },
+    {
+      "id": "F4-2-11",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "panel geometry",
+      "expected": "the panel stays inside the card surface (never ancestor-clipped)",
+      "pass": true,
+      "actual": "{\"panel\":{\"x\":441,\"y\":4595,\"w\":283,\"h\":154,\"right\":725,\"bottom\":4749},\"surface\":{\"x\":440,\"y\":4187,\"w\":285,\"h\":695,\"right\":726,\"bottom\":4882}}"
+    },
+    {
+      "id": "F4-2-12",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "panel contents",
+      "expected": "status chip (button, role=button) + Sửa + Xóa, and no Quick View button inside",
+      "pass": true,
+      "actual": "[\"BUTTON.badge b-wish status-chip card-more__item:Muốn mua\",\"BUTTON.mini card-more__item:Sửa\",\"BUTTON.mini danger card-more__item:Xóa\"]"
+    },
+    {
+      "id": "F4-2-13",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "legacy selector contract",
+      "expected": "first .mini:not(.danger):not(.mark-purchased):not(.product-card__view) is Sửa",
+      "pass": true,
+      "actual": "\"Sửa\""
+    },
+    {
+      "id": "F4-2-14",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "legacy selector contract",
+      "expected": "the card .mini.danger is the Xóa action",
+      "pass": true,
+      "actual": "\"Xóa\""
+    },
+    {
+      "id": "F4-2-15",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "chip contract",
+      "expected": "the chip is a focusable role=button control",
+      "pass": true,
+      "actual": "{\"tag\":\"BUTTON\",\"role\":\"button\",\"next\":\"Đang để dành\"}"
+    },
+    {
+      "id": "F4-2-16",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "open via ⋯",
+      "expected": "aria-expanded true, panel open and instant, pointer-events auto, and it survives the pointer leaving",
+      "pass": true,
+      "actual": "{\"aria\":\"true\",\"open\":\"true\",\"opacity\":\"1\",\"pe\":\"auto\"}"
+    },
+    {
+      "id": "F4-2-17",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "close via ⋯ again",
+      "expected": "aria-expanded false, panel closed again",
+      "pass": true,
+      "actual": "{\"aria\":\"false\",\"opacity\":\"0\",\"pe\":\"none\"}"
+    },
+    {
+      "id": "F4-2-18",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "Escape",
+      "expected": "closes the panel and returns focus to the ⋯ trigger",
+      "pass": true,
+      "actual": "{\"open\":\"false\",\"opacity\":\"0\",\"pe\":\"none\",\"aria\":\"false\",\"focusIsTrigger\":true}"
+    },
+    {
+      "id": "F4-2-19",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "click outside",
+      "expected": "closes the panel",
+      "pass": true,
+      "actual": "{\"open\":\"false\"}"
+    },
+    {
+      "id": "F4-2-20",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "ArrowDown on ⋯",
+      "expected": "opens the panel and focuses the first item",
+      "pass": true,
+      "actual": "{\"open\":\"true\",\"opacity\":\"1\",\"pe\":\"auto\",\"focusIsFirst\":true,\"focusIndex\":0,\"focusText\":\"Muốn mua\"}"
+    },
+    {
+      "id": "F4-2-21",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "focus ring",
+      "expected": "the focused panel item paints a visible outline",
+      "pass": true,
+      "actual": "{\"outlineStyle\":\"solid\",\"outlineWidth\":\"2px\"}"
+    },
+    {
+      "id": "F4-2-22",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "one menu at a time",
+      "expected": "opening another card closes the previous one",
+      "pass": true,
+      "actual": "{\"openCount\":1,\"w2\":\"true\"}"
+    },
+    {
+      "id": "F4-2-23",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "status chip action",
+      "expected": "cycling changes the chip label and the stored status",
+      "pass": true,
+      "actual": "{\"before\":\"Muốn mua\",\"after\":\"Đang để dành\"}"
+    },
+    {
+      "id": "F4-2-24",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "real mouse click on the chip",
+      "expected": "the hover reveal makes the chip reachable by a genuine mouse click",
+      "pass": true,
+      "actual": "{\"thrown\":\"\",\"text\":\"Đang để dành\"}"
+    },
+    {
+      "id": "F4-2-25",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "Sửa from the panel",
+      "expected": "opens the edit form prefilled with that item",
+      "pass": true,
+      "actual": "{\"dlgOpen\":true,\"name\":\"Loa C\",\"title\":\"Sửa món\"}"
+    },
+    {
+      "id": "F4-2-26",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "delete confirm (dismissed)",
+      "expected": "asks by name and keeps the item",
+      "pass": true,
+      "actual": "{\"ids\":[\"p1\",\"o1\",\"s1\",\"w2\",\"w1\"],\"dialog\":\"Xóa \\\"Ghế D\\\"?\"}"
+    },
+    {
+      "id": "F4-2-27",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "delete confirmed",
+      "expected": "removes exactly that item from the grid and storage",
+      "pass": true,
+      "actual": "{\"ids\":[\"p1\",\"s1\",\"w2\",\"w1\"],\"stored\":[\"w1\",\"w2\",\"s1\",\"p1\"]}"
+    },
+    {
+      "id": "F4-2-28",
+      "section": "A F4.2 CARD",
+      "area": "CARD",
+      "entry": "console",
+      "expected": "no page errors and no console errors in the card scenario",
+      "pass": true,
+      "actual": "{\"pageErrors\":[],\"errors\":[]}"
+    },
+    {
+      "id": "F4-3-01",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "status switcher present",
+      "expected": "one real button per status, current one marked pressed",
+      "pass": true,
+      "actual": "{\"count\":4,\"current\":[\"Muốn mua\"],\"labels\":[\"Muốn mua\",\"Đang để dành\",\"Đã đặt hàng\",\"Đã mua\"]}"
+    },
+    {
+      "id": "F4-3-02",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "status switcher targets",
+      "expected": "every option is at least 40px tall",
+      "pass": true,
+      "actual": "40"
+    },
+    {
+      "id": "F4-3-03",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "QV contract intact",
+      "expected": "title / price / object index still render as before",
+      "pass": true,
+      "actual": "{\"title\":\"Bàn phím B\",\"object\":\"VẬT PHẨM 004 — XEM CHI TIẾT\"}"
+    },
+    {
+      "id": "F4-3-04",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "no link -> no buy",
+      "expected": "a card without a URL hides the buy action",
+      "pass": true,
+      "actual": "false"
+    },
+    {
+      "id": "F4-3-05",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "change status in the QV",
+      "expected": "writes the status, keeps the QV the single open dialog, updates the card",
+      "pass": true,
+      "actual": "{\"qvOpen\":true,\"current\":[\"Đã đặt hàng\"],\"stored\":\"ordered\",\"cardChip\":\"Đã đặt hàng\",\"dialogs\":[\"qv\"]}"
+    },
+    {
+      "id": "F4-3-06",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "purchase from the QV",
+      "expected": "opens the F2 purchase dialog for the same item, without dropping the QV underneath",
+      "pass": true,
+      "actual": "{\"pdOpen\":true,\"qvOpen\":true,\"pdName\":\"Bàn phím B\",\"openIds\":[\"qv\",\"pd\"]}"
+    },
+    {
+      "id": "F4-3-07",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "purchase cancelled",
+      "expected": "cancelling leaves the status untouched",
+      "pass": true,
+      "actual": "{\"pdOpen\":false,\"stored\":\"ordered\"}"
+    },
+    {
+      "id": "F4-3-08",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "QV -> Sửa",
+      "expected": "QV closes, then the prefilled form opens with focus in #fName",
+      "pass": true,
+      "actual": "{\"qvOpen\":false,\"dlgOpen\":true,\"name\":\"Bàn phím B\",\"focusId\":\"fName\",\"focusInDialog\":true}"
+    },
+    {
+      "id": "F4-3-09",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "close returns focus",
+      "expected": "focus goes back to the card control that opened the QV (never lost)",
+      "pass": true,
+      "actual": "{\"qvOpen\":false,\"cls\":\"mini product-card__view\",\"id\":\"\"}"
+    },
+    {
+      "id": "F4-3-10",
+      "section": "B F4.3 QUICK VIEW",
+      "area": "QV",
+      "entry": "console",
+      "expected": "no page or console errors in the Quick View scenario",
+      "pass": true,
+      "actual": "{\"pageErrors\":[],\"errors\":[]}"
+    },
+    {
+      "id": "F4-5-01",
+      "section": "C F4.5 SAFETY",
+      "area": "SAFETY",
+      "entry": "delete feedback",
+      "expected": "the toast offers a real \"Hoàn tác\" action button",
+      "pass": true,
+      "actual": "{\"label\":\"Hoàn tác\",\"text\":\"Đã xóa 1 món.Hoàn tác\"}"
+    },
+    {
+      "id": "F4-5-02",
+      "section": "C F4.5 SAFETY",
+      "area": "SAFETY",
+      "entry": "delete applied",
+      "expected": "the item leaves the grid and storage",
+      "pass": true,
+      "actual": "{\"ids\":[\"p1\",\"o1\",\"w2\",\"w1\"],\"stored\":[\"w1\",\"w2\",\"o1\",\"p1\"]}"
+    },
+    {
+      "id": "F4-5-03",
+      "section": "C F4.5 SAFETY",
+      "area": "SAFETY",
+      "entry": "undo",
+      "expected": "restores exactly the one deleted item, at its original position",
+      "pass": true,
+      "actual": "{\"ids\":[\"p1\",\"o1\",\"s1\",\"w2\",\"w1\"],\"was\":2,\"now\":2}"
+    },
+    {
+      "id": "F4-5-04",
+      "section": "C F4.5 SAFETY",
+      "area": "SAFETY",
+      "entry": "undo is idempotent",
+      "expected": "a double activation never duplicates a card or a stored row",
+      "pass": true,
+      "actual": "{\"ids\":[\"p1\",\"o1\",\"s1\",\"w2\",\"w1\"],\"uniqueCards\":true,\"uniqueStored\":true}"
+    },
+    {
+      "id": "F4-5-05",
+      "section": "C F4.5 SAFETY",
+      "area": "SAFETY",
+      "entry": "sync wording",
+      "expected": "an unsynced session never claims it has synced",
+      "pass": true,
+      "actual": "{\"text\":\"Chỉ lưu trên thiết bị này\",\"state\":\"local\"}"
+    },
+    {
+      "id": "F4-5-06",
+      "section": "C F4.5 SAFETY",
+      "area": "SAFETY",
+      "entry": "console",
+      "expected": "no page or console errors in the safety scenario",
+      "pass": true,
+      "actual": "{\"pageErrors\":[],\"errors\":[]}"
+    },
+    {
+      "id": "F4-4-01",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "phone disclosure",
+      "expected": "the toggle is offered and the panel starts collapsed",
+      "pass": true,
+      "actual": "{\"toggleShown\":true,\"toggleRect\":{\"w\":311,\"h\":48,\"shown\":true},\"ariaExpanded\":\"false\",\"panelShown\":false,\"panelDisplay\":\"none\",\"countText\":\"0\",\"countHidden\":true,\"selectShown\":[{\"w\":0,\"h\":0,\"shown\":false},{\"w\":0,\"h\":0,\"shown\":false},{\"w\":0,\"h\":0,\"shown\":false},{\"w\":0,\"h\":0,\"shown\":false}],\"values\":{\"q\":\"\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\"},\"activeTabs\":[\"all\"],\"cards\":5,\"gridMode\":\"gallery\",\"docOverflow\":0}"
+    },
+    {
+      "id": "F4-4-02",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "badge at rest",
+      "expected": "the count badge is hidden when nothing is filtered",
+      "pass": true,
+      "actual": "{\"text\":\"0\",\"hidden\":true}"
+    },
+    {
+      "id": "F4-4-03",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "open the panel",
+      "expected": "expanding reveals all four selects with real touch targets",
+      "pass": true,
+      "actual": "{\"shown\":true,\"selects\":[{\"w\":151,\"h\":52,\"shown\":true},{\"w\":151,\"h\":52,\"shown\":true},{\"w\":151,\"h\":52,\"shown\":true},{\"w\":151,\"h\":52,\"shown\":true}]}"
+    },
+    {
+      "id": "F4-4-04",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "filter + badge",
+      "expected": "the filter reduces the grid and the badge counts it",
+      "pass": true,
+      "actual": "{\"count\":\"1\",\"cards\":2}"
+    },
+    {
+      "id": "F4-4-05",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "filters survive the view switch",
+      "expected": "priority filter and the quick tab are untouched by Gallery/Focus",
+      "pass": true,
+      "actual": "{\"focus\":{\"q\":\"\",\"status\":\"\",\"priority\":\"high\",\"category\":\"\",\"sort\":\"newest\"},\"back\":{\"q\":\"\",\"status\":\"\",\"priority\":\"high\",\"category\":\"\",\"sort\":\"newest\"},\"mode\":[\"focus\",\"gallery\"]}"
+    },
+    {
+      "id": "F4-4-06",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "quick tab survives too",
+      "expected": "the tab stays selected across a view switch",
+      "pass": true,
+      "actual": "{\"tab\":[\"pending\"],\"afterSwitch\":[\"pending\"]}"
+    },
+    {
+      "id": "F4-4-07",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "clear filters",
+      "expected": "one control resets search, the four selects, the tab and the badge",
+      "pass": true,
+      "actual": "{\"toggleShown\":true,\"toggleRect\":{\"w\":311,\"h\":48,\"shown\":true},\"ariaExpanded\":\"true\",\"panelShown\":true,\"panelDisplay\":\"grid\",\"countText\":\"0\",\"countHidden\":true,\"selectShown\":[{\"w\":151,\"h\":52,\"shown\":true},{\"w\":151,\"h\":52,\"shown\":true},{\"w\":151,\"h\":52,\"shown\":true},{\"w\":151,\"h\":52,\"shown\":true}],\"values\":{\"q\":\"\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\"},\"activeTabs\":[\"all\"],\"cards\":5,\"gridMode\":\"gallery\",\"docOverflow\":0}"
+    },
+    {
+      "id": "F4-4-08",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "dashboard quick action",
+      "expected": "the shortcut sets the status filter and the collapsed badge reports it",
+      "pass": true,
+      "actual": "{\"status\":\"wish\",\"count\":\"1\",\"cards\":2}"
+    },
+    {
+      "id": "F4-4-09-320",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "no horizontal overflow at 320px",
+      "expected": "the toolbar never widens the document",
+      "pass": true,
+      "actual": "0"
+    },
+    {
+      "id": "F4-4-09-375",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "no horizontal overflow at 375px",
+      "expected": "the toolbar never widens the document",
+      "pass": true,
+      "actual": "0"
+    },
+    {
+      "id": "F4-4-09-430",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "no horizontal overflow at 430px",
+      "expected": "the toolbar never widens the document",
+      "pass": true,
+      "actual": "0"
+    },
+    {
+      "id": "F4-4-10",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "console",
+      "expected": "no page or console errors on the phone",
+      "pass": true,
+      "actual": "{\"pageErrors\":[],\"errors\":[]}"
+    },
+    {
+      "id": "F4-4-11",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "desktop unchanged",
+      "expected": "no toggle, all four selects always visible",
+      "pass": true,
+      "actual": "{\"toggle\":false,\"panel\":true,\"selects\":[{\"w\":121,\"h\":54,\"shown\":true},{\"w\":121,\"h\":54,\"shown\":true},{\"w\":121,\"h\":54,\"shown\":true},{\"w\":121,\"h\":54,\"shown\":true}]}"
+    },
+    {
+      "id": "F4-4-12",
+      "section": "D F4.4 COLLECTION",
+      "area": "COLLECTION",
+      "entry": "desktop console",
+      "expected": "no page or console errors on desktop",
+      "pass": true,
+      "actual": "{\"pageErrors\":[],\"errors\":[]}"
+    },
+    {
+      "id": "F4-6-01",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "F4 per-card listener cost (informational)",
+      "expected": "reported, not asserted: the card actions are delegated and must add nothing per card",
+      "pass": true,
+      "actual": "{\"one\":95,\"fifty\":569,\"perCard\":9.67}"
+    },
+    {
+      "id": "F4-6-02",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "F4 adds no per-card listeners",
+      "expected": "the 1 -> 50 item listener growth is no larger than the pre-F4 baseline",
+      "pass": true,
+      "actual": "{\"f4\":474,\"baseline\":1014,\"f4PerCard\":9.67,\"basePerCard\":20.69}"
+    },
+    {
+      "id": "F4-6-03",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "F4 adds no global listeners",
+      "expected": "total listeners at 50 items is not larger than the pre-F4 baseline",
+      "pass": true,
+      "actual": "{\"f4\":569,\"baseline\":1112}"
+    },
+    {
+      "id": "F4-6-04",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "render cost stays inside budget",
+      "expected": "render(50 items) is within 35% (+5ms) of the pre-F4 baseline: the richer card (3 action children + always-laid-out ⋯ panel, 25 vs 20 nodes) costs the measured delta",
+      "pass": true,
+      "actual": "{\"f4RenderMs\":45,\"baselineRenderMs\":40,\"budgetMs\":59,\"f4All\":[45],\"baselineAll\":[40]}"
+    },
+    {
+      "id": "F4-6-05",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "no new long task",
+      "expected": "the 50-card page adds no long task the pre-F4 baseline did not already have (one allowance: F4 sits at the 50ms line, so a marginal second render can tip over)",
+      "pass": true,
+      "actual": "{\"f4Count\":1,\"baselineCount\":1,\"f4Tasks\":[117],\"baselineTasks\":[105]}"
+    },
+    {
+      "id": "F4-6-06",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "panel causes no layout shift",
+      "expected": "opening and closing the ⋯ panel keeps cumulative layout shift at 0",
+      "pass": true,
+      "actual": "{\"shifts\":[],\"cls\":0}"
+    },
+    {
+      "id": "F4-6-07",
+      "section": "E F4.6 PERF",
+      "area": "PERF",
+      "entry": "console",
+      "expected": "no page or console errors at 50 items",
+      "pass": true,
+      "actual": "{\"errors\":[]}"
+    }
+  ]
+}

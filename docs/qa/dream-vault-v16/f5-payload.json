@@ -1,0 +1,273 @@
+{
+ "note": "Byte-exact trees: git -c core.autocrlf=false archive + tar. Raw bytes are the bytes git stores and Cloudflare serves.",
+ "trees": {
+  "f2": {
+   "html": {
+    "file": "wishlist.html",
+    "raw": 133552,
+    "gzip": 39436,
+    "inlineScriptBlocks": 3,
+    "inlineScriptBytes": 96834
+   },
+   "css": {
+    "files": 50,
+    "raw": 290656,
+    "gzip": 81281
+   },
+   "js": {
+    "files": 0,
+    "raw": 0,
+    "gzip": 0,
+    "list": []
+   },
+   "total": {
+    "raw": 424208,
+    "gzip": 120717,
+    "requests": 51
+   },
+   "largestCss": [
+    {
+     "file": "./css/cinematic-v7-mobile.css",
+     "raw": 31028,
+     "gzip": 6060
+    },
+    {
+     "file": "./css/premium-v9-signature.css",
+     "raw": 24482,
+     "gzip": 6450
+    },
+    {
+     "file": "./css/cinematic-v7-visual-overhaul.css",
+     "raw": 22004,
+     "gzip": 4432
+    },
+    {
+     "file": "./css/immersive-v8-gallery.css",
+     "raw": 21057,
+     "gzip": 4497
+    },
+    {
+     "file": "./css/editorial-v10-workspace.css",
+     "raw": 19713,
+     "gzip": 4488
+    },
+    {
+     "file": "./css/immersive-v8-quick-view.css",
+     "raw": 15944,
+     "gzip": 4226
+    },
+    {
+     "file": "./css/dashboard-v16.css",
+     "raw": 9099,
+     "gzip": 2892
+    },
+    {
+     "file": "./css/immersive-v11-workspace.css",
+     "raw": 8237,
+     "gzip": 2115
+    }
+   ]
+  },
+  "f3": {
+   "html": {
+    "file": "wishlist.html",
+    "raw": 166455,
+    "gzip": 48663,
+    "inlineScriptBlocks": 3,
+    "inlineScriptBytes": 124683
+   },
+   "css": {
+    "files": 50,
+    "raw": 313640,
+    "gzip": 86173
+   },
+   "js": {
+    "files": 0,
+    "raw": 0,
+    "gzip": 0,
+    "list": []
+   },
+   "total": {
+    "raw": 480095,
+    "gzip": 134836,
+    "requests": 51
+   },
+   "largestCss": [
+    {
+     "file": "./css/dashboard-v16.css",
+     "raw": 31586,
+     "gzip": 7538
+    },
+    {
+     "file": "./css/cinematic-v7-mobile.css",
+     "raw": 31028,
+     "gzip": 6060
+    },
+    {
+     "file": "./css/premium-v9-signature.css",
+     "raw": 24482,
+     "gzip": 6450
+    },
+    {
+     "file": "./css/cinematic-v7-visual-overhaul.css",
+     "raw": 22004,
+     "gzip": 4432
+    },
+    {
+     "file": "./css/immersive-v8-gallery.css",
+     "raw": 21057,
+     "gzip": 4497
+    },
+    {
+     "file": "./css/editorial-v10-workspace.css",
+     "raw": 19713,
+     "gzip": 4488
+    },
+    {
+     "file": "./css/immersive-v8-quick-view.css",
+     "raw": 15944,
+     "gzip": 4226
+    },
+    {
+     "file": "./css/immersive-v11-workspace.css",
+     "raw": 8237,
+     "gzip": 2115
+    }
+   ]
+  },
+  "f4": {
+   "html": {
+    "file": "wishlist.html",
+    "raw": 180822,
+    "gzip": 52777,
+    "inlineScriptBlocks": 3,
+    "inlineScriptBytes": 137703
+   },
+   "css": {
+    "files": 51,
+    "raw": 326604,
+    "gzip": 89796
+   },
+   "js": {
+    "files": 0,
+    "raw": 0,
+    "gzip": 0,
+    "list": []
+   },
+   "total": {
+    "raw": 507426,
+    "gzip": 142573,
+    "requests": 52
+   },
+   "largestCss": [
+    {
+     "file": "./css/dashboard-v16.css",
+     "raw": 31586,
+     "gzip": 7538
+    },
+    {
+     "file": "./css/cinematic-v7-mobile.css",
+     "raw": 31028,
+     "gzip": 6060
+    },
+    {
+     "file": "./css/premium-v9-signature.css",
+     "raw": 24482,
+     "gzip": 6450
+    },
+    {
+     "file": "./css/cinematic-v7-visual-overhaul.css",
+     "raw": 22004,
+     "gzip": 4432
+    },
+    {
+     "file": "./css/immersive-v8-gallery.css",
+     "raw": 21057,
+     "gzip": 4497
+    },
+    {
+     "file": "./css/editorial-v10-workspace.css",
+     "raw": 19713,
+     "gzip": 4488
+    },
+    {
+     "file": "./css/immersive-v8-quick-view.css",
+     "raw": 15944,
+     "gzip": 4226
+    },
+    {
+     "file": "./css/f4-interaction-v16.css",
+     "raw": 12964,
+     "gzip": 3623
+    }
+   ]
+  },
+  "f5": {
+   "html": {
+    "file": "wishlist.html",
+    "raw": 213826,
+    "gzip": 61148,
+    "inlineScriptBlocks": 3,
+    "inlineScriptBytes": 163567
+   },
+   "css": {
+    "files": 52,
+    "raw": 337709,
+    "gzip": 92789
+   },
+   "js": {
+    "files": 0,
+    "raw": 0,
+    "gzip": 0,
+    "list": []
+   },
+   "total": {
+    "raw": 551535,
+    "gzip": 153937,
+    "requests": 53
+   },
+   "largestCss": [
+    {
+     "file": "./css/dashboard-v16.css",
+     "raw": 31586,
+     "gzip": 7538
+    },
+    {
+     "file": "./css/cinematic-v7-mobile.css",
+     "raw": 31028,
+     "gzip": 6060
+    },
+    {
+     "file": "./css/premium-v9-signature.css",
+     "raw": 24482,
+     "gzip": 6450
+    },
+    {
+     "file": "./css/cinematic-v7-visual-overhaul.css",
+     "raw": 22004,
+     "gzip": 4432
+    },
+    {
+     "file": "./css/immersive-v8-gallery.css",
+     "raw": 21057,
+     "gzip": 4497
+    },
+    {
+     "file": "./css/editorial-v10-workspace.css",
+     "raw": 19713,
+     "gzip": 4488
+    },
+    {
+     "file": "./css/immersive-v8-quick-view.css",
+     "raw": 15944,
+     "gzip": 4226
+    },
+    {
+     "file": "./css/f4-interaction-v16.css",
+     "raw": 12964,
+     "gzip": 3623
+    }
+   ]
+  }
+ }
+}

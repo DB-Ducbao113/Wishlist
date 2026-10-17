@@ -1,0 +1,22 @@
+{
+  "label": "before",
+  "root": "C:\\Users\\Admin\\AppData\\Local\\Temp\\opencode\\v16_1-before",
+  "unfiltered": {
+    "sumTotal": "4.775.000 ₫",
+    "sumSpent": "1.500.000 ₫",
+    "sumCount": "50 m├│n",
+    "resultStatus": "─Éang hiß╗ân thß╗ï 50 tr├¬n 50 m├│n."
+  },
+  "filteredByStatus": {
+    "sumTotal": "1.512.000 ₫",
+    "sumSpent": "0 ₫",
+    "sumCount": "12 m├│n",
+    "resultStatus": "─Éang hiß╗ân thß╗ï 12 tr├¬n 50 m├│n."
+  },
+  "filteredBySearch": {
+    "sumTotal": "901.000 ₫",
+    "sumSpent": "345.000 ₫",
+    "sumCount": "11 m├│n",
+    "resultStatus": "─Éang hiß╗ân thß╗ï 11 tr├¬n 50 m├│n."
+  }
+}

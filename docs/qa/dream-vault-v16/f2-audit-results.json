@@ -1,0 +1,1682 @@
+[
+  {
+    "id": "M-01",
+    "area": "normalizeItem",
+    "entry": "valid paidAmount carried",
+    "expected": "kept as a number",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "12345"
+  },
+  {
+    "id": "M-02",
+    "area": "normalizeItem",
+    "entry": "valid purchasedAt carried",
+    "expected": "kept as a number",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "1710000000000"
+  },
+  {
+    "id": "M-03",
+    "area": "normalizeItem",
+    "entry": "valid previousStatus carried",
+    "expected": "kept",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "\"saving\""
+  },
+  {
+    "id": "M-04",
+    "area": "normalizeItem",
+    "entry": "legacy row without the fields",
+    "expected": "no paidAmount / purchasedAt / previousStatus invented",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"id\",\"name\",\"price\",\"image\",\"link\",\"status\",\"priority\",\"category\",\"note\",\"createdAt\"]"
+  },
+  {
+    "id": "M-05",
+    "area": "normalizeItem",
+    "entry": "empty string / null / negative / NaN / Infinity / 1e30 paidAmount",
+    "expected": "all dropped, never stored as 0",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "{}"
+  },
+  {
+    "id": "M-06",
+    "area": "normalizeItem",
+    "entry": "paidAmount = 0",
+    "expected": "kept - a real 0 is not the same as skipped",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"x\",\"name\":\"n\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1,\"paidAmount\":0}"
+  },
+  {
+    "id": "M-07",
+    "area": "normalizeItem",
+    "entry": "previousStatus = \"purchased\" or unknown",
+    "expected": "dropped",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "{}"
+  },
+  {
+    "id": "M-08",
+    "area": "normalizeItem",
+    "entry": "purchasedAt = 0",
+    "expected": "dropped (never a fake date)",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": ""
+  },
+  {
+    "id": "M-09",
+    "area": "normalizeItem",
+    "entry": "not purchased but carrying purchase fields",
+    "expected": "fields stripped - invariant enforced",
+    "name": "S0 MODEL · normalizeItem",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"x\",\"name\":\"n\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1}"
+  },
+  {
+    "id": "M-10",
+    "area": "validPaidAmount",
+    "entry": "0 / \"1500\" / -1 / \"\" / null / 1.6 / 1e30 / Infinity",
+    "expected": "0, 1500 kept; -1, \"\", null, 1e30, Infinity dropped; 1.6 rounds to 2",
+    "name": "S0 MODEL · validPaidAmount",
+    "pass": true,
+    "gate": true,
+    "actual": "[0,1500,null,null,null,2,null,null]"
+  },
+  {
+    "id": "M-11",
+    "area": "validPurchasedAt",
+    "entry": "0 / epoch / -1 / \"abc\" / \"\"",
+    "expected": "only a positive finite epoch survives",
+    "name": "S0 MODEL · validPurchasedAt",
+    "pass": true,
+    "gate": true,
+    "actual": "[null,1710000000000,null,null,null]"
+  },
+  {
+    "id": "M-12",
+    "area": "validPreviousStatus",
+    "entry": "wish / purchased / unknown / null / 7",
+    "expected": "only a real non-purchased status survives",
+    "name": "S0 MODEL · validPreviousStatus",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wish\",null,null,null,null]"
+  },
+  {
+    "id": "M-13",
+    "area": "restoreStatusKey",
+    "entry": "previousStatus saved",
+    "expected": "returns the saved status",
+    "name": "S0 MODEL · restoreStatusKey",
+    "pass": true,
+    "gate": true,
+    "actual": "\"saving\""
+  },
+  {
+    "id": "M-14",
+    "area": "restoreStatusKey",
+    "entry": "legacy purchased row, no previousStatus",
+    "expected": "falls back to the step before purchased (\"ordered\")",
+    "name": "S0 MODEL · restoreStatusKey",
+    "pass": true,
+    "gate": true,
+    "actual": "\"ordered\""
+  },
+  {
+    "id": "M-15",
+    "area": "restoreStatusKey",
+    "entry": "previousStatus invalid",
+    "expected": "never returns \"purchased\"",
+    "name": "S0 MODEL · restoreStatusKey",
+    "pass": true,
+    "gate": true,
+    "actual": "\"ordered\""
+  },
+  {
+    "id": "M-16",
+    "area": "restoreStatusKey",
+    "entry": "item that is not purchased (wish)",
+    "expected": "stays on the default status, no crash",
+    "name": "S0 MODEL · restoreStatusKey",
+    "pass": true,
+    "gate": true,
+    "actual": "\"wish\""
+  },
+  {
+    "id": "M-17",
+    "area": "date helpers",
+    "entry": "date input round-trip",
+    "expected": "\"2026-03-04\" survives both directions",
+    "name": "S0 MODEL · date helpers",
+    "pass": true,
+    "gate": true,
+    "actual": "\"2026-03-04\""
+  },
+  {
+    "id": "M-18",
+    "area": "date helpers",
+    "entry": "over-flow / garbage / empty / non-padded dates",
+    "expected": "all rejected as null",
+    "name": "S0 MODEL · date helpers",
+    "pass": true,
+    "gate": true,
+    "actual": "[null,null,null,null]"
+  },
+  {
+    "id": "M-20",
+    "area": "computeMetrics",
+    "entry": "0 items",
+    "expected": "every field 0/absent, no NaN",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":0,\"ownedCount\":0,\"pendingCount\":0,\"ownedValue\":0,\"pendingValue\":0,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":0,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "M-21",
+    "area": "computeMetrics",
+    "entry": "2 purchased (1 skipped) + 1 pending",
+    "expected": "owned 800000, actualSpent 250000, unpriced 1, pending 100000",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":800000,\"pendingValue\":100000,\"actualSpent\":250000,\"pricedOwnedCount\":1,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":0.6666666666666666,\"trackedValue\":900000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "M-22",
+    "area": "computeMetrics",
+    "entry": "all purchased items priced (incl. a real 0)",
+    "expected": "actualSpent 400000, unpricedOwnedCount 0",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":2,\"ownedCount\":2,\"pendingCount\":0,\"ownedValue\":800000,\"pendingValue\":0,\"actualSpent\":400000,\"pricedOwnedCount\":2,\"unpricedOwnedCount\":0,\"hasActualSpending\":true,\"ownershipRate\":1,\"trackedValue\":800000,\"progress\":1,\"progressPercent\":100}"
+  },
+  {
+    "id": "M-23",
+    "area": "computeMetrics",
+    "entry": "paidAmount on a NON-purchased item",
+    "expected": "never counted as spending",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":0,\"pendingCount\":1,\"ownedValue\":0,\"pendingValue\":500000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":500000,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "M-24",
+    "area": "computeMetrics",
+    "entry": "\"abc\" and -3 paidAmount",
+    "expected": "both treated as skipped, never NaN",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":2,\"ownedCount\":2,\"pendingCount\":0,\"ownedValue\":3000,\"pendingValue\":0,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":2,\"hasActualSpending\":false,\"ownershipRate\":1,\"trackedValue\":3000,\"progress\":1,\"progressPercent\":100}"
+  },
+  {
+    "id": "M-25",
+    "area": "computeMetrics",
+    "entry": "ownedValue is NOT actualSpent",
+    "expected": "the two are separate fields",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "M-26",
+    "area": "computeMetrics",
+    "entry": "50-item fixture",
+    "expected": "ownershipRate === progress, progressPercent 24, all fields finite",
+    "name": "S0 MODEL · computeMetrics",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"rate\":0.24,\"p\":0.24,\"pc\":24}"
+  },
+  {
+    "id": "M-30",
+    "area": "Contract",
+    "entry": "F1 fields still present",
+    "expected": "totalCount/ownedCount/pendingCount/ownedValue/pendingValue/trackedValue/progress/progressPercent",
+    "name": "S0 MODEL · Contract",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"totalCount\",\"ownedCount\",\"pendingCount\",\"ownedValue\",\"pendingValue\",\"actualSpent\",\"pricedOwnedCount\",\"unpricedOwnedCount\",\"hasActualSpending\",\"ownershipRate\",\"trackedValue\",\"progress\",\"progressPercent\"]"
+  },
+  {
+    "id": "BUG-0",
+    "area": "Console",
+    "entry": "model scenario",
+    "expected": "no page errors",
+    "name": "S0 MODEL · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "P-01",
+    "area": "entry",
+    "entry": "initial state",
+    "expected": "3 items, one already purchased",
+    "name": "S1 CAPTURE · entry",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"n\":3,\"cards\":3}"
+  },
+  {
+    "id": "P-02",
+    "area": "card button",
+    "entry": "click Danh dau da mua",
+    "expected": "opens #pd, writes nothing yet",
+    "name": "S1 CAPTURE · card button",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"open\":true,\"status\":\"wish\"}"
+  },
+  {
+    "id": "P-03",
+    "area": "dialog content",
+    "entry": "product name + expected price",
+    "expected": "shows the name and 500.000",
+    "name": "S1 CAPTURE · dialog content",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"n\":\"Áo khoác\",\"p\":\"500.000 ₫\"}"
+  },
+  {
+    "id": "P-04",
+    "area": "dialog defaults",
+    "entry": "empty amount, today date, no error, confirm enabled",
+    "expected": true,
+    "name": "S1 CAPTURE · dialog defaults",
+    "pass": true,
+    "gate": true,
+    "actual": ""
+  },
+  {
+    "id": "P-05",
+    "area": "dialog a11y",
+    "entry": "confirm button at rest",
+    "expected": "aria-busy = \"false\"",
+    "name": "S1 CAPTURE · dialog a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "\"false\""
+  },
+  {
+    "id": "P-06",
+    "area": "dialog a11y",
+    "entry": "focus starts in the amount field",
+    "expected": "#pdAmount is the active element",
+    "name": "S1 CAPTURE · dialog a11y",
+    "pass": true,
+    "gate": true,
+    "actual": "\"pdAmount\""
+  },
+  {
+    "id": "P-07",
+    "area": "Huy",
+    "entry": "cancel the dialog",
+    "expected": "closes, zero data change",
+    "name": "S1 CAPTURE · Huy",
+    "pass": true,
+    "gate": true,
+    "actual": "false"
+  },
+  {
+    "id": "P-08",
+    "area": "Huy",
+    "entry": "focus returns to the card button",
+    "expected": "focus is on .mark-purchased",
+    "name": "S1 CAPTURE · Huy",
+    "pass": true,
+    "gate": true,
+    "actual": "\"mini mark-purchased\""
+  },
+  {
+    "id": "P-09",
+    "area": "Escape",
+    "entry": "close with Escape",
+    "expected": "closes, zero data change",
+    "name": "S1 CAPTURE · Escape",
+    "pass": true,
+    "gate": true,
+    "actual": "false"
+  },
+  {
+    "id": "P-10",
+    "area": "validation",
+    "entry": "amount = 1e30",
+    "expected": "error shown, Xac nhan disabled, nothing written",
+    "name": "S1 CAPTURE · validation",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"e\":\"Giá thực tế phải là số không âm và không quá lớn.\",\"dis\":true}"
+  },
+  {
+    "id": "P-11",
+    "area": "validation",
+    "entry": "aria-invalid on the amount input",
+    "expected": "set to \"true\" while invalid",
+    "name": "S1 CAPTURE · validation",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "P-12",
+    "area": "validation",
+    "entry": "amount = -5",
+    "expected": "error shown, Xac nhan disabled",
+    "name": "S1 CAPTURE · validation",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Giá thực tế phải là số không âm và không quá lớn.\""
+  },
+  {
+    "id": "P-13",
+    "area": "validation",
+    "entry": "click a disabled Xac nhan",
+    "expected": "dialog stays open, no data change",
+    "name": "S1 CAPTURE · validation",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "P-14",
+    "area": "validation",
+    "entry": "amount back to a valid value",
+    "expected": "error cleared, Xac nhan enabled",
+    "name": "S1 CAPTURE · validation",
+    "pass": true,
+    "gate": true,
+    "actual": "\"\""
+  },
+  {
+    "id": "P-15",
+    "area": "+Xac nhan",
+    "entry": "confirm a priced purchase",
+    "expected": "dialog closed, purchased with exact fields",
+    "name": "S1 CAPTURE · +Xac nhan",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"purchased\",\"paid\":450000,\"prev\":\"wish\",\"at\":1772557200000}"
+  },
+  {
+    "id": "P-16",
+    "area": "+Xac nhan",
+    "entry": "untouched fields survive",
+    "expected": "name/price/note/category/priority/image/link kept",
+    "name": "S1 CAPTURE · +Xac nhan",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"i1\",\"name\":\"Áo khoác\",\"price\":500000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"high\",\"category\":\"Áo\",\"note\":\"note1\",\"createdAt\":1700000000001,\"paidAmount\":450000,\"purchasedAt\":1772557200000,\"previousStatus\":\"wish\"}"
+  },
+  {
+    "id": "P-17",
+    "area": "toast",
+    "entry": "success feedback with an action",
+    "expected": "toast shown with a \"Hoan tac\" button",
+    "name": "S1 CAPTURE · toast",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"t\":\"Đã ghi \\\"Áo khoác\\\": 450.000 ₫.Hoàn tác\",\"a\":\"Hoàn tác\"}"
+  },
+  {
+    "id": "P-18",
+    "area": "KPI",
+    "entry": "global numbers move immediately",
+    "expected": "ownedValue 800000, actualSpent 450000, unpriced 1",
+    "name": "S1 CAPTURE · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":800000,\"pendingValue\":900000,\"actualSpent\":450000,\"pricedOwnedCount\":1,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":0.6666666666666666,\"trackedValue\":1700000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "P-19",
+    "area": "card",
+    "entry": "button flips to undo",
+    "expected": "text is \"Hoan tac\"",
+    "name": "S1 CAPTURE · card",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "P-20",
+    "area": "toast action",
+    "entry": "click the toast action",
+    "expected": "invokes undo, item leaves purchased",
+    "name": "S1 CAPTURE · toast action",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "P-21",
+    "area": "+Bo qua gia",
+    "entry": "skip the price",
+    "expected": "purchased, NO paidAmount key at all, previousStatus kept",
+    "name": "S1 CAPTURE · +Bo qua gia",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"purchased\",\"keys\":[\"id\",\"name\",\"price\",\"image\",\"link\",\"status\",\"priority\",\"category\",\"note\",\"createdAt\",\"purchasedAt\",\"previousStatus\"],\"prev\":\"saving\"}"
+  },
+  {
+    "id": "P-22",
+    "area": "+Bo qua gia",
+    "entry": "skipped price is not spending",
+    "expected": "actualSpent 0, unpriced 2 (i2 + the legacy i3)",
+    "name": "S1 CAPTURE · +Bo qua gia",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":1200000,\"pendingValue\":500000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":2,\"hasActualSpending\":false,\"ownershipRate\":0.6666666666666666,\"trackedValue\":1700000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "P-23",
+    "area": "+Bo qua gia",
+    "entry": "toast says the price was skipped",
+    "expected": "mentions chua ghi gia thuc te",
+    "name": "S1 CAPTURE · +Bo qua gia",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đã đánh dấu \\\"Giày\\\" là đã mua — chưa ghi giá thực tế.Hoàn tác\""
+  },
+  {
+    "id": "P-24",
+    "area": "+Xac nhan (empty)",
+    "entry": "confirm with an empty amount",
+    "expected": "purchased, no paidAmount, but a real date",
+    "name": "S1 CAPTURE · +Xac nhan (empty)",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"i3\",\"name\":\"Túi\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"Túi\",\"note\":\"note3\",\"createdAt\":1700000000003,\"purchasedAt\":1792170000000,\"previousStatus\":\"wish\"}"
+  },
+  {
+    "id": "P-25",
+    "area": "Quick View",
+    "entry": "open QV on a non-purchased item",
+    "expected": "QV open, primary button says Danh dau da mua",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "P-26",
+    "area": "Quick View",
+    "entry": "purchase rows hidden while not purchased",
+    "expected": "both #qvPaidItem and #qvPurchasedItem hidden",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "P-27",
+    "area": "Quick View",
+    "entry": "QV purchase button",
+    "expected": "opens #pd on top of the still-open Quick View",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"pd\":true,\"qv\":true}"
+  },
+  {
+    "id": "P-28",
+    "area": "Quick View",
+    "entry": "confirm from the QV",
+    "expected": "purchased, QV still open, panel refreshed in place",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"purchased\",\"qv\":true}"
+  },
+  {
+    "id": "P-29",
+    "area": "Quick View",
+    "entry": "QV now shows the recorded purchase",
+    "expected": "button is Hoan tac da mua and both rows visible",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"btn\":\"Hoàn tác đã mua\",\"paid\":\"400.000 ₫\",\"at\":\"6/5/2026\"}"
+  },
+  {
+    "id": "P-30",
+    "area": "Quick View",
+    "entry": "toast is mounted inside the top layer",
+    "expected": "parent element is a DIALOG while a modal is open",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "P-31",
+    "area": "Quick View",
+    "entry": "Escape closes the layers",
+    "expected": "QV closed, list intact",
+    "name": "S1 CAPTURE · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "false"
+  },
+  {
+    "id": "P-32",
+    "area": "edit form",
+    "entry": "open the form on a purchased row",
+    "expected": "purchase section visible, dialog open",
+    "name": "S1 CAPTURE · edit form",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "P-33",
+    "area": "edit form",
+    "entry": "legacy purchased row",
+    "expected": "date + amount empty (no fake date invented)",
+    "name": "S1 CAPTURE · edit form",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"paid\":\"\",\"at\":\"\"}"
+  },
+  {
+    "id": "P-34",
+    "area": "edit form",
+    "entry": "fill in the missing price later",
+    "expected": "paidAmount saved, date saved, previousStatus NOT invented",
+    "name": "S1 CAPTURE · edit form",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"paid\":275000,\"at\":1767286800000}"
+  },
+  {
+    "id": "P-35",
+    "area": "edit form",
+    "entry": "the unpriced counter drops",
+    "expected": "unpricedOwnedCount 1, actualSpent 675000",
+    "name": "S1 CAPTURE · edit form",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":3,\"pendingCount\":0,\"ownedValue\":1700000,\"pendingValue\":0,\"actualSpent\":675000,\"pricedOwnedCount\":2,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":1,\"trackedValue\":1700000,\"progress\":1,\"progressPercent\":100}"
+  },
+  {
+    "id": "P-36",
+    "area": "edit form",
+    "entry": "status select left Da mua",
+    "expected": "purchase section hides",
+    "name": "S1 CAPTURE · edit form",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "P-37",
+    "area": "edit form",
+    "entry": "save a row that is no longer purchased",
+    "expected": "purchase fields cleared",
+    "name": "S1 CAPTURE · edit form",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"i3\",\"name\":\"Túi\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"Túi\",\"note\":\"note3\",\"createdAt\":1700000000003}"
+  },
+  {
+    "id": "P-38",
+    "area": "KPI",
+    "entry": "metrics follow the row out",
+    "expected": "actualSpent 400000, ownedCount 2",
+    "name": "S1 CAPTURE · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":1400000,\"pendingValue\":300000,\"actualSpent\":400000,\"pricedOwnedCount\":1,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":0.6666666666666666,\"trackedValue\":1700000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "P-39",
+    "area": "Firestore path",
+    "entry": "syncItems payload carries the new fields",
+    "expected": "paidAmount + purchasedAt + previousStatus present",
+    "name": "S1 CAPTURE · Firestore path",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"i1\",\"name\":\"Áo khoác\",\"price\":500000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"high\",\"category\":\"Áo\",\"note\":\"note1\",\"createdAt\":1700000000001,\"paidAmount\":400000,\"purchasedAt\":1778000400000,\"previousStatus\":\"wish\"}"
+  },
+  {
+    "id": "P-40",
+    "area": "Firestore path",
+    "entry": "skipped price is not written as 0",
+    "expected": "no paidAmount key in the payload",
+    "name": "S1 CAPTURE · Firestore path",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"i2\",\"name\":\"Giày\",\"price\":900000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"low\",\"category\":\"Giày\",\"note\":\"\",\"createdAt\":1700000000002,\"purchasedAt\":1792170000000,\"previousStatus\":\"saving\"}"
+  },
+  {
+    "id": "BUG-1",
+    "area": "console",
+    "entry": "entire capture scenario",
+    "expected": "no page errors",
+    "name": "S1 CAPTURE · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "U-01",
+    "area": "seed",
+    "entry": "four purchased rows, two pending",
+    "expected": "6 items, 4 owned, actualSpent 140000",
+    "name": "S2 UNDO · seed",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":6,\"ownedCount\":4,\"pendingCount\":2,\"ownedValue\":1000000,\"pendingValue\":1100000,\"actualSpent\":140000,\"pricedOwnedCount\":2,\"unpricedOwnedCount\":2,\"hasActualSpending\":true,\"ownershipRate\":0.6666666666666666,\"trackedValue\":2100000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "U-02",
+    "area": "undo",
+    "entry": "previousStatus = wish",
+    "expected": "restores exactly \"wish\"",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "\"wish\""
+  },
+  {
+    "id": "U-03",
+    "area": "undo",
+    "entry": "purchase fields cleared",
+    "expected": "paidAmount / purchasedAt / previousStatus all gone",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "{}"
+  },
+  {
+    "id": "U-04",
+    "area": "undo",
+    "entry": "nothing else is touched",
+    "expected": "price/note/image/link/category/priority/createdAt/name kept",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u1\",\"name\":\"A\",\"price\":100000,\"image\":\"\",\"link\":\"https://e.com/a\",\"status\":\"wish\",\"priority\":\"high\",\"category\":\"C1\",\"note\":\"n1\",\"createdAt\":1700000000011}"
+  },
+  {
+    "id": "U-05",
+    "area": "undo",
+    "entry": "toast names the restored status",
+    "expected": "mentions \"Muốn mua\"",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đã hoàn tác \\\"A\\\" về \\\"Muốn mua\\\".\""
+  },
+  {
+    "id": "U-06",
+    "area": "undo",
+    "entry": "card button flips back",
+    "expected": "text is \"Đánh dấu đã mua\"",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "U-07",
+    "area": "undo",
+    "entry": "previousStatus = saving",
+    "expected": "restores \"saving\", no fields written",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u2\",\"name\":\"B\",\"price\":200000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"low\",\"category\":\"C2\",\"note\":\"n2\",\"createdAt\":1700000000012}"
+  },
+  {
+    "id": "U-08",
+    "area": "undo",
+    "entry": "previousStatus = ordered",
+    "expected": "restores \"ordered\", paidAmount 50000 removed",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u3\",\"name\":\"C\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"ordered\",\"priority\":\"medium\",\"category\":\"C1\",\"note\":\"\",\"createdAt\":1700000000013}"
+  },
+  {
+    "id": "U-09",
+    "area": "undo (legacy)",
+    "entry": "no previousStatus stored",
+    "expected": "falls back to the step before purchased (\"ordered\")",
+    "name": "S2 UNDO · undo (legacy)",
+    "pass": true,
+    "gate": true,
+    "actual": "\"ordered\""
+  },
+  {
+    "id": "U-10",
+    "area": "undo (legacy)",
+    "entry": "a legacy image / note / link survive",
+    "expected": "image, note and link unchanged",
+    "name": "S2 UNDO · undo (legacy)",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u4\",\"name\":\"D\",\"price\":400000,\"image\":\"data:image/png;base64,iVBORw0KGgo=\",\"link\":\"https://e.com/d\",\"status\":\"ordered\",\"priority\":\"high\",\"category\":\"C3\",\"note\":\"legacy-note\",\"createdAt\":1700000000014}"
+  },
+  {
+    "id": "U-11",
+    "area": "isolation",
+    "entry": "the two pending rows are untouched",
+    "expected": "u5 wish / u6 saving, notes intact",
+    "name": "S2 UNDO · isolation",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"u5\":{\"id\":\"u5\",\"name\":\"E\",\"price\":500000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"low\",\"category\":\"C2\",\"note\":\"untouched\",\"createdAt\":1700000000015},\"u6\":{\"id\":\"u6\",\"name\":\"F\",\"price\":600000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"medium\",\"category\":\"C3\",\"note\":\"\",\"createdAt\":1700000000016}}"
+  },
+  {
+    "id": "U-12",
+    "area": "isolation",
+    "entry": "list is still complete",
+    "expected": "6 items, 0 purchased, 6 cards on screen",
+    "name": "S2 UNDO · isolation",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"m\":{\"totalCount\":6,\"ownedCount\":0,\"pendingCount\":6,\"ownedValue\":0,\"pendingValue\":2100000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":2100000,\"progress\":0,\"progressPercent\":0},\"cards\":6}"
+  },
+  {
+    "id": "U-13",
+    "area": "KPI",
+    "entry": "actualSpent is back to zero",
+    "expected": "ownedValue 0, pendingValue 2100000",
+    "name": "S2 UNDO · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":6,\"ownedCount\":0,\"pendingCount\":6,\"ownedValue\":0,\"pendingValue\":2100000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":2100000,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "U-14",
+    "area": "undo",
+    "entry": "undo a NON-purchased row",
+    "expected": "returns false and changes nothing",
+    "name": "S2 UNDO · undo",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"r\":false,\"st\":\"wish\"}"
+  },
+  {
+    "id": "U-15",
+    "area": "status chip",
+    "entry": "saving -> ordered",
+    "expected": "ordered, no purchase fields yet",
+    "name": "S2 UNDO · status chip",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u6\",\"name\":\"F\",\"price\":600000,\"image\":\"\",\"link\":\"\",\"status\":\"ordered\",\"priority\":\"medium\",\"category\":\"C3\",\"note\":\"\",\"createdAt\":1700000000016}"
+  },
+  {
+    "id": "U-16",
+    "area": "status chip",
+    "entry": "ordered -> purchased",
+    "expected": "records previousStatus = ordered, NO invented price or date",
+    "name": "S2 UNDO · status chip",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"purchased\",\"prev\":\"ordered\",\"keys\":[\"id\",\"name\",\"price\",\"image\",\"link\",\"status\",\"priority\",\"category\",\"note\",\"createdAt\",\"previousStatus\"]}"
+  },
+  {
+    "id": "U-17",
+    "area": "KPI",
+    "entry": "chip purchase counts as owned but not as spending",
+    "expected": "ownedCount 1, actualSpent 0, unpriced 1",
+    "name": "S2 UNDO · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":6,\"ownedCount\":1,\"pendingCount\":5,\"ownedValue\":600000,\"pendingValue\":1500000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":1,\"hasActualSpending\":false,\"ownershipRate\":0.16666666666666666,\"trackedValue\":2100000,\"progress\":0.16666666666666666,\"progressPercent\":17}"
+  },
+  {
+    "id": "U-18",
+    "area": "status chip + undo",
+    "entry": "undo a chip purchase",
+    "expected": "returns to \"ordered\", fields cleared",
+    "name": "S2 UNDO · status chip + undo",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u6\",\"name\":\"F\",\"price\":600000,\"image\":\"\",\"link\":\"\",\"status\":\"ordered\",\"priority\":\"medium\",\"category\":\"C3\",\"note\":\"\",\"createdAt\":1700000000016}"
+  },
+  {
+    "id": "U-19",
+    "area": "Quick View",
+    "entry": "QV on a purchased row",
+    "expected": "button is \"Hoàn tác đã mua\", paid row visible",
+    "name": "S2 UNDO · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "U-20",
+    "area": "Quick View",
+    "entry": "undo from the panel",
+    "expected": "status \"saving\", fields cleared, panel refreshed in place",
+    "name": "S2 UNDO · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u3\",\"name\":\"C\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"medium\",\"category\":\"C1\",\"note\":\"\",\"createdAt\":1700000000013}"
+  },
+  {
+    "id": "U-21",
+    "area": "two-way sync",
+    "entry": "payload after an undo",
+    "expected": "the uploaded document carries no purchase fields",
+    "name": "S2 UNDO · two-way sync",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u1\",\"name\":\"A\",\"price\":100000,\"image\":\"\",\"link\":\"https://e.com/a\",\"status\":\"wish\",\"priority\":\"high\",\"category\":\"C1\",\"note\":\"n1\",\"createdAt\":1700000000011}"
+  },
+  {
+    "id": "U-22",
+    "area": "two-way sync",
+    "entry": "local row after the push",
+    "expected": "still not purchased",
+    "name": "S2 UNDO · two-way sync",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u1\",\"name\":\"A\",\"price\":100000,\"image\":\"\",\"link\":\"https://e.com/a\",\"status\":\"wish\",\"priority\":\"high\",\"category\":\"C1\",\"note\":\"n1\",\"createdAt\":1700000000011}"
+  },
+  {
+    "id": "U-23",
+    "area": "two-way sync",
+    "entry": "server snapshot echoes the undo",
+    "expected": "item stays out of purchased",
+    "name": "S2 UNDO · two-way sync",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"u1\",\"name\":\"A\",\"price\":100000,\"image\":\"\",\"link\":\"https://e.com/a\",\"status\":\"wish\",\"priority\":\"high\",\"category\":\"C1\",\"note\":\"n1\",\"createdAt\":1700000000011}"
+  },
+  {
+    "id": "BUG-2",
+    "area": "console",
+    "entry": "entire undo scenario",
+    "expected": "no page errors",
+    "name": "S2 UNDO · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "T-01",
+    "area": "default",
+    "entry": "initial tab",
+    "expected": "\"Tất cả\" pressed, all 5 cards",
+    "name": "S3 TABS · default",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"t\":{\"all\":\"true\",\"pending\":\"false\",\"owned\":\"false\"},\"cards\":5}"
+  },
+  {
+    "id": "T-02",
+    "area": "Chua mua",
+    "entry": "filter to not-purchased",
+    "expected": "3 cards, only non-purchased ids",
+    "name": "S3 TABS · Chua mua",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":[\"t3\",\"t2\",\"t1\"],\"pressed\":{\"all\":\"false\",\"pending\":\"true\",\"owned\":\"false\"}}"
+  },
+  {
+    "id": "T-03",
+    "area": "Chua mua",
+    "entry": "aria-pressed",
+    "expected": "only \"Chưa mua\" is pressed",
+    "name": "S3 TABS · Chua mua",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"all\":\"false\",\"pending\":\"true\",\"owned\":\"false\"}"
+  },
+  {
+    "id": "T-04",
+    "area": "KPI independence",
+    "entry": "switch tabs",
+    "expected": "every global number is byte-identical",
+    "name": "S3 TABS · KPI independence",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":\"{\\\"totalCount\\\":5,\\\"ownedCount\\\":2,\\\"pendingCount\\\":3,\\\"ownedValue\\\":900000,\\\"pendingValue\\\":600000,\\\"actualSpent\\\":380000,\\\"pricedOwnedCount\\\":1,\\\"unpricedOwnedCount\\\":1,\\\"hasActualSpending\\\":true,\\\"ownershipRate\\\":0.4,\\\"trackedValue\\\":1500000,\\\"progress\\\":0.4,\\\"progressPercent\\\":40}\",\"after\":\"{\\\"totalCount\\\":5,\\\"ownedCount\\\":2,\\\"pendingCount\\\":3,\\\"ownedValue\\\":900000,\\\"pendingValue\\\":600000,\\\"actualSpent\\\":380000,\\\"pricedOwnedCount\\\":1,\\\"unpricedOwnedCount\\\":1,\\\"hasActualSpending\\\":true,\\\"ownershipRate\\\":0.4,\\\"trackedValue\\\":1500000,\\\"progress\\\":0.4,\\\"progressPercent\\\":40}\"}"
+  },
+  {
+    "id": "T-05",
+    "area": "resultStatus",
+    "entry": "live count line",
+    "expected": "\"Đang hiển thị 3 trên 5 món.\"",
+    "name": "S3 TABS · resultStatus",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đang hiển thị 3 trên 5 món.\""
+  },
+  {
+    "id": "T-06",
+    "area": "Da mua",
+    "entry": "filter to purchased",
+    "expected": "2 cards, only purchased ids",
+    "name": "S3 TABS · Da mua",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"t5\",\"t4\"]"
+  },
+  {
+    "id": "T-07",
+    "area": "Tat ca",
+    "entry": "back to everything",
+    "expected": "5 cards",
+    "name": "S3 TABS · Tat ca",
+    "pass": true,
+    "gate": true,
+    "actual": "5"
+  },
+  {
+    "id": "T-08",
+    "area": "tab + search",
+    "entry": "pending tab + a term that only matches an owned item",
+    "expected": "0 cards, empty panel visible",
+    "name": "S3 TABS · tab + search",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":0,\"hidden\":false}"
+  },
+  {
+    "id": "T-09",
+    "area": "empty copy",
+    "entry": "tab-specific wording",
+    "expected": "names the tab, not \"no search results\"",
+    "name": "S3 TABS · empty copy",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"hidden\":false,\"title\":\"Không còn món nào đang chờ mua.\",\"action\":\"Xem tất cả\"}"
+  },
+  {
+    "id": "T-10",
+    "area": "empty action",
+    "entry": "\"Xem tất cả\"",
+    "expected": "tab resets to Tất cả, the search term stays (1 card)",
+    "name": "S3 TABS · empty action",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tabs\":{\"all\":\"true\",\"pending\":\"false\",\"owned\":\"false\"},\"cards\":1}"
+  },
+  {
+    "id": "T-11",
+    "area": "tab + fStatus",
+    "entry": "Tất cả + status=purchased",
+    "expected": "2 cards",
+    "name": "S3 TABS · tab + fStatus",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"t5\",\"t4\"]"
+  },
+  {
+    "id": "T-12",
+    "area": "tab + fStatus",
+    "entry": "Chưa mua + status=purchased",
+    "expected": "honest AND: 0 cards",
+    "name": "S3 TABS · tab + fStatus",
+    "pass": true,
+    "gate": true,
+    "actual": "0"
+  },
+  {
+    "id": "T-13",
+    "area": "clear filter",
+    "entry": "Xóa bộ lọc",
+    "expected": "resets the tab to \"Tất cả\" as well",
+    "name": "S3 TABS · clear filter",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tabs\":{\"all\":\"true\",\"pending\":\"false\",\"owned\":\"false\"},\"cards\":5}"
+  },
+  {
+    "id": "T-14",
+    "area": "tab + sort",
+    "entry": "Đã mua + price ascending",
+    "expected": "owned items in price order",
+    "name": "S3 TABS · tab + sort",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"t4\",\"t5\"]"
+  },
+  {
+    "id": "T-15",
+    "area": "tab + view mode",
+    "entry": "switch tabs while in focus view",
+    "expected": "focus view is preserved",
+    "name": "S3 TABS · tab + view mode",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"view\":\"focus\",\"cards\":3}"
+  },
+  {
+    "id": "T-16",
+    "area": "purchase on tab",
+    "entry": "starting point",
+    "expected": "3 pending cards",
+    "name": "S3 TABS · purchase on tab",
+    "pass": true,
+    "gate": true,
+    "actual": "3"
+  },
+  {
+    "id": "T-17",
+    "area": "purchase on tab",
+    "entry": "confirm while on \"Chưa mua\"",
+    "expected": "the card leaves the list",
+    "name": "S3 TABS · purchase on tab",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":[\"t3\",\"t2\"]}"
+  },
+  {
+    "id": "T-18",
+    "area": "purchase on tab",
+    "entry": "no surprise navigation",
+    "expected": "still on the \"Chưa mua\" tab",
+    "name": "S3 TABS · purchase on tab",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"all\":\"false\",\"pending\":\"true\",\"owned\":\"false\"}"
+  },
+  {
+    "id": "T-19",
+    "area": "purchase on tab",
+    "entry": "toast offers the owned tab",
+    "expected": "action label is \"Xem đã mua\"",
+    "name": "S3 TABS · purchase on tab",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Xem đã mua\""
+  },
+  {
+    "id": "T-20",
+    "area": "KPI independence",
+    "entry": "purchase changed global numbers, not the view",
+    "expected": "actualSpent 475000",
+    "name": "S3 TABS · KPI independence",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":5,\"ownedCount\":3,\"pendingCount\":2,\"ownedValue\":1000000,\"pendingValue\":500000,\"actualSpent\":475000,\"pricedOwnedCount\":2,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":0.6,\"trackedValue\":1500000,\"progress\":0.6,\"progressPercent\":60}"
+  },
+  {
+    "id": "T-21",
+    "area": "purchase on tab",
+    "entry": "click \"Xem đã mua\"",
+    "expected": "tab is Đã mua and t1 is there",
+    "name": "S3 TABS · purchase on tab",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"tabs\":{\"all\":\"false\",\"pending\":\"false\",\"owned\":\"true\"},\"cards\":[\"t5\",\"t4\",\"t1\"]}"
+  },
+  {
+    "id": "T-22",
+    "area": "purchase on \"Tất cả\"",
+    "entry": "the card stays in place",
+    "expected": "same ids in the same order",
+    "name": "S3 TABS · purchase on \"Tất cả\"",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"before\":\"t5,t4,t3,t2,t1\",\"after\":\"t5,t4,t3,t2,t1\"}"
+  },
+  {
+    "id": "T-23",
+    "area": "purchase on \"Tất cả\"",
+    "entry": "state changed, position did not",
+    "expected": "t2 is now purchased",
+    "name": "S3 TABS · purchase on \"Tất cả\"",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"t2\",\"name\":\"Beta saving\",\"price\":200000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"low\",\"category\":\"X\",\"note\":\"\",\"createdAt\":1700000000022,\"purchasedAt\":1792170000000,\"previousStatus\":\"saving\"}"
+  },
+  {
+    "id": "T-24",
+    "area": "purchase on \"Tất cả\"",
+    "entry": "toast offers undo here",
+    "expected": "action label is \"Hoàn tác\"",
+    "name": "S3 TABS · purchase on \"Tất cả\"",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Hoàn tác\""
+  },
+  {
+    "id": "T-25",
+    "area": "not persisted",
+    "entry": "localStorage keys",
+    "expected": "no tab / purchase-tab key was written",
+    "name": "S3 TABS · not persisted",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"wishlist.guest.items\"]"
+  },
+  {
+    "id": "BUG-3",
+    "area": "console",
+    "entry": "entire tabs scenario",
+    "expected": "no page errors",
+    "name": "S3 TABS · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "D-01",
+    "area": "KPI triad",
+    "entry": "three headline numbers",
+    "expected": "owned 900000 / pending 1200000 / 5 món",
+    "name": "S4 DASHBOARD · KPI triad",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"spent\":\"900.000 ₫\",\"total\":\"1.200.000 ₫\",\"count\":\"5 món\"}"
+  },
+  {
+    "id": "D-02",
+    "area": "recorded spending",
+    "entry": "the new figure",
+    "expected": "#dvActualSpent shows 100000 (only real paidAmounts)",
+    "name": "S4 DASHBOARD · recorded spending",
+    "pass": true,
+    "gate": true,
+    "actual": "\"100.000 ₫\""
+  },
+  {
+    "id": "D-03",
+    "area": "recorded spending",
+    "entry": "owned value vs actual spending",
+    "expected": "the two figures are different numbers",
+    "name": "S4 DASHBOARD · recorded spending",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"owned\":\"900.000 ₫\",\"spent\":\"100.000 ₫\"}"
+  },
+  {
+    "id": "D-04",
+    "area": "unpriced counter",
+    "entry": "one owned row without a price",
+    "expected": "#dvUnpriced says \"1 món\"",
+    "name": "S4 DASHBOARD · unpriced counter",
+    "pass": true,
+    "gate": true,
+    "actual": "\"1 món\""
+  },
+  {
+    "id": "D-05",
+    "area": "ownership rate",
+    "entry": "purchased / total by item count",
+    "expected": "60%",
+    "name": "S4 DASHBOARD · ownership rate",
+    "pass": true,
+    "gate": true,
+    "actual": "\"60%\""
+  },
+  {
+    "id": "D-06",
+    "area": "labelling",
+    "entry": "\"Giá trị đã sở hữu\" disclaimer",
+    "expected": "its description says it is not actual spending",
+    "name": "S4 DASHBOARD · labelling",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "D-07",
+    "area": "independent of search",
+    "entry": "search that matches nothing",
+    "expected": "every global KPI byte-identical",
+    "name": "S4 DASHBOARD · independent of search",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"after\":{\"total\":\"1.200.000 ₫\",\"spent\":\"900.000 ₫\",\"count\":\"5 món\",\"progress\":\"60%\",\"actualSpent\":\"100.000 ₫\",\"unpriced\":\"1 món\",\"caption\":\"3 trên 5 món đã sở hữu.\",\"ariaNow\":\"60\"}}"
+  },
+  {
+    "id": "D-08",
+    "area": "independent of search",
+    "entry": "result line still reports the view",
+    "expected": "0 cards but the KPI line is unchanged",
+    "name": "S4 DASHBOARD · independent of search",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":0,\"spent\":\"900.000 ₫\"}"
+  },
+  {
+    "id": "D-09",
+    "area": "independent of the tabs",
+    "entry": "on the \"Chưa mua\" tab",
+    "expected": "still 900000 / 100000 / 60%",
+    "name": "S4 DASHBOARD · independent of the tabs",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"spent\":\"900.000 ₫\",\"actual\":\"100.000 ₫\",\"p\":\"60%\"}"
+  },
+  {
+    "id": "D-10",
+    "area": "live update",
+    "entry": "purchase a priced item",
+    "expected": "actualSpent 750000, owned 1400000, 80%",
+    "name": "S4 DASHBOARD · live update",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"spent\":\"750.000 ₫\",\"owned\":\"1.400.000 ₫\",\"p\":\"80%\"}"
+  },
+  {
+    "id": "D-11",
+    "area": "live update",
+    "entry": "unpriced counter",
+    "expected": "still 1 món (D2)",
+    "name": "S4 DASHBOARD · live update",
+    "pass": true,
+    "gate": true,
+    "actual": "\"1 món\""
+  },
+  {
+    "id": "D-12",
+    "area": "live update",
+    "entry": "undo it again",
+    "expected": "every number returns exactly",
+    "name": "S4 DASHBOARD · live update",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"spent\":\"100.000 ₫\",\"owned\":\"900.000 ₫\",\"p\":\"60%\"}"
+  },
+  {
+    "id": "D-13",
+    "area": "live update",
+    "entry": "the undone row left no trace",
+    "expected": "no paidAmount anywhere on d4",
+    "name": "S4 DASHBOARD · live update",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"d4\",\"name\":\"D4\",\"price\":500000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"high\",\"category\":\"C\",\"note\":\"\",\"createdAt\":1700000000034}"
+  },
+  {
+    "id": "D-14",
+    "area": "empty collection",
+    "entry": "0 items",
+    "expected": "no NaN anywhere, 0% and honest empty wording",
+    "name": "S4 DASHBOARD · empty collection",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"k\":{\"total\":\"0 ₫\",\"spent\":\"0 ₫\",\"count\":\"0 món\",\"progress\":\"0%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"Không còn món nào\",\"caption\":\"Chưa có món nào trong bộ sưu tập.\",\"ariaNow\":\"0\",\"result\":\"Đang hiển thị 0 trên 0 món.\"}}"
+  },
+  {
+    "id": "D-15",
+    "area": "empty collection",
+    "entry": "search / filter / tab still cannot move it",
+    "expected": "identical after touching every control",
+    "name": "S4 DASHBOARD · empty collection",
+    "pass": true,
+    "gate": true,
+    "actual": "null"
+  },
+  {
+    "id": "BUG-4a",
+    "area": "console",
+    "entry": "dashboard scenario",
+    "expected": "no page errors",
+    "name": "S4 DASHBOARD · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "D-16",
+    "area": "1 item",
+    "entry": "single purchased row without a price",
+    "expected": "owned 123000, actualSpent empty, unpriced 1, 100%",
+    "name": "S4 DASHBOARD · 1 item",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"k\":{\"total\":\"0 ₫\",\"spent\":\"123.000 ₫\",\"count\":\"1 món\",\"progress\":\"100%\",\"actualSpent\":\"Chưa ghi nhận\",\"unpriced\":\"1 món\",\"caption\":\"1 trên 1 món đã sở hữu.\",\"ariaNow\":\"100\",\"result\":\"Đang hiển thị 1 trên 1 món.\"},\"m\":{\"totalCount\":1,\"ownedCount\":1,\"pendingCount\":0,\"ownedValue\":123000,\"pendingValue\":0,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":1,\"hasActualSpending\":false,\"ownershipRate\":1,\"trackedValue\":123000,\"progress\":1,\"progressPercent\":100}}"
+  },
+  {
+    "id": "BUG-4b",
+    "area": "console",
+    "entry": "1-item page",
+    "expected": "no page errors",
+    "name": "S4 DASHBOARD · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "D-17",
+    "area": "50 items",
+    "entry": "the KPI text matches a freshly computed expectation",
+    "expected": "owned / actualSpent / count / 24% all agree",
+    "name": "S4 DASHBOARD · 50 items",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"owned\":\"1.500.000 ₫\",\"expectOwned\":1500000,\"spent\":\"Chưa ghi nhận\",\"expectSpent\":0,\"p\":\"24%\"}"
+  },
+  {
+    "id": "D-18",
+    "area": "50 items",
+    "entry": "unpriced counter",
+    "expected": "equals ownedCount here (no paidAmount in the fixture)",
+    "name": "S4 DASHBOARD · 50 items",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"dom\":\"12 món\",\"owned\":12}"
+  },
+  {
+    "id": "BUG-4c",
+    "area": "console",
+    "entry": "50-item page",
+    "expected": "no page errors",
+    "name": "S4 DASHBOARD · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "S5-01",
+    "area": "guest boot",
+    "entry": "first resolved session",
+    "expected": "guest list, 2 items, no purchase fields leak",
+    "name": "S5 SESSION · guest boot",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"n\":2,\"m\":{\"totalCount\":2,\"ownedCount\":0,\"pendingCount\":2,\"ownedValue\":0,\"pendingValue\":300000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":300000,\"progress\":0,\"progressPercent\":0}}"
+  },
+  {
+    "id": "S5-02",
+    "area": "sign in (A)",
+    "entry": "account cache adopted",
+    "expected": "3 items, none from the guest list",
+    "name": "S5 SESSION · sign in (A)",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"a-3\",\"a-2\",\"a-1\"]"
+  },
+  {
+    "id": "S5-03",
+    "area": "sign in (A)",
+    "entry": "recorded purchase survives the round-trip",
+    "expected": "paidAmount 280000, date, previousStatus all intact",
+    "name": "S5 SESSION · sign in (A)",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"a-1\",\"name\":\"Tai khoan 1\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"paidAmount\":280000,\"purchasedAt\":1750000000000,\"previousStatus\":\"saving\",\"priority\":\"medium\",\"category\":\"A\",\"note\":\"account-note\",\"createdAt\":1700000000053}"
+  },
+  {
+    "id": "S5-04",
+    "area": "sign in (A)",
+    "entry": "the new KPI reads the account data",
+    "expected": "actualSpent 280000, unpriced 1",
+    "name": "S5 SESSION · sign in (A)",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":700000,\"pendingValue\":500000,\"actualSpent\":280000,\"pricedOwnedCount\":1,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":0.6666666666666666,\"trackedValue\":1200000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "S5-05",
+    "area": "purchase while signed in",
+    "entry": "Firestore write path",
+    "expected": "a-3 uploaded with paidAmount/date/previousStatus",
+    "name": "S5 SESSION · purchase while signed in",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"a-3\",\"name\":\"Tai khoan 3\",\"price\":500000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"high\",\"category\":\"A\",\"note\":\"\",\"createdAt\":1700000000055,\"paidAmount\":470000,\"purchasedAt\":1783443600000,\"previousStatus\":\"wish\"}"
+  },
+  {
+    "id": "S5-06",
+    "area": "sign out",
+    "entry": "back to the guest session",
+    "expected": "guest list returns, account rows gone",
+    "name": "S5 SESSION · sign out",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"g-2\",\"g-1\"]"
+  },
+  {
+    "id": "S5-07",
+    "area": "sign out",
+    "entry": "the guest list was not polluted",
+    "expected": "still 0 recorded spending",
+    "name": "S5 SESSION · sign out",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":2,\"ownedCount\":0,\"pendingCount\":2,\"ownedValue\":0,\"pendingValue\":300000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":300000,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "S5-08",
+    "area": "sign in again (A)",
+    "entry": "the account cache is re-read",
+    "expected": "the purchase is still recorded",
+    "name": "S5 SESSION · sign in again (A)",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"a1\":{\"id\":\"a-1\",\"name\":\"Tai khoan 1\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"paidAmount\":280000,\"purchasedAt\":1750000000000,\"previousStatus\":\"saving\",\"priority\":\"medium\",\"category\":\"A\",\"note\":\"account-note\",\"createdAt\":1700000000053},\"n\":3}"
+  },
+  {
+    "id": "S5-09",
+    "area": "A -> B",
+    "entry": "switch account",
+    "expected": "only B rows, zero A leakage",
+    "name": "S5 SESSION · A -> B",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"b-1\"]"
+  },
+  {
+    "id": "S5-10",
+    "area": "A -> B",
+    "entry": "no A purchase fields leak into B",
+    "expected": "no paidAmount/purchasedAt/previousStatus anywhere",
+    "name": "S5 SESSION · A -> B",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":[{\"id\":\"b-1\",\"name\":\"Tai khoan B\",\"price\":900000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"low\",\"category\":\"B\",\"note\":\"b-note\",\"createdAt\":1700000000056}],\"m\":{\"totalCount\":1,\"ownedCount\":0,\"pendingCount\":1,\"ownedValue\":0,\"pendingValue\":900000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":0,\"hasActualSpending\":false,\"ownershipRate\":0,\"trackedValue\":900000,\"progress\":0,\"progressPercent\":0}}"
+  },
+  {
+    "id": "S5-11",
+    "area": "undo while signed in",
+    "entry": "restores previousStatus",
+    "expected": "a-1 back to \"saving\", fields cleared",
+    "name": "S5 SESSION · undo while signed in",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"a-1\",\"name\":\"Tai khoan 1\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"medium\",\"category\":\"A\",\"note\":\"account-note\",\"createdAt\":1700000000053}"
+  },
+  {
+    "id": "S5-12",
+    "area": "undo while signed in",
+    "entry": "uploaded document",
+    "expected": "status saving and no purchase fields at all",
+    "name": "S5 SESSION · undo while signed in",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"a-1\",\"name\":\"Tai khoan 1\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"medium\",\"category\":\"A\",\"note\":\"account-note\",\"createdAt\":1700000000053}"
+  },
+  {
+    "id": "BUG-5",
+    "area": "console",
+    "entry": "session scenario",
+    "expected": "no page errors",
+    "name": "S5 SESSION · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "S6-01",
+    "area": "export",
+    "entry": "the purchase fields go out with the row",
+    "expected": "paidAmount/date/previousStatus exported verbatim",
+    "name": "S6 IMPORT / EXPORT + MOBILE · export",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"e1\",\"name\":\"Ghe cong thai hoc\",\"price\":4200000,\"image\":\"\",\"link\":\"https://e.com/e1\",\"status\":\"purchased\",\"paidAmount\":3900000,\"purchasedAt\":1750000000000,\"previousStatus\":\"saving\",\"priority\":\"high\",\"category\":\"Noi that\",\"note\":\"lung luoi\",\"createdAt\":1700000000061}"
+  },
+  {
+    "id": "S6-02",
+    "area": "export",
+    "entry": "a legacy owned row",
+    "expected": "exported with no invented price or date",
+    "name": "S6 IMPORT / EXPORT + MOBILE · export",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"e2\",\"name\":\"Den ban (cu)\",\"price\":700000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"Noi that\",\"note\":\"legacy\",\"createdAt\":1700000000062}"
+  },
+  {
+    "id": "S6-03",
+    "area": "import",
+    "entry": "round-trip of our own export",
+    "expected": "e1 identical: same id, fields and extras",
+    "name": "S6 IMPORT / EXPORT + MOBILE · import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"e1\",\"name\":\"Ghe cong thai hoc\",\"price\":4200000,\"image\":\"\",\"link\":\"https://e.com/e1\",\"status\":\"purchased\",\"priority\":\"high\",\"category\":\"Noi that\",\"note\":\"lung luoi\",\"createdAt\":1700000000061,\"paidAmount\":3900000,\"purchasedAt\":1750000000000,\"previousStatus\":\"saving\"}"
+  },
+  {
+    "id": "S6-04",
+    "area": "import",
+    "entry": "the legacy row came back plain",
+    "expected": "no purchase fields appeared",
+    "name": "S6 IMPORT / EXPORT + MOBILE · import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"e2\",\"name\":\"Den ban (cu)\",\"price\":700000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"Noi that\",\"note\":\"legacy\",\"createdAt\":1700000000062}"
+  },
+  {
+    "id": "S6-05",
+    "area": "KPI after round-trip",
+    "entry": "metrics recomputed from the file",
+    "expected": "owned 4900000, actualSpent 3900000, unpriced 1, 67%",
+    "name": "S6 IMPORT / EXPORT + MOBILE · KPI after round-trip",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":4900000,\"pendingValue\":111111,\"actualSpent\":3900000,\"pricedOwnedCount\":1,\"unpricedOwnedCount\":1,\"hasActualSpending\":true,\"ownershipRate\":0.6666666666666666,\"trackedValue\":5011111,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "S6-06",
+    "area": "import",
+    "entry": "corrupt / impossible purchase values",
+    "expected": "all dropped, previousStatus purchased dropped",
+    "name": "S6 IMPORT / EXPORT + MOBILE · import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"x1\",\"name\":\"Bad price\",\"price\":100000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792201300495}"
+  },
+  {
+    "id": "S6-07",
+    "area": "import",
+    "entry": "purchase fields on a NON-purchased row",
+    "expected": "stripped by the invariant",
+    "name": "S6 IMPORT / EXPORT + MOBILE · import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"x2\",\"name\":\"Not owned\",\"price\":200000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792201300495}"
+  },
+  {
+    "id": "S6-08",
+    "area": "import",
+    "entry": "a 1e30 price",
+    "expected": "dropped, never stored as a number",
+    "name": "S6 IMPORT / EXPORT + MOBILE · import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"x3\",\"name\":\"Huge\",\"price\":300000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792201300495}"
+  },
+  {
+    "id": "S6-09",
+    "area": "KPI after hostile import",
+    "entry": "no NaN can reach the dashboard",
+    "expected": "actualSpent 0, unpriced 2, every field finite",
+    "name": "S6 IMPORT / EXPORT + MOBILE · KPI after hostile import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":2,\"pendingCount\":1,\"ownedValue\":400000,\"pendingValue\":200000,\"actualSpent\":0,\"pricedOwnedCount\":0,\"unpricedOwnedCount\":2,\"hasActualSpending\":false,\"ownershipRate\":0.6666666666666666,\"trackedValue\":600000,\"progress\":0.6666666666666666,\"progressPercent\":67}"
+  },
+  {
+    "id": "S6-10",
+    "area": "view mode",
+    "entry": "#v13FocusView",
+    "expected": "focus view holds all 3 cards",
+    "name": "S6 IMPORT / EXPORT + MOBILE · view mode",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"v\":\"focus\",\"c\":3}"
+  },
+  {
+    "id": "S6-11",
+    "area": "view mode + tab",
+    "entry": "focus view survives the toggle",
+    "expected": "still focus, 2 owned cards",
+    "name": "S6 IMPORT / EXPORT + MOBILE · view mode + tab",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"v\":\"focus\",\"c\":2}"
+  },
+  {
+    "id": "S6-20",
+    "area": "mobile 320px",
+    "entry": "no horizontal overflow",
+    "expected": "document and every card fit the viewport, tabs visible",
+    "name": "S6 IMPORT / EXPORT + MOBILE · mobile 320px",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollW\":320,\"clientW\":320,\"tabsLeft\":15,\"tabsRight\":305,\"tabsVisible\":true,\"worstRight\":305,\"cardCount\":3}"
+  },
+  {
+    "id": "S6-21",
+    "area": "mobile 390px",
+    "entry": "no horizontal overflow",
+    "expected": "document and every card fit the viewport, tabs visible",
+    "name": "S6 IMPORT / EXPORT + MOBILE · mobile 390px",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollW\":390,\"clientW\":390,\"tabsLeft\":15,\"tabsRight\":375,\"tabsVisible\":true,\"worstRight\":375,\"cardCount\":3}"
+  },
+  {
+    "id": "S6-22",
+    "area": "mobile 430px",
+    "entry": "no horizontal overflow",
+    "expected": "document and every card fit the viewport, tabs visible",
+    "name": "S6 IMPORT / EXPORT + MOBILE · mobile 430px",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollW\":430,\"clientW\":430,\"tabsLeft\":15,\"tabsRight\":415,\"tabsVisible\":true,\"worstRight\":415,\"cardCount\":3}"
+  },
+  {
+    "id": "S6-23",
+    "area": "mobile 320px dialog",
+    "entry": "the capture dialog",
+    "expected": "fits the viewport, every button is fully inside",
+    "name": "S6 IMPORT / EXPORT + MOBILE · mobile 320px dialog",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"left\":14,\"right\":306,\"top\":38.40625,\"bottom\":741.59375,\"w\":292,\"btns\":[{\"id\":\"pdConfirm\",\"left\":35,\"right\":285,\"w\":250,\"h\":45},{\"id\":\"pdSkip\",\"left\":35,\"right\":285,\"w\":250,\"h\":45},{\"id\":\"pdCancel\",\"left\":35,\"right\":285,\"w\":250,\"h\":45}]}"
+  },
+  {
+    "id": "BUG-6",
+    "area": "console",
+    "entry": "import/export + mobile scenario",
+    "expected": "no page errors",
+    "name": "S6 IMPORT / EXPORT + MOBILE · console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  }
+]

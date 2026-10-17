@@ -1,0 +1,354 @@
+/* =====================================================================
+   V16 — Premium scroll motion (IntersectionObserver + CSS transforms)
+   Presentation only. It never touches product data, search, CRUD, the
+   Focus/Gallery switch or the 3D card tilt (the tilt owns the inner
+   surface, this system only moves the outer element).
+
+   Progressive enhancement:
+   - <html class="dv-motion"> is added by a tiny inline script that only
+     runs when IntersectionObserver exists AND the user allows motion.
+   - Without that class nothing is ever hidden, so a browser without
+     IntersectionObserver (or with JS off) still shows all content.
+   - prefers-reduced-motion always resolves straight to the final state.
+
+   A CSS animation (not a transition) drives the reveal because a single
+   `animationend` event marks the end of the whole motion. A transition
+   would fire one `transitionend` per property, and tearing the rules down
+   after the first one would cancel the second mid-flight.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  html.dv-motion [data-dv-section],
+  html.dv-motion [data-dv-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--dv-reveal-shift, 22px), 0);
+  }
+
+  /* Cards need their own rule: product-card.css pins the outer card with
+     `.grid > .card.wishlist-card { transform: none }` (three classes), so a
+     plain `[data-dv-reveal]` selector would lose the cascade. */
+  html.dv-motion #grid > .card.wishlist-card[data-dv-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--dv-reveal-shift, 18px), 0);
+    --dv-reveal-shift: 18px;
+    --dv-reveal-duration: 560ms;
+  }
+
+  /* Hint the compositor only while the reveal is still pending. */
+  html.dv-motion [data-dv-reveal]:not(.dv-reveal-in) {
+    will-change: opacity, transform;
+  }
+
+  html.dv-motion [data-dv-section].dv-reveal-in,
+  html.dv-motion [data-dv-reveal].dv-reveal-in {
+    animation: dv-reveal
+      var(--dv-reveal-duration, 620ms)
+      cubic-bezier(.22, .68, .24, 1)
+      var(--dv-reveal-delay, 0ms) both;
+  }
+}
+
+@keyframes dv-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--dv-reveal-shift, 22px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: always the resolved state, no animation at all. */
+@media (prefers-reduced-motion: reduce) {
+  [data-dv-section],
+  [data-dv-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* =====================================================================
+   V16 — Product imagery
+   Transform + translate only. No animated filter/blur: that is a GPU cost
+   the brief explicitly rules out.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 .wishlist-card .product-media__image {
+    transform: scale(1);
+    translate: 0 0;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    transition:
+      transform 320ms cubic-bezier(.22, .68, .24, 1),
+      translate 320ms cubic-bezier(.22, .68, .24, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    body.dreamscape-v5 .wishlist-card:hover .product-media__image,
+    body.dreamscape-v5 .wishlist-card:focus-within .product-media__image {
+      transform: scale(1.045);
+    }
+
+    /* Pointer parallax. The card publishes the offset, only the image moves
+       (via `translate`), so the tilt keeps sole ownership of the surface's
+       `transform`. */
+    body.dreamscape-v5 #grid .wishlist-card[data-dv-parallax] .product-media__image {
+      translate: var(--dv-parallax-x, 0px) var(--dv-parallax-y, 0px);
+    }
+  }
+}
+
+/* Touch devices never run a fake hover state. */
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .wishlist-card .product-media__image {
+    transform: none !important;
+    translate: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .wishlist-card .product-media__image {
+    transform: none !important;
+    translate: none !important;
+    transition: none !important;
+  }
+}
+
+/* =====================================================================
+   V16 — Quick View exit
+   Mirrors the existing entrance (opacity + transform only) so the dialog
+   leaves as smoothly as it arrives.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 #qv.qv-closing[open] {
+    animation: v8-qv-out .24s cubic-bezier(.4, 0, .7, .3) both;
+  }
+
+  body.dreamscape-v5 #qv.qv-closing[open]::backdrop {
+    animation: v8-qv-backdrop-out .24s ease both;
+  }
+
+  @media (max-width: 640px) {
+    body.dreamscape-v5 dialog#qv.qv-closing[open] {
+      animation: v8-qv-sheet-out .24s cubic-bezier(.4, 0, .7, .3) both;
+    }
+  }
+}
+
+@keyframes v8-qv-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(10px) scale(.985); }
+}
+
+@keyframes v8-qv-sheet-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: translateY(40px); }
+}
+
+@keyframes v8-qv-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* =====================================================================
+   V16 — Sliding workspace nav indicator
+   The pill is absolutely positioned (so it can never shift layout) and is
+   driven by two custom properties published from the real link metrics.
+   Because the geometry comes from measurement, resize / font load /
+   language change all stay correct.
+   ===================================================================== */
+
+body.dreamscape-v5 .v11-workspace-nav {
+  position: relative;
+}
+
+body.dreamscape-v5 .v11-workspace-nav__indicator {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: var(--v11-nav-w, 0px);
+  height: calc(100% - 8px);
+  border-radius: 999px;
+  background: var(--dream-accent);
+  transform: translateX(var(--v11-nav-x, 0px));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.dreamscape-v5 .v11-workspace-nav[data-v11-nav-ready] .v11-workspace-nav__indicator {
+  opacity: 1;
+}
+
+body.dreamscape-v5 .v11-workspace-nav__link {
+  position: relative;
+  z-index: 1;
+}
+
+/* The pill owns the "active" fill now, so the link itself stays transparent
+   and only its text colour changes. */
+body.dreamscape-v5 .v11-workspace-nav__link.is-active,
+body.dreamscape-v5 .v11-workspace-nav__link.is-active:hover {
+  background: transparent;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 .v11-workspace-nav__indicator {
+    transition:
+      transform 260ms cubic-bezier(.22, .68, .24, 1),
+      width 260ms cubic-bezier(.22, .68, .24, 1),
+      opacity 180ms ease;
+  }
+}
+
+/* Reduced motion: the pill still goes to the right place, it just teleports. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .v11-workspace-nav__indicator {
+    transition: none !important;
+  }
+}
+
+/* =====================================================================
+   V16.2 — Hero cinematic scroll + pointer depth (MOTION-02)
+   Additive only. Three movement depths, all bounded and clamped in JS;
+   CSS only composes the variables. Reduced motion returns every layer to
+   its static position. No heavy blur or filter animation.
+   ===================================================================== */
+
+body.dreamscape-v5 .hero--v9 {
+  --hero-bg-y: 0px;
+  --hero-mid-y: 0px;
+  --hero-fg-y: 0px;
+  --hero-pointer-x: 0px;
+  --hero-pointer-y: 0px;
+  position: relative;
+}
+
+body.dreamscape-v5 .hero--v9::before {
+  content: "";
+  position: absolute;
+  inset: -24px 0 0 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 62% 46% at 50% 32%,
+    rgba(168, 139, 247, .22), transparent 72%);
+  transform: translate3d(0, var(--hero-bg-y), 0);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__visual {
+  transform: translate3d(var(--hero-pointer-x), var(--hero-mid-y), 0);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__content {
+  transform: translate3d(0, calc(var(--hero-fg-y) + var(--hero-pointer-y)), 0);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+  transition: background var(--v9-ease) 160ms,
+    box-shadow var(--v9-ease) 160ms;
+  will-change: transform;
+}
+
+.site-header.site-header--scrolled {
+  background: rgba(248, 246, 255, .92);
+  box-shadow: 0 1px 0 rgba(104, 80, 188, .10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9::before,
+  body.dreamscape-v5 .hero--v9 .hero__content,
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    transform: none !important;
+  }
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    transform: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .hero--v9 .hero__visual,
+  body.dreamscape-v5 .hero--v9 .hero__content {
+    transform: none !important;
+  }
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    transform: none !important;
+  }
+}
+
+/* =====================================================================
+   V16.2 — Hero cinematic scroll + pointer depth (MOTION-02)
+   Additive only. Three movement depths via the CSS `translate` property
+   (independent of `transform`, so the hero-enter entrance animation keeps
+   ownership of `transform` and the two compose instead of fighting).
+   ===================================================================== */
+
+body.dreamscape-v5 .hero--v9 {
+  --hero-bg-y: 0px;
+  --hero-mid-y: 0px;
+  --hero-fg-y: 0px;
+  --hero-pointer-x: 0px;
+  --hero-pointer-y: 0px;
+  position: relative;
+}
+
+body.dreamscape-v5 .hero--v9::before {
+  content: "";
+  position: absolute;
+  inset: -24px 0 0 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 62% 46% at 50% 32%,
+    rgba(168, 139, 247, .22), transparent 72%);
+  translate: 0 var(--hero-bg-y);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__visual {
+  translate: var(--hero-pointer-x) var(--hero-mid-y);
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__content {
+  translate: 0 calc(var(--hero-fg-y) + var(--hero-pointer-y));
+  will-change: transform;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+  transition: background var(--v9-ease) 160ms,
+    box-shadow var(--v9-ease) 160ms;
+  will-change: transform;
+}
+
+.site-header.site-header--scrolled {
+  background: rgba(248, 246, 255, .92);
+  box-shadow: 0 1px 0 rgba(104, 80, 188, .10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9::before,
+  body.dreamscape-v5 .hero--v9 .hero__content,
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    translate: none !important;
+  }
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    transform: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .hero--v9 .hero__visual,
+  body.dreamscape-v5 .hero--v9 .hero__content {
+    translate: none !important;
+  }
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    transform: none !important;
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "375": {
+    "counts": {
+      "interactive": 615,
+      "visible": 467,
+      "tiny": 0,
+      "unnamed": 0,
+      "divButton": 0
+    },
+    "metrics": {
+      "Timestamp": 63644.66629,
+      "Documents": 2,
+      "Frames": 2,
+      "JSEventListeners": 201,
+      "Nodes": 2810,
+      "LayoutCount": 13,
+      "RecalcStyleCount": 26,
+      "LayoutDuration": 0.228279,
+      "RecalcStyleDuration": 0.16547,
+      "ScriptDuration": 0.041802,
+      "TaskDuration": 0.556715,
+      "JSHeapUsedSize": 1272544,
+      "JSHeapTotalSize": 3932160
+    },
+    "geom": {
+      "base": {
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "bodyScrollWidth": 375
+      },
+      "quickview": {
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "bodyScrollWidth": 375
+      },
+      "form": {
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "bodyScrollWidth": 375
+      },
+      "purchase": {
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "bodyScrollWidth": 375
+      }
+    },
+    "errors": [],
+    "nativeDialogs": [],
+    "js": [
+      {
+        "url": "http://localhost:8140/wishlist.html",
+        "total": 126295,
+        "used": 77201
+      },
+      {
+        "url": "http://localhost:8140/wishlist.html",
+        "total": 4774,
+        "used": 3773
+      },
+      {
+        "url": "debugger://VM4",
+        "total": 2571,
+        "used": 2559
+      },
+      {
+        "url": "http://localhost:8140/wishlist-cloud.js?v=10",
+        "total": 1090,
+        "used": 645
+      },
+      {
+        "url": "http://localhost:8140/wishlist.html",
+        "total": 618,
+        "used": 535
+      },
+      {
+        "url": "debugger://VM20",
+        "total": 96,
+        "used": 96
+      }
+    ],
+    "css": {
+      "sheetCount": 52
+    },
+    "surfaceElementCounts": {
+      "base": 153,
+      "quickview": 154,
+      "form": 154,
+      "purchase": 154
+    }
+  },
+  "1440": {
+    "counts": {
+      "interactive": 615,
+      "visible": 483,
+      "tiny": 0,
+      "unnamed": 0,
+      "divButton": 0
+    },
+    "metrics": {
+      "Timestamp": 63638.050681,
+      "Documents": 2,
+      "Frames": 2,
+      "JSEventListeners": 201,
+      "Nodes": 2811,
+      "LayoutCount": 16,
+      "RecalcStyleCount": 40,
+      "LayoutDuration": 0.222466,
+      "RecalcStyleDuration": 0.175964,
+      "ScriptDuration": 0.044435,
+      "TaskDuration": 0.583903,
+      "JSHeapUsedSize": 1272644,
+      "JSHeapTotalSize": 3932160
+    },
+    "geom": {
+      "base": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "quickview": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "form": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "bodyScrollWidth": 1440
+      },
+      "purchase": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "bodyScrollWidth": 1440
+      }
+    },
+    "errors": [],
+    "nativeDialogs": [],
+    "js": [
+      {
+        "url": "http://localhost:8140/wishlist.html",
+        "total": 126295,
+        "used": 77464
+      },
+      {
+        "url": "http://localhost:8140/wishlist.html",
+        "total": 4774,
+        "used": 3773
+      },
+      {
+        "url": "debugger://VM4",
+        "total": 2571,
+        "used": 2559
+      },
+      {
+        "url": "http://localhost:8140/wishlist-cloud.js?v=10",
+        "total": 1090,
+        "used": 645
+      },
+      {
+        "url": "http://localhost:8140/wishlist.html",
+        "total": 618,
+        "used": 535
+      },
+      {
+        "url": "debugger://VM20",
+        "total": 96,
+        "used": 96
+      }
+    ],
+    "css": {
+      "sheetCount": 52
+    },
+    "surfaceElementCounts": {
+      "base": 153,
+      "quickview": 154,
+      "form": 154,
+      "purchase": 154
+    }
+  },
+  "note": "F4.1 interaction audit, summary. Full per-element dumps (with the CSS/JS coverage tables) stay in the QA directory as v16_4-out/f4-audit-<width>.json. Scanner: v16_4-f4-audit.js (label[for] resolution fixed for this milestone)."
+}

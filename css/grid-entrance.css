@@ -3,10 +3,8 @@
 ====================================== */
 
 /*
-  The outer card is responsible for
-  entrance opacity/translate.
-
-  The inner surface owns 3D rotation.
+  The outer card owns the scroll reveal (css/motion-v16.css).
+  The inner surface owns 3D rotation (card tilt).
 */
 
 .wishlist-grid,
@@ -14,15 +12,5 @@
   isolation: isolate;
 }
 
-#grid > .wishlist-card {
-  opacity: 1;
-  translate: 0 0;
-}
-
-/* Motion capability */
-@media (prefers-reduced-motion: reduce) {
-  #grid > .wishlist-card {
-    opacity: 1;
-    translate: none;
-  }
-}
+/* Product media motion now lives in css/motion-v16.css (with the Quick View
+   exit animation). Nothing else belongs in this file. */

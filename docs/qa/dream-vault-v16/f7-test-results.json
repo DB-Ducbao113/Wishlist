@@ -1,0 +1,35 @@
+{
+  "milestone": "F7",
+  "generatedAt": "2026-10-17",
+  "branch": "feature/motion-auth-reset",
+  "head": "f1f1d6552058c2923565ee24aea153a04968ecb7",
+  "pr": { "number": 1, "base": "develop", "state": "open", "draft": false, "merged": false },
+  "suites": [
+    { "name": "F1", "checks": 107, "pass": 107, "fail": 0 },
+    { "name": "F2", "checks": 168, "pass": 168, "fail": 0 },
+    { "name": "F3", "checks": 167, "pass": 167, "fail": 0 },
+    { "name": "F4", "checks": 65, "pass": 65, "fail": 0 },
+    { "name": "F5", "checks": 97, "pass": 97, "fail": 0 },
+    { "name": "F6", "checks": 28, "pass": 28, "fail": 0 },
+    { "name": "V16", "checks": 36, "pass": 36, "fail": 0 },
+    { "name": "M1", "checks": 28, "pass": 28, "fail": 0 },
+    { "name": "M2", "checks": 31, "pass": 31, "fail": 0 },
+    { "name": "M3", "checks": 32, "pass": 32, "fail": 0 },
+    { "name": "M4", "checks": 28, "pass": 28, "fail": 0 }
+  ],
+  "totalChecks": 787,
+  "totalPass": 787,
+  "totalFail": 0,
+  "note": "759 (quoted in the F6 report) was the same sum minus M4 (28). Nothing was added or removed in F7.",
+  "build": { "files": 56, "assets": 54, "platform": 2, "totalBytes": 574303, "cssCount": 1, "leakCount": 0, "verdict": "PASS" },
+  "secretsInRepo": false,
+  "untrackedUserFile": "image/After Shave.webp (preserved, never staged)",
+  "tag": { "name": "ui-v16.0.0", "sha": "562a62ffe26660d8fcd676b06ca5b5b057b664c1", "moved": false },
+  "gates": {
+    "functional": "PASS", "dataIntegrity": "PASS", "authPrivacy": "PASS",
+    "firebaseLive": "BLOCKED", "cloudinaryLive": "BLOCKED",
+    "browserMobile": "PASS (Chrome); NOT VERIFIED (Safari/iPhone)",
+    "security": "PASS", "hosting": "PASS", "performance": "PASS", "ci": "PASS"
+  },
+  "decision": "GO for release preparation, with three BLOCKED gates"
+}

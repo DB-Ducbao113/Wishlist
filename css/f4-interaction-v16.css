@@ -1,0 +1,435 @@
+/* =====================================================================
+   DREAM VAULT V16.1 — F4 PREMIUM INTERACTION
+   ---------------------------------------------------------------------
+   One stylesheet for every surface F4 introduced, so the release adds
+   exactly ONE request rather than three:
+
+   1. Product-card action hierarchy (F4.2)
+   2. Quick View status switcher (F4.3)
+   3. Advanced-filter disclosure on phones (F4.4)
+
+   GEOMETRY CONTRACT (why these numbers):
+   * .wishlist-card__surface has `overflow: hidden`, so an ancestor-clipped
+     popover is not hit-testable at all (CDP getContentQuads returns no
+     quads and a real click reports "not clickable"). The card panel is
+     therefore anchored to the action row with left:0/right:0 — it can
+     never leave the card, at any viewport width.
+   * The panel is hidden with opacity + pointer-events only, never with
+     display/visibility: it must stay in layout so layout-based QA keeps
+     measuring real 44px targets, and it must stay in the accessibility
+     tree.
+   * No transform on the panel: a translate would move the controls
+     between the moment a click point is computed and the moment the
+     click lands.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. THE "⋯" WRAPPER
+   The wrapper is an ordinary flex item so the trigger participates in the
+   existing action row exactly like a `.mini` pill. It is NOT positioned:
+   the panel anchors to the action row instead.
+--------------------------------------------------------------------- */
+
+#grid.gallery--v2.gallery--v4.gallery--v6 .product-card__actions {
+  position: relative;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions > .card-more {
+  position: static;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid rgba(104, 80, 188, .24);
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .06);
+  color: #4f437c;
+  font: inherit;
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: .06em;
+  cursor: pointer;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__trigger:hover {
+  background: rgba(104, 80, 188, .13);
+  border-color: rgba(104, 80, 188, .4);
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions
+.card-more__trigger[aria-expanded="true"] {
+  background: rgba(104, 80, 188, .16);
+  border-color: rgba(104, 80, 188, .48);
+  color: #3d3263;
+}
+
+/* ---------------------------------------------------------------------
+   2. THE "⋯" PANEL
+--------------------------------------------------------------------- */
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 4px;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid rgba(104, 80, 188, .18);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow:
+    0 22px 48px rgba(65, 43, 139, .18),
+    0 2px 8px rgba(65, 43, 139, .08);
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 130ms ease 0ms;
+}
+
+/* Revealed by an explicit activation (⋯ / keyboard / tap), by keyboard
+   focus, and by a pointer resting on the card.
+
+   These three are declared as SEPARATE rules on purpose. `:hover` carries a
+   260 ms delay (a pointer merely crossing the grid must not flash panels),
+   while an explicit open must be instant. Written as one big comma list the
+   delay of the hover branch would win the cascade for an element that is
+   both hovered and explicitly open — i.e. every mouse click on ⋯ — and the
+   panel would visibly lag 260 ms behind the click.
+
+   Scoping the hover branch with :not([data-open="true"]) removes that
+   overlap instead of fighting it with specificity: when the panel is
+   explicitly open the hover branch does not match at all, so the explicit
+   rule's 0 ms delay is the only candidate.
+
+   The keyboard case is NOT handled here. A CSS reveal keyed off focus
+   (:focus-within, or :has(:focus-visible)) cannot work for this control: a
+   mouse click leaves focus on the ⋯ trigger, so the panel would be pinned
+   open and could never be closed by the mouse; and Escape returns focus to
+   the trigger, which would immediately re-reveal the panel it just closed.
+   Keyboard visibility is owned by the controller instead — the panel items
+   leave the tab order while the panel is closed and rejoin it when
+   data-open is set (see closeCardMenu / openCardMenuFor), so a keyboard user
+   can never land on an invisible control and Escape really does close.
+
+   Every reveal selector must out-specify the base rule above (1 id + 5
+   classes), otherwise the closed state wins the cascade. */
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card .product-card__actions
+.card-more__menu[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0ms;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card:hover .product-card__actions
+.card-more__menu:not([data-open="true"]) {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 260ms;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__menu .card-more__item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: #19152C;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__menu .card-more__item:hover {
+  background: rgba(104, 80, 188, .07);
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions
+.card-more__menu .card-more__item.mini.danger {
+  color: #b3261e;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions
+.card-more__menu .card-more__item.mini.danger:hover {
+  background: rgba(179, 38, 30, .08);
+}
+
+/* The status row reads left-to-right: current status, then the consequence.
+   The consequence is generated content, so the button's textContent stays
+   exactly the status label — which screen readers and the existing QA
+   hooks both depend on. */
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__menu .status-chip {
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  border-color: rgba(104, 80, 188, .2);
+  background: rgba(104, 80, 188, .05);
+  color: #19152C;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 1;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__menu .status-chip::after {
+  content: "→ " attr(data-next-label);
+  min-width: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #4a3f7a;
+}
+
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .card-more__menu .status-chip:hover {
+  background: rgba(104, 80, 188, .11);
+  border-color: rgba(104, 80, 188, .38);
+}
+
+/* Focus rings: visible on the trigger and on every panel control. */
+#grid .product-card__actions .card-more__trigger:focus-visible,
+#grid .product-card__actions .card-more__menu .card-more__item:focus-visible {
+  outline: 2px solid #6850bc;
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   3. QUICK VIEW — STATUS SWITCHER (F4.3)
+--------------------------------------------------------------------- */
+
+.quick-view__status {
+  margin: 4px 0 0;
+}
+
+.quick-view__status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-view__status-option {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid rgba(104, 80, 188, .24);
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .05);
+  color: #19152C;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.quick-view__status-option:hover {
+  background: rgba(104, 80, 188, .12);
+  border-color: rgba(104, 80, 188, .42);
+}
+
+.quick-view__status-option.is-current,
+.quick-view__status-option[aria-pressed="true"] {
+  background: #6850bc;
+  border-color: #6850bc;
+  color: #ffffff;
+}
+
+.quick-view__status-option:focus-visible {
+  outline: 2px solid #6850bc;
+  outline-offset: 2px;
+}
+
+.quick-view__status .quick-view__status-hint {
+  margin: 10px 0 0;
+  color: #4a4460;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------
+   4. ADVANCED-FILTER DISCLOSURE (F4.4, phones only)
+
+   Above 640px the button is display:none and the panel is a normal open
+   grid — desktop behaviour is byte-for-byte the pre-F4 behaviour. At
+   ≤640px the panel is display:none until the user opens it, which removes
+   four selects from the toolbar without ever removing them from the DOM:
+   `visibleItems()` reads the same four values at every width.
+--------------------------------------------------------------------- */
+
+#collection .collection-filters__toggle {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  body.dreamscape-v5
+  #collection .collection-filters__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    grid-column: 1 / -1;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 18px;
+
+    border: 1px solid rgba(104, 80, 188, .3);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .92);
+    color: var(--dream-ink, #19152C);
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters__toggle:hover {
+    border-color: rgba(104, 80, 188, .5);
+    background: rgba(104, 80, 188, .06);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters__toggle.is-active {
+    border-color: rgba(104, 80, 188, .55);
+    background: rgba(104, 80, 188, .1);
+    color: var(--dream-accent, #6850bc);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters__toggle:focus-visible {
+    outline: 2px solid var(--dream-accent, #6850bc);
+    outline-offset: 2px;
+  }
+
+  /* Chevron: the only decoration, and it flips with the state. */
+  body.dreamscape-v5
+  #collection .collection-filters__toggle::after {
+    content: "⌄";
+    font-size: 15px;
+    line-height: 1;
+    color: var(--dream-accent, #6850bc);
+    transition: transform 160ms ease;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters__toggle[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters__toggle-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 22px;
+    min-height: 22px;
+    margin-left: auto;
+    padding: 0 6px;
+
+    border-radius: 999px;
+    background: var(--dream-accent, #6850bc);
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters__toggle-count[hidden] {
+    display: none;
+  }
+
+  /* Collapsed by default; only the user's own toggle opens it. */
+  body.dreamscape-v5
+  #collection .collection-filters {
+    display: none;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters.is-open {
+    display: grid;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   5. MOTION — decoration only, never a source of truth.
+--------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Selectors mirror section 2 verbatim so that a reduced-motion rebuild
+     ties on specificity and wins on source order — no !important needed. */
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .card-more__menu,
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card .product-card__actions
+  .card-more__menu[data-open="true"],
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card:hover .product-card__actions
+  .card-more__menu:not([data-open="true"]) {
+    transition: none;
+    transition-delay: 0ms;
+  }
+
+  #collection .collection-filters__toggle::after {
+    transition: none;
+  }
+  #collection .collection-filters__toggle {
+    transition: none;
+  }
+}
