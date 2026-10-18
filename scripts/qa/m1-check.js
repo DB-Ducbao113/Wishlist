@@ -94,7 +94,16 @@ const snapshot = page => page.evaluate(() => {
 const j = s => { try { return JSON.parse(s); } catch (e) { return null; } };
 
 const ITEM = (id, name) => ({ id, name: name || id, price: 1000, image: '', link: '', status: 'wish', priority: 'medium', category: '', note: '', createdAt: 1700000000000 });
-const IMG = 'data:image/jpeg;base64,/9j/AAAA';
+// Ảnh legacy của fixture phải là một JPEG THẬT (2x2, giải mã được).
+// Bản cũ là một JPEG cụt 6 byte (`/9j/AAAA`) mà không decoder nào nhận: khi đó
+// assertion chỉ còn đúng nhờ việc Chrome *chưa từng thử* tải URL đó — thẻ
+// trong #grid nằm cách đáy viewport ~2100px nên `loading="lazy"` hoãn vô hạn.
+// Chỉ cần một chỗ nào đó giải mã URL ấy ngay (ví dụ thẻ hero FUSION-01, vốn
+// hiển thị ảnh wishlist thật ở trên màn hình đầu) là cơ chế "ảnh lỗi → ảnh
+// thay thế" của app chạy đúng, và assertion fail dù ảnh legacy VẪN được giữ.
+// Ảnh giải mã được kiểm tra đúng điều định kiểm: view tài khoản giữ ảnh
+// local của khách cho cùng id.
+const IMG = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAACAAIDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAXEAEBAQEAAAAAAAAAAAAAAAABAgAR/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgX/xAAVEQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEQMRAD8ArVVdNUtUvVXquZmoQn//2Q==';
 
 (async () => {
   await new Promise(r => server.listen(PORT, '127.0.0.1', r));

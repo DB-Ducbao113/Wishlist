@@ -141,6 +141,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      de tat ca quy tac cua moc nay thang trong ca cascate. -->
 <link rel="stylesheet" href="./css/motion-v18-mobile.css">
 
+<!-- V16.2 FUSION-01 — aurora atmosphere + floating 3D hero; loaded last so
+     every rule of this milestone wins in the cascade. -->
+<link rel="stylesheet" href="./css/fusion-01-aurora-hero.css">
+
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
      the class is only added when IntersectionObserver exists and the user
@@ -281,8 +285,41 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   }
 })();
 </script>
+
+<!-- V16.2 FUSION-01 — one-shot hero entrance switch.
+     Added before the body is parsed (exactly like the dv-motion runtime
+     above) so the staggered editorial entrance starts at first paint
+     instead of replaying after it. A user who asked for reduced motion
+     never gets the class, and the CSS resolves to the final, complete
+     composition. Transform-only keyframes: hero copy is never hidden. -->
+<script>
+(function () {
+  try {
+    var reduce = window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
+    if (reduce && reduce.matches) return;
+    document.documentElement.classList.add("pv-enter");
+  } catch (err) {
+    /* Decorative only. */
+  }
+})();
+</script>
 </head>
 <body id="top" class="dreamscape-v5">
+
+<!-- V16.2 FUSION-01 — aurora atmosphere (decorative, presentational only).
+     Behind every layer: drift blobs, a depth grid, a static grain and the
+     desktop cursor glow. No product data, no interaction, aria-hidden. -->
+<div class="pv-aurora" aria-hidden="true">
+  <span class="pv-aurora__blob pv-aurora__blob--1"></span>
+  <span class="pv-aurora__blob pv-aurora__blob--2"></span>
+  <span class="pv-aurora__blob pv-aurora__blob--3"></span>
+</div>
+<div class="pv-grid" aria-hidden="true"></div>
+<div class="pv-grain" aria-hidden="true"></div>
+<div class="pv-cursor-glow" id="pvCursorGlow" aria-hidden="true"></div>
+
 <div class="wrap">
 <header class="top site-header">
 
@@ -437,6 +474,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   aria-labelledby="hero-title"
 >
 
+  <!-- V16.2 FUSION-01 — ghost word behind the composition (decorative).
+       Desktop only: below 1025px the hero stacks and the word is dropped. -->
+  <span class="pv-hero-ghost" aria-hidden="true">Vault</span>
+
   <div class="hero__content">
     <p class="hero__eyebrow">
       KHÔNG GIAN ƯỚC MƠ
@@ -539,6 +580,76 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
       <span class="v9-scene__no" data-object="01"></span>
       <span class="v9-scene__caption">Vật phẩm 001 — Điều ước đã chọn</span>
+
+      <!-- V16.2 FUSION-01 — floating 3D composition (decorative). The orbit,
+           the seal and the sparks are pure CSS; the cards and the chips are
+           filled by renderHeroStage() from the REAL collection and stay
+           hidden while there is nothing real to show. -->
+      <div class="pv-stage" aria-hidden="true">
+        <span class="pv-stage__ring"></span>
+        <span class="pv-stage__halo"></span>
+        <span class="pv-stage__spark" style="--pv-spark-x: 8%; --pv-spark-y: 18%; --pv-spark-d: 0s; --pv-spark-s: 1.1rem;">✦</span>
+        <span class="pv-stage__spark" style="--pv-spark-x: 84%; --pv-spark-y: 8%; --pv-spark-d: 1.2s; --pv-spark-s: .85rem;">✦</span>
+        <span class="pv-stage__spark" style="--pv-spark-x: 22%; --pv-spark-y: 84%; --pv-spark-d: 2.1s; --pv-spark-s: .95rem;">✦</span>
+
+        <div class="pv-stage__badge">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <path id="pvBadgePath" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/>
+            </defs>
+            <text>
+              <textPath href="#pvBadgePath">PERSONAL VAULT • KHÔNG GIAN ƯỚC MƠ •</textPath>
+            </text>
+          </svg>
+          <span class="pv-stage__badge-core" aria-hidden="true">✦</span>
+        </div>
+
+        <div class="pv-chip pv-chip--goal pv-off" data-pv-chip="goal">
+          <span class="pv-chip__icon" aria-hidden="true">◎</span>
+          <span class="pv-chip__text">
+            <small>Mục tiêu tiết kiệm</small>
+            <b data-pv-chip-value></b>
+          </span>
+        </div>
+
+        <div class="pv-chip pv-chip--owned pv-off" data-pv-chip="owned">
+          <span class="pv-chip__icon" aria-hidden="true">✦</span>
+          <span class="pv-chip__text">
+            <small>Đã sở hữu</small>
+            <b data-pv-chip-value></b>
+          </span>
+        </div>
+
+        <figure class="pv-card pv-card--main pv-off" data-pv-card="main">
+          <span class="pv-card__float">
+            <span class="pv-card__media">
+              <img class="pv-card__img" alt="" decoding="async">
+              <span class="pv-card__empty"><span class="pv-card__mark">PVault.</span></span>
+            </span>
+            <span class="pv-card__cap"><b data-pv-card-title></b><span data-pv-card-meta></span></span>
+          </span>
+        </figure>
+
+        <figure class="pv-card pv-card--a pv-off" data-pv-card="a">
+          <span class="pv-card__float">
+            <span class="pv-card__media">
+              <img class="pv-card__img" alt="" decoding="async">
+              <span class="pv-card__empty"><span class="pv-card__mark">PVault.</span></span>
+            </span>
+            <span class="pv-card__cap"><b data-pv-card-title></b><span data-pv-card-meta></span></span>
+          </span>
+        </figure>
+
+        <figure class="pv-card pv-card--b pv-off" data-pv-card="b">
+          <span class="pv-card__float">
+            <span class="pv-card__media">
+              <img class="pv-card__img" alt="" decoding="async">
+              <span class="pv-card__empty"><span class="pv-card__mark">PVault.</span></span>
+            </span>
+            <span class="pv-card__cap"><b data-pv-card-title></b><span data-pv-card-meta></span></span>
+          </span>
+        </figure>
+      </div>
 
     </div>
   </div>
@@ -3303,6 +3414,11 @@ function render(){
   // (sau search/filter/sort — không theo index trong mảng dữ liệu)
   updateObjectIndices();
 
+  // V16.2 FUSION-01 — sân khấu hero cũng là một góc nhìn trên CHÍNH mảng
+  // `items`, nên nó được vẽ lại cùng lúc với lưới. Không có dữ liệu thật
+  // thì thẻ/chip vẫn ẩn (alcove V9 giữ vai trò hình ảnh trung tính).
+  renderHeroStage();
+
   // V16 — staggered scroll reveal, once per product id: search / filter /
   // render never replay it, but genuinely new items still animate in.
   // V16.2 MOTION-03B — capture old rects BEFORE rebuilding, so surviving
@@ -6058,6 +6174,12 @@ function init(){
     setTimeout(setupHeroMotion, 120);
   }
 
+  // V16.2 FUSION-01 — aurora + staged entrance. Both are presentation only
+  // and both bail out on their own for reduced motion / touch. The stage
+  // itself was already painted by render() above.
+  setupFusionAurora();
+  setupFusionTypography();
+
   // V16.2 MOTION-06 — dò tốc độ khung một lần sau khi trang yên tĩnh: nếu
   // thiết bị chậm liên tục → motion-lite (CSS M06.5 tắt chuyển động ambient).
   // Đo trễ sau render để không nhân nhầm khung chậm của lần render đầu.
@@ -6736,6 +6858,200 @@ function setupHeroMotion(){
   scheduleHeroMotion();
   setupHeroPointerDepth();
   setupHeroMagneticCta();
+}
+
+/* =====================================================================
+   V16.2 FUSION-01 — Aurora atmosphere & floating 3D hero
+   ---------------------------------------------------------------------
+   Trình bày thuần tuý, ba phần tách biệt:
+
+   1) renderHeroStage() — ghi DỮ LIỆU THẬT của bộ sưu tập vào sân khấu:
+      ảnh/ tên/ giá của món nổi bật, tiến độ tiết kiệm và số món đã sở hữu.
+      Thẻ hay chip không có dữ liệu thật đứng sau thì LUÔN ẩn, nên bộ sưu
+      tập rỗng vẫn giữ alcove V9 làm hình ảnh thương hiệu trung tính —
+      không bao giờ có sản phẩm hư cấu.
+   2) setupFusionAurora() — vệt sáng theo con trỏ trên desktop: một rAF CÓ
+      BIÊN (tự dừng khi con trỏ đứng yên), không cài cho touch/pen hay
+      reduced motion, dừng khi tab bị ẩn (kiêm luôn khoá html.pv-fx-hidden).
+   3) setupFusionTypography() — một lần html.pv-enter cho nhịp vào sân khấu
+      (keyframes chỉ chạy transform, không đụng opacity nên chữ hero không
+      bao giờ bị ẩn sau một animation đang chờ).
+   ===================================================================== */
+
+const PV_CARD_SLOTS = ["main", "a", "b"];
+
+// a xếp trên b? — dùng rank/price đã tính sẵn nên không gọi lại findPriority
+// trong lúc so sánh.
+function pvBeats(a, b){
+  if(a.purchased !== b.purchased) return !a.purchased;
+  if(a.rank !== b.rank) return a.rank > b.rank;
+  return a.price > b.price;
+}
+
+function pvSetText(el, text){
+  if(el && el.textContent !== text) el.textContent = text;
+}
+
+function pvSyncChip(stage, key, show, text){
+  const chip = stage.querySelector('[data-pv-chip="' + key + '"]');
+  if(!chip) return;
+  chip.classList.toggle("pv-off", !show);
+  if(show) pvSetText(chip.querySelector("[data-pv-chip-value]"), text);
+}
+
+/* Được gọi trong mỗi lần render() nên phải rẻ: MỘT lượt trên `items`, không
+   cấp phát mảng và không sắp xếp. Một lượt đó vừa chọn ra 3 món nổi bật, vừa
+   đếm số món đã sở hữu, vừa tìm món có tiến độ tiết kiệm cao nhất. */
+function renderHeroStage(){
+  const stage = document.querySelector(".pv-stage");
+  if(!stage) return;
+
+  const scene = stage.closest(".v9-scene");
+  // > 0 món: thẻ nổi thay chỗ sản phẩm trên bệ; rỗng: alcove giữ nguyên.
+  if(scene) scene.classList.toggle("pv-has-items", items.length > 0);
+
+  const top = [];               // 0..3 hạng, luôn xếp giảm dần
+  let owned = 0;
+  let bestGoal = null, bestProgress = -1;
+
+  for(const it of items){
+    if(!it) continue;
+    const purchased = it.status === "purchased";
+    if(purchased) owned++;
+
+    if(!purchased){
+      const progress = savingsProgress(it);
+      if(progress !== null && progress > bestProgress){
+        bestProgress = progress;
+        bestGoal = it;
+      }
+    }
+
+    const cand = {
+      item: it,
+      purchased,
+      rank: findPriority(it.priority).rank,
+      price: itemPrice(it)
+    };
+    let at = 0;
+    while(at < top.length && !pvBeats(cand, top[at])) at++;
+    if(at < PV_CARD_SLOTS.length){
+      top.splice(at, 0, cand);
+      if(top.length > PV_CARD_SLOTS.length) top.pop();
+    }
+  }
+
+  PV_CARD_SLOTS.forEach((slot, index) => {
+    const cardEl = stage.querySelector('[data-pv-card="' + slot + '"]');
+    if(!cardEl) return;
+    const pick = top[index];
+    if(!pick){
+      cardEl.classList.add("pv-off");
+      return;
+    }
+    const it = pick.item;
+    cardEl.classList.remove("pv-off");
+
+    const src = validImageSrc(it.image);
+    const img = cardEl.querySelector(".pv-card__img");
+    if(img && !img.pvErrBound){
+      img.pvErrBound = true;
+      // Ảnh thật nhưng URL hỏng (link chết, data-URI lỗi): thẻ lùi về nền
+      // thương hiệu trung tính thay vì hiện biểu tượng ảnh vỡ. Ghi nhớ URL
+      // đã hỏng để các lần render sau không thử lại chính ảnh đó.
+      img.addEventListener("error", () => {
+        img.pvFailedSrc = img.getAttribute("src") || "";
+        cardEl.classList.add("pv-noimg");
+      });
+    }
+    if(src && !(img && img.pvFailedSrc === src)){
+      cardEl.classList.remove("pv-noimg");
+      if(img && img.getAttribute("src") !== src) img.src = src;
+    }else{
+      // Không có ảnh thật (hoặc ảnh lỗi) → nền thương hiệu trung tính,
+      // không ảnh giả và không icon ảnh vỡ.
+      cardEl.classList.add("pv-noimg");
+      if(img) img.removeAttribute("src");
+    }
+
+    const progress = savingsProgress(it);
+    pvSetText(cardEl.querySelector("[data-pv-card-title]"), it.name || "Món yêu thích");
+    pvSetText(
+      cardEl.querySelector("[data-pv-card-meta]"),
+      slot === "main"
+        ? fmtMoney(it.price)
+        : (progress === null ? findStatus(it.status).label : Math.round(progress * 100) + "%")
+    );
+  });
+
+  pvSyncChip(stage, "owned", items.length > 0, owned + " / " + items.length + " món");
+  pvSyncChip(stage, "goal", !!bestGoal,
+    bestGoal
+      ? (bestGoal.name || "Món yêu thích") + " · " + Math.round(bestProgress * 100) + "%"
+      : "");
+}
+
+let pvGlowEl = null;
+let pvGlowX = 0, pvGlowY = 0, pvGlowCx = 0, pvGlowCy = 0, pvGlowRaf = null;
+
+function pvApplyGlow(){
+  pvGlowCx += (pvGlowX - pvGlowCx) * 0.14;
+  pvGlowCy += (pvGlowY - pvGlowCy) * 0.14;
+  if(pvGlowEl){
+    pvGlowEl.style.setProperty("--pv-cursor-x", pvGlowCx.toFixed(1) + "px");
+    pvGlowEl.style.setProperty("--pv-cursor-y", pvGlowCy.toFixed(1) + "px");
+  }
+  // Có biên: chỉ đặt lại khung khi vệt sáng còn đang bắt kịp con trỏ.
+  if(Math.abs(pvGlowX - pvGlowCx) > 0.5 || Math.abs(pvGlowY - pvGlowCy) > 0.5){
+    pvGlowRaf = requestAnimationFrame(pvApplyGlow);
+  }else{
+    pvGlowRaf = null;
+  }
+}
+
+function pvStopGlow(){
+  if(pvGlowRaf !== null){
+    cancelAnimationFrame(pvGlowRaf);
+    pvGlowRaf = null;
+  }
+}
+
+function pvHideGlow(){
+  document.documentElement.classList.remove("pv-cursor-on");
+  pvStopGlow();
+}
+
+function setupFusionAurora(){
+  const root = document.documentElement;
+  pvGlowEl = document.getElementById("pvCursorGlow");
+
+  // Tab bị ẩn: CSS tạm dừng các lớp ambient, JS dừng vòng rAF.
+  document.addEventListener("visibilitychange", () => {
+    root.classList.toggle("pv-fx-hidden", !!document.hidden);
+    if(document.hidden) pvHideGlow();
+  }, { passive: true });
+
+  if(!pvGlowEl) return;
+  // Touch/pen không bao giờ mô phỏng con trỏ hover.
+  if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  document.addEventListener("pointermove", (event) => {
+    if(document.hidden) return;
+    if(event.pointerType && event.pointerType !== "mouse") return;
+    pvGlowX = event.clientX;
+    pvGlowY = event.clientY;
+    root.classList.add("pv-cursor-on");
+    if(pvGlowRaf === null) pvGlowRaf = requestAnimationFrame(pvApplyGlow);
+  }, { passive: true });
+
+  document.addEventListener("pointerleave", pvHideGlow, { passive: true });
+  window.addEventListener("blur", pvHideGlow);
+}
+
+function setupFusionTypography(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.documentElement.classList.add("pv-enter");
 }
 
 let activeWorkspaceNavId = "";
