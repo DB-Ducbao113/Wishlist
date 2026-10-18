@@ -1,7 +1,7 @@
 {
-  "name": "personal-vaul",
+  "name": "personal-vault",
   "version": "16.1.0",
-  "description": "Personal Vaul (PVault) — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
+  "description": "Personal Vault (PVault) — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
   "private": true,
   "scripts": {
     "qa": "node scripts/qa/run-all.js",
