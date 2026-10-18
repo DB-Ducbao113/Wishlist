@@ -1,7 +1,7 @@
 {
-  "name": "someday-vault",
+  "name": "personal-vaul",
   "version": "16.1.0",
-  "description": "Someday Vault — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
+  "description": "Personal Vaul (PVault) — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
   "private": true,
   "scripts": {
     "qa": "node scripts/qa/run-all.js",
