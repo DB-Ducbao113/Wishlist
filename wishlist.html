@@ -3298,6 +3298,15 @@ function render(){
       requestAnimationFrame(() => { flipSurvivingCards(oldRects); });
     });
   }
+  // V16.2 MOTION-04 — the Board is a second view over the SAME items array, so
+  // it must re-render with the grid whenever data changes. It is skipped while
+  // a drag or keyboard move is in flight (the session owns the DOM and will
+  // re-sync through its own path), so a background render can never pull the
+  // card out from under the pointer.
+  const boardEl = $("board");
+  if(boardEl && !boardEl.classList.contains("hidden") && !boardDragState && !boardKbState){
+    renderBoard();
+  }
 }
 
 /* ==========================================
@@ -5014,17 +5023,27 @@ function setCollectionView(mode){
   const focus = mode === "focus";
   const isBoard = mode === "board";
 
-  // capture BEFORE the layout changes (for FLIP)
-  const oldRects = (!isBoard) ? captureCardRects() : null;
+  // A drag/keyboard session owns the board DOM; switching views mid-session
+  // must cancel it instead of leaving an orphan preview / listener set.
+  if(boardDragState) cancelBoardDrag();
+  if(boardKbState) cleanupKb();
 
-  // toggle visibility
+  // capture BEFORE the layout changes (for FLIP)
+  const oldRects = (!isBoard && grid && !grid.classList.contains("hidden"))
+    ? captureCardRects() : null;
+
+  // toggle visibility with the app-wide .hidden class (NOT the hidden
+  // attribute: #grid.grid has an author `display:grid` which outranks the
+  // UA [hidden] rule and would keep the grid on screen behind the Board).
   if(isBoard){
-    grid.hidden = true;
-    if(board){ board.hidden = false; renderBoard(); }
+    if(grid) grid.classList.add("hidden");
+    if(board){ board.classList.remove("hidden"); renderBoard(); }
   } else {
-    if(board) board.hidden = true;
-    grid.hidden = false;
-    grid.dataset.v13View = focus ? "focus" : "gallery";
+    if(board) board.classList.add("hidden");
+    if(grid){
+      grid.classList.remove("hidden");
+      grid.dataset.v13View = focus ? "focus" : "gallery";
+    }
   }
   $("v13GridView").setAttribute("aria-pressed", String(mode === "gallery"));
   $("v13FocusView").setAttribute("aria-pressed", String(focus));
@@ -5058,6 +5077,8 @@ function renderBoard(){
     title.textContent = labels[st];
     const count = document.createElement('span');
     count.className = 'board__count';
+    count.dataset.status = st;
+    count.setAttribute('aria-label', 'Số món ở cột ' + labels[st]);
     count.textContent = items.filter(it => it.status === st).length;
     head.append(title, count);
     const list = document.createElement('div');
@@ -5083,11 +5104,13 @@ function renderBoard(){
       handle.className = 'board__handle';
       handle.setAttribute('aria-label', 'Kéo hoặc dùng bàn phím để đổi trạng thái: ' + (it.name || ''));
       handle.textContent = '⋮⋮';
-      // Non-drag fallback select
+      // Non-drag fallback: a direct status selector. Hidden on fine-pointer
+      // devices (desktop has pointer drag + keyboard), always available on
+      // touch / coarse-pointer, so a touch user is never forced to drag.
       const sel = document.createElement('select');
       sel.className = 'board__status-select';
-      sel.setAttribute('aria-label', 'Đổi trạng thái nhanh');
-      sel.style.display = 'none';
+      sel.setAttribute('aria-label', 'Đổi trạng thái nhanh: ' + (it.name || ''));
+      sel.dataset.statusSelect = it.id;
       ['wish','saving','ordered','purchased'].forEach(k => {
         const o = document.createElement('option');
         o.value = k;
@@ -5098,7 +5121,6 @@ function renderBoard(){
       sel.addEventListener('change', () => {
         setItemStatus(it.id, sel.value, sel);
       });
-      // Show fallback on touch-like contexts if desired (optional)
       card.append(handle, img, name, price, sel);
       list.appendChild(card);
     });
@@ -5141,6 +5163,10 @@ function setupBoardDrag(){
     handle._onKeyDown = (e) => {
       if(e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
+        // A session that is already active owns Enter/Space (confirm) and Escape
+        // through its own document-level handler. Restarting here would swallow
+        // the confirmation key, so only a fresh press starts a move.
+        if(boardKbState && boardKbState.active) return;
         const card = handle.closest('.board__card');
         if(card) startBoardKeyboardDrag(card, handle, e);
       }
@@ -5160,9 +5186,19 @@ function startBoardDrag(card, e){
   const rect = card.getBoundingClientRect();
   const preview = card.cloneNode(true);
   preview.classList.add('board__preview');
+  preview.classList.remove('dragging');
+  // The preview is decoration only: never duplicated to assistive tech, never
+  // focusable, and stripped of ids so it can never collide with the real card.
+  preview.setAttribute('aria-hidden', 'true');
+  preview.removeAttribute('role');
+  preview.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  preview.querySelectorAll('button,select,input,a,[tabindex]').forEach(el => {
+    el.setAttribute('tabindex', '-1');
+    if(el.disabled !== undefined) el.disabled = true;
+  });
   preview.style.position = 'fixed';
   preview.style.pointerEvents = 'none';
-  preview.style.zIndex = '9999';
+  preview.style.zIndex = '900';
   preview.style.width = rect.width + 'px';
   preview.style.height = rect.height + 'px';
   preview.style.transform = 'translate3d(' + e.clientX + 'px, ' + e.clientY + 'px, 0) translate(-50%, -50%)';
@@ -5265,23 +5301,26 @@ function findBoardDropTarget(x,y){
 function endBoardDrag(ev){
   if(!boardDragState) return;
   const id = boardDragState.id;
+  const card = boardDragState.card;
   const target = findBoardDropTarget(ev.clientX, ev.clientY);
   let newStatus = null;
   if(target){
-    newStatus = target.dataset.status || target.closest('.board__column')?.dataset.status;
+    newStatus = target.dataset.status || (target.closest ? target.closest('.board__column')?.dataset.status : null);
   }
   cleanupBoardDragListeners();
   cleanupBoardDragPreview();
-  if(boardDragState.card) boardDragState.card.classList.remove('dragging');
+  if(card) card.classList.remove('dragging');
   clearBoardDropTargets();
+  // The session is over BEFORE the data changes, so render() is allowed to
+  // rebuild the board again (it only skips while a session owns the DOM).
+  boardDragState = null;
 
   if(newStatus){
     const it = items.find(x => x.id === id);
     if(it && it.status !== newStatus){
-      setItemStatus(id, newStatus, boardDragState.card);
+      setItemStatus(id, newStatus, card);
     }
   }
-  boardDragState = null;
 }
 
 function cancelBoardDrag(){
@@ -5318,6 +5357,10 @@ function startBoardKeyboardDrag(card, handle, e){
 
   const onKey = (kev) => {
     if(!boardKbState || !boardKbState.active) return;
+    // The document listener is attached DURING the Enter/Space dispatch, so it
+    // would otherwise also receive that very same event and instantly confirm
+    // the (unchanged) starting column. Ignore the originating event.
+    if(kev === e) return;
     if(kev.key === 'ArrowLeft' || kev.key === 'ArrowRight'){
       kev.preventDefault();
       boardKbState.cur = (boardKbState.cur + (kev.key === 'ArrowRight' ? 1 : -1) + statuses.length) % statuses.length;
@@ -5325,13 +5368,17 @@ function startBoardKeyboardDrag(card, handle, e){
     } else if(kev.key === 'Enter' || kev.key === ' '){
       kev.preventDefault();
       const target = statuses[boardKbState.cur];
-      if(it.status !== target){
+      const moved = it.status !== target;
+      // The session ends BEFORE the data mutates, so render() is allowed to
+      // rebuild the board again (it only skips while a session owns the DOM).
+      cleanupKb();
+      if(moved){
         setItemStatus(id, target, handle);
         announceBoard('Đã chuyển trạng thái thành: ' + statusLabel(target));
+        boardFocusHandle(id);
       } else {
         announceBoard('Giữ nguyên trạng thái');
       }
-      cleanupKb();
     } else if(kev.key === 'Escape'){
       kev.preventDefault();
       announceBoard('Đã hủy di chuyển');
@@ -5351,6 +5398,18 @@ function cleanupKb(){
   try { boardKbState.handle && boardKbState.handle.removeEventListener('blur', boardKbState._onBlur); } catch(_) {}
   boardKbState.active = false;
   boardKbState = null;
+}
+
+// V16.2 MOTION-04 — after a board re-render the old handle node is gone, so the
+// keyboard path re-focuses the NEW handle of the same item. If the item left
+// the board (filter/purchase) focus simply moves to the board's first handle.
+function boardFocusHandle(id){
+  const board = $("board");
+  if(!board) return false;
+  const card = board.querySelector('.board__card[data-id="' + (id || '').replace(/"/g, '') + '"]');
+  const handle = card ? card.querySelector('.board__handle') : board.querySelector('.board__handle');
+  if(!handle) return false;
+  try { handle.focus(); return document.activeElement === handle; } catch(_) { return false; }
 }
 
 function statusLabel(k){
