@@ -991,6 +991,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <div class="v13-viewbar__switch" role="group" aria-label="Chọn chế độ xem">
       <button id="v13GridView" type="button" class="v13-viewbar__button" aria-pressed="true" aria-controls="grid">Dạng lưới</button>
       <button id="v13FocusView" type="button" class="v13-viewbar__button" aria-pressed="false" aria-controls="grid">Tập trung</button>
+      <button id="v13BoardView" type="button" class="v13-viewbar__button" aria-pressed="false" aria-controls="board">Bảng</button>
     </div>
   </div>
 <section
@@ -998,6 +999,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   class="grid gallery--v2 gallery--v4 gallery--v6"
   aria-label="Bộ sưu tập sản phẩm"
 ></section>
+<section id="board" class="board hidden" aria-label="Bảng trạng thái"></section>
 <section
   id="empty"
   class="empty wishlist-empty hidden"
@@ -5007,25 +5009,264 @@ function flipSurvivingCards(oldRects){
 }
 
 function setCollectionView(mode){
-  // capture BEFORE the layout changes
-  const oldRects = captureCardRects();
-  const focus = mode === "focus";
+  const board = $("board");
   const grid = $("grid");
-  grid.dataset.v13View = focus ? "focus" : "gallery";
-  $("v13GridView").setAttribute("aria-pressed", String(!focus));
+  const focus = mode === "focus";
+  const isBoard = mode === "board";
+
+  // capture BEFORE the layout changes (for FLIP)
+  const oldRects = (!isBoard) ? captureCardRects() : null;
+
+  // toggle visibility
+  if(isBoard){
+    grid.hidden = true;
+    if(board){ board.hidden = false; renderBoard(); }
+  } else {
+    if(board) board.hidden = true;
+    grid.hidden = false;
+    grid.dataset.v13View = focus ? "focus" : "gallery";
+  }
+  $("v13GridView").setAttribute("aria-pressed", String(mode === "gallery"));
   $("v13FocusView").setAttribute("aria-pressed", String(focus));
-  // animate surviving cards from their old position to the new one
-  requestAnimationFrame(() => {
+  $("v13BoardView").setAttribute("aria-pressed", String(isBoard));
+
+  if(!isBoard){
     requestAnimationFrame(() => {
-      flipSurvivingCards(oldRects);
+      requestAnimationFrame(() => {
+        flipSurvivingCards(oldRects);
+      });
+    });
+  }
+}
+
+function renderBoard(){
+  const board = $("board");
+  if(!board) return;
+  const statuses = ['wish','saving','ordered','purchased'];
+  const labels = { wish: 'Muốn mua', saving: 'Đang để dành', ordered: 'Đã đặt hàng', purchased: 'Đã mua' };
+  board.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'board__columns';
+  statuses.forEach(st => {
+    const col = document.createElement('section');
+    col.className = 'board__column';
+    col.dataset.status = st;
+    const head = document.createElement('header');
+    head.className = 'board__head';
+    const title = document.createElement('h3');
+    title.className = 'board__title';
+    title.textContent = labels[st];
+    const count = document.createElement('span');
+    count.className = 'board__count';
+    count.textContent = items.filter(it => it.status === st).length;
+    head.append(title, count);
+    const list = document.createElement('div');
+    list.className = 'board__list';
+    list.dataset.status = st;
+    items.filter(it => it.status === st).forEach(it => {
+      const card = document.createElement('article');
+      card.className = 'board__card';
+      card.dataset.id = it.id;
+      card.draggable = false; // we use pointer events, not native drag
+      const img = document.createElement('img');
+      img.className = 'board__card-img';
+      img.src = validImageSrc(it.image) || PLACEHOLDER;
+      img.alt = '';
+      const name = document.createElement('span');
+      name.className = 'board__card-name';
+      name.textContent = it.name || '(chưa đặt tên)';
+      const price = document.createElement('span');
+      price.className = 'board__card-price';
+      price.textContent = fmtMoney(it.price);
+      const handle = document.createElement('button');
+      handle.type = 'button';
+      handle.className = 'board__handle';
+      handle.setAttribute('aria-label', 'Kéo để đổi trạng thái: ' + (it.name || ''));
+      handle.textContent = '⋮⋮';
+      card.append(handle, img, name, price);
+      list.appendChild(card);
+    });
+    col.append(head, list);
+    wrap.appendChild(col);
+  });
+  board.appendChild(wrap);
+
+  // MOTION-04 — wire drag & drop + keyboard + fallback on the board.
+  setupBoardDrag();
+}
+
+let boardDragState = null;
+
+function setupBoardDrag(){
+  const board = $("board");
+  if(!board) return;
+
+  // Clean up any previous listeners by cloning? Easier: remove old by re-rendering structure is fine
+  // But we already rendered; add listeners
+  board.querySelectorAll('.board__handle').forEach((handle, idx) => {
+    handle.setAttribute('tabindex', '0');
+    handle.setAttribute('role', 'button');
+    handle.setAttribute('aria-grabbed', 'false');
+
+    // Pointer events
+    handle.addEventListener('pointerdown', (e) => {
+      if(e.button !== 0) return;
+      const card = handle.closest('.board__card');
+      if(!card) return;
+      e.preventDefault();
+      startBoardDrag(card, e);
+    });
+
+    // Keyboard
+    handle.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        const card = handle.closest('.board__card');
+        if(card) startBoardKeyboardDrag(card, handle, e);
+      }
     });
   });
+}
+
+function startBoardDrag(card, e){
+  const board = $("board");
+  if(!board) return;
+  const id = card.dataset.id;
+  const rect = card.getBoundingClientRect();
+  const preview = card.cloneNode(true);
+  preview.classList.add('board__preview');
+  preview.style.position = 'fixed';
+  preview.style.pointerEvents = 'none';
+  preview.style.zIndex = '9999';
+  preview.style.width = rect.width + 'px';
+  preview.style.height = rect.height + 'px';
+  preview.style.transform = 'translate3d(' + e.clientX + 'px, ' + e.clientY + 'px, 0) translate(-50%, -50%)';
+  document.body.appendChild(preview);
+
+  card.classList.add('dragging');
+  boardDragState = {
+    id,
+    card,
+    preview,
+    startX: e.clientX,
+    startY: e.clientY,
+    offsetX: rect.width/2,
+    offsetY: rect.height/2,
+    active: true,
+    mode: 'pointer'
+  };
+
+  const move = (ev) => {
+    if(!boardDragState || !boardDragState.active) return;
+    const p = boardDragState.preview;
+    p.style.transform = 'translate3d(' + ev.clientX + 'px, ' + ev.clientY + 'px, 0) translate(-50%, -50%)';
+    // Highlight target column/list
+    clearBoardDropTargets();
+    const target = findBoardDropTarget(ev.clientX, ev.clientY);
+    if(target) target.classList.add('drag-over');
+  };
+  const up = (ev) => {
+    if(boardDragState && boardDragState.active){
+      endBoardDrag(ev);
+    }
+    cleanupBoardDragListeners(move, up, cancel);
+  };
+  const cancel = () => {
+    if(boardDragState && boardDragState.active){
+      cancelBoardDrag();
+    }
+    cleanupBoardDragListeners(move, up, cancel);
+  };
+
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+  document.addEventListener('pointercancel', cancel);
+  document.addEventListener('visibilitychange', cancel);
+  document.addEventListener('keydown', (kev) => {
+    if(kev.key === 'Escape') { kev.preventDefault(); cancel(); }
+  }, { once: true });
+}
+
+function cleanupBoardDragListeners(move, up, cancel){
+  document.removeEventListener('pointermove', move);
+  document.removeEventListener('pointerup', up);
+  document.removeEventListener('pointercancel', cancel);
+}
+
+function clearBoardDropTargets(){
+  document.querySelectorAll('.board__column, .board__list').forEach(el => el.classList.remove('drag-over'));
+}
+
+function findBoardDropTarget(x,y){
+  const el = document.elementFromPoint(x,y);
+  if(!el) return null;
+  const col = el.closest('.board__column');
+  if(col) return col;
+  const list = el.closest('.board__list');
+  return list || null;
+}
+
+function endBoardDrag(ev){
+  if(!boardDragState) return;
+  boardDragState.active = false;
+  const id = boardDragState.id;
+  const target = findBoardDropTarget(ev.clientX, ev.clientY);
+  let newStatus = null;
+  if(target){
+    newStatus = target.dataset.status || target.closest('.board__column')?.dataset.status;
+  }
+  cleanupBoardDragPreview();
+  boardDragState.card.classList.remove('dragging');
+  clearBoardDropTargets();
+
+  if(newStatus){
+    const it = items.find(x => x.id === id);
+    if(it && it.status !== newStatus){
+      // Use canonical path
+      setItemStatus(id, newStatus, boardDragState.card);
+    }
+  }
+  boardDragState = null;
+}
+
+function cancelBoardDrag(){
+  if(!boardDragState) return;
+  boardDragState.active = false;
+  cleanupBoardDragPreview();
+  if(boardDragState.card) boardDragState.card.classList.remove('dragging');
+  clearBoardDropTargets();
+  boardDragState = null;
+}
+
+function cleanupBoardDragPreview(){
+  if(boardDragState && boardDragState.preview && boardDragState.preview.parentNode){
+    boardDragState.preview.parentNode.removeChild(boardDragState.preview);
+  }
+}
+
+// Minimal keyboard drag stub (basic)
+function startBoardKeyboardDrag(card, handle, e){
+  // For now, just announce - full keyboard roving is more complex; provide status selector fallback is enough
+  // But spec asks for basic keyboard: we'll implement simple cycle via handle
+  const id = card.dataset.id;
+  const it = items.find(x => x.id === id);
+  if(!it) return;
+  const statuses = ['wish','saving','ordered','purchased'];
+  const idx = statuses.indexOf(it.status);
+  const next = statuses[(idx + 1) % statuses.length];
+  setItemStatus(id, next, handle);
 }
 function init(){
   buildSelects();
   $("v13GridView").addEventListener("click", () => setCollectionView("gallery"));
   $("v13FocusView").addEventListener("click", () => setCollectionView("focus"));
+  const v13BoardView = $("v13BoardView");
+  if(v13BoardView) v13BoardView.addEventListener("click", () => setCollectionView("board"));
   setCollectionView("gallery");
+
+  // MOTION-04 — board drag is wired inside renderBoard(); ensure it re-wires
+  // after a re-render while the board view is active.
+  if($("board") && !$("board").hidden) setupBoardDrag();
   // V16.1 F4.4 — nút thu gọn bộ lọc nâng cao. Chỉ hiện trên điện thoại (CSS);
   // trên desktop nút bị ẩn nên bảng luôn mở và nút này không thể bấm.
   const filterToggle = $("filterToggle");

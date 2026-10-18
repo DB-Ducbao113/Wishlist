@@ -39,3 +39,30 @@ body.dreamscape-v5 .v11-canvas #grid.grid.gallery--v2.gallery--v4.gallery--v6[da
  body.dreamscape-v5 .v11-canvas #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]>.wishlist-card .product-card__actions{min-width:0}
 }
 @media(prefers-reduced-motion:reduce){body.dreamscape-v5 .v13-viewbar__button{transition:none;animation:none}}
+/* ===================================================================
+   V16.2 MOTION-04 — Board view (drag & drop status board)
+   =================================================================== */
+body.dreamscape-v5 .board { display: none; }
+body.dreamscape-v5 .board:not([hidden]) { display: block; }
+body.dreamscape-v5 .board__columns { display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+body.dreamscape-v5 .board__column { background: var(--dv-surface-2, #f7f4ff); border-radius: 16px; padding: 12px; min-height: 200px; }
+body.dreamscape-v5 .board__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+body.dreamscape-v5 .board__title { font-size: 13px; font-weight: 700; color: var(--dv-ink, #17122e); margin: 0; }
+body.dreamscape-v5 .board__count { font-size: 12px; color: var(--dv-muted, #5e5678); background: rgba(104,80,188,.10); padding: 2px 8px; border-radius: 999px; }
+body.dreamscape-v5 .board__list { display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
+body.dreamscape-v5 .board__card { display: grid; grid-template-columns: auto 44px 1fr; gap: 8px; align-items: center; padding: 8px; background: #fff; border-radius: 12px; border: 1px solid rgba(104,80,188,.12); cursor: grab; user-select: none; transition: transform 120ms ease, box-shadow 120ms ease; }
+body.dreamscape-v5 .board__card:active { cursor: grabbing; }
+body.dreamscape-v5 .board__card.dragging { opacity: .6; transform: scale(1.03); box-shadow: 0 8px 24px rgba(104,80,188,.2); }
+body.dreamscape-v5 .board__card-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+body.dreamscape-v5 .board__card-name { font-size: 13px; font-weight: 600; color: var(--dv-ink, #17122e); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.dreamscape-v5 .board__card-price { font-size: 12px; color: var(--dv-muted, #5e5678); grid-column: 3; }
+body.dreamscape-v5 .board__handle { background: none; border: none; cursor: grab; color: var(--dv-muted, #5e5678); font-size: 14px; padding: 0; }
+body.dreamscape-v5 .board__column.drag-over { outline: 2px dashed #6850bc; outline-offset: -4px; background: rgba(104,80,188,.06); }
+body.dreamscape-v5 .board__list:empty::after { content: "Chua có món"; display: block; text-align: center; color: var(--dv-muted, #5e5678); font-size: 12px; padding: 20px 0; }
+@media (max-width: 768px) {
+  body.dreamscape-v5 .board__columns { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .board__card { transition: none !important; }
+  body.dreamscape-v5 .board__card.dragging { transform: none !important; }
+}
