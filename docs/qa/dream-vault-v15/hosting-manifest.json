@@ -7,7 +7,7 @@
  "generated": [
   "css/app.css"
  ],
- "stylesheetSourceCount": 52,
+ "stylesheetSourceCount": 53,
  "stylesheetOrder": [
   "css/legacy.css",
   "css/tokens.css",
@@ -57,6 +57,7 @@
   "css/interactive-v13-collection.css",
   "css/header-sync-v1.css",
   "css/motion-v16.css",
+  "css/motion-v17-tactile.css",
   "css/dashboard-v16.css",
   "css/purchase-v16.css",
   "css/f4-interaction-v16.css",
@@ -68,7 +69,7 @@
   "_headers",
   "_redirects"
  ],
- "totalBytes": 609473,
+ "totalBytes": 629451,
  "files": [
   "_headers",
   "_redirects",

@@ -28,7 +28,7 @@ function ensureBaseline() {
 const suites = [
   'syntax.js', 'f1-check.js', 'f2-check.js', 'f3-check.js', 'f4-check.js',
   'f5-check.js', 'f6-check.js', 'motion-02-check.js', 'motion-03-check.js',
-  'motion-04-check.js', 'v16-qa.js',
+  'motion-04-check.js', 'motion-05-check.js', 'v16-qa.js',
   'm1-check.js', 'm2-check.js', 'm3-check.js', 'm4-check.js'
 ];
 

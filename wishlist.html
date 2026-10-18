@@ -130,6 +130,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/header-sync-v1.css">
 
 <link rel="stylesheet" href="./css/motion-v16.css">
+<link rel="stylesheet" href="./css/motion-v17-tactile.css">
 
 <link rel="stylesheet" href="./css/dashboard-v16.css">
 <link rel="stylesheet" href="./css/purchase-v16.css">
@@ -1921,7 +1922,19 @@ function toast(msg, type = "info", action = null) {
   // A toast the user is expected to act on stays a little longer.
   toastTimeout = setTimeout(() => {
     if (activeToast === el) {
-      el.remove();
+      // M05.5 — toasts rời đi bằng animation (--leaving) thay vì biến mất
+      // ngay; hoàn tất dữ liệu KHÔNG phụ thuộc animation (lưới 260 ms).
+      el.classList.add("toast--leaving");
+      let leaving = false;
+      const finishLeave = () => {
+        if (leaving) return;
+        leaving = true;
+        el.removeEventListener("animationend", onLeaveEnd);
+        el.remove();
+      };
+      const onLeaveEnd = (event) => { if (event.target === el) finishLeave(); };
+      el.addEventListener("animationend", onLeaveEnd);
+      setTimeout(finishLeave, 280);
       activeToast = null;
     }
     toastTimeout = null;
@@ -4072,6 +4085,12 @@ function updateQuickViewPurchase(id){
 function updateQuickViewSavings(id){
   const it = items.find(x => x.id === id);
   if(!it) return;
+  // M05.6 — thanh tiến độ chỉ chuyển động khi GIÁ TRỊ THẬT của cùng một món
+  // thay đổi. Mở sang món khác (kể cả lần mở lại sau khi món trước không có
+  // mục tiêu) phải tới thẳng đúng tỉ lệ, không quét qua phần trăm cũ.
+  const prevSavingsFor = $("qv").dataset.savingsFor;
+  const jumpToNewValue = prevSavingsFor !== id;
+  $("qv").dataset.savingsFor = id;
 
   const goal = readSavingGoal(it);
   const storedSaved = readSavedAmount(it);
@@ -4111,7 +4130,16 @@ function updateQuickViewSavings(id){
   setDashText($("qvSavingsSaved"), fmtMoney(saved));
   setDashText($("qvSavingsGoal"), fmtMoney(goal));
 
-  if(fill) fill.style.setProperty("--savings-fill", String(ratio));
+  if(fill){
+    if(jumpToNewValue){
+      fill.classList.add("qv-savings__fill--jump");
+      fill.style.setProperty("--savings-fill", String(ratio));
+      void fill.offsetWidth;   // chốt giá trị nhảy không chuyển tiếp
+      requestAnimationFrame(() => fill.classList.remove("qv-savings__fill--jump"));
+    } else if(fill.style.getPropertyValue("--savings-fill") !== String(ratio)){
+      fill.style.setProperty("--savings-fill", String(ratio));
+    }
+  }
   if(track){
     setDashAttr(track, "aria-valuenow", String(percent));
     setDashAttr(
@@ -4248,8 +4276,21 @@ function openQuickView(id, opener){
   updateQuickViewSavings(it.id);
   // Chỉ trả focus về opener nếu node đó còn tồn tại sau khi re-render
   qvOpener = (opener && opener.isConnected) ? opener : null;
+  settleQvProxy();
   qv.showModal();
   $("qvClose").focus();
+
+  // M05.2 — shared-element: ảnh bay từ thẻ vào Quick View bằng một proxy
+  // nằm ở top layer (Popover API) nên không phụ thuộc transform của dialog;
+  // animation mở riêng của dialog chạy song song nguyên vẹn. Nếu lượt gọi
+  // đầu gặp khung chưa sẵn sàng (browser chưa update style/top layer),
+  // thử lại đúng 1 khung — không bao giờ tạo hai proxy.
+  startQvOpenFlight(it.id);
+  if(!qvProxyState){
+    requestAnimationFrame(() => {
+      if(qv.open && !qvProxyState && !qvClosing) startQvOpenFlight(it.id);
+    });
+  }
 }
 
 // V16 — Quick View đóng bằng một animation thoát tương ứng với animation mở.
@@ -4262,37 +4303,236 @@ function prefersReducedMotion(){
     matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+// =====================================================================
+// M05.2 — SHARED-ELEMENT QUICK VIEW
+// ---------------------------------------------------------------------
+// Quyền sở hữu chuyển động (kết quả audit M05.1):
+//  - proxy là node tuổi thọ ngắn, CỰC KỲ chỉ do chính nó ghi left/top/
+//    width/height/border-radius; aria-hidden + inert + không thể focus;
+//  - chỉ ĐỌC khung thẻ nguồn (getBoundingClientRect) — surface tilt của
+//    card và FLIP lưới không bao giờ bị đụng vào;
+//  - proxy SỐNG Ở TOP LAYER (Popover API) nên transform của dialog không
+//    bao giờ tái định vị nó; animation mở/đóng của dialog (#qv) giữ
+//    nguyên vẹn như trước M05 (giữ đúng cam kết của m3-check T5);
+//  - reduced motion hoặc thiếu Popover API → bỏ bay, dùng entrance cũ.
+// =====================================================================
+let qvProxyState = null; // flight đang chạy: { el, anim, mode, timer, onVis }
+
+function qvProxySupported(){
+  return typeof HTMLElement !== "undefined" &&
+    typeof HTMLElement.prototype.showPopover === "function" &&
+    !prefersReducedMotion();
+}
+
+// Ảnh nguồn CHỈ trong lưới gallery: thẻ phải còn kết nối, lưới đang hiển thị
+// và ảnh phải có khung đo được (đã lọc/xoá/đang ở board → trả null).
+function qvSourceImage(id){
+  if(!id || !$("grid") || $("grid").classList.contains("hidden")) return null;
+  const card = document.querySelector('#grid > .wishlist-card[data-id="' + CSS.escape(id) + '"]');
+  if(!card || !card.isConnected) return null;
+  const img = card.querySelector(".product-media__image");
+  if(!img || !img.getClientRects().length) return null;
+  const r = img.getBoundingClientRect();
+  if(r.width < 8 || r.height < 8) return null;
+  return {
+    el: img,
+    rect: r,
+    radius: parseFloat(getComputedStyle(img).borderRadius) || 14
+  };
+}
+
+function qvProxyNode(rect, radius, src){
+  const el = document.createElement("div");
+  el.className = "qv-proxy";
+  el.setAttribute("popover", "manual");
+  el.setAttribute("aria-hidden", "true");
+  el.setAttribute("inert", "");
+  el.tabIndex = -1;
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = "";
+  el.appendChild(img);
+  el.style.left = rect.left + "px";
+  el.style.top = rect.top + "px";
+  el.style.width = rect.width + "px";
+  el.style.height = rect.height + "px";
+  el.style.borderRadius = radius + "px";
+  return el;
+}
+
+function qvProxyCleanup(){
+  if(!qvProxyState) return;
+  const s = qvProxyState;
+  qvProxyState = null;
+  document.removeEventListener("visibilitychange", s.onVis);
+  clearTimeout(s.timer);
+  try { s.anim.onfinish = null; s.anim.oncancel = null; } catch(e){}  /* js */
+  try { s.el.hidePopover(); } catch(e){}
+  try { s.el.remove(); } catch(e){}
+}
+
+// Chốt flight hiện có về khung cuối (anim.finish) rồi dọn sạch — an toàn ở
+// mọi thời điểm: Escape giữa lúc mở, tab bị ẩn, đóng khi đang bay.
+function settleQvProxy(){
+  if(!qvProxyState) return;
+  try { qvProxyState.anim.finish(); } catch(e){}
+  const s = qvProxyState;
+  qvProxyCleanup();
+  if(s.mode === "open"){
+    const qv = $("qv");
+    if(qv){ qv.classList.remove("qv--flying"); try{$("qvImage").classList.remove("qv-image-hidden");}catch(e){} }
+  } else {
+    try { $("qvImage").classList.remove("qv-image-hidden"); } catch(e){}
+  }
+}
+
+function finishQvProxyNow(){
+  const s = qvProxyState;
+  qvProxyCleanup();
+  try { $("qvImage").classList.remove("qv-image-hidden"); } catch(e){}
+  const qv = $("qv");
+  if(qv){ try { qv.classList.remove("qv--flying", "qv--reveal-zone", "qv--jump"); } catch(e){} }
+}
+
+function startQvOpenFlight(id){
+  const qv = $("qv");
+  const img = $("qvImage");
+  if(!qv.open || !img || !qvProxySupported()) return;
+  const src = qvSourceImage(id);
+  if(!src) return;                      // mở từ dashboard / board lúc lưới ẩn → entrance mặc định
+  const to = img.getBoundingClientRect();
+  if(to.width < 8 || to.height < 8) return;
+
+  qv.classList.add("qv--flying");
+  const el = qvProxyNode(to, parseFloat(getComputedStyle(img).borderRadius) || 8,
+    img.currentSrc || img.src || PLACEHOLDER);
+  document.body.appendChild(el);
+  // showPopover không sẵn sàng (browser từ chối top layer ngay sau showModal
+  // trong một số trạng thái) → bỏ flight trải nghiệm thuần, entrance cũ đảm nhiệm.
+  try { el.showPopover(); } catch(e){ try{el.remove();}catch(e2){} qv.classList.remove("qv--flying"); return; }
+
+  const dx = (src.rect.left + src.rect.width / 2) - (to.left + to.width / 2);
+  const dy = (src.rect.top + src.rect.height / 2) - (to.top + to.height / 2);
+  const sx = src.rect.width / Math.max(1, to.width);
+  const sy = src.rect.height / Math.max(1, to.height);
+  const anim = el.animate([
+    { transform: "translate(" + dx + "px," + dy + "px) scale(" + sx + "," + sy + ")", borderRadius: src.radius + "px" },
+    { transform: "none", borderRadius: (parseFloat(getComputedStyle(img).borderRadius) || 8) + "px" }
+  ], { duration: 320, easing: "cubic-bezier(.22, 1, .36, 1)", fill: "both" });
+
+  const flight = { el, anim, mode: "open", timer: 0, onVis: null };
+  qvProxyState = flight;
+  const finish = () => {
+    if(qvProxyState !== flight) return;
+    qvProxyCleanup();
+    qv.classList.remove("qv--flying");
+  };
+  anim.onfinish = finish;
+  anim.oncancel = () => { if(qvProxyState === flight) qvProxyCleanup(); };
+  flight.timer = setTimeout(finish, 640);
+  flight.onVis = () => { if(document.hidden){ try{anim.finish();}catch(e){} } };
+  document.addEventListener("visibilitychange", flight.onVis);
+}
+
+// Flight NGƯỢC: ảnh bay từ Quick View về đúng thẻ nguồn. Nguồn được tra lại
+// MỖI LẦN đóng (không giữ node cũ) — đã lọc/xoá thì trả null và caller dùng
+// animation thoát thuần. Flight cho biết khi nào xong qua onDone (callback
+// của closeQuickView), màu màu chỉ cần dọn sạch.
+function startQvCloseFlight(id){
+  const qv = $("qv");
+  const img = $("qvImage");
+  if(!qv.open || !img || !qvProxySupported()) return null;
+  const src = qvSourceImage(id);
+  if(!src) return null;
+  const from = img.getBoundingClientRect();
+  if(from.width < 8 || from.height < 8) return null;
+
+  qv.classList.add("qv--reveal-zone");
+  img.classList.add("qv-image-hidden");
+  const el = qvProxyNode(from, parseFloat(getComputedStyle(img).borderRadius) || 8,
+    img.currentSrc || img.src || PLACEHOLDER);
+  document.body.appendChild(el);
+  try { el.showPopover(); } catch(e){ try{el.remove();}catch(e2){} img.classList.remove("qv-image-hidden"); qv.classList.remove("qv--reveal-zone"); return null; }
+
+  const dx = (src.rect.left + src.rect.width / 2) - (from.left + from.width / 2);
+  const dy = (src.rect.top + src.rect.height / 2) - (from.top + from.height / 2);
+  const sx = src.rect.width / Math.max(1, from.width);
+  const sy = src.rect.height / Math.max(1, from.height);
+  const anim = el.animate([
+    { transform: "none", borderRadius: (parseFloat(getComputedStyle(img).borderRadius) || 8) + "px" },
+    { transform: "translate(" + dx + "px," + dy + "px) scale(" + sx + "," + sy + ")", borderRadius: src.radius + "px" }
+  ], { duration: 300, easing: "cubic-bezier(.4, 0, .7, .3)", fill: "both" });
+
+  const flight = { el, anim, mode: "close", timer: 0, onVis: null, onDone: null };
+  qvProxyState = flight;
+  const finish = () => {
+    if(qvProxyState !== flight) return;
+    qvProxyCleanup();
+    if(typeof flight.onDone === "function") flight.onDone();
+  };
+  anim.onfinish = finish;
+  anim.oncancel = () => {
+    if(qvProxyState !== flight) return;
+    qvProxyCleanup();
+    if(typeof flight.onDone === "function") flight.onDone();
+  };
+  flight.timer = setTimeout(finish, 640);
+  flight.onVis = () => { if(document.hidden){ try{anim.finish();}catch(e){} } };
+  document.addEventListener("visibilitychange", flight.onVis);
+  return flight;
+}
+
 function closeQuickView(){
   const qv = $("qv");
   if(!qv.open || qvClosing) return Promise.resolve();
+
+  // Flight mở còn dang dở (Escape giữa lúc bay): chốt về khung cuối ngay.
+  settleQvProxy();
 
   if(prefersReducedMotion()){
     qv.close();
     return Promise.resolve();
   }
 
+  // M05.2 — còn ảnh nguồn đang hiển thị trong lưới? ảnh bay VỀ đúng thẻ đó;
+  // không còn (đã lọc/xoá/đang ở view khác) → thu về animation thuần tuỳ
+  // những gì đã có từ MOTION-03, không tạo proxy ma.
+  const flight = startQvCloseFlight(qv.dataset.id);
+
   qvClosing = true;
   qv.classList.add("qv-closing");
 
   return new Promise(resolve => {
     let settled = false;
+    let sawFlight = !flight;
+    let sawAnim = false;
 
     const finish = () => {
       if(settled) return;
       settled = true;
       clearTimeout(timer);
       qv.removeEventListener("animationend", onEnd);
-      qv.classList.remove("qv-closing");
+      qvProxyCleanup();                      // proxy ma không bao giờ sống sót
+      try { $("qvImage").classList.remove("qv-image-hidden"); } catch(e){}
+      qv.classList.remove("qv-closing", "qv--flying", "qv--reveal-zone", "qv--closing-fade", "qv--jump");
       qvClosing = false;
       if(qv.open) qv.close();
       resolve();
     };
 
-    const onEnd = (event) => { if(event.target === qv) finish(); };
+    const onEnd = (event) => {
+      if(event.target !== qv) return;
+      sawAnim = true;
+      if(sawFlight) finish();
+    };
+
+    if(flight){
+      flight.onDone = () => { sawFlight = true; if(sawAnim) finish(); };
+    }
 
     qv.addEventListener("animationend", onEnd);
-    // Lưới an toàn: nếu animation không bắn sự kiện thì vẫn phải đóng.
-    const timer = setTimeout(finish, 420);
+    // Lưới an toàn: nếu animation/phượt không bắn sự kiện thì vẫn phải đóng.
+    const timer = setTimeout(() => { sawAnim = true; sawFlight = true; finish(); }, 780);
   });
 }
 
@@ -5119,7 +5359,7 @@ function renderBoard(){
         sel.appendChild(o);
       });
       sel.addEventListener('change', () => {
-        setItemStatus(it.id, sel.value, sel);
+        if(setItemStatus(it.id, sel.value, sel)) flashBoardColumn(sel.value);
       });
       card.append(handle, img, name, price, sel);
       list.appendChild(card);
@@ -5318,9 +5558,28 @@ function endBoardDrag(ev){
   if(newStatus){
     const it = items.find(x => x.id === id);
     if(it && it.status !== newStatus){
-      setItemStatus(id, newStatus, card);
+      // M05.5 — hiệu ứng nhận cột CHỈ khi ghi THÀNH CÔNG (setItemStatus trả
+      // false khi lưu lỗi và đã khôi phục dữ liệu cũ).
+      if(setItemStatus(id, newStatus, card)) flashBoardColumn(newStatus);
     }
   }
+}
+
+// M05.5 — vảy sáng cột đích sau khi kéo/thả hoặc bàn phím chuyển cột thành
+// công. Chỉ đọc DOM sau render, không bao giờ ghi dữ liệu.
+function flashBoardColumn(status){
+  requestAnimationFrame(() => {
+    const col = document.querySelector('.board__column[data-status="' + CSS.escape(status) + '"]');
+    if(!col || !col.isConnected) return;
+    if(col.__flashTimer) clearTimeout(col.__flashTimer);
+    col.classList.remove("board__column--confirm");
+    void col.offsetWidth;
+    col.classList.add("board__column--confirm");
+    col.__flashTimer = setTimeout(() => {
+      col.__flashTimer = 0;
+      col.classList.remove("board__column--confirm");
+    }, 700);
+  });
 }
 
 function cancelBoardDrag(){
@@ -5373,7 +5632,7 @@ function startBoardKeyboardDrag(card, handle, e){
       // rebuild the board again (it only skips while a session owns the DOM).
       cleanupKb();
       if(moved){
-        setItemStatus(id, target, handle);
+        if(setItemStatus(id, target, handle)) flashBoardColumn(target);
         announceBoard('Đã chuyển trạng thái thành: ' + statusLabel(target));
         boardFocusHandle(id);
       } else {
@@ -5562,6 +5821,7 @@ function init(){
   // Sự kiện "close" bên dưới vẫn lo việc trả focus.
   $("qv").addEventListener("cancel", (event) => {
     event.preventDefault();
+    finishQvProxyNow();
     closeQuickView();
   });
   $("qvPurchase").addEventListener("click", () => {
@@ -5582,11 +5842,13 @@ function init(){
   // Không trả focus nếu dialog form đang mở (đã mở từ QV) hoặc node đã bị
   // re-render loại bỏ (isConnected).
   $("qv").addEventListener("close", () => {
+    finishQvProxyNow();
     const opener = qvOpener;
     qvOpener = null;
     if(!opener || !opener.isConnected) return;
+    try { if (opener.getClientRects().length === 0) return; } catch (e) {}
     if($("dlg").open) return;
-    opener.focus();
+    try { opener.focus(); } catch (e) {}
   });
 
   /* ---- V16.1 F2 — purchase capture dialog ------------------------------ */

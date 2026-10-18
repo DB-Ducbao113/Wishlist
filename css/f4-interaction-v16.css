@@ -150,7 +150,7 @@
 #grid.gallery--v2.gallery--v4.gallery--v6
 .wishlist-card .product-card__actions
 .card-more__menu[data-open="true"] {
-  opacity: 1;
+  opacity: 1 !important;
   pointer-events: auto;
   transition-delay: 0ms;
 }
