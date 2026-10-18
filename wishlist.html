@@ -137,6 +137,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/f4-interaction-v16.css">
 <link rel="stylesheet" href="./css/f5-savings-v16.css">
 
+<!-- V16.2 MOTION-06 — mobile gestures + adaptive motion; neo sau f5-savings-v16.css
+     de tat ca quy tac cua moc nay thang trong ca cascate. -->
+<link rel="stylesheet" href="./css/motion-v18-mobile.css">
+
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
      the class is only added when IntersectionObserver exists and the user
@@ -1297,6 +1301,8 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   <div class="quick-view__panel">
     <div class="quick-view__top">
+      <!-- M06.2 — tay cầm swipe-to-dismiss (decor, chỉ pointerEvents:none) -->
+      <span class="quick-view__grabber" aria-hidden="true"></span>
       <div class="quick-view__top-id">
         <span class="quick-view__kicker">TRƯNG BÀY SẢN PHẨM</span>
         <span class="quick-view__object" id="qvObject" aria-hidden="true">VẬT PHẨM</span>
@@ -3613,9 +3619,18 @@ function setupImageParallax(cardEl, imageEl){
     schedule();
   };
 
+  // M06.5 — tab bị ẩn: hủy mọi frame của pending (không kết luận trên trang
+  // không hiển thị, không để rAF treo khi quay lại).
+  const handleVisChange = () => {
+    if(!document.hidden || rafId === null) return;
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  };
+
   cardEl.setAttribute("data-dv-parallax", "");
   cardEl.addEventListener("pointermove", handleMove);
   cardEl.addEventListener("pointerleave", handleLeave);
+  document.addEventListener("visibilitychange", handleVisChange);
 
   const cleanup = () => {
     if(rafId !== null){
@@ -3624,6 +3639,7 @@ function setupImageParallax(cardEl, imageEl){
     }
     cardEl.removeEventListener("pointermove", handleMove);
     cardEl.removeEventListener("pointerleave", handleLeave);
+    document.removeEventListener("visibilitychange", handleVisChange);
     cardEl.removeAttribute("data-dv-parallax");
     cardEl.style.removeProperty("--dv-parallax-x");
     cardEl.style.removeProperty("--dv-parallax-y");
@@ -4548,9 +4564,264 @@ function editFromQuickView(){
   });
 }
 
-/* ===================================================================
+/* =====================================================================
+   M06.2 — QUICK VIEW SWIPE-TO-DISMISS (thiết bị chạm)
+   ---------------------------------------------------------------------
+   Quyết định từ audit M06.1:
+   - Vùng nghi thức = duy nhất thanh tiêu đề dính (.quick-view__top) của
+     #qv. Chưa từng cài ở #dlg/#pd → chưa từng vô tình đóng hộp mua hàng.
+   - Chỉ nhận pointerType "touch" + isPrimary: chuột không bao giờ drag.
+   - Chỉ khởi khi panel đang trên đỉnh mặt cuộn (scrollTop <= 6): cuộn
+     nội dung bên dưới giữ nguyên cuộn tự nhiên.
+   - Ràng buộc dọc, có kháng lực, không vượt 260px; backdrop mờ theo
+     tiến trình qua biến --qv-swipe-progress (CSS M06.2).
+   - Thả đạt ngưỡng (>=120px hoặc flick nhanh >=56px) → ĐÓNG QUA
+     closeQuickView() chính tắc (qvClosing / trả focus / close flight
+     đều giữ nguyên — M06-09 kiểm chứng proxy không còn sót).
+   - Không đủ → nảy về đúng chỗ (snap-back) rồi mới dọn.
+   - pointercancel / Escape / visibilitychange → huỷ sạch listener,
+     reset style tức thời ngay cả khi tab bị ẩn.
+   - Không setPointerCapture thủ công: pointer chạm có capture ngầm
+     (pointermove vẫn bắn về đúng target) → dọn luôn chỉ là
+     removeEventListener, không bao giờ sót listener.
+   - prefers-reduced-motion: KHÔNG cài gesture (nút × luôn hoạt động).
+   ===================================================================== */
+let qvSwipeState = null;      // phiên drag hiện hành
+let qvSwipeCloseTimer = 0;
+let qvSwipeSessions = 0;      // chẩn đoán/báo cáo (suite M06-08 đọc)
+
+const QV_DRAG_MAX = 120, QV_DRAG_CEIL = 260;
+const QV_DISMISS_DIST = 120, QV_FLICK_MIN = 56, QV_FLICK_V = 0.55;
+const QV_SCROLL_ARM = 6;
+
+function qvSwipeResetStyle(){
+  const qv = $("qv");
+  if(!qv) return;
+  qv.style.removeProperty("transform");
+  qv.style.removeProperty("opacity");
+  qv.style.removeProperty("transition");
+  qv.style.removeProperty("visibility");
+  qv.style.removeProperty("--qv-swipe-progress");
+  qv.classList.remove("qv--dragging", "qv--drag-closing");
+}
+
+function qvSwipeDetach(){
+  const s = qvSwipeState;
+  if(!s) return null;
+  qvSwipeState = null;
+  cancelAnimationFrame(s.raf);
+  document.removeEventListener("pointermove", s.onMove);
+  document.removeEventListener("pointerup", s.onUp);
+  document.removeEventListener("pointercancel", s.onCancel);
+  document.removeEventListener("keydown", s.onKey);
+  document.removeEventListener("visibilitychange", s.onVis);
+  return s;
+}
+
+// Huỷ tức thời: tab bị ẩn, stroke chéo, đóng giữa chừng stroke.
+function qvSwipeAbort(){
+  qvSwipeDetach();
+  clearTimeout(qvSwipeCloseTimer); qvSwipeCloseTimer = 0;
+  qvSwipeResetStyle();
+}
+
+// Kết thúc cử chỉ: dismiss=true → hạ sheet rồi qua kênh chính tắc;
+// false → snap-back về chỗ. Làm sạch listener TRONG CẢ HAI nhánh.
+function qvSwipeEnd(dismiss){
+  const s = qvSwipeDetach();
+  if(!s) return;
+  const qv = $("qv");
+  if(!qv || !qv.open){ qvSwipeAbort(); return; }
+
+  if(!dismiss || prefersReducedMotion()){
+    if(s.dy > 4 && !prefersReducedMotion()){
+      qv.classList.add("qv--dragging");
+      qv.style.transition = "transform 260ms cubic-bezier(.22, 1, .36, 1)";
+      requestAnimationFrame(() => {
+        qv.style.transform = "translateY(0px)";
+        qv.style.setProperty("--qv-swipe-progress", "0");
+        setTimeout(() => { qvSwipeResetStyle(); }, 290);
+      });
+    } else {
+      qvSwipeResetStyle();
+    }
+    return;
+  }
+
+  qvSwipeSessions++;
+  qv.classList.remove("qv--dragging");
+  qv.classList.add("qv--drag-closing");
+  qv.style.transition = "transform 240ms cubic-bezier(.4, 0, .55, 1), opacity 240ms ease";
+  const cur = parseFloat(qv.style.transform.replace(/[^\d.]/g, "")) || 0;
+  requestAnimationFrame(() => {
+    qv.style.transform = "translateY(" + (cur + 220) + "px)";
+    qv.style.opacity = "0.18";
+    qv.style.setProperty("--qv-swipe-progress", "1");
+  });
+  qvSwipeCloseTimer = setTimeout(() => {
+    qvSwipeCloseTimer = 0;
+    qv.style.visibility = "hidden";
+    // Dự phòng tuyệt đối: cho dù sự kiện "close" có trễ/hỏng ra sao thì
+    // kết thúc closeQuickView() cũng phải trả sheet về trạng thái sạch
+    // (classes + inline styles) — không bao giờ sót lớp drag lại.
+    const onDone = () => { qv.style.removeProperty("visibility"); qvSwipeResetStyle(); };
+    closeQuickView().then(onDone, onDone);
+  }, 260);
+}
+
+function setupQvSwipe(){
+  const qv = $("qv");
+  const top = document.querySelector("#qv .quick-view__top");
+  const panel = document.querySelector("#qv .quick-view__panel");
+  if(!qv || !top || !panel || top.__qvSwipeReady) return;
+  top.__qvSwipeReady = true;
+
+  top.addEventListener("pointerdown", (e) => {
+    if(qvSwipeState || !qv.open || qvClosing) return;
+    if(e.pointerType !== "touch" || e.isPrimary === false) return;
+    if(prefersReducedMotion()) return;                     // M06.5 — reduced: không drag
+    if(e.target.closest("button, a, select, input, textarea, label")) return;
+    if(panel.scrollTop > QV_SCROLL_ARM) return;            // đang đọc nội dung → cuộn tự nhiên
+
+    const state = {
+      pointerId: e.pointerId, top, panel,
+      startX: e.clientX, startY: e.clientY,
+      dx: 0, dy: 0, axis: null, raf: 0, dyLast: 0,
+      samples: [{ t: e.timeStamp || performance.now(), y: e.clientY }],
+      onMove: null, onUp: null, onCancel: null, onKey: null, onVis: null
+    };
+
+    state.onMove = (ev) => {
+      const s = qvSwipeState;
+      if(!s || ev.pointerId !== s.pointerId) return;
+      if(!qv.open || qvClosing){ qvSwipeAbort(); return; }
+      const dyRaw = ev.clientY - s.startY;
+      const dxRaw = ev.clientX - s.startX;
+      if(!s.axis){
+        if(Math.abs(dxRaw) > 10 && Math.abs(dxRaw) > Math.abs(dyRaw)){
+          s.axis = "x";                                    // stroke ngang → buông ngay, không đụng gì cả
+          qvSwipeAbort();
+          return;
+        }
+        if(Math.abs(dyRaw) < 8) return;
+        s.axis = "y";
+      }
+      if(s.axis !== "y") return;
+      const now = ev.timeStamp || performance.now();
+      s.samples.push({ t: now, y: ev.clientY });
+      if(s.samples.length > 6) s.samples.shift();
+      s.dy = Math.max(0, dyRaw);
+      s.dx = dxRaw;
+      if(!s.raf) s.raf = requestAnimationFrame(() => {
+        s.raf = 0;
+        const st = qvSwipeState;
+        if(!st || st.axis !== "y") return;
+        qv.classList.add("qv--dragging");
+        const d = Math.min(QV_DRAG_CEIL,
+          st.dy <= QV_DRAG_MAX ? st.dy : QV_DRAG_MAX + (st.dy - QV_DRAG_MAX) * 0.35);
+        st.dyLast = d;
+        qv.style.transform = "translateY(" + d.toFixed(1) + "px)";
+        qv.style.setProperty("--qv-swipe-progress", Math.min(1, d / 320).toFixed(3));
+      });
+    };
+
+    state.onUp = (ev) => {
+      const s = qvSwipeState;
+      if(!s || ev.pointerId !== s.pointerId) return;
+      if(!qv.open || qvClosing){ qvSwipeAbort(); return; }
+      const engaged = s.axis === "y" && s.dy > 8;
+      if(!engaged){ qvSwipeAbort(); return; }             // chạm quá ngắn → không phải stroke
+      const now = ev.timeStamp || performance.now();
+      s.samples.push({ t: now, y: ev.clientY });
+      const first = s.samples[0];
+      // M06.2 — flick cần một stroke CÓ THỜI LƯỢNG THỰC (>= 24ms). Một cử chỉ
+      // không có khoảng thời gian (dispatch đồng loạt / chạm máy) không được
+      // coi là flick — chỉ thi hành dismissal bằng khoảng cách thực (>= 120px).
+      const span = now - first.t;
+      const v = span >= 24 ? (ev.clientY - first.y) / span : 0;
+      const downward = s.dy >= QV_DISMISS_DIST || (s.dy >= QV_FLICK_MIN && v >= QV_FLICK_V);
+      qvSwipeEnd(downward);
+    };
+
+    state.onCancel = () => { qvSwipeEnd(false); };
+    state.onKey = (kev) => {
+      if(!qvSwipeState || kev.key !== "Escape") return;
+      if(qvSwipeState.axis === "y"){ kev.preventDefault(); qvSwipeEnd(false); }
+      // stroke chưa chạm ngưỡng → Escape đi tự nhiên (cancel của dialog).
+    };
+    state.onVis = () => { if(document.hidden) qvSwipeAbort(); };
+
+    document.addEventListener("pointermove", state.onMove);
+    document.addEventListener("pointerup", state.onUp);
+    document.addEventListener("pointercancel", state.onCancel);
+    document.addEventListener("keydown", state.onKey);
+    document.addEventListener("visibilitychange", state.onVis);
+    qvSwipeState = state;
+  });
+
+  // Bất kỳ lối đóng nào (Escape giữa chừng stroke, nút ×, dismissal của
+  // chính stroke) → sheet phải về trạng thái style nguyên bản.
+  qv.addEventListener("close", () => {
+    if(qvSwipeCloseTimer){ clearTimeout(qvSwipeCloseTimer); qvSwipeCloseTimer = 0; }
+    qvSwipeAbort();
+  });
+  qv.addEventListener("cancel", () => {
+    if(qvSwipeState && qvSwipeState.axis === "y") qvSwipeEnd(false);
+  });
+}
+
+setupQvSwipe();
+
+/* =====================================================================
+   M06.5 — ADAPTIVE MOTION BUDGET (bằng chứng đo được)
+   ---------------------------------------------------------------------
+   Đo tốc độ khung THỰC bằng rAF sau khi trang yên tĩnh: trung vị delta
+   liên tục chậm (>= 29ms) và quá nửa số mẫu là khung trễ (>= 33.4ms)
+   → thêm class "motion-lite" trên <html>: CSS M06.5 tắt chuyển động
+   AMBIENT (breathe/glow/parallax), KHÔNG đụng phản hồi bắt buộc (busy,
+   spinner, entrance). Không dựa vào user-agent.
+   ===================================================================== */
+
+// thuần tuý quyết định từ dải delta — suite thử trực tiếp giá trị biên.
+function motionBudgetFromDeltas(deltas){
+  if(!Array.isArray(deltas) || deltas.length < 10) return false;
+  const ds = deltas.filter(d => typeof d === "number" && isFinite(d) && d >= 0);
+  if(ds.length < 10) return false;
+  ds.sort((a, b) => a - b);
+  const q2 = ds[Math.floor((ds.length - 1) * 0.5)];
+  const slow = ds.filter(d => d >= 33.4).length;
+  return q2 >= 29.0 && slow >= ds.length / 2;
+}
+
+function sampleMotionBudget(){
+  return new Promise((resolve) => {
+    if(typeof requestAnimationFrame !== "function"){ resolve(false); return; }
+    if(prefersReducedMotion()){ resolve(false); return; }
+    let last = 0;
+    const deltas = [];
+    const tick = (t) => {
+      if(document.hidden){ resolve(false); return; }     // tab ẩn: không kết luận
+      if(last) deltas.push(t - last);
+      last = t;
+      if(deltas.length < 24){ requestAnimationFrame(tick); return; }
+      resolve(motionBudgetFromDeltas(deltas));
+    };
+    requestAnimationFrame(tick);
+    setTimeout(() => resolve(motionBudgetFromDeltas(deltas)), 2200);   // lưới an toàn
+  });
+}
+
+function applyMotionBudget(){
+  sampleMotionBudget().then((lowPerf) => {
+    if(lowPerf && !document.documentElement.classList.contains("motion-lite")){
+      document.documentElement.classList.add("motion-lite");
+    }
+  });
+}
+
+/* ==================
    CRUD
-   =================================================================== */
+   ================== */
 function removeItem(id){
   const it = items.find(x => x.id === id);
   if(!it) return;
@@ -5375,6 +5646,21 @@ function renderBoard(){
 
 let boardDragState = null;
 
+let boardTouchPending = null;
+
+// Huỷ phiên chờ touch (chưa đủ 8px): bỏ sạch document listener ngay lập
+// tức — không bao giờ rò rỉ. Được gọi khi nhả/pointercancel/Escape/ẩn tab.
+function clearBoardTouchPending(){
+  const p = boardTouchPending;
+  if(!p) return;
+  boardTouchPending = null;
+  document.removeEventListener('pointermove', p.onMove);
+  document.removeEventListener('pointerup', p.onUp);
+  document.removeEventListener('pointercancel', p.onCancel);
+  document.removeEventListener('keydown', p.onKey);
+  document.removeEventListener('visibilitychange', p.onVis);
+}
+
 function setupBoardDrag(){
   const board = $("board");
   if(!board) return;
@@ -5393,10 +5679,42 @@ function setupBoardDrag(){
       try { handle.removeEventListener('keydown', handle._onKeyDown); } catch(_) {}
     }
 
+    // M06.4 — kích hoạt chuột/bút NGAY (hành vi cũ giữ nguyên — các suite
+    // MOTION-04 phụ thuộc hành vi pointer chuột), nhưng TOUCH phải là
+    // deliberate: thêm phiên chờ và chỉ tổng hành drag khi đã di chuyển
+    // đủ 8px. Chưa đủ ngưỡng = chạm thường: 0 preview, 0 clone, select
+    // trạng thái vẫn là lối chính cho touch. pointercancel / Escape /
+    // visibilitychange đều huỷ sạch.
     handle._onPointerDown = (e) => {
       if(e.button !== 0) return;
       const card = handle.closest('.board__card');
       if(!card) return;
+      if(e.pointerType === 'touch'){
+        if(e.isPrimary === false){ return; }
+        clearBoardTouchPending();
+        const pending = {
+          id: e.pointerId, card, sx: e.clientX, sy: e.clientY,
+          onMove: null, onUp: null, onCancel: null, onKey: null, onVis: null
+        };
+        pending.onMove = (ev) => {
+          if(!boardTouchPending || ev.pointerId !== pending.id) return;
+          if(Math.hypot(ev.clientX - pending.sx, ev.clientY - pending.sy) >= 8){
+            clearBoardTouchPending();          // dọn phiên chờ TRƯỚC khi nuốt drag
+            startBoardDrag(pending.card, ev);
+          }
+        };
+        pending.onUp = () => clearBoardTouchPending();
+        pending.onCancel = () => clearBoardTouchPending();
+        pending.onKey = (kev) => { if(kev.key === 'Escape') clearBoardTouchPending(); };
+        pending.onVis = () => { if(document.hidden) clearBoardTouchPending(); };
+        boardTouchPending = pending;
+        document.addEventListener('pointermove', pending.onMove);
+        document.addEventListener('pointerup', pending.onUp);
+        document.addEventListener('pointercancel', pending.onCancel);
+        document.addEventListener('keydown', pending.onKey);
+        document.addEventListener('visibilitychange', pending.onVis);
+        return;
+      }
       e.preventDefault();
       startBoardDrag(card, e);
     };
@@ -5739,6 +6057,12 @@ function init(){
   if(document.querySelector(".hero--v9")){
     setTimeout(setupHeroMotion, 120);
   }
+
+  // V16.2 MOTION-06 — dò tốc độ khung một lần sau khi trang yên tĩnh: nếu
+  // thiết bị chậm liên tục → motion-lite (CSS M06.5 tắt chuyển động ambient).
+  // Đo trễ sau render để không nhân nhầm khung chậm của lần render đầu.
+  setTimeout(applyMotionBudget, 900);
+  window.addEventListener("load", () => setTimeout(applyMotionBudget, 400), { once: true });
 
   // Font xong (hoặc đổi font/ngôn ngữ) là bề rộng chữ đổi -> đo lại pill.
   if(document.fonts && document.fonts.ready){

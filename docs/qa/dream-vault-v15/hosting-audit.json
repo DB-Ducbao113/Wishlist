@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-18T07:28:15.156Z",
+ "generatedAt": "2026-10-18T09:20:17.448Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
-  "publishedFileCount": 1792,
-  "leakCount": 1571,
+  "publishedFileCount": 1808,
+  "leakCount": 1574,
   "leakedSamples": [
    "docs/design/dream-vault-v11-sprint.md",
    "docs/design/dream-vault-v5-design.md",
@@ -60,8 +60,8 @@
   "leakCount": 0,
   "leaks": [],
   "cssInvariant": {
-   "repoStylesheetCount": 53,
-   "linkedStylesheetCount": 53,
+   "repoStylesheetCount": 54,
+   "linkedStylesheetCount": 54,
    "everyRepoSheetLinked": true,
    "appCssExists": true,
    "appCssByteIdenticalToSourceConcatenation": true,

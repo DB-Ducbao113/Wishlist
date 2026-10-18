@@ -7,7 +7,7 @@
  "generated": [
   "css/app.css"
  ],
- "stylesheetSourceCount": 53,
+ "stylesheetSourceCount": 54,
  "stylesheetOrder": [
   "css/legacy.css",
   "css/tokens.css",
@@ -61,7 +61,8 @@
   "css/dashboard-v16.css",
   "css/purchase-v16.css",
   "css/f4-interaction-v16.css",
-  "css/f5-savings-v16.css"
+  "css/f5-savings-v16.css",
+  "css/motion-v18-mobile.css"
  ],
  "fileCount": 5,
  "assetCount": 3,
@@ -69,7 +70,7 @@
   "_headers",
   "_redirects"
  ],
- "totalBytes": 629451,
+ "totalBytes": 651748,
  "files": [
   "_headers",
   "_redirects",
