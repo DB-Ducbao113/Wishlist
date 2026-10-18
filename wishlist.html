@@ -5081,9 +5081,25 @@ function renderBoard(){
       const handle = document.createElement('button');
       handle.type = 'button';
       handle.className = 'board__handle';
-      handle.setAttribute('aria-label', 'Kéo để đổi trạng thái: ' + (it.name || ''));
+      handle.setAttribute('aria-label', 'Kéo hoặc dùng bàn phím để đổi trạng thái: ' + (it.name || ''));
       handle.textContent = '⋮⋮';
-      card.append(handle, img, name, price);
+      // Non-drag fallback select
+      const sel = document.createElement('select');
+      sel.className = 'board__status-select';
+      sel.setAttribute('aria-label', 'Đổi trạng thái nhanh');
+      sel.style.display = 'none';
+      ['wish','saving','ordered','purchased'].forEach(k => {
+        const o = document.createElement('option');
+        o.value = k;
+        o.textContent = ({wish:'Muốn mua',saving:'Đang để dành',ordered:'Đã đặt hàng',purchased:'Đã mua'})[k];
+        if(k === it.status) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', () => {
+        setItemStatus(it.id, sel.value, sel);
+      });
+      // Show fallback on touch-like contexts if desired (optional)
+      card.append(handle, img, name, price, sel);
       list.appendChild(card);
     });
     col.append(head, list);
@@ -5200,23 +5216,37 @@ function startBoardDrag(card, e){
   };
   boardDragState._onVis = () => cancel();
 
+  boardDragState.pointerId = e.pointerId || null;
+  boardDragState.capturingEl = e.target || null;
+
   document.addEventListener('pointermove', move);
   document.addEventListener('pointerup', up);
   document.addEventListener('pointercancel', cancel);
   document.addEventListener('visibilitychange', boardDragState._onVis);
   document.addEventListener('keydown', boardDragState._onKey);
 
-  try { e.target.setPointerCapture && e.pointerId && e.target.setPointerCapture(e.pointerId); } catch(_) {}
+  try {
+    if(boardDragState.capturingEl && boardDragState.pointerId !== null && boardDragState.capturingEl.setPointerCapture){
+      boardDragState.capturingEl.setPointerCapture(boardDragState.pointerId);
+    }
+  } catch(_) {}
 }
 
 function cleanupBoardDragListeners(){
   if(!boardDragState) return;
-  document.removeEventListener('pointermove', boardDragState._onMove);
-  document.removeEventListener('pointerup', boardDragState._onUp);
-  document.removeEventListener('pointercancel', boardDragState._onCancel);
-  document.removeEventListener('visibilitychange', boardDragState._onVis);
-  document.removeEventListener('keydown', boardDragState._onKey);
+  try { document.removeEventListener('pointermove', boardDragState._onMove); } catch(_) {}
+  try { document.removeEventListener('pointerup', boardDragState._onUp); } catch(_) {}
+  try { document.removeEventListener('pointercancel', boardDragState._onCancel); } catch(_) {}
+  try { document.removeEventListener('visibilitychange', boardDragState._onVis); } catch(_) {}
+  try { document.removeEventListener('keydown', boardDragState._onKey); } catch(_) {}
+  try {
+    if(boardDragState.capturingEl && boardDragState.pointerId !== null && boardDragState.capturingEl.hasPointerCapture && boardDragState.capturingEl.hasPointerCapture(boardDragState.pointerId)){
+      boardDragState.capturingEl.releasePointerCapture(boardDragState.pointerId);
+    }
+  } catch(_) {}
   if(boardDragState.raf){ cancelAnimationFrame(boardDragState.raf); boardDragState.raf = null; }
+  boardDragState.capturingEl = null;
+  boardDragState.pointerId = null;
 }
 
 function clearBoardDropTargets(){
@@ -5274,6 +5304,9 @@ let boardKbState = null;
 function startBoardKeyboardDrag(card, handle, e){
   const board = $("board");
   if(!board) return;
+  if(boardKbState && boardKbState.active){
+    cleanupKb();
+  }
   const id = card.dataset.id;
   const it = items.find(x => x.id === id);
   if(!it) return;
@@ -5305,14 +5338,17 @@ function startBoardKeyboardDrag(card, handle, e){
       cleanupKb();
     }
   };
+  const onBlur = () => { cleanupKb(); };
   boardKbState._onKey = onKey;
+  boardKbState._onBlur = onBlur;
   document.addEventListener('keydown', onKey);
-  handle.addEventListener('blur', cleanupKb, { once: true });
+  handle.addEventListener('blur', onBlur);
 }
 
 function cleanupKb(){
   if(!boardKbState) return;
   try { document.removeEventListener('keydown', boardKbState._onKey); } catch(_) {}
+  try { boardKbState.handle && boardKbState.handle.removeEventListener('blur', boardKbState._onBlur); } catch(_) {}
   boardKbState.active = false;
   boardKbState = null;
 }
