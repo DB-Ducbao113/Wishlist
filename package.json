@@ -1,7 +1,7 @@
 {
-  "name": "dream-vault",
+  "name": "someday-vault",
   "version": "16.1.0",
-  "description": "Dream Vault — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
+  "description": "Someday Vault — single-file wish list app. This package holds the QA harnesses only; the app itself has no runtime dependencies.",
   "private": true,
   "scripts": {
     "qa": "node scripts/qa/run-all.js",

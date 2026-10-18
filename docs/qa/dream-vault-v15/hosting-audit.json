@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-18T09:20:17.448Z",
+ "generatedAt": "2026-10-18T09:27:29.184Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
-  "publishedFileCount": 1808,
-  "leakCount": 1574,
+  "publishedFileCount": 1814,
+  "leakCount": 1577,
   "leakedSamples": [
    "docs/design/dream-vault-v11-sprint.md",
    "docs/design/dream-vault-v5-design.md",
