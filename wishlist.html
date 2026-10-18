@@ -5101,36 +5101,45 @@ function setupBoardDrag(){
   const board = $("board");
   if(!board) return;
 
-  // Clean up any previous listeners by cloning? Easier: remove old by re-rendering structure is fine
-  // But we already rendered; add listeners
-  board.querySelectorAll('.board__handle').forEach((handle, idx) => {
+  // Remove old data-bindings by re-attaching? Just set up; renderBoard recreates handles.
+  // But we call setupBoardDrag after innerHTML; add listeners
+  board.querySelectorAll('.board__handle').forEach((handle) => {
     handle.setAttribute('tabindex', '0');
-    handle.setAttribute('role', 'button');
     handle.setAttribute('aria-grabbed', 'false');
 
-    // Pointer events
-    handle.addEventListener('pointerdown', (e) => {
+    // Remove old if any
+    if(handle._onPointerDown){
+      try { handle.removeEventListener('pointerdown', handle._onPointerDown); } catch(_) {}
+    }
+    if(handle._onKeyDown){
+      try { handle.removeEventListener('keydown', handle._onKeyDown); } catch(_) {}
+    }
+
+    handle._onPointerDown = (e) => {
       if(e.button !== 0) return;
       const card = handle.closest('.board__card');
       if(!card) return;
       e.preventDefault();
       startBoardDrag(card, e);
-    });
-
-    // Keyboard
-    handle.addEventListener('keydown', (e) => {
+    };
+    handle._onKeyDown = (e) => {
       if(e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
         const card = handle.closest('.board__card');
         if(card) startBoardKeyboardDrag(card, handle, e);
       }
-    });
+    };
+    handle.addEventListener('pointerdown', handle._onPointerDown);
+    handle.addEventListener('keydown', handle._onKeyDown);
   });
 }
 
 function startBoardDrag(card, e){
   const board = $("board");
   if(!board) return;
+  if(boardDragState && boardDragState.active){
+    cancelBoardDrag();
+  }
   const id = card.dataset.id;
   const rect = card.getBoundingClientRect();
   const preview = card.cloneNode(true);
@@ -5148,49 +5157,66 @@ function startBoardDrag(card, e){
     id,
     card,
     preview,
-    startX: e.clientX,
-    startY: e.clientY,
-    offsetX: rect.width/2,
-    offsetY: rect.height/2,
     active: true,
-    mode: 'pointer'
+    raf: null,
+    lastX: e.clientX,
+    lastY: e.clientY
   };
 
   const move = (ev) => {
     if(!boardDragState || !boardDragState.active) return;
-    const p = boardDragState.preview;
-    p.style.transform = 'translate3d(' + ev.clientX + 'px, ' + ev.clientY + 'px, 0) translate(-50%, -50%)';
-    // Highlight target column/list
-    clearBoardDropTargets();
-    const target = findBoardDropTarget(ev.clientX, ev.clientY);
-    if(target) target.classList.add('drag-over');
+    boardDragState.lastX = ev.clientX;
+    boardDragState.lastY = ev.clientY;
+    if(boardDragState.raf) return;
+    boardDragState.raf = requestAnimationFrame(() => {
+      boardDragState.raf = null;
+      if(!boardDragState || !boardDragState.active) return;
+      const p = boardDragState.preview;
+      p.style.transform = 'translate3d(' + boardDragState.lastX + 'px, ' + boardDragState.lastY + 'px, 0) translate(-50%, -50%)';
+      clearBoardDropTargets();
+      const target = findBoardDropTarget(boardDragState.lastX, boardDragState.lastY);
+      if(target) target.classList.add('drag-over');
+    });
   };
   const up = (ev) => {
     if(boardDragState && boardDragState.active){
       endBoardDrag(ev);
-    }
-    cleanupBoardDragListeners(move, up, cancel);
-  };
-  const cancel = () => {
-    if(boardDragState && boardDragState.active){
+    } else {
       cancelBoardDrag();
     }
-    cleanupBoardDragListeners(move, up, cancel);
+    cleanupBoardDragListeners();
   };
+  const cancel = () => {
+    cancelBoardDrag();
+    cleanupBoardDragListeners();
+  };
+
+  // Scoped cleanup
+  boardDragState._onMove = move;
+  boardDragState._onUp = up;
+  boardDragState._onCancel = cancel;
+  boardDragState._onKey = (kev) => {
+    if(kev.key === 'Escape'){ kev.preventDefault(); cancel(); }
+  };
+  boardDragState._onVis = () => cancel();
 
   document.addEventListener('pointermove', move);
   document.addEventListener('pointerup', up);
   document.addEventListener('pointercancel', cancel);
-  document.addEventListener('visibilitychange', cancel);
-  document.addEventListener('keydown', (kev) => {
-    if(kev.key === 'Escape') { kev.preventDefault(); cancel(); }
-  }, { once: true });
+  document.addEventListener('visibilitychange', boardDragState._onVis);
+  document.addEventListener('keydown', boardDragState._onKey);
+
+  try { e.target.setPointerCapture && e.pointerId && e.target.setPointerCapture(e.pointerId); } catch(_) {}
 }
 
-function cleanupBoardDragListeners(move, up, cancel){
-  document.removeEventListener('pointermove', move);
-  document.removeEventListener('pointerup', up);
-  document.removeEventListener('pointercancel', cancel);
+function cleanupBoardDragListeners(){
+  if(!boardDragState) return;
+  document.removeEventListener('pointermove', boardDragState._onMove);
+  document.removeEventListener('pointerup', boardDragState._onUp);
+  document.removeEventListener('pointercancel', boardDragState._onCancel);
+  document.removeEventListener('visibilitychange', boardDragState._onVis);
+  document.removeEventListener('keydown', boardDragState._onKey);
+  if(boardDragState.raf){ cancelAnimationFrame(boardDragState.raf); boardDragState.raf = null; }
 }
 
 function clearBoardDropTargets(){
@@ -5208,21 +5234,20 @@ function findBoardDropTarget(x,y){
 
 function endBoardDrag(ev){
   if(!boardDragState) return;
-  boardDragState.active = false;
   const id = boardDragState.id;
   const target = findBoardDropTarget(ev.clientX, ev.clientY);
   let newStatus = null;
   if(target){
     newStatus = target.dataset.status || target.closest('.board__column')?.dataset.status;
   }
+  cleanupBoardDragListeners();
   cleanupBoardDragPreview();
-  boardDragState.card.classList.remove('dragging');
+  if(boardDragState.card) boardDragState.card.classList.remove('dragging');
   clearBoardDropTargets();
 
   if(newStatus){
     const it = items.find(x => x.id === id);
     if(it && it.status !== newStatus){
-      // Use canonical path
       setItemStatus(id, newStatus, boardDragState.card);
     }
   }
@@ -5231,7 +5256,7 @@ function endBoardDrag(ev){
 
 function cancelBoardDrag(){
   if(!boardDragState) return;
-  boardDragState.active = false;
+  cleanupBoardDragListeners();
   cleanupBoardDragPreview();
   if(boardDragState.card) boardDragState.card.classList.remove('dragging');
   clearBoardDropTargets();
@@ -5240,21 +5265,74 @@ function cancelBoardDrag(){
 
 function cleanupBoardDragPreview(){
   if(boardDragState && boardDragState.preview && boardDragState.preview.parentNode){
-    boardDragState.preview.parentNode.removeChild(boardDragState.preview);
+    try { boardDragState.preview.parentNode.removeChild(boardDragState.preview); } catch(_) {}
   }
 }
 
-// Minimal keyboard drag stub (basic)
+let boardKbState = null;
+
 function startBoardKeyboardDrag(card, handle, e){
-  // For now, just announce - full keyboard roving is more complex; provide status selector fallback is enough
-  // But spec asks for basic keyboard: we'll implement simple cycle via handle
+  const board = $("board");
+  if(!board) return;
   const id = card.dataset.id;
   const it = items.find(x => x.id === id);
   if(!it) return;
   const statuses = ['wish','saving','ordered','purchased'];
   const idx = statuses.indexOf(it.status);
-  const next = statuses[(idx + 1) % statuses.length];
-  setItemStatus(id, next, handle);
+  let cur = idx;
+  boardKbState = { id, card, handle, statuses, cur, active: true };
+  announceBoard('Đang di chuyển thẻ. Dùng mũi tên để chọn cột đích, Enter để xác nhận, Esc để hủy.');
+
+  const onKey = (kev) => {
+    if(!boardKbState || !boardKbState.active) return;
+    if(kev.key === 'ArrowLeft' || kev.key === 'ArrowRight'){
+      kev.preventDefault();
+      boardKbState.cur = (boardKbState.cur + (kev.key === 'ArrowRight' ? 1 : -1) + statuses.length) % statuses.length;
+      announceBoard('Đích: ' + statusLabel(statuses[boardKbState.cur]));
+    } else if(kev.key === 'Enter' || kev.key === ' '){
+      kev.preventDefault();
+      const target = statuses[boardKbState.cur];
+      if(it.status !== target){
+        setItemStatus(id, target, handle);
+        announceBoard('Đã chuyển trạng thái thành: ' + statusLabel(target));
+      } else {
+        announceBoard('Giữ nguyên trạng thái');
+      }
+      cleanupKb();
+    } else if(kev.key === 'Escape'){
+      kev.preventDefault();
+      announceBoard('Đã hủy di chuyển');
+      cleanupKb();
+    }
+  };
+  boardKbState._onKey = onKey;
+  document.addEventListener('keydown', onKey);
+  handle.addEventListener('blur', cleanupKb, { once: true });
+}
+
+function cleanupKb(){
+  if(!boardKbState) return;
+  try { document.removeEventListener('keydown', boardKbState._onKey); } catch(_) {}
+  boardKbState.active = false;
+  boardKbState = null;
+}
+
+function statusLabel(k){
+  const m = { wish:'Muốn mua', saving:'Đang để dành', ordered:'Đã đặt hàng', purchased:'Đã mua' };
+  return m[k] || k;
+}
+
+function announceBoard(msg){
+  let sr = document.getElementById('boardSr');
+  if(!sr){
+    sr = document.createElement('div');
+    sr.id = 'boardSr';
+    sr.className = 'sr-only';
+    sr.setAttribute('aria-live', 'polite');
+    sr.setAttribute('aria-atomic', 'true');
+    document.body.appendChild(sr);
+  }
+  sr.textContent = msg;
 }
 function init(){
   buildSelects();
