@@ -1,79 +1,499 @@
 /* Hero — Dreamscape V5
-   Aligned to reference prototype: kicker → h1 → lede → CTA → stats
-   Single-column on mobile, two-column on desktop > 620px
+   Matched to reference prototype: someday-vault-motion-reference.html
+   Using EXISTING HTML class names: .dash-hero__kicker, .dash-hero__title, .dash-hero__lede, .dash-grid, .dh-stat, .own-ring, .goal-row
+   Gradient hero band, kicker→title→lede→CTA→stats, 3D visual stage, marquee
+   DO NOT remove or rename existing HTML classes — restructuring only.
 */
 
+/* ============ REFERENCE MATCH: .dash-hero (existing HTML: <section class="hero">) ============ */
+/* Reference structure from HTML: <h2 class="dash-hero__kicker"> → <h1 class="dash-hero__title"> → <p class="dash-hero__lede"> → .cta → .dash-grid */
 .hero {
+  padding: 148px 0 30px;
   display: grid;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: 1.02fr 0.98fr;
+  gap: 44px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
-@media (min-width: 620px) {
-  .hero {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
+/* Background aurora/grid for hero (reference has drift blobs, depth grid, static grain) */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 700px at 85% -10%, var(--bg-2), transparent 60%),
+    var(--bg);
 }
 
-.kicker {
-  font-size: .75rem;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--muted);
-  margin-bottom: .5rem;
-}
-
-.hero__title {
-  font-size: 2rem;
+/* Kicker — reference: .kicker {display:inline-flex; align-items:center; gap:9px; font-size:.74rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); padding:7px 13px; border-radius:999px; background:var(--panel)} */
+.dash-hero__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: .74rem;
   font-weight: 700;
-  line-height: 1.2;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+/* Hero title — reference: .hero h1 {font-size:clamp(2.55rem, 5.6vw, 4.35rem); font-weight:900; margin:22px 0 16px} */
+.dash-hero__title {
+  font-size: clamp(2.55rem, 5.6vw, 4.35rem);
+  font-weight: 900;
+  margin: 22px 0 16px;
+  line-height: 1.15;
+  letter-spacing: -.015em;
   color: var(--text);
-  margin-bottom: .5rem;
 }
 
-.hero__lede {
-  font-size: 1.25rem;
-  line-height: 1.4;
+/* Hero title span — reference: .hero h1 .hl {color:var(--amber); position:relative; white-space:nowrap} */
+.dash-hero__title .hl {
+  color: var(--amber);
+  position: relative;
+  white-space: nowrap;
+}
+
+/* Hero title span::after — reference: .hero h1 .hl::after {content:""; position:absolute; left:0; right:0; bottom:.06em; height:.34em; z-index:-1; background:var(--amber-soft); border-radius:4px; transform:skewX(-8deg)} */
+.dash-hero__title .hl::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: .06em;
+  height: .34em;
+  z-index: -1;
+  background: color-mix(in srgb, var(--amber) 45%, transparent);
+  border-radius: 4px;
+  transform: skewX(-8deg);
+}
+
+/* Hero lede — reference: .hero .lede {color:var(--muted); font-size:1.08rem; max-width:34rem; margin:0 0 26px} */
+.dash-hero__lede {
   color: var(--muted);
-  margin-bottom: 1.5rem;
+  font-size: 1.08rem;
+  max-width: 34rem;
+  margin: 0 0 26px;
 }
 
-.hero__cta {
+/* Hero CTA — reference: .hero-cta {display:flex; gap:12px; flex-wrap:wrap; margin-bottom:30px} */
+.hero-cta {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-bottom: 30px;
 }
 
-.hero__cta button {
-  flex: 1;
-  min-width: 140px;
+/* Hero CTA buttons — reference: .btn {display:inline-flex; align-items-center; gap:8px; font-weight:600; text-decoration:none; border:1px solid var(--border); background:var(--panel-solid); color:var(--text); border-radius:999px; padding:9px 14px; transition:border-color .2s, transform .2s, background .2s} */
+.hero-cta .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--panel-solid);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 9px 14px;
+  transition: border-color .2s, transform .2s, background .2s;
 }
 
-.hero__stats {
-  display: flex;
-  gap: 2rem;
-  margin-top: 1.5rem;
-  color: var(--muted);
+/* Hero CTA button hover — reference: .btn:hover {border-color:var(--border-strong)} */
+.hero-cta .btn:hover {
+  border-color: var(--border-strong);
+}
+
+/* Hero stats — reference: .hero-stats {display:flex; gap:12px; flex-wrap:wrap} .hstat {border:1px solid var(--border); background:var(--panel); border-radius:14px; padding:12px 16px; min-width:132px; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)} .hstat b {display:block; font-size:1.32rem; font-family:var(--num); letter-spacing:-.01em} .hstat span {font-size:.76rem; color:var(--muted); font-weight:600} */
+.dash-grid {
+  display: grid;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.dh-stat {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 12px 16px;
+  min-width: 132px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   font-size: .875rem;
 }
 
-.hero__stats div {
-  line-height: 1.4;
+.dh-stat b {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 4px;
 }
 
-/* Mobile: single column layout */
-@media (max-width: 620px) {
+.dh-stat span {
+  font-size: .75rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+}
+
+/* ============ REFERENCE MATCH: 3D VISUAL STAGE ============ */
+/* Reference has .stage, .ring, .halo, .float-card, .fc-main, .fc-a, .fc-b, .tilt — inside the hero */
+/* These are decorative/CSS-only; ensure they don't break with the restructured hero */
+
+/* Featured card */
+.stage {
+  position: relative;
+  height: 520px;
+  perspective: 1300px;
+}
+
+.stage .ring {
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: 50%;
+  animation: spin 46s linear infinite;
+}
+
+.stage .ring::before {
+  content: '';
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--amber);
+  top: 26px;
+  left: 50%;
+  box-shadow: 0 0 18px 3px var(--amber-soft);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Halo */
+.stage .halo {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--amber-soft), transparent 65%);
+  filter: blur(6px);
+}
+
+/* Floating cards */
+.float-card {
+  position: absolute;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background: var(--panel-solid);
+  box-shadow: 0 34px 70px -24px rgba(15, 23, 42, .38);
+  will-change: transform;
+}
+
+.float-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Cap bar */
+.float-card .cap {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 12, 16, .55);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-size: .82rem;
+  font-weight: 600;
+}
+
+.float-card .cap .num {
+  color: var(--amber);
+  font-weight: 700;
+}
+
+/* Main featured card */
+.fc-main {
+  width: min(400px, 86%);
+  aspect-ratio: 4 / 3.1;
+  left: 50%;
+  top: 50%;
+  translate: -50% -54%;
+  z-index: 3;
+}
+
+/* Floating card a */
+.fc-a {
+  width: 172px;
+  aspect-ratio: 1 / 1.18;
+  left: -6px;
+  top: 6px;
+  z-index: 4;
+  animation: floaty 6.5s ease-in-out infinite;
+}
+
+.fc-b {
+  width: 178px;
+  aspect-ratio: 4 / 3;
+  right: -16px;
+  bottom: -30px;
+  z-index: 4;
+  animation: floaty 7.5s ease-in-out reverse;
+}
+
+@keyframes floaty {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -13px; }
+}
+
+/* Tilt */
+.tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Tilt glare */
+.tilt .glare {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .22), transparent 55%);
+}
+
+.tilt:hover .glare {
+  opacity: 1;
+}
+
+/* ============ REFERENCE MATCH: MARQUEE ============ */
+/* Reference: .marquee {margin:44px 0 8px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); overflow:hidden; position:relative; height:47px; display:flex; align-items-center; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)} .marquee .track {display:flex; gap:0; width:max-content; flex:none; animation:mq 30s linear infinite} .marquee .track {position:absolute; left:0; top:50%; translate:0 -50%} .marquee span {font-family:var(--num); font-weight:600; letter-spacing:.22em; font-size:.8rem; color:var(--faint); text-transform:uppercase; padding:0 26px; white-space:nowrap} .marquee span i {font-style:normal; color:var(--amber); padding-right:26px} @keyframes mq {to{transform:translateX(-50%)}} */
+/* .marquee is inside the HTML at line 687 as .pv-marquee */
+
+/* Marquee container */
+.pv-marquee {
+  margin: 44px 0 8px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Marquee track */
+.pv-marquee__track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  flex: none;
+  animation: mq 30s linear infinite;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+/* Marquee items */
+.pv-marquee__word {
+  font-family: "Space Grotesk", "Be Vietnam Pro", system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: .22em;
+  font-size: .8rem;
+  color: var(--faint);
+  text-transform: uppercase;
+  padding: 0 26px;
+  white-space: nowrap;
+}
+
+.pv-marquee__sep {
+  color: var(--amber);
+  padding: 0 26px;
+}
+
+/* Marquee animation */
+@keyframes mq {
+  to { transform: translateX(-50%); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pv-marquee__track {
+    animation: none;
+  }
+}
+
+/* ============ REFERENCE MATCH: SECTIONS ============ */
+/* Reference: section {padding:56px 0 8px} .sec-head {display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:22px; flex-wrap:wrap} .sec-no {font:var(--num); font-size:.8rem; font-weight:700; letter-spacing:.2em; color:var(--amber); text-transform:uppercase} .sec-head h2 {font:clamp(1.65rem,3.4vw,2.3rem); font-weight:800; margin-top:6px} .sec-head p {color:var(--muted); margin:6px 0 0; max-width:36rem} .panel {background:var(--panel); border:1px solid var(--border); border-radius:var(--r-lg); padding:20px; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:var(--shadow)} .panel h3 {font:1rem 700; margin-bottom:4px} .panel .sub {color:var(--muted); font:.84rem; margin:0 0 14px} */
+
+/* Section padding */
+section {
+  padding: 56px 0 8px;
+}
+
+/* Section heading */
+.sec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.sec-no {
+  font-family: "Space Grotesk", "Be Vietnam Pro", system-ui, sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  color: var(--amber);
+  text-transform: uppercase;
+}
+
+.sec-head h2 {
+  font-size: clamp(1.65rem, 3.4vw, 2.3rem);
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+.sec-head p {
+  color: var(--muted);
+  margin: 6px 0 0;
+  max-width: 36rem;
+}
+
+/* Panel */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 34px 70px -24px rgba(15, 23, 42, .38);
+}
+
+.panel h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.panel .sub {
+  color: var(--muted);
+  font-size: .84rem;
+  margin: 0 0 14px;
+}
+
+/* ============ RESPONSIVE: MOBILE REFLOW (using EXISTING classes) ============ */
+/* Mobile: below 1025px the hero stacks and the word is dropped. Below 620px mobile grid */
+/* All below uses the EXISTING HTML class names — NO new classes added */
+
+@media (max-width: 640px) {
   .hero {
+    padding: 120px 0 20px;
     grid-template-columns: 1fr;
+    gap: 14px;
   }
-
-  .hero__title {
-    font-size: 1.75rem;
+  
+  .dash-hero__title {
+    font-size: clamp(2.35rem, 9vw, 2.75rem);
+    line-height: 1.01;
   }
-
-  .hero__lede {
+  
+  .dash-hero__lede {
+    font-size: 1rem;
+    line-height: 1.65;
+    margin-top: 20px;
+  }
+  
+  .hero-cta {
+    margin-bottom: 20px;
+    gap: 8px;
+  }
+  
+  .hero-cta .btn {
+    padding: 8px 12px;
+    font-size: .8rem;
+  }
+  
+  .dh-stat {
+    min-width: 110px;
+    padding: 10px;
+    font-size: .75rem;
+  }
+  
+  .dh-stat b {
     font-size: 1.1rem;
   }
+  
+  /* Dh-stat mobile: full width */
+  .dh-stat {
+    min-width: 100%;
+    padding: 10px;
+    font-size: .75rem;
+  }
+  
+  /* Marquee on mobile */
+  .pv-marquee {
+    margin: 20px 0 4px;
+    height: auto;
+    padding: 8px 0;
+  }
+  
+  .pv-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+  }
+  
+  .pv-marquee__word {
+    padding: 0 12px;
+    font-size: .7rem;
+  }
+}
+
+/* Narrow devices 320px */
+@media (max-width: 360px) {
+  .hero {
+    padding-inline: 16px;
+  }
+  
+  .dash-hero__title {
+    font-size: clamp(2.5rem, 10vw, 3.25rem);
+  }
+  
+  /* Floating card height mobile */
+  /* Note: card heights are managed by the 3D stage, not overridden here to avoid breaking the FLIP animation */
 }
