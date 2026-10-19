@@ -45,6 +45,7 @@ const zlib = require('zlib');
 
 const CHROME = process.env.CHROME || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const ROOT = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : path.join(__dirname, '..', '..');
+const OUT = path.join(ROOT, 'qa-out');
 const PORT = 8212;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -1415,6 +1416,12 @@ async function run() {
     if (process.env.QA_DETAILS && r.pass && r.actual && r.actual !== '""') console.log('        measured: ' + r.actual);
   }
   console.log('\n' + (fail === 0 ? 'PASS' : 'FAIL') + ' — ' + pass + '/' + results.length + ' checks');
+  console.log('\n==== FUSION-02 SUITE: ' + pass + ' PASS / ' + fail + ' FAIL (total ' + results.length + ') ====');
+  // machine-readable artifact, same shape as fusion-01-suite.json
+  fs.mkdirSync(OUT, { recursive: true });
+  fs.writeFileSync(path.join(OUT, 'fusion-02-suite.json'), JSON.stringify({
+    generatedAt: new Date().toISOString(), repo: ROOT, pass, fail, total: results.length, results
+  }, null, 2));
   process.exit(fail === 0 ? 0 : 1);
 }
 
