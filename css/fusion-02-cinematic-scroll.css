@@ -1,0 +1,441 @@
+/* =====================================================================
+   DREAM VAULT V16.2 — FUSION-02
+   CINEMATIC SCROLL, EDITORIAL TYPOGRAPHY & LIVING DASHBOARD
+   Loaded after fusion-01-aurora-hero.css, so it wins the cascade for the
+   elements it owns. FUSION-01 (aurora, floating 3D hero) is NOT rebuilt.
+
+   OWNERSHIP MAP — who already owns transform / opacity / animation, and
+   what this sheet therefore never touches:
+
+     .hero--v9 / .pv-stage / .pv-card__float / .pv-chip / .pv-aurora
+       → FUSION-01 + MOTION-02 own every transform and the --hero-* vars.
+     #grid > .card.wishlist-card[data-dv-reveal]
+       → MOTION-03 owns the card reveal, product-card.css the tilt
+         (--rotate-x/--rotate-y), MOTION-02 the image parallax, FLIP the
+         same node. The sheen is a NEW child (.pv-sheen) inside the media
+         frame, so no existing owner loses a property.
+     .dv-progress__fill / .dv-savings__bar-fill
+       → the meters own their progress (saver: scaleX(var(--dv-fill)),
+         ownership: width). Only a static box-shadow is added here.
+     .stats-dashboard > .stat-card:hover
+       → cinematic-v7 + the dreamscape surfaces already own the hover
+         elevation with higher specificity. A fourth owner for one
+         property is exactly the overlap this milestone must avoid, so
+         FUSION-02 declares no transform there.
+     .dv-savings__row:hover
+       → the app owns the row's background/border transition and its -1px
+         lift. This sheet adds light only, keeping both properties verbatim.
+     [data-dv-section] / .dv-reveal-in
+       → the page-level IntersectionObserver runtime (motion-v16.css) owns
+         the section entrance. This sheet only hangs CHILD animations off
+         .dv-reveal-in: no second observer, never two reveal systems.
+
+   F01 scroll rail: .pv-progress is a fixed aria-hidden decorative rail
+     written by ONE bounded requestAnimationFrame fed by scroll, resize and
+     a ResizeObserver on the body. scaleX only, no CSS animation, no idle
+     work (a still page requests no frame).
+   F02 marquee: one CSS-only translate loop over two identical groups, so
+     the -50% wrap is seamless. Paused on hover, on focus, on a hidden tab
+     and under html.motion-lite; a static strip under reduced motion.
+     aria-hidden: no AT duplication, no invented statistics.
+   F03 typography: .pv-ghost are REAL aria-hidden spans (pseudo content
+     cannot carry aria-hidden), z-index:-1 inside a heading that already
+     establishes a stacking context — the pattern FUSION-01 uses for its
+     numerals. Entrance keys off the existing .dv-reveal-in; the depth
+     rides the ROOT scroll timeline, not view() (see the F03 note).
+   F04 dashboard: one-shot rail light on reveal, refined border + light on
+     active savings rows (hover-capable desktop only), soft glow on both
+     meters. The stat-card elevation stays with its owner. No
+     backdrop-filter, no animated blur, no always-running sheen.
+   F05 gallery: desktop-hover-only light sweep inside the media frame.
+   F06 gates: reduced-motion, motion-lite, touch and hidden-tab all
+     resolve to a complete but static composition.
+   ===================================================================== */
+
+/* =====================================================================
+   F01 — GLOBAL SCROLL PROGRESS
+   ===================================================================== */
+
+body.dreamscape-v5 .pv-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 400;                 /* above the sticky header (30) and the
+                                   mobile dock (90), below the toast (999) */
+  pointer-events: none;
+  overflow: hidden;
+  background: rgba(104, 80, 188, .06);
+}
+
+body.dreamscape-v5 .pv-progress__bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, #C9B6FF 0%, #A88BF7 34%, #6850BC 78%, #93B4FD 100%);
+  box-shadow: 0 0 10px rgba(168, 139, 247, .40);
+}
+
+/* A position read-out, not motion: it keeps updating under reduced motion,
+   it just resolves instantly instead of easing. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .pv-progress__bar {
+    transition: none !important;
+  }
+}
+
+/* =====================================================================
+   F02 — PREMIUM MARQUEE
+   ===================================================================== */
+
+body.dreamscape-v5 .pv-marquee {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  margin: clamp(20px, 2.6vw, 34px) 0 0;
+  overflow: hidden;
+  border-top: 1px solid var(--pv-line, rgba(104, 80, 188, .10));
+  border-bottom: 1px solid var(--pv-line, rgba(104, 80, 188, .10));
+  contain: layout paint;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+
+body.dreamscape-v5 .pv-marquee__track {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: max-content;
+  animation: pv-marquee-scroll 48s linear infinite;
+}
+
+body.dreamscape-v5 .pv-marquee__group {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: clamp(18px, 2.4vw, 34px);
+  padding-right: clamp(18px, 2.4vw, 34px);
+}
+
+body.dreamscape-v5 .pv-marquee__word {
+  font-family: var(--v9-serif, Georgia, serif);
+  font-size: clamp(.76rem, 1vw, .94rem);
+  font-weight: 600;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(25, 21, 44, .40);
+}
+
+/* Prototype trick: every other word is an outline instead of a fill. */
+body.dreamscape-v5 .pv-marquee__word:nth-child(even) {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(104, 80, 188, .38);
+}
+
+body.dreamscape-v5 .pv-marquee__sep {
+  color: var(--pv-lav, #A88BF7);
+  font-size: .7rem;
+  line-height: 1;
+}
+
+@keyframes pv-marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Pause conditions, kept as SEPARATE rules on purpose: one unsupported
+   selector in a list would drop the whole rule. */
+body.dreamscape-v5 .pv-marquee:hover .pv-marquee__track,
+body.dreamscape-v5 .pv-marquee:focus-within .pv-marquee__track {
+  animation-play-state: paused;
+}
+
+html:has(:focus-visible) body.dreamscape-v5 .pv-marquee__track {
+  animation-play-state: paused;
+}
+
+html.pv-fx-hidden body.dreamscape-v5 .pv-marquee__track,
+html.motion-lite body.dreamscape-v5 .pv-marquee__track {
+  animation-play-state: paused;
+}
+
+/* =====================================================================
+   F03 — EDITORIAL TYPOGRAPHY
+   ===================================================================== */
+
+body.dreamscape-v5 .pv-ghost {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .pv-ghost {
+    display: block;
+    position: absolute;
+    z-index: -1;                    /* behind the heading text, above the
+                                       panel background — the heading owns
+                                       its own stacking context */
+    pointer-events: none;           /* never intercepts a control */
+    user-select: none;
+    font-family: var(--v9-serif, Georgia, serif);
+    font-style: italic;
+    font-weight: 700;
+    line-height: .8;
+    letter-spacing: -.04em;
+    white-space: nowrap;
+    color: rgba(104, 80, 188, .055);
+    -webkit-text-stroke: 1.15px rgba(104, 80, 188, .115);
+  }
+
+  body.dreamscape-v5 .pv-ghost--dash {
+    left: 0;
+    top: clamp(30px, 3.4vw, 56px);
+    font-size: clamp(3.2rem, 6vw, 6rem);
+  }
+
+  body.dreamscape-v5 .pv-ghost--collection {
+    left: 0;
+    top: clamp(26px, 3vw, 48px);
+    font-size: clamp(2.8rem, 5.2vw, 5.2rem);
+  }
+}
+
+@keyframes pv-head-in {
+  from { transform: translate3d(0, 22px, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+/* Durations are sized to the REAL reveal window, not chosen by eye: the app
+   removes .dv-reveal-in ~650ms after adding it (measured at 25ms sampling:
+   qa-out/fusion-02-reveal-timeline.json), and a cut reverts instantly to
+   the resolved state. 460ms + the longest 110ms stagger = 570ms < 650ms. */
+@media (prefers-reduced-motion: no-preference) {
+  html.dv-motion body.dreamscape-v5 .dashboard-panel.dv-dash.dv-reveal-in .overview-heading__eyebrow,
+  html.dv-motion body.dreamscape-v5 .dashboard-panel.dv-dash.dv-reveal-in .overview-heading__title,
+  html.dv-motion body.dreamscape-v5 .collection-panel__heading.dv-reveal-in .collection-panel__eyebrow,
+  html.dv-motion body.dreamscape-v5 .collection-panel__heading.dv-reveal-in h2,
+  html.dv-motion body.dreamscape-v5 .collection-panel__heading.dv-reveal-in .collection-panel__description {
+    animation: pv-head-in 460ms cubic-bezier(.22, .68, .24, 1) both;
+  }
+
+  html.dv-motion body.dreamscape-v5 .dashboard-panel.dv-dash.dv-reveal-in .overview-heading__title {
+    animation-delay: 70ms;
+  }
+
+  html.dv-motion body.dreamscape-v5 .collection-panel__heading.dv-reveal-in h2 {
+    animation-delay: 60ms;
+  }
+  html.dv-motion body.dreamscape-v5 .collection-panel__heading.dv-reveal-in .collection-panel__description {
+    animation-delay: 110ms;
+  }
+}
+
+/* Depth tied to scroll position, driven by the ROOT scroll timeline.
+   view() was measured as the wrong tool: two of the three targets live
+   inside .dashboard-panel, an overflow:hidden scroll container, so their
+   view() progress was pinned (same matrix at every scroll position). The
+   root timeline is measured against the document, so the depth is real
+   everywhere and cannot silently freeze if an ancestor later gains
+   overflow:hidden. Pure CSS: no listener, no rAF, no observer, composited;
+   without animation-timeline support the composition just stays static. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    body.dreamscape-v5 .pv-ghost,
+    body.dreamscape-v5 .overview-heading::after,
+    body.dreamscape-v5 .list-heading--v3::after {
+      animation: pv-ghost-drift linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    body.dreamscape-v5 .dv-savings__title {
+      animation: pv-savings-in linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@keyframes pv-ghost-drift {
+  from { transform: translate3d(0, 30px, 0); }
+  to   { transform: translate3d(0, -30px, 0); }
+}
+
+@keyframes pv-savings-in {
+  from { transform: translate3d(0, 14px, 0); }
+  to   { transform: translate3d(0, -14px, 0); }
+}
+
+html.motion-lite body.dreamscape-v5 .pv-ghost,
+html.motion-lite body.dreamscape-v5 .overview-heading::after,
+html.motion-lite body.dreamscape-v5 .list-heading--v3::after,
+html.motion-lite body.dreamscape-v5 .dv-savings__title {
+  animation: none !important;
+}
+
+/* =====================================================================
+   F04 — LIVING DASHBOARD
+   ===================================================================== */
+
+/* One-shot rail light on reveal: 2px, one run, gone — never a sweep. */
+body.dreamscape-v5 .overview-heading::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -.55rem;
+  height: 2px;
+  border-radius: var(--dream-radius-pill, 999px);
+  background: linear-gradient(90deg,
+    rgba(168, 139, 247, .0) 0%,
+    rgba(168, 139, 247, .70) 18%,
+    rgba(104, 80, 188, .45) 58%,
+    rgba(147, 180, 253, 0) 100%);
+  opacity: 0;
+  transform: scaleX(.18);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+@keyframes pv-rail-light {
+  0%   { opacity: 0;  transform: scaleX(.16); }
+  30%  { opacity: .95; }
+  100% { opacity: 0;  transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Sized to the reveal window too (see the entrance note): at 520ms the
+     rail has faded to 0 and reached scaleX(1), so the removal of
+     .dv-reveal-in never interrupts it. */
+  html.dv-motion body.dreamscape-v5 .dashboard-panel.dv-dash.dv-reveal-in .overview-heading::before {
+    animation: pv-rail-light 520ms cubic-bezier(.22, .68, .24, 1) both;
+  }
+}
+
+/* Active savings rows: the app already owns the -1px hover lift and the
+   background/border transition, so this adds light only and keeps both
+   already-transitioned properties verbatim. No transform is re-declared. */
+@media (hover: hover) and (pointer: fine) {
+  @media (prefers-reduced-motion: no-preference) {
+    body.dreamscape-v5 .dv-savings__row {
+      transition:
+        background var(--dv-motion, 260ms) var(--dv-ease-out, ease),
+        border-color var(--dv-motion, 260ms) var(--dv-ease-out, ease),
+        box-shadow 240ms cubic-bezier(.22, .68, .24, 1);
+    }
+
+    body.dreamscape-v5 .dv-savings__row:hover {
+      border-color: rgba(168, 139, 247, .38);
+      box-shadow:
+        0 12px 26px rgba(53, 35, 110, .10),
+        0 2px 6px rgba(53, 35, 110, .05);
+    }
+  }
+}
+
+html.motion-lite body.dreamscape-v5 .dv-savings__row {
+  transition: none !important;
+}
+html.motion-lite body.dreamscape-v5 .dv-savings__row:hover {
+  box-shadow: none !important;
+}
+
+/* The stat card keeps the elevation ITS OWNER already declares
+   (cinematic-v7-workspace + the dreamscape surfaces, higher specificity
+   than anything here): FUSION-02 adds no transform on purpose. */
+
+/* Static glow on both meters. Neither progress owner is touched: the
+   savings fill keeps transform: scaleX(var(--dv-fill)), the ownership
+   fill keeps its width transition. */
+body.dreamscape-v5 .dv-savings__bar-fill,
+body.dreamscape-v5 .dv-progress__fill {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .55),
+    0 0 12px rgba(168, 139, 247, .38);
+}
+
+/* =====================================================================
+   F05 — GALLERY IMAGE SHEEN
+   ===================================================================== */
+
+body.dreamscape-v5 .pv-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 4;                     /* inside the media frame's own stacking
+                                     context: above the image, below nothing
+                                     it could ever cover */
+  display: block;
+  overflow: hidden;               /* the band is clipped to the frame */
+  border-radius: inherit;         /* matches the frame's own radius */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms ease 340ms;   /* on leave: hold, then fade */
+}
+
+body.dreamscape-v5 .pv-sheen::before {
+  content: "";
+  position: absolute;
+  top: -32%;
+  bottom: -32%;
+  left: 0;
+  width: 42%;
+  background: linear-gradient(100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, .40) 46%,
+    rgba(255, 255, 255, .58) 54%,
+    rgba(255, 255, 255, 0) 100%);
+  transform: translate3d(-165%, 0, 0) rotate(6deg);
+  transition: none;               /* snaps back invisibly, so the sweep
+                                     never plays backwards */
+}
+
+@media (hover: hover) and (pointer: fine) {
+  @media (prefers-reduced-motion: no-preference) {
+    @media (min-width: 1025px) {
+      body.dreamscape-v5 .wishlist-card .thumb:hover .pv-sheen,
+      body.dreamscape-v5 .wishlist-card:hover .pv-sheen {
+        opacity: 1;
+        transition: opacity 70ms ease;
+      }
+
+      body.dreamscape-v5 .wishlist-card .thumb:hover .pv-sheen::before,
+      body.dreamscape-v5 .wishlist-card:hover .pv-sheen::before {
+        transition: transform 760ms cubic-bezier(.22, .68, .24, 1);
+        transform: translate3d(300%, 0, 0) rotate(6deg);
+      }
+    }
+  }
+}
+
+/* =====================================================================
+   F06 — MOTION GATES
+   ===================================================================== */
+
+/* Hidden tab: the marquee stops (nothing else here has an idle animation). */
+html.pv-fx-hidden body.dreamscape-v5 .pv-sheen {
+  opacity: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Static strip: one copy of the words, no loop, no duplicated text. */
+  body.dreamscape-v5 .pv-marquee__track {
+    animation: none !important;
+  }
+  body.dreamscape-v5 .pv-marquee__group + .pv-marquee__group {
+    display: none !important;
+  }
+  body.dreamscape-v5 .pv-ghost,
+  body.dreamscape-v5 .overview-heading::after,
+  body.dreamscape-v5 .list-heading--v3::after,
+  body.dreamscape-v5 .dv-savings__title {
+    animation: none !important;
+    transform: none !important;
+  }
+  body.dreamscape-v5 .overview-heading::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  body.dreamscape-v5 .pv-sheen {
+    display: none !important;
+  }
+}

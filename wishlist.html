@@ -145,6 +145,12 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      every rule of this milestone wins in the cascade. -->
 <link rel="stylesheet" href="./css/fusion-01-aurora-hero.css">
 
+<!-- V16.2 FUSION-02 — cinematic scroll, editorial typography and the living
+     dashboard. Loaded after FUSION-01: it adds the scroll rail, the
+     marquee, the ghost typography and the surface sheens, and owns no
+     transform that FUSION-01/MOTION already own. -->
+<link rel="stylesheet" href="./css/fusion-02-cinematic-scroll.css">
+
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
      the class is only added when IntersectionObserver exists and the user
@@ -319,6 +325,12 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <div class="pv-grid" aria-hidden="true"></div>
 <div class="pv-grain" aria-hidden="true"></div>
 <div class="pv-cursor-glow" id="pvCursorGlow" aria-hidden="true"></div>
+
+<!-- V16.2 FUSION-02 — global scroll progress. Decorative read-out only:
+     aria-hidden, pointer-events:none, no focus, no interaction. -->
+<div class="pv-progress" aria-hidden="true">
+  <span class="pv-progress__bar" id="pvProgressBar"></span>
+</div>
 
 <div class="wrap">
 <header class="top site-header">
@@ -656,6 +668,47 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </section>
 
+<!-- V16.2 FUSION-02 — restrained editorial marquee at the Hero-to-Dashboard
+     transition. Decorative: aria-hidden, no data, no invented statistics,
+     no network request. Two identical groups make the -50% wrap seamless;
+     the whole strip is static under reduced motion. -->
+<div class="pv-marquee" aria-hidden="true">
+  <div class="pv-marquee__track">
+    <div class="pv-marquee__group">
+      <span class="pv-marquee__word">Personal Vault</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Không gian lưu giữ ước mơ</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">PVault.</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Bộ sưu tập</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Ước mơ</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Tiết kiệm</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Sở hữu</span>
+      <span class="pv-marquee__sep">✦</span>
+    </div>
+    <div class="pv-marquee__group">
+      <span class="pv-marquee__word">Personal Vault</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Không gian lưu giữ ước mơ</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">PVault.</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Bộ sưu tập</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Ước mơ</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Tiết kiệm</span>
+      <span class="pv-marquee__sep">✦</span>
+      <span class="pv-marquee__word">Sở hữu</span>
+      <span class="pv-marquee__sep">✦</span>
+    </div>
+  </div>
+</div>
+
   <!-- Statistics: independent section -->
 <section class="panel dashboard-panel dashboard-panel--v2 dv-dash" data-dv-section
          aria-label="Tổng quan wishlist">
@@ -663,6 +716,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   <!-- V10 — Editorial overview heading. V16.1 F3 adds the dashboard's own
        "Thêm món" action so the command center can create without leaving. -->
   <div class="overview-heading">
+    <!-- FUSION-02 — decorative ghost word (no text duplication for AT: the
+         real heading below is unchanged and still the accessible name). -->
+    <span class="pv-ghost pv-ghost--dash" aria-hidden="true">Giấc mơ</span>
+
     <p class="overview-heading__eyebrow">
       <span class="overview-heading__no">01</span>
       Toàn cảnh bộ sưu tập
@@ -1080,6 +1137,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   <!-- ================= DANH SACH ================= -->
   <div class="list-heading list-heading--v3">
+    <!-- FUSION-02 — decorative ghost word behind the collection heading. -->
+    <span class="pv-ghost pv-ghost--collection" aria-hidden="true">Bộ sưu tập</span>
+
     <div>
       <p class="list-heading__eyebrow">
         BỘ SƯU TẬP
@@ -3419,6 +3479,10 @@ function render(){
   // thì thẻ/chip vẫn ẩn (alcove V9 giữ vai trò hình ảnh trung tính).
   renderHeroStage();
 
+  // V16.2 FUSION-02 — a render can change the document height (search,
+  // filter, add, delete), so the rail re-measures on the next frame.
+  pvProgressSync();
+
   // V16 — staggered scroll reveal, once per product id: search / filter /
   // render never replay it, but genuinely new items still animate in.
   // V16.2 MOTION-03B — capture old rects BEFORE rebuilding, so surviving
@@ -3802,6 +3866,17 @@ function card(it){
   imageFrame.className = "product-media__frame";
 
   imageFrame.appendChild(img);
+
+  // V16.2 FUSION-02 — image light sweep. A real decorative node instead of a
+  // pseudo-element, so the existing ::before/::after owners on
+  // .product-media and .product-media__frame stay untouched. It carries no
+  // data, no listener and no transform owner: the card tilt, the image
+  // parallax and the Gallery/Focus FLIP keep their own transforms.
+  const sheen = document.createElement("span");
+  sheen.className = "pv-sheen";
+  sheen.setAttribute("aria-hidden", "true");
+  imageFrame.appendChild(sheen);
+
   thumb.appendChild(imageFrame);
 
   // V8: plaque triển lãm (trang trí, aria-hidden).
@@ -6180,6 +6255,11 @@ function init(){
   setupFusionAurora();
   setupFusionTypography();
 
+  // V16.2 FUSION-02 — the scroll rail is the only new runtime piece. It is
+  // a bounded rAF (scroll / resize / body-resize only) and it stops when
+  // the page is still, so it never becomes idle work.
+  setupFusionCinematic();
+
   // V16.2 MOTION-06 — dò tốc độ khung một lần sau khi trang yên tĩnh: nếu
   // thiết bị chậm liên tục → motion-lite (CSS M06.5 tắt chuyển động ambient).
   // Đo trễ sau render để không nhân nhầm khung chậm của lần render đầu.
@@ -7052,6 +7132,59 @@ function setupFusionAurora(){
 function setupFusionTypography(){
   if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   document.documentElement.classList.add("pv-enter");
+}
+
+/* V16.2 FUSION-02 — global scroll progress.
+   ONE bounded rAF: it is requested only when something actually moved
+   (scroll, resize, a body resize observed by a ResizeObserver, or a
+   render), and it stops as soon as the position has been written. There
+   is no CSS animation, no interval and no idle work, so a still page
+   never schedules a frame. Decorative read-out only: the rail is
+   aria-hidden and the bar is written with transform (scaleX), never with
+   width, so no layout is ever invalidated. */
+let pvProgressBar = null;
+let pvProgressRaf = null;
+let pvProgressLast = -1;
+
+function pvProgressPaint(){
+  pvProgressRaf = null;
+  const bar = pvProgressBar || (pvProgressBar = document.getElementById("pvProgressBar"));
+  if(!bar) return;
+
+  const doc = document.documentElement;
+  const max = Math.max(1, doc.scrollHeight - window.innerHeight);
+  const top = window.scrollY || doc.scrollTop || 0;
+
+  let ratio = top / max;
+  if(ratio < 0) ratio = 0;
+  if(ratio > 1) ratio = 1;
+  ratio = Math.round(ratio * 10000) / 10000;
+
+  if(ratio === pvProgressLast) return;
+  pvProgressLast = ratio;
+  bar.style.transform = "scaleX(" + ratio + ")";
+}
+
+function pvProgressSync(){
+  if(pvProgressRaf !== null) return;
+  pvProgressRaf = requestAnimationFrame(pvProgressPaint);
+}
+
+function setupFusionCinematic(){
+  pvProgressBar = document.getElementById("pvProgressBar");
+  if(!pvProgressBar) return;
+
+  window.addEventListener("scroll", pvProgressSync, { passive: true });
+  window.addEventListener("resize", pvProgressSync, { passive: true });
+
+  // Search, filter, add, delete and late image loads all change the
+  // document height. The observer re-measures without polling.
+  if(typeof ResizeObserver === "function"){
+    try { new ResizeObserver(pvProgressSync).observe(document.body); }
+    catch(err) { /* measurement only: never fatal */ }
+  }
+
+  pvProgressSync();
 }
 
 let activeWorkspaceNavId = "";
