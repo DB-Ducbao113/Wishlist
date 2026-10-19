@@ -302,11 +302,12 @@ async function run() {
       .filter(Boolean);
     const i2 = links.findIndex(h => /fusion-02-cinematic-scroll\.css/.test(h));
     const i3 = links.findIndex(h => /fusion-03-gallery-board\.css/.test(h));
+    const i4 = links.findIndex(h => /fusion-04-mobile\.css/.test(h));
     const count3 = links.filter(h => /fusion-03-gallery-board\.css/.test(h)).length;
-    c('F03-A01', 'source', 'the FUSION-03 sheet is linked once, immediately after FUSION-02, and is last in the cascade',
-      'exactly one link, index(i3) === index(i2) + 1, and it is the final stylesheet',
-      count3 === 1 && i2 >= 0 && i3 === i2 + 1 && i3 === links.length - 1,
-      { sheets: links.length, i2: i2, i3: i3, last: links[links.length - 1] });
+    c('F03-A01', 'source', 'the FUSION-03 sheet is linked once, immediately after FUSION-02 and before the FUSION-04 mobile sheet',
+      'exactly one link, index(i3) === index(i2) + 1, and FUSION-04 (the newer milestone) is the final stylesheet',
+      count3 === 1 && i2 >= 0 && i3 === i2 + 1 && i4 === links.length - 1,
+      { sheets: links.length, i2: i2, i3: i3, i4: i4, last: links[links.length - 1] });
 
     const header = cssSrc.slice(0, cssSrc.indexOf('body.dreamscape-v5'));
     const namesOwners = /OWNERSHIP MAP/i.test(header) &&
