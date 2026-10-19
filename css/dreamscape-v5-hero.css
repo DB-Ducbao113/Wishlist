@@ -1,243 +1,79 @@
-/* ==========================================
-   Dream Vault V5 — Cinematic Hero 3D
-   Visual only · No Firebase / CRUD changes
-========================================== */
+/* Hero — Dreamscape V5
+   Aligned to reference prototype: kicker → h1 → lede → CTA → stats
+   Single-column on mobile, two-column on desktop > 620px
+*/
 
-/* Dreamscape stage */
-
-.dreamscape-v5 .hero.hero--v5 {
-  position: relative;
-  isolation: isolate;
-  min-height: 640px;
-  grid-template-columns:
-    minmax(0, 1.04fr)
-    minmax(0, .96fr);
-  gap: clamp(20px, 3vw, 48px);
-  padding: clamp(40px, 5vw, 76px);
-  border-radius: var(--dream-radius-xl);
-  border: 1px solid var(--dream-glass-border);
-
-  background:
-    radial-gradient(
-      ellipse at 78% 38%,
-      rgba(168,139,247,.32),
-      transparent 48%
-    ),
-    radial-gradient(
-      ellipse at 22% 90%,
-      rgba(222,213,255,.5),
-      transparent 53%
-    ),
-    linear-gradient(
-      135deg,
-      #FCFBFF 0%,
-      #F3EFFF 55%,
-      #E9E0FF 100%
-    );
-
-  box-shadow: var(--dream-shadow-glass);
+.hero {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
 }
 
-/* Atmospheric overlay */
-
-.dreamscape-v5 .hero--v5::before {
-  opacity: .45;
-  background-size: 56px 56px;
-}
-
-/* Editorial content */
-
-.dreamscape-v5 .hero--v5 .hero__content {
-  position: relative;
-  z-index: 2;
-  min-width: 0;
-}
-
-.dreamscape-v5 .hero--v5 .hero__eyebrow {
-  color: var(--dream-accent);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: .22em;
-}
-
-.dreamscape-v5 .hero--v5 .hero__title {
-  max-width: 690px;
-  margin: 0;
-  font-size: clamp(3.4rem, 5.5vw, 6.4rem);
-  font-weight: 780;
-  line-height: .98;
-  letter-spacing: -.075em;
-  color: var(--dream-ink);
-  overflow-wrap: anywhere;
-}
-
-.dreamscape-v5 .hero--v5 .hero__title span {
-  color: var(--dream-accent);
-}
-
-.dreamscape-v5 .hero--v5 .hero__description {
-  max-width: 455px;
-  margin-top: 28px;
-  color: var(--dream-muted);
-  font-size: 1rem;
-  line-height: 1.8;
-}
-
-/* Primary and secondary actions */
-
-.dreamscape-v5
-.hero--v5 .hero-v3__actions {
-  gap: 12px;
-  margin-top: 30px;
-}
-
-.dreamscape-v5
-.hero--v5 .hero-v3__primary {
-  background: var(--dream-accent);
-  border-color: var(--dream-accent);
-  color: #fff;
-  box-shadow:
-    0 14px 34px rgba(83,62,169,.22);
-}
-
-.dreamscape-v5
-.hero--v5 .hero-v3__secondary {
-  color: var(--dream-accent);
-  background: rgba(255,255,255,.8);
-  border-color: var(--dream-glass-border);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .dreamscape-v5
-  .hero--v5 .hero-v3__primary:hover {
-    background: var(--dream-accent-hover);
-    border-color: var(--dream-accent-hover);
-  }
-
-  .dreamscape-v5
-  .hero--v5 .hero-v3__secondary:hover {
-    background: #fff;
+@media (min-width: 620px) {
+  .hero {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
   }
 }
 
-.dreamscape-v5
-.hero--v5 .hero-v3__actions
-:is(button, a):focus-visible {
-  outline: 3px solid var(--dream-accent);
-  outline-offset: 3px;
+.kicker {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: .5rem;
 }
 
-/* 3D visual stage */
-
-.dreamscape-v5 .hero--v5 .hero__visual {
-  min-width: 0;
-  position: relative;
-  perspective: 1200px;
+.hero__title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: .5rem;
 }
 
-/* Tablet */
-
-@media (min-width: 641px) and
-       (max-width: 1024px) {
-  .dreamscape-v5 .hero.hero--v5 {
-    min-height: 540px;
-    padding: 48px 36px;
-    gap: 12px;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__title {
-    font-size: clamp(2.8rem, 5.4vw, 4.5rem);
-  }
+.hero__lede {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
 }
 
-/* Mobile: content first, compact 3D */
-
-@media (max-width: 640px) {
-  .dreamscape-v5 .hero.hero--v5 {
-    min-height: auto;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-    padding: 34px 20px 18px;
-    border-radius: 26px;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__title {
-    font-size: clamp(2.7rem, 10vw, 4rem);
-    line-height: 1.01;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__description {
-    margin-top: 20px;
-    font-size: .93rem;
-    line-height: 1.65;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero-v3__actions {
-    margin-top: 24px;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__visual {
-    height: 220px;
-    overflow: hidden;
-  }
+.hero__cta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
-/* Narrow devices */
-
-@media (max-width: 360px) {
-  .dreamscape-v5 .hero.hero--v5 {
-    padding-inline: 16px;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__title {
-    font-size: clamp(2.5rem, 10vw, 3.25rem);
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__visual {
-    height: 195px;
-  }
+.hero__cta button {
+  flex: 1;
+  min-width: 140px;
 }
 
-/* Respect user motion preference */
-
-@media (prefers-reduced-motion: reduce) {
-  .dreamscape-v5 .hero--v5,
-  .dreamscape-v5 .hero--v5 *,
-  .dreamscape-v5 .hero--v5 *::before,
-  .dreamscape-v5 .hero--v5 *::after {
-    animation: none !important;
-    transition: none !important;
-  }
+.hero__stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: .875rem;
 }
 
-/* V5 15F.1 — Short mobile viewport refinement.
-   Applies to any narrow viewport short enough for the fixed
-   dock to overlap the hero CTAs (verified at 320x700, 375x667). */
-@media (max-width: 640px) and (max-height: 740px) {
-  .dreamscape-v5 .hero.hero--v5 {
-    padding-top: 24px;
-    gap: 10px;
+.hero__stats div {
+  line-height: 1.4;
+}
+
+/* Mobile: single column layout */
+@media (max-width: 620px) {
+  .hero {
+    grid-template-columns: 1fr;
   }
 
-  .dreamscape-v5 .hero--v5 .hero__eyebrow {
-    margin-bottom: 12px;
+  .hero__title {
+    font-size: 1.75rem;
   }
 
-  .dreamscape-v5 .hero--v5 .hero__title {
-    font-size: clamp(2.35rem, 9vw, 2.75rem);
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__description {
-    margin-top: 12px;
-    line-height: 1.5;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero-v3__actions {
-    margin-top: 16px;
-    gap: 8px;
-  }
-
-  .dreamscape-v5 .hero--v5 .hero__footer {
-    margin-top: 12px;
+  .hero__lede {
+    font-size: 1.1rem;
   }
 }

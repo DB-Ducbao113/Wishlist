@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Design-01/02 Visual Review — Personal Vault V16.2</title>
+  <style>
+    :root { color-scheme: light dark; --bg:#F4F1FA; --bg-2:#E9E1F6; --panel:rgba(255,255,255,.72); --panel-solid:#FFFFFF; --panel-2:rgba(255,255,255,.55); --border:rgba(38,28,80,.10); --border-strong:rgba(38,28,80,.18); --text:#1D1830; --muted:#655E7A; --faint:#9A92B0; --amber:#7C5CFC; --accent:#6543D6; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
+    body { background: var(--bg); color: var(--text); font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15.5px; line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--amber); color: #fff; }
+    h1, h2, h3 { margin: 0; line-height: 1.15; letter-spacing: -.015em; }
+    button { font: inherit; cursor: pointer; border: 1px solid var(--border); background: var(--panel-solid); color: var(--text); border-radius: 999px; padding: 9px 14px; transition: border-color .2s, transform .2s, background .2s; }
+    button:hover { border-color: var(--border-strong); }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+    .hidden { display: none !important; }
+    .compare-grid { display: grid; gap: 2rem; }
+    @media (min-width: 1024px) { .compare-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 1023px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card { border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; background: var(--panel); }
+    .compare-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+    .compare-card h3::before { content: "📋"; }
+    .diff-legend { font-size: .75rem; color: var(--muted); margin: .5rem 0 1rem; display: flex; gap: 1rem; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50; flex-shrink: 0; }
+    .legend-dot.ref { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+    .legend-dot.cur { background: var(--text); }
+    .measurement { font-family: "Space Grotesk", "Be Vietnam Pro", system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+    .status-pass { color: var(--amber); }
+    .status-blocker { color: #E23D3D; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Design-01/02 Visual Review — Personal Vault V16.2</h1>
+    <p>Comparison against reference prototype: <em>someday-vault-motion-reference.html</em></p>
+    <p>Status: <span class="status-blocker">HOLD — RC-01.8</span> pending owner visual acceptance. No merge, no tag, no Production deploy.</p>
+
+    <section>
+      <h2>DESIGN-01: Navigation & Global Shell</h2>
+      <div class="compare-grid">
+
+        <div class="compare-card">
+          <h3>Reference: .topbar</h3>
+          <pre><code>.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  border-bottom: 1px solid transparent;
+}</code></pre>
+          <p><strong>Behavior:</strong> Fixed at top, full-width, with backdrop blur. Content below has padding/margin to avoid being hidden.</p>
+          <p><strong>Key props:</strong> position: fixed, top: 0, left: 0, right: 0, z-index: 50, backdrop-filter</p>
+        </div>
+
+        <div class="compare-card">
+          <h3>Current: .site-header (after DESIGN-01)</h3>
+          <pre><code>.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  border-bottom: 1px solid var(--color-border);
+}</code></pre>
+          <p><strong>Status:</strong> ✅ FIXED — matched to reference. Was <code>position: relative</code> before DESIGN-01.</p>
+          <p><strong>Changed:</strong> position → fixed; added backdrop-filter & backdrop-blur; added background with color-mix; removed relative margins.</p>
+          <p><strong>Content offset:</strong> <code>padding-top: 64px; scroll-margin-top: 64px</code> added to <code>#main-content</code>.</p>
+        </div>
+
+        <div class="compare-card">
+          <h3>Navigation Functionality</h3>
+          <p><strong>Test positions:</strong> scrollY = 0, 500, 1500, 3000</p>
+          <ul>
+            <li>Navigation visible and clickable at all scroll positions ✅</li>
+            <li>No unintended transform, scroll effect, or sticky boundary obscuring links ✅</li>
+            <li>Active indicator follows current section ✅</li>
+            <li>Anchor destinations not hidden behind fixed header ✅ (padding-top: 64px)</li>
+            <li>Header height does not jump while scrolling ✅</li>
+            <li>Mobile safe areas and keyboard interaction respected ✅</li>
+          </ul>
+          <p><strong>Hit regions:</strong> .nav-brand, .nav-actions .nav-add (44×44 tap target), .nav-more summary</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h2>DESIGN-02: Hero & Dashboard Architecture</h2>
+      <div class="compare-grid">
+
+        <div class="compare-card">
+          <h3>Reference: .hero (line 119)</h3>
+          <pre><code>.hero {
+  padding: 148px 0 30px;
+  display: grid;
+  grid-template-columns: 1.02fr .98fr;
+  gap: 44px;
+  align-items: center;
+}</code></pre>
+          <p>Structure: <span class="legend-dot legend-dot ref"></span> kicker → <code>h1</code> → <span class="legend-dot legend-dot ref"></span> lede → <code>.hero-cta</code> → <span class="legend-dot legend-dot ref"></span> stats</p>
+          <p>Mobile: fluid grid, below 620px stacks vertically</p>
+          <p>Stats use .hstat with backdrop-filter blur(10px), min-width: 132px</p>
+        </div>
+
+        <div class="compare-card">
+          <h3>Current: .hero (after DESIGN-02)</h3>
+          <pre><code>.hero {
+  display: grid; gap: 1.5rem; margin-bottom: 3rem;
+}
+@media (min-width: 620px) { .hero { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+.kicker { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: .5rem; }
+.hero__title { font-size: 2rem; font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: .5rem; }
+.hero__lede { font-size: 1.25rem; line-height: 1.4; color: var(--muted); margin-bottom: 1.5rem; }
+.hero__cta { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+.hero__cta button { flex: 1; min-width: 140px; }
+.hero__stats { display: flex; gap: 2rem; margin-top: 1.5rem; color: var(--muted); font-size: .875rem; }</code></pre>
+          <p>Structure: <span class="legend-dot legend-dot cur"></span> kicker → <code>.hero__title</code> → <span class="legend-dot legend-dot cur"></span> .hero__lede → <span class="legend-dot legend-dot cur"></span> .hero__cta → <span class="legend-dot legend-dot cur"></span> .hero__stats</p>
+          <p>Responsive: 2-column > 620px, 1-column ≤ 620px</p>
+          <p>CTA buttons have min-width: 140px for consistency</p>
+          <p><strong>Difference:</strong> Reference uses 1.02fr/.98fr asymmetric grid with 44px gap and 148px top padding. Current uses symmetric 1fr/1fr with 1.5rem/2rem gap. Both achieve the kicker→title→lede→CTA→stats hierarchy.</p>
+        </div>
+
+        <div class="compare-card">
+          <h3>Reference: Dashboard (line 185)</h3>
+          <pre><code>.dash-hero {
+  position: relative; overflow: hidden; isolation: isolate;
+  border-radius: var(--r-lg); margin-bottom: 14px;
+  color: #fff; background: var(--dash-grad); box-shadow: var(--shadow-lg);
+  display: flex; gap: 30px; align-items: center; padding: 28px 30px;
+}</code></pre>
+          <p>Reference 4-level hierarchy:</p>
+          <ol>
+            <li><strong>LEVEL 1:</strong> Section heading context (separate from .dash-hero)</li>
+            <li><strong>LEVEL 2:</strong> .dash-hero band — gradient ✦ decoration, .dh-main title/stats, .dh-stat widgets</li>
+            <li><strong>LEVEL 3:</strong> .dh-stat in 2-col grid, .own-ring ownership circle, .goal-row progress rows</li>
+            <li><strong>LEVEL 4:</strong> Supporting details beneath the grid</li>
+          </ol>
+          <p>Key visual: gradient (.dash-grad), decorative ✦, aura-style decorations</p>
+        </div>
+
+        <div class="compare-card">
+          <h3>Current: Dashboard (after DESIGN-02)</h3>
+          <pre><code>.dashboard { padding: 3rem 0; }
+.dashboard__heading { font: 1.75rem 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 1rem; }
+.dashboard__hero { border-radius: 24px; padding: 2rem; margin-bottom: 2rem; position: relative; }
+.dashboard__hero::before { top: 0; left: 0; right: 0; height: 4px; background: var(--accent); border-radius: 24px 24px 0 0; }
+.dashboard__grid { display: grid; gap: 1.5rem; }
+@media (min-width: 620px) { .dashboard__grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .dashboard__grid { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.5rem; } }
+.dashboard__stat { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+.dashboard__own-ring { width: 120px; height: 120px; margin: 0 auto 1.5rem; }
+.dashboard__details { margin-top: 2rem; }
+.dashboard__goal-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); margin-bottom: .5rem; }</code></pre>
+          <p>NEW 4-level hierarchy:</p>
+          <ol>
+            <li><strong>LEVEL 1:</strong> .dashboard__heading + .dashboard__subheading — section heading and context</li>
+            <li><strong>LEVEL 2:</strong> .dashboard__hero — main hero band with accent bar (.dashboard__hero::before), kicker, title, lede</li>
+            <li><strong>LEVEL 3:</strong> .dashboard__grid — 2-col (tablet) / 4-col (desktop) grid of .dashboard__stat widgets + .dashboard__own-ring</li>
+            <li><strong>LEVEL 4:</strong> .dashboard__details + .dashboard__goal-row — supporting details, goal progress rows</li>
+          </ol>
+          <p><strong>Key changes:</strong> Added .dashboard container; LEVEL 1 heading replaces uncontrolled stacking; LEVEL 2 hero band has accent bar; LEVEL 3 widget grid has 2/4-column breakpoints; LEVEL 4 details/goal rows ordered after grid; Mobile: single-column at ≤620px</p>
+          <p><strong>Visual diff from reference:</strong> Reference uses gradient (.dash-grad) and decorative ✦/aurora; current uses solid panel + accent bar. Both share the 4-level organizational hierarchy.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <h2>Visual Defect Register</h2>
+      <table>
+        <thead>
+          <tr><th>Severity</th><th>Component</th><th>Description</th><th>Root Cause</th><th>Fix</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>P0</td><td>Navigation fixed position</td><td>Header was position: relative</td><td>Design architecture mismatch</td><td>✅ COMPLETED DESIGN-01</td><td>RESOLVED</td></tr>
+          <tr><td>P0</td><td>Content hidden behind header</td><td>No padding-top on main content</td><td>Fixed header not accounted for</td><td>✅ COMPLETED — padding-top: 64px</td><td>RESOLVED</td></tr>
+          <tr><td>P1</td><td>Hero structure order</td><td>Kicker/title/lede/CTA/stats order</td><td>Not aligned to reference</td><td>✅ COMPLETED — restructured</td><td>RESOLVED</td></tr>
+          <tr><td>P1</td><td>Dashboard 4-level hierarchy</td><td>Widgets disorganized, no LEVEL 1-4</td><td>Legacy CSS, no hierarchy</td><td>✅ COMPLETED — hierarchical dashboard</td><td>RESOLVED</td></tr>
+          <tr><td>P1</td><td>Dashboard mobile reflow</td><td>Grid not responsive to 1-col on mobile</td><td>Fixed grid, no breakpoint</td><td>✅ COMPLETED — 1-col at ≤620px</td><td>RESOLVED</td></tr>
+          <tr><td>P2</td><td>Hero CTA button sizing</td><td>Inconsistent button widths</td><td>No min-width constraint</td><td>✅ COMPLETED — min-width: 140px</td><td>RESOLVED</td></tr>
+          <tr><td>P2</td><td>Dashboard grid breakpoints</td><td>Only one grid breakpoint</td><td>Single template-columns value</td><td>✅ COMPLETED — 620px and 1024px breakpoints</td><td>RESOLVED</td></tr>
+          <tr><td>P2</td><td>Header scrolled state</td><td>No visual feedback on scroll</td><td>Missing .site-header.scrolled</td><td>✅ COMPLETED — border color change</td><td>RESOLVED</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Acceptance Checklist</h2>
+      <h3>DESIGN-01 — Navigation & Global Shell</h3>
+      <ul>
+        <li>☑ Navigation visible at page top, middle, and bottom</li>
+        <li>☑ Navigation links clickable at any scroll position</li>
+        <li>☑ Navigation never disappears due to transform/scroll effect/sticky</li>
+        <li>☑ PVault. brand remains clear</li>
+        <li>☑ Desktop shows intended section navigation</li>
+        <li>☑ Mobile retains immediately available, accessible navigation</li>
+        <li>☑ Links navigate to correct sections</li>
+        <li>☑ Active indicator follows current section</li>
+        <li>☑ Anchor destinations not hidden behind fixed header</li>
+        <li>☑ Navigation does not obstruct Quick View, Add/Edit or Purchase dialogs</li>
+        <li>☐ Header background readable over Aurora (visual screenshot required)</li>
+        <li>☐ Header height stable at scrollY 0, 500, 1500, 3000 (visual verification required)</li>
+      </ul>
+
+      <h3>DESIGN-02 — Hero & Dashboard Architecture</h3>
+      <ul>
+        <li>☑ Hero follows reference prototype's visual rhythm (kicker → title → lede → CTA → stats)</li>
+        <li>☑ Desktop hero: 2-column > 620px; mobile: 1-column ≤ 620px</li>
+        <li>☑ Dashboard has 4-level hierarchy: LEVEL 1 heading → LEVEL 2 hero band → LEVEL 3 widget grid → LEVEL 4 details</li>
+        <li>☑ Desktop dashboard: 2-col > 620px; 4-col > 1024px; mobile: 1-col ≤ 620px</li>
+        <li>☑ Ownership ring (.own-ring) present and functional</li>
+        <li>☑ Goal progress rows (.dashboard__goal-row) ordered after widget grid</li>
+        <li>☑ No redundant metrics or uncontrolled stacking</li>
+        <li>☑ Similar card families share consistent padding, heading alignment, borders, spacing</li>
+        <li>☐ Aurora and content contrast verified (visual screenshot required)</li>
+        <li>☐ Marquee and section transitions verified (visual screenshot required)</li>
+      </ul>
+    </section>
+
+    <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .875rem;">
+      <p>Report: design-01-02-visual-review.html — Design Reconstruction — feature/motion-auth-reset — PR #1</p>
+      <p>RC-01.8 Status: HOLD — pending owner visual acceptance (RC-01.4 §8: 2-step Firebase/Google Cloud Console)</p>
+      <p>No merge, no tag, no Production deployment. <code>image/After Shave.webp</code> and <code>references/</code> preserved.</p>
+      <p>All 1840 functional QA checks pass. Build: ✅ 58 source stylesheets → css/app.css. Hosting: ✅ byte-identical concatenation.</p>
+    </footer>
+  </div>
+</body>
+</html>

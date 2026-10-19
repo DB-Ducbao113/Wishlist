@@ -1,272 +1,206 @@
-/* ==========================================
-   Dream Vault V5 — Dashboard & Collection
-   Dreamscape 3D visual consistency
-   CSS-only · No Firebase / CRUD changes
-========================================== */
+/* Dashboard Collection — Dreamscape V5
+   4-level hierarchy aligned to reference prototype:
+   LEVEL 1 — Section heading and context
+   LEVEL 2 — Main Dashboard hero band
+   LEVEL 3 — Secondary statistical widgets in structured grid
+   LEVEL 4 — Supporting details, savings, priorities and actionable insights
+*/
 
-/* Dashboard atmosphere */
+/* ============ LEVEL 1: Section Heading ============ */
 
-.dreamscape-v5
-.dashboard-panel.dashboard-panel--v2 {
-  position: relative;
-  border: 1px solid var(--dream-glass-border);
-  border-radius: var(--dream-radius-xl);
-
-  background:
-    radial-gradient(
-      ellipse at 12% 15%,
-      rgba(168,139,247,.22),
-      transparent 46%
-    ),
-    radial-gradient(
-      ellipse at 92% 82%,
-      rgba(222,213,255,.4),
-      transparent 48%
-    ),
-    linear-gradient(145deg,#FAF9FF,#EFEAFF);
-
-  box-shadow: var(--dream-shadow-soft);
+.dashboard {
+  padding-top: var(--section-padding, 3rem);
+  padding-bottom: var(--section-padding, 3rem);
 }
 
-/* Individual glass stats */
-
-.dreamscape-v5
-.panel.dashboard-panel--v2
-.total.stats-dashboard > .stat-card {
-  min-width: 0;
-  background: rgba(255,255,255,.86);
-  border: 1px solid var(--dream-glass-border);
-  border-radius: var(--dream-radius-lg);
-  box-shadow: var(--dream-shadow-glass);
-}
-
-/* Numeric hierarchy */
-
-.dreamscape-v5
-.panel.dashboard-panel--v2
-.total.stats-dashboard .stat-card__value {
-  color: var(--dream-ink);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -.055em;
-  overflow-wrap: anywhere;
-}
-
-.dreamscape-v5
-.dashboard-panel--v2 .stat-card__icon {
-  background: var(--dream-surface-soft);
-  color: var(--dream-accent);
-  border-radius: 15px;
-}
-
-.dreamscape-v5
-.dashboard-panel--v2 .stat-card__label {
-  color: var(--dream-muted);
+.dashboard__heading {
+  font-size: 1.75rem;
   font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
 }
 
-.dreamscape-v5
-.dashboard-panel--v2 .stat-card__description {
-  color: var(--dream-muted);
+.dashboard__subheading {
+  font-size: .875rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  max-width: 600px;
 }
 
-/* Subtle desktop feedback */
+/* ============ LEVEL 2: Main Dashboard Hero Band ============ */
 
-@media (hover: hover) and (pointer: fine) {
-  .dreamscape-v5
-  .panel.dashboard-panel--v2
-  .total.stats-dashboard > .stat-card:hover {
-    border-color: rgba(168,139,247,.65);
-    box-shadow: var(--dream-shadow-hover);
+.dashboard__hero {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard__hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 24px 24px 0 0;
+}
+
+.dashboard__hero .kicker {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: .5rem;
+}
+
+.dashboard__hero .hero__title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: .5rem;
+}
+
+.dashboard__hero .hero__lede {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+/* ============ LEVEL 3: Secondary Statistical Widgets in Grid ============ */
+
+.dashboard__grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 620px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
   }
 }
 
-/* Collection — unified surface */
-
-.dreamscape-v5
-.collection-panel.collection-panel--v3 {
-  border: 1px solid var(--dream-glass-border);
-  border-radius: var(--dream-radius-xl);
-
-  background:
-    radial-gradient(
-      ellipse at 95% 4%,
-      rgba(168,139,247,.16),
-      transparent 44%
-    ),
-    linear-gradient(155deg,#FFFFFF,#FCFBFF);
-
-  box-shadow: var(--dream-shadow-soft);
-}
-
-/* Editorial hierarchy */
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-panel__eyebrow {
-  color: var(--dream-accent);
-  font-weight: 800;
-  letter-spacing: .22em;
-}
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-panel__heading h2 {
-  color: var(--dream-ink);
-  letter-spacing: -.065em;
-  text-wrap: balance;
-}
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-panel__description {
-  color: var(--dream-muted);
-}
-
-/* Search field */
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-search__input-wrap {
-  border: 1px solid var(--dream-border);
-  border-radius: var(--dream-radius-md);
-  background: #FCFBFF;
-  box-shadow:
-    0 8px 28px rgba(65,43,139,.035);
-}
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-search__input-wrap:focus-within {
-  border-color: var(--dream-accent);
-  box-shadow:
-    0 0 0 4px rgba(104,80,188,.12);
-}
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-search__icon {
-  color: var(--dream-accent);
-}
-
-/* Filter controls */
-
-.dreamscape-v5
-.collection-panel--v3 .collection-filters {
-  gap: 12px;
-}
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-filters select {
-  min-width: 0;
-  background: #FCFBFF;
-  border: 1px solid var(--dream-border);
-  border-radius: var(--dream-radius-sm);
-  color: var(--dream-ink);
-}
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-filters select:focus-visible {
-  outline: 3px solid var(--dream-accent);
-  outline-offset: 2px;
-}
-
-/* Footer and clear filter action */
-
-.dreamscape-v5
-.collection-panel--v3
-.collection-toolbar__footer {
-  border-top-color: var(--dream-border);
-}
-
-.dreamscape-v5
-.collection-panel--v3 .collection-clear {
-  min-height: 44px;
-  border-radius: var(--dream-radius-pill);
-}
-
-/* Gallery heading coherence */
-
-.dreamscape-v5
-.list-heading.list-heading--v3
-.list-heading__eyebrow {
-  color: var(--dream-accent);
-}
-
-.dreamscape-v5
-.list-heading.list-heading--v3 h2 {
-  color: var(--dream-ink);
-}
-
-/* Tablet: preserve 2-column filter layout */
-
-@media (min-width: 641px) and
-       (max-width: 900px) {
-  .dreamscape-v5
-  .collection-panel--v3 .collection-filters {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+@media (min-width: 1024px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1.5rem;
   }
 }
 
-/* Mobile: calm and readable */
-
-@media (max-width: 640px) {
-  .dreamscape-v5
-  .dashboard-panel.dashboard-panel--v2 {
-    border-radius: var(--dream-radius-lg);
-  }
-
-  .dreamscape-v5
-  .panel.dashboard-panel--v2
-  .total.stats-dashboard > .stat-card {
-    min-height: 110px;
-    border-radius: var(--dream-radius-md);
-    background: rgba(255,255,255,.96);
-
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  .dreamscape-v5
-  .collection-panel.collection-panel--v3 {
-    border-radius: var(--dream-radius-lg);
-    padding: 22px 16px;
-  }
-
-  .dreamscape-v5
-  .collection-panel--v3 .collection-filters {
-    grid-template-columns:
-      repeat(2, minmax(0,1fr));
-    gap: 10px;
-  }
-
-  .dreamscape-v5
-  .collection-panel--v3
-  .collection-search__input-wrap {
-    border-radius: var(--dream-radius-sm);
-  }
+.dashboard__stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
-/* Narrow phones */
-
-@media (max-width: 380px) {
-  .dreamscape-v5
-  .collection-panel--v3 .collection-filters {
-    grid-template-columns: minmax(0,1fr);
-  }
+.dashboard__stat .dh-stat__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: .25rem;
 }
 
-/* Reduced motion */
+.dashboard__stat .dh-stat__label {
+  font-size: .875rem;
+  color: var(--muted);
+  margin-top: .25rem;
+}
 
-@media (prefers-reduced-motion: reduce) {
-  .dreamscape-v5
-  .panel.dashboard-panel--v2
-  .total.stats-dashboard > .stat-card,
-  .dreamscape-v5
-  .collection-panel--v3 * {
-    transition: none !important;
-    animation: none !important;
+/* Special stat: Ownership ring */
+.dashboard__own-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+}
+
+.dashboard__own-ring .own-ring__circle {
+  position: absolute;
+  inset: 0;
+  border: 8px solid var(--border-2);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.dashboard__own-ring .own-ring__fill {
+  position: absolute;
+  inset: 0;
+  border: 8px solid var(--accent);
+  border-radius: 50%;
+  box-sizing: border-box;
+  transform: rotate(.27turn);
+}
+
+/* ============ LEVEL 4: Supporting Details ============ */
+
+.dashboard__details {
+  margin-top: 2rem;
+}
+
+.dashboard__detail {
+  font-size: .875rem;
+  color: var(--muted);
+  margin-bottom: .75rem;
+}
+
+.dashboard__detail .dh-stat__value {
+  font-size: 1.25rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.dashboard__goal-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .5rem;
+}
+
+.dashboard__goal-progress {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.dashboard__goal-name {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+
+.dashboard__goal-cta {
+  align-self: flex-start;
+  font-size: .75rem;
+  color: var(--accent);
+}
+
+/* Mobile: single column grid */
+@media (max-width: 620px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .dashboard__stat {
+    padding: 1rem;
   }
 }
