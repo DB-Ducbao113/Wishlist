@@ -1,0 +1,961 @@
+/* =====================================================================
+   DREAM VAULT V16.2 — FUSION-03
+   GALLERY, FOCUS & STATUS BOARD VISUAL UNIFICATION
+
+   Loaded LAST (after fusion-02-cinematic-scroll.css) so it wins the
+   cascade for the elements it owns. FUSION-01 (aurora hero) and
+   FUSION-02 (cinematic scroll) are NOT rebuilt: this sheet only refines
+   surfaces, framing, type hierarchy, indicators and feedback that the
+   earlier sheets left plain.
+
+   OWNERSHIP MAP — who already owns transform / opacity / animation, and
+   what this sheet therefore never touches:
+
+     #grid > .card.wishlist-card[data-dv-reveal]
+       → MOTION-03 owns the card entrance (translate3d + opacity + the
+         `will-change` that lives only while hidden). No rule here
+         declares a transform on the card element itself.
+     .wishlist-card__surface
+       → product-card.css owns the TILT (--rotate-x / --rotate-y →
+         transform). This sheet only ever writes border / background /
+         box-shadow on that node. It also never adds a pseudo-element to
+         it: the surface is a flex (gallery) or grid (focus) container, so
+         a pseudo would become a real layout item.
+     .product-media__image
+       → MOTION-02 owns the pointer parallax through `translate`, MOTION-16
+         owns the hover zoom through `transform`, V8 owns the mat padding.
+         This sheet adds none of them: it only sets position and z-index so
+         the frame's new pedestal can never cover the artwork. No animated
+         filter is added anywhere — motion-v16 T1 forbids it and the brief
+         rules out the GPU cost.
+     .product-media__frame
+       → previously owned no transform. F03.2 gives it the ONLY new
+         translate of this milestone: a fraction of the parallax offset the
+         card already publishes (`--dv-parallax-x/-y`, same probe, no new
+         listener). Zero px at rest, so no card is promoted, and it is
+         switched off for touch, motion-lite and reduced motion.
+     .pv-sheen
+       → FUSION-02 owns the sweep. Untouched here (z-index 4 stays on top).
+     .board__card
+       → MOTION-04 owns `transform: scale(1.03)` while `.dragging`. The
+         hover lift added here is scoped `:not(.dragging)` so the two can
+         never fight, and it is a paint-free transform/box-shadow change.
+     .board__column--confirm
+       → MOTION-05/17 own `board-col-flash` (inset box-shadow). The seal
+         added here is a `::after` child animation, so the existing
+         animation list is left exactly as it was.
+     .v13-viewbar__button / .collection-filters__toggle / .card-more__trigger
+       → F4 + MOTION-17 own them. Untouched.
+     .quick-view__* / .qv-savings__*
+       → V8/V9/V12/F5 own the layout, the shared-element flight
+         (MOTION-05) and the savings meter (scaleX(--savings-fill)).
+         This sheet only rewrites surfaces, plates and type consistency;
+         the flight, the close fallback and every id stay canonical.
+
+   STATUS LANGUAGE — one shared map, so Gallery, Focus, Board and Quick
+   View finally agree (canonical values from dashboard-v16.css):
+     wish #6850BC · saving #8B7ED8 · ordered #A88BF7 · purchased #2F7D5B
+     priority low #9A93AD · medium #8B7ED8 · high #B3261E
+   ===================================================================== */
+
+body.dreamscape-v5 {
+  --f3-ink:        #19152C;
+  --f3-muted:      #5F5677;
+  --f3-lav:        #6850BC;
+  --f3-lav-deep:   #5B44AE;
+  --f3-lav-soft:   #8B7ED8;
+  --f3-hairline:   rgba(104, 80, 188, .13);
+  --f3-hairline-2: rgba(104, 80, 188, .09);
+  --f3-surface:    linear-gradient(168deg, #FFFFFF 0%, #FDFBFF 44%, #F2EBFF 100%);
+  --f3-mat:        linear-gradient(170deg, #FFFFFF 0%, #FDFBFF 58%, #F8F4FF 100%);
+  --f3-plate:      linear-gradient(180deg, rgba(247, 244, 255, .88), rgba(243, 238, 255, .58));
+  --f3-stage:
+    radial-gradient(ellipse 76% 50% at 50% 20%,
+      rgba(168, 139, 247, .52), transparent 70%),
+    radial-gradient(ellipse 68% 42% at 50% 110%,
+      rgba(104, 80, 188, .34), transparent 72%),
+    linear-gradient(168deg, #F4EFFF 0%, #E4DAFC 100%);
+  --f3-shadow:
+    0 22px 52px rgba(57, 43, 122, .10),
+    0 2px 6px rgba(57, 43, 122, .05),
+    inset 0 1px 0 rgba(255, 255, 255, .95);
+  --f3-shadow-hover:
+    0 34px 78px rgba(74, 53, 153, .17),
+    0 4px 12px rgba(74, 53, 153, .07),
+    inset 0 1px 0 #FFFFFF;
+  --f3-ease: cubic-bezier(.22, .68, .24, 1);
+}
+
+/* =====================================================================
+   F03.2 — PREMIUM PRODUCT GALLERY
+   ===================================================================== */
+
+/* ---- Card surface: lavender-tinted glass, refined edge + shadow ---- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card__surface {
+  border: 1px solid var(--f3-hairline);
+  background: var(--f3-surface);
+  box-shadow: var(--f3-shadow);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.wishlist-card.is-purchased .wishlist-card__surface {
+  border-color: rgba(47, 125, 91, .22);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card:hover .wishlist-card__surface {
+    border-color: rgba(148, 125, 235, .58);
+    box-shadow: var(--f3-shadow-hover);
+  }
+}
+
+/* ---- Collection view switcher: the door to all three views ---- */
+body.dreamscape-v5 .v13-viewbar__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+body.dreamscape-v5 .v13-viewbar__label::before {
+  content: "";
+  flex: 0 0 14px;
+  height: 1px;
+  background: currentColor;
+  opacity: .55;
+}
+
+body.dreamscape-v5 .v13-viewbar__switch {
+  padding: 5px;
+  gap: 5px;
+  border: 1px solid rgba(104, 80, 188, .16);
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, .92) 0%,
+    rgba(242, 236, 255, .78) 100%);
+  box-shadow:
+    0 12px 30px rgba(57, 43, 122, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+body.dreamscape-v5 .v13-viewbar__button[aria-pressed="true"] {
+  background: linear-gradient(135deg, #7E66D6 0%, #6850BC 100%);
+  box-shadow: 0 10px 24px rgba(84, 63, 158, .28);
+}
+
+/* ---- Media stage + framed artwork ---- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.thumb.product-media {
+  background: var(--f3-stage);
+  box-shadow: inset 0 -1px 0 rgba(104, 80, 188, .12);
+}
+
+/* Specificity note: premium-v9-signature.css (.product-media__frame,
+   rgba(255,255,255,.34)) also owns this node's background at a HIGHER
+   specificity than a plain `#grid .product-media__frame` chain, so the
+   gallery class chain is repeated here. Nothing else about the frame
+   changes: the v9 border and radius still apply. */
+body.dreamscape-v5
+.v11-canvas
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-media__frame {
+  background: var(--f3-mat);
+  box-shadow:
+    0 18px 36px rgba(60, 42, 128, .16),
+    0 2px 6px rgba(60, 42, 128, .06),
+    inset 0 0 0 1px rgba(255, 255, 255, .92);
+}
+
+/* Pedestal: the artwork finally sits ON something instead of floating.
+   Pseudo-element instead of a real node: the frame carries no data and
+   no listener, and `.pv-sheen` (z-index 4) still paints above it. */
+body.dreamscape-v5 .v11-canvas #grid .product-media__frame::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 4%;
+  height: 17%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(52% 100% at 50% 100%,
+    rgba(104, 80, 188, .24) 0%,
+    rgba(104, 80, 188, .07) 56%,
+    rgba(104, 80, 188, 0) 76%);
+}
+
+body.dreamscape-v5 .v11-canvas #grid > .wishlist-card .product-media__image {
+  position: relative;
+  z-index: 1;
+}
+
+/* Controlled pointer-responsive depth: the mat travels a third of the
+   distance the artwork travels, so the two layers read as separate
+   planes. It rides the offset the card already publishes — no second
+   pointer listener, no second rAF. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5
+  #grid .wishlist-card[data-dv-parallax] .product-media__frame {
+    translate:
+      calc(var(--dv-parallax-x, 0px) * .34)
+      calc(var(--dv-parallax-y, 0px) * .34);
+    transition:
+      translate 320ms var(--f3-ease),
+      box-shadow 300ms var(--f3-ease);
+  }
+}
+
+/* ---- Type hierarchy: kicker rule, serif name, priced in lavender ---- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content {
+  padding: 17px 19px 15px;
+  gap: 9px;
+}
+
+body.dreamscape-v5 #grid .product-card__index {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9.5px;
+  letter-spacing: .28em;
+  color: rgba(104, 80, 188, .82);
+}
+
+body.dreamscape-v5 #grid .product-card__index::before {
+  content: "";
+  flex: 0 0 14px;
+  height: 1px;
+  background: currentColor;
+  opacity: .6;
+  transform-origin: left center;
+  transition: transform 260ms var(--f3-ease);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__title {
+  font-size: 1.14rem;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  color: var(--f3-ink);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__price {
+  width: 100%;
+  padding-top: 8px;
+  border-top: 1px solid rgba(104, 80, 188, .10);
+  font-size: 1.09rem;
+  font-weight: 780;
+  letter-spacing: -.005em;
+  color: var(--f3-lav-deep);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .cat {
+  color: rgba(104, 80, 188, .86);
+  font-size: 10.5px;
+  letter-spacing: .16em;
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__content .meta {
+  color: #8E86A6;
+  font-size: 9.5px;
+  letter-spacing: .1em;
+}
+
+/* Hovering a card extends its kicker rule — the same gesture Focus uses,
+   so the two views share one "selected exhibit" language. */
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 #grid .wishlist-card:hover .product-card__index::before {
+    transform: scaleX(2.1);
+  }
+}
+
+/* ---- Status / priority indicators: filled chips, one shared map ---- */
+body.dreamscape-v5 #grid .product-card__badges .badge {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 9.5px;
+  letter-spacing: .15em;
+  background: rgba(104, 80, 188, .06);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .18);
+}
+
+body.dreamscape-v5 #grid .product-card__badges .badge.b-wish {
+  color: #5B44AE;
+  background: rgba(104, 80, 188, .10);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .22);
+}
+body.dreamscape-v5 #grid .product-card__badges .badge.b-saving {
+  color: #6A56BD;
+  background: rgba(139, 126, 216, .16);
+  box-shadow: inset 0 0 0 1px rgba(139, 126, 216, .30);
+}
+body.dreamscape-v5 #grid .product-card__badges .badge.b-ordered {
+  color: #7A5FD0;
+  background: rgba(168, 139, 247, .20);
+  box-shadow: inset 0 0 0 1px rgba(168, 139, 247, .34);
+}
+body.dreamscape-v5 #grid .product-card__badges .badge.b-purchased {
+  color: #2F7D5B;
+  background: rgba(47, 125, 91, .10);
+  box-shadow: inset 0 0 0 1px rgba(47, 125, 91, .22);
+}
+body.dreamscape-v5 #grid .product-card__badges .badge.b-high {
+  color: #B3261E;
+  background: rgba(179, 38, 30, .07);
+  box-shadow: inset 0 0 0 1px rgba(179, 38, 30, .20);
+}
+body.dreamscape-v5 #grid .product-card__badges .badge.b-medium {
+  color: #5F5677;
+  background: rgba(95, 86, 119, .07);
+  box-shadow: inset 0 0 0 1px rgba(95, 86, 119, .16);
+}
+body.dreamscape-v5 #grid .product-card__badges .badge.b-low {
+  color: #857E99;
+  background: rgba(133, 126, 153, .10);
+  box-shadow: inset 0 0 0 1px rgba(133, 126, 153, .18);
+}
+
+/* ---- Action shelf ---- */
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions {
+  gap: 8px;
+  padding: 13px 19px 17px;
+  border-top: 1px solid rgba(104, 80, 188, .11);
+  background: linear-gradient(180deg,
+    rgba(246, 242, 255, 0) 0%,
+    rgba(244, 239, 255, .62) 100%);
+}
+
+body.dreamscape-v5
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-card__actions .mini.product-card__view {
+  box-shadow: 0 10px 24px rgba(84, 63, 158, .24);
+}
+
+/* ---- Decorative wall tile: finally part of the collection, not a
+   dashed placeholder. Desktop only, exactly like its owner rule. ---- */
+@media (min-width: 1025px) {
+  body.dreamscape-v5
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6:not(:empty)::after {
+    min-height: 330px;
+    padding: 34px 28px;
+    border: 1px solid rgba(104, 80, 188, .16);
+    border-radius: 28px;
+    background: var(--f3-mat);
+    box-shadow: var(--f3-shadow);
+    color: #6E6588;
+    text-align: center;
+  }
+}
+
+/* ---- Failed / missing artwork: the mat says so, politely ----
+   Same gallery class chain as the frame's own rule, so the empty mat also
+   wins over premium-v9's translucent white. */
+body.dreamscape-v5
+.v11-canvas
+#grid.gallery--v2.gallery--v4.gallery--v6
+.product-media__frame.is-empty {
+  background: linear-gradient(170deg, #FCFBFF 0%, #F6F1FF 100%);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .14);
+}
+
+body.dreamscape-v5 .v11-canvas #grid .product-media__frame.is-empty::after {
+  content: "PVault.";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  z-index: 2;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: rgba(104, 80, 188, .40);
+  pointer-events: none;
+}
+
+/* =====================================================================
+   F03.3 — IMMERSIVE FOCUS VIEW (curated exhibition rows)
+   ===================================================================== */
+
+body.dreamscape-v5
+.v11-canvas
+#grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"] {
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  /* Wider plate, taller rows: the exhibit reads as a spread, not a row. */
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card .wishlist-card__surface {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+    min-height: 380px;
+  }
+
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card:first-child:not(:only-child) .wishlist-card__surface {
+    min-height: 460px;
+  }
+
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card .product-card__content {
+    padding: clamp(26px, 2.6vw, 44px) clamp(24px, 2.6vw, 44px) 14px;
+    gap: 11px;
+    align-content: center;
+    border-left: 1px solid var(--f3-hairline-2);
+  }
+
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card .product-card__actions {
+    padding: 16px clamp(24px, 2.6vw, 44px) clamp(24px, 2.6vw, 36px);
+    border-left: 1px solid var(--f3-hairline-2);
+  }
+
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card .product-card__title {
+    font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -.02em;
+  }
+
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card .product-card__price {
+    font-size: clamp(1.35rem, 1.7vw, 1.8rem);
+  }
+}
+
+/* Selection feedback inside Focus: the kicker rule draws out and the
+   plaque warms up. Both are paint-free (transform / colour only). */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5
+  .v11-canvas
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6[data-v13-view="focus"]
+  > .wishlist-card:hover .product-card__index::before {
+    transform: scaleX(2.6);
+  }
+}
+
+/* =====================================================================
+   F03.4 — PREMIUM STATUS BOARD
+   ===================================================================== */
+
+body.dreamscape-v5 .board__columns {
+  gap: 14px;
+  align-items: start;
+}
+
+/* Status language, per column. Kept on the column so the head, the count,
+   the cards and the drop ring all inherit one accent. */
+body.dreamscape-v5 .board__column[data-status="wish"]      { --f3-accent: #6850BC; }
+body.dreamscape-v5 .board__column[data-status="saving"]    { --f3-accent: #8B7ED8; }
+body.dreamscape-v5 .board__column[data-status="ordered"]   { --f3-accent: #A88BF7; }
+body.dreamscape-v5 .board__column[data-status="purchased"] { --f3-accent: #2F7D5B; }
+
+body.dreamscape-v5 .board__column {
+  position: relative;
+  padding: 15px 12px 16px;
+  min-height: 240px;
+  border-radius: 20px;
+  background: linear-gradient(180deg,
+    #FBFAFF 0%,
+    var(--dv-surface-2, #F7F4FF) 44%,
+    #F3EEFF 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(104, 80, 188, .10),
+    0 14px 34px rgba(57, 43, 122, .055);
+}
+
+body.dreamscape-v5 .board__column::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(90deg,
+    var(--f3-accent, #6850BC) 0%,
+    rgba(255, 255, 255, 0) 100%);
+  opacity: .8;
+  pointer-events: none;
+}
+
+body.dreamscape-v5 .board__head {
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--f3-hairline-2);
+}
+
+body.dreamscape-v5 .board__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  letter-spacing: .005em;
+  color: var(--f3-ink);
+}
+
+body.dreamscape-v5 .board__title::before {
+  content: "";
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--f3-accent, #6850BC);
+  box-shadow: 0 0 0 3px rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .board__count {
+  min-width: 28px;
+  padding: 3px 9px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 800;
+  border-radius: 999px;
+  color: #4C3E86;
+  background: rgba(104, 80, 188, .10);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .16);
+}
+
+/* ---- Cards: lifted, lit, and tinted by their column ---- */
+body.dreamscape-v5 .board__list {
+  gap: 9px;
+  min-height: 76px;
+}
+
+body.dreamscape-v5 .board__card {
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(104, 80, 188, .13);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FDFCFF 100%);
+  box-shadow:
+    0 6px 16px rgba(57, 43, 122, .06),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+body.dreamscape-v5 .board__card-img {
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .board__card-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -.005em;
+  color: var(--f3-ink);
+}
+
+body.dreamscape-v5 .board__card-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--f3-lav-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+body.dreamscape-v5 .board__handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  min-height: 40px;
+  border-radius: 10px;
+  color: rgba(104, 80, 188, .52);
+  font-size: 15px;
+  letter-spacing: -2px;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .board__handle:hover {
+    background: #F1EAFF;
+    color: var(--f3-lav);
+  }
+
+  body.dreamscape-v5 .board__card:not(.dragging):hover {
+    transform: translateY(-2px);
+    border-color: rgba(148, 125, 235, .45);
+    box-shadow:
+      0 14px 30px rgba(74, 53, 153, .14),
+      inset 0 1px 0 #FFFFFF;
+  }
+}
+
+/* ---- Drop target ---- */
+body.dreamscape-v5 .board__column.drag-over {
+  outline: 2px dashed rgba(104, 80, 188, .55);
+  outline-offset: -4px;
+  background: linear-gradient(180deg,
+    rgba(232, 224, 255, .92) 0%,
+    rgba(243, 238, 255, .92) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(148, 125, 235, .30),
+    0 18px 40px rgba(74, 53, 153, .12);
+}
+
+/* ---- Empty column: an illustration instead of a bare sentence ---- */
+body.dreamscape-v5 .board__list:empty {
+  min-height: 122px;
+}
+
+body.dreamscape-v5 .board__list:empty::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 8px auto 10px;
+  border-radius: 18px;
+  background-color: rgba(255, 255, 255, .72);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none'%3E%3Cpath d='M6 13h20v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V13Z' stroke='rgb(160,143,228)' stroke-width='1.6'/%3E%3Cpath d='M6 13l3-6h14l3 6' stroke='rgb(160,143,228)' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M13 13v5h6v-5' stroke='rgb(196,182,240)' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 32px 32px;
+  box-shadow:
+    inset 0 0 0 1px rgba(104, 80, 188, .14),
+    0 8px 18px rgba(57, 43, 122, .06);
+}
+
+body.dreamscape-v5 .board__list:empty::after {
+  content: "Chưa có món";
+  display: block;
+  padding: 0;
+  text-align: center;
+  color: #8E86A6;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: .06em;
+}
+
+/* ---- Completion feedback: the existing flash plus a seal ---- */
+body.dreamscape-v5 .board__column--confirm::after {
+  content: "✓";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--f3-accent, #6850BC);
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(74, 53, 153, .26);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.dreamscape-v5 .board__column--confirm::after {
+    animation: f3-board-seal 640ms var(--f3-ease) both;
+  }
+}
+
+@keyframes f3-board-seal {
+  0%   { opacity: 0; transform: scale(.55) rotate(-14deg); }
+  55%  { opacity: 1; transform: scale(1.10) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* =====================================================================
+   F03.5 — QUICK VIEW CONTINUITY
+   ===================================================================== */
+
+body.dreamscape-v5 #qv .quick-view__stage {
+  background: var(--f3-stage);
+}
+
+/* Same pedestal as the card mat, so the object stands on the same floor
+   in both places. `::before` on the stage is the V12 ring — untouched. */
+body.dreamscape-v5 #qv .quick-view__stage::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 9%;
+  height: 13%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(52% 100% at 50% 100%,
+    rgba(104, 80, 188, .22) 0%,
+    rgba(104, 80, 188, .06) 58%,
+    rgba(104, 80, 188, 0) 76%);
+}
+
+body.dreamscape-v5 #qv .quick-view__panel {
+  gap: 15px;
+}
+
+body.dreamscape-v5 #qv .quick-view__price {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(104, 80, 188, .14);
+}
+
+/* Kicker rule for every section heading — the same mark the gallery card
+   uses for its object number. */
+body.dreamscape-v5 #qv .quick-view__story-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+body.dreamscape-v5 #qv .quick-view__story-heading::before {
+  content: "";
+  flex: 0 0 14px;
+  height: 1px;
+  background: currentColor;
+  opacity: .55;
+}
+
+/* Metadata plate: the facts finally read as one block. */
+body.dreamscape-v5 #qv .quick-view__meta {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: 13px 15px;
+  border-radius: 16px;
+  background: var(--f3-plate);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .09);
+}
+
+body.dreamscape-v5 #qv .quick-view__meta-item {
+  padding: 6px 0;
+  border-top: 0;
+}
+
+@media (min-width: 1025px) {
+  body.dreamscape-v5 #qv .quick-view__meta {
+    column-gap: 22px;
+  }
+
+  body.dreamscape-v5 #qv .quick-view__meta-item {
+    padding: 7px 0;
+  }
+}
+
+/* Savings plate — same treatment, so the meter is not a stray strip. */
+body.dreamscape-v5 #qv .quick-view__savings {
+  margin: 0;
+  padding: 14px 15px 16px;
+  border-top: 0;
+  border-radius: 16px;
+  background: var(--f3-plate);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .09);
+}
+
+body.dreamscape-v5 #qv .quick-view__savings .quick-view__story-heading {
+  margin-bottom: 10px;
+}
+
+body.dreamscape-v5 #qv .qv-savings__track {
+  height: 9px;
+  background: rgba(104, 80, 188, .14);
+  box-shadow: inset 0 1px 2px rgba(57, 43, 122, .08);
+}
+
+body.dreamscape-v5 #qv .qv-savings__fill {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+
+/* Status plate — the four buttons keep their ids/handlers, only the
+   surface moves, and the current one is unmistakably current. */
+body.dreamscape-v5 #qv .quick-view__status-options {
+  gap: 8px;
+}
+
+body.dreamscape-v5 #qv .quick-view__status-option {
+  border-color: rgba(104, 80, 188, .20);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .70);
+}
+
+body.dreamscape-v5 #qv .quick-view__status-option.is-current,
+body.dreamscape-v5 #qv .quick-view__status-option[aria-pressed="true"] {
+  background: linear-gradient(135deg, #7E66D6, #6850BC);
+  border-color: transparent;
+  color: #FFFFFF;
+  box-shadow: 0 10px 24px rgba(84, 63, 158, .26);
+}
+
+/* =====================================================================
+   F03.6 — EMPTY STATE (gallery + board share one alcove)
+   ===================================================================== */
+
+body.dreamscape-v5 #empty.wishlist-empty {
+  position: relative;
+  overflow: hidden;
+  padding: 56px 24px 40px;
+  border: 1px solid rgba(104, 80, 188, .12);
+  border-radius: 30px;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,
+      rgba(168, 139, 247, .22), transparent 68%),
+    radial-gradient(ellipse 60% 40% at 50% 104%,
+      rgba(104, 80, 188, .16), transparent 72%),
+    linear-gradient(168deg, #FFFFFF 0%, #FBF9FF 52%, #F3EDFF 100%);
+  box-shadow:
+    0 26px 60px rgba(57, 43, 122, .09),
+    inset 0 1px 0 rgba(255, 255, 255, .95);
+}
+
+body.dreamscape-v5 #empty .wishlist-empty__illustration {
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(117, 101, 232, .14) 0%,
+    rgba(117, 101, 232, .05) 62%,
+    rgba(117, 101, 232, 0) 74%);
+  box-shadow: inset 0 0 0 1px rgba(104, 80, 188, .10);
+}
+
+body.dreamscape-v5 #empty .wishlist-empty__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: rgba(104, 80, 188, .88);
+  letter-spacing: .22em;
+}
+
+body.dreamscape-v5 #empty .wishlist-empty__eyebrow::before {
+  content: "✦";
+  color: #A88BF7;
+  letter-spacing: 0;
+}
+
+body.dreamscape-v5 #empty .wishlist-empty__title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--f3-ink);
+}
+
+body.dreamscape-v5 #empty .wishlist-empty__description {
+  color: #6E6789;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty::after {
+  content: "PVault.";
+  margin-top: 22px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: .02em;
+  color: rgba(104, 80, 188, .42);
+}
+
+/* =====================================================================
+   F03.7 — RESPONSIVE & ADAPTIVE GATES
+   ===================================================================== */
+
+/* Narrow phones: tighter chrome, still no overflow and no clipped action. */
+@media (max-width: 430px) {
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__content {
+    padding: 15px 15px 13px;
+    gap: 8px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions {
+    padding: 12px 15px 15px;
+  }
+
+  body.dreamscape-v5 .board__column {
+    padding: 13px 10px 14px;
+    border-radius: 18px;
+  }
+
+  body.dreamscape-v5 .board__card {
+    grid-template-columns: auto 42px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 8px 9px;
+  }
+
+  body.dreamscape-v5 .board__card-img {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* Touch / coarse pointers: no pointer-responsive depth, no fake hover. */
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5
+  #grid .wishlist-card[data-dv-parallax] .product-media__frame {
+    translate: none;
+    transition: none;
+  }
+
+  body.dreamscape-v5 .board__handle {
+    min-width: 30px;
+    min-height: 44px;
+  }
+
+  /* The three controls this milestone restyled get the same real thumb
+     target as the drag handle: 44px, measured on the element itself. */
+  body.dreamscape-v5 .board__status-select,
+  body.dreamscape-v5 .v13-viewbar__button,
+  body.dreamscape-v5 #qv .quick-view__status-option {
+    min-height: 44px;
+  }
+}
+
+/* html.motion-lite — the app's own low-power switch. */
+html.motion-lite body.dreamscape-v5
+#grid .wishlist-card[data-dv-parallax] .product-media__frame {
+  translate: none;
+  transition: none;
+}
+
+html.motion-lite body.dreamscape-v5 .board__card:not(.dragging):hover {
+  transform: none;
+}
+
+/* Reduced motion: every added motion settles to a complete static state. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  #grid .wishlist-card[data-dv-parallax] .product-media__frame {
+    translate: none !important;
+    transition: none !important;
+  }
+
+  body.dreamscape-v5 #grid .product-card__index::before,
+  body.dreamscape-v5 .board__card,
+  body.dreamscape-v5 .board__handle,
+  body.dreamscape-v5 .board__column--confirm::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  body.dreamscape-v5 #grid .wishlist-card:hover .product-card__index::before {
+    transform: none !important;
+  }
+}

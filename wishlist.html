@@ -151,6 +151,12 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      transform that FUSION-01/MOTION already own. -->
 <link rel="stylesheet" href="./css/fusion-02-cinematic-scroll.css">
 
+<!-- V16.2 FUSION-03 — gallery, focus view, status board and quick view share
+     one lavender surface language and one status colour map. Loaded after
+     FUSION-02 so it wins the cascade for the surfaces it refines; it rebuilds
+     neither the FUSION-01 hero nor the FUSION-02 scroll layer. -->
+<link rel="stylesheet" href="./css/fusion-03-gallery-board.css">
+
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
      the class is only added when IntersectionObserver exists and the user
@@ -3857,6 +3863,10 @@ function card(it){
   img.height = 600;
   img.addEventListener("error", () => {
     img.src = PLACEHOLDER;
+    // V16.2 FUSION-03 — a real URL that failed gets the same styled state as
+    // an item that never had one.
+    const frame = img.closest(".product-media__frame");
+    if (frame) frame.classList.add("is-empty");
   }, { once: true });
 
   const thumb = document.createElement("div");
@@ -3864,6 +3874,12 @@ function card(it){
 
   const imageFrame = document.createElement("div");
   imageFrame.className = "product-media__frame";
+
+  // V16.2 FUSION-03 — the missing/failed artwork state is now a styled state
+  // (lavender mat + wordmark mark) instead of looking like a broken card.
+  // The class is set here for an item that never had an image, and in the
+  // error handler above when a real URL fails to load.
+  if (src === PLACEHOLDER) imageFrame.classList.add("is-empty");
 
   imageFrame.appendChild(img);
 
