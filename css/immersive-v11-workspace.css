@@ -101,7 +101,9 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
   /* ---- Rail: #collection ---- */
   body.dreamscape-v5 #collection.v11-rail {
     position: sticky;
-    top: 22px;
+    top: var(--dv-header-inset);
+    max-height: calc(100vh - var(--dv-header-inset) - 16px);
+    overflow-y: auto;
     padding: clamp(26px, 2.2vw, 34px);
     border-radius: 30px;
     width: auto;

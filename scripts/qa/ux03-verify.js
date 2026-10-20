@@ -255,7 +255,40 @@ async function makePage(browser, width, height, seed) {
         return { x: ox, y: oy, area: ox * oy };
       }
     });
-    report.layout.push({ width: w, ...audit });
+    let sticky = null;
+    if (w === 1440) {
+      sticky = await page.evaluate(() => {
+        const rail = document.getElementById('collection');
+        const workspace = document.querySelector('.v11-workspace');
+        workspace.scrollIntoView({ block: 'start', behavior: 'instant' });
+        const startY = rail.getBoundingClientRect().top;
+        const beforeScroll = window.scrollY;
+        window.scrollBy(0, 220);
+        const endY = rail.getBoundingClientRect().top;
+        const inset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+        const railClientHeight = rail.clientHeight;
+        const railScrollHeight = rail.scrollHeight;
+        rail.scrollTop = rail.scrollHeight;
+        const railRect = rail.getBoundingClientRect();
+        const footer = rail.querySelector('.collection-toolbar__footer');
+        const footerRect = footer ? footer.getBoundingClientRect() : null;
+        return {
+          position: getComputedStyle(rail).position,
+          stickyTop: parseFloat(getComputedStyle(rail).top),
+          startY: Math.round(startY),
+          endY: Math.round(endY),
+          railBottom: Math.round(railRect.bottom),
+          railClientHeight,
+          railScrollHeight,
+          footerBottom: footerRect ? Math.round(footerRect.bottom) : null,
+          footerReachable: !!footerRect && footerRect.top >= inset && footerRect.bottom <= window.innerHeight,
+          scrollDelta: Math.round(window.scrollY - beforeScroll),
+          inset,
+          pinned: Math.abs(endY - inset) <= 2
+        };
+      });
+    }
+    report.layout.push({ width: w, ...audit, sticky });
     line('\n-- ' + w + 'px --');
     line('  overflow: ' + audit.overflow + ' (doc ' + audit.docW + ' / win ' + audit.winW + ')');
     line('  workspace display: ' + audit.workspaceDisplay + ' cols=' + audit.workspaceCols);
@@ -269,6 +302,7 @@ async function makePage(browser, width, height, seed) {
     line('  controls with 0 visible instances: ' + (bad.length ? bad.join(', ') : 'none'));
     const empty = Object.keys(audit.reachable).filter(k => (audit.reachable[k].visibleOptions || []).some(o => o !== null && o <= 1));
     line('  selects with <=1 option (unpopulated): ' + (empty.length ? empty.join(', ') : 'none'));
+    if (sticky) line('  sticky rail after scroll: ' + JSON.stringify(sticky));
 
     // screenshot
     const file = path.join(OUT, 'ux03-' + w + '.png');
@@ -283,7 +317,7 @@ async function makePage(browser, width, height, seed) {
   head('PART C — interaction verification');
   {
     // C1 desktop: add item -> search -> filter -> sort -> views -> QV -> status -> clear
-    const { ctx, page } = await makePage(browser, 1440, 900, []);
+    const { ctx, page } = await makePage(browser, 1440, 900, makeItems(12));
     const steps = [];
     const step = async (name, fn) => {
       try { const v = await fn(); steps.push({ name, ok: true, v }); }
@@ -291,14 +325,18 @@ async function makePage(browser, width, height, seed) {
     };
 
     await step('add item', async () => {
+      const before = await page.$$eval('#grid .wishlist-card', els => els.length);
       await page.click('#btnAdd');
       await sleep(400);
       await page.type('#fName', 'Tai nghe chống ồn');
       await page.type('#fPrice', '2500000');
+      await page.type('#fCategory', 'UX-03 audit');
       await page.click('#form button[type="submit"], #btnSave');
-      await sleep(700);
+      await page.waitForFunction(() => document.getElementById('dlg').open === false, { timeout: 5000 });
+      await page.waitForFunction(n => document.querySelectorAll('#grid .wishlist-card').length === n + 1, { timeout: 5000 }, before);
       const n = await page.$$eval('#grid .wishlist-card', els => els.length);
       const names = await page.$$eval('#grid .product-card__title', els => els.map(e => e.textContent.trim()));
+      if (!names.includes('Tai nghe chống ồn')) throw new Error('added item is not rendered');
       return { cards: n, names };
     });
 
@@ -306,15 +344,16 @@ async function makePage(browser, width, height, seed) {
       const el = await page.$('#q');
       await el.click();
       await el.type('Tai nghe');
-      await sleep(600);
+      await page.waitForFunction(() => document.querySelectorAll('#grid .wishlist-card').length === 1, { timeout: 5000 });
       const n = await page.$$eval('#grid .wishlist-card', els => els.length);
       const status = await page.$eval('#resultStatus', e => e.textContent.trim());
+      if (n !== 1 || !/1 trên 13/.test(status)) throw new Error('search did not narrow to the added item: ' + status);
       return { cards: n, status };
     });
 
     await step('clear via search', async () => {
       await page.click('#btnClearFilter');
-      await sleep(500);
+      await page.waitForFunction(() => document.getElementById('q').value === '' && document.querySelectorAll('#grid .wishlist-card').length === 13, { timeout: 5000 });
       const q = await page.$eval('#q', e => e.value);
       return { q, cards: await page.$$eval('#grid .wishlist-card', e => e.length) };
     });
@@ -324,39 +363,57 @@ async function makePage(browser, width, height, seed) {
       if (!sel) throw new Error('no category select');
       const opts = await page.$$eval('#fCategoryFilter option', o => o.map(x => x.value));
       if (opts.length < 2) throw new Error('category select not populated: ' + JSON.stringify(opts));
-      await page.select('#fCategoryFilter', opts[1]);
-      await sleep(600);
-      return { opts, cards: await page.$$eval('#grid .wishlist-card', e => e.length) };
+      if (!opts.includes('UX-03 audit')) throw new Error('added item category missing from options: ' + JSON.stringify(opts));
+      await page.select('#fCategoryFilter', 'UX-03 audit');
+      await page.waitForFunction(() => document.querySelectorAll('#grid .wishlist-card').length === 1, { timeout: 5000 });
+      const names = await page.$$eval('#grid .product-card__title', els => els.map(e => e.textContent.trim()));
+      if (names[0] !== 'Tai nghe chống ồn') throw new Error('category filter returned the wrong item: ' + JSON.stringify(names));
+      return { opts, cards: names.length, names };
     });
 
     await step('sort by newest', async () => {
+      await page.click('#btnClearFilter');
+      await page.waitForFunction(() => document.getElementById('fCategoryFilter').value === '' && document.querySelectorAll('#grid .wishlist-card').length === 13, { timeout: 5000 });
       await page.select('#fSort', 'newest');
-      await sleep(500);
+      await page.waitForFunction(() => document.querySelector('#grid .product-card__title')?.textContent.trim() === 'Tai nghe chống ồn', { timeout: 5000 });
       const v = await page.$eval('#fSort', e => e.value);
+      if (v !== 'newest') throw new Error('sort selection did not persist: ' + v);
       return { value: v };
     });
 
     await step('gallery -> focus -> board -> gallery', async () => {
       const out = {};
-      await page.click('#v13FocusView'); await sleep(400);
+      await page.click('#v13FocusView');
+      await page.waitForFunction(() => document.getElementById('grid').dataset.v13View === 'focus' && document.getElementById('v13FocusView').getAttribute('aria-pressed') === 'true', { timeout: 5000 });
       out.focus = await page.evaluate(() => ({
         pressed: document.getElementById('v13FocusView').getAttribute('aria-pressed'),
         gridPressed: document.getElementById('v13GridView').getAttribute('aria-pressed'),
         dataView: document.getElementById('grid').dataset.v13View,
         cols: getComputedStyle(document.getElementById('grid')).gridTemplateColumns
       }));
-      await page.click('#v13BoardView'); await sleep(500);
+      if (out.focus.pressed !== 'true' || out.focus.gridPressed !== 'false' || out.focus.dataView !== 'focus') {
+        throw new Error('focus view state did not activate: ' + JSON.stringify(out.focus));
+      }
+      await page.click('#v13BoardView');
+      await page.waitForFunction(() => document.getElementById('v13BoardView').getAttribute('aria-pressed') === 'true' && getComputedStyle(document.getElementById('board')).display !== 'none', { timeout: 5000 });
       out.board = await page.evaluate(() => ({
         pressed: document.getElementById('v13BoardView').getAttribute('aria-pressed'),
         boardVisible: !!document.getElementById('board') && getComputedStyle(document.getElementById('board')).display !== 'none',
         gridHidden: document.getElementById('grid').classList.contains('hidden'),
         columns: document.querySelectorAll('#board .board__column').length
       }));
-      await page.click('#v13GridView'); await sleep(400);
+      if (out.board.pressed !== 'true' || !out.board.boardVisible || !out.board.gridHidden || out.board.columns !== 4) {
+        throw new Error('board view state did not activate: ' + JSON.stringify(out.board));
+      }
+      await page.click('#v13GridView');
+      await page.waitForFunction(() => document.getElementById('grid').dataset.v13View === 'gallery' && document.getElementById('v13GridView').getAttribute('aria-pressed') === 'true', { timeout: 5000 });
       out.gallery = await page.evaluate(() => ({
         pressed: document.getElementById('v13GridView').getAttribute('aria-pressed'),
         dataView: document.getElementById('grid').dataset.v13View
       }));
+      if (out.gallery.pressed !== 'true' || out.gallery.dataView !== 'gallery') {
+        throw new Error('gallery view did not restore: ' + JSON.stringify(out.gallery));
+      }
       return out;
     });
 
@@ -364,37 +421,41 @@ async function makePage(browser, width, height, seed) {
       const target = await page.$('#grid .wishlist-card .product-card__view');
       if (!target) throw new Error('no .product-card__view trigger on the card');
       await target.click();
-      await sleep(800);
-      const open = await page.$eval('#qv', d => d.open).catch(() => false);
-      const title = await page.$eval('#qv', d => {
-        const t = d.querySelector('#qvTitle'); return t ? t.textContent.trim() : null;
-      }).catch(() => null);
+      await page.waitForFunction(() => document.getElementById('qv').open === true, { timeout: 5000 });
+      const open = await page.$eval('#qv', d => d.open);
+      const title = await page.$eval('#qv', d => d.querySelector('#qvTitle')?.textContent.trim() || null);
+      if (!open || title !== 'Tai nghe chống ồn') throw new Error('Quick View did not open for the selected item: ' + JSON.stringify({ open, title }));
       return { open, title };
     });
 
     await step('change status via quick view', async () => {
       const before = await page.$eval('#qvStatus', e => e.textContent.trim()).catch(() => null);
-      const btn = await page.$('#qvStatusOptions button[data-status-key]');
+      const btn = await page.$('#qvStatusOptions button[data-status-key="saving"]');
       if (!btn) throw new Error('no status option button inside #qvStatusOptions');
       const target = await btn.evaluate(el => el.dataset.statusKey);
+      if (target === 'wish') throw new Error('status target must differ from the current status');
       await btn.click();
-      await sleep(900);
+      await page.waitForFunction(key => document.querySelector('#qvStatusOptions button[aria-pressed="true"]')?.dataset.statusKey === key, { timeout: 5000 }, target);
       const after = await page.$eval('#qvStatus', e => e.textContent.trim()).catch(() => null);
-      const pressed = await page.$eval('#qvStatusOptions button[data-status-key="' + target + '"]',
-        e => e.getAttribute('aria-pressed')).catch(() => null);
-      await page.keyboard.press('Escape');
-      await sleep(500);
+      const pressed = await page.$eval('#qvStatusOptions button[data-status-key="' + target + '"]', e => e.getAttribute('aria-pressed'));
+      if (before === after || pressed !== 'true' || after !== 'Đang để dành') {
+        throw new Error('status did not change: ' + JSON.stringify({ before, after, pressed }));
+      }
+      await page.click('#qvClose');
+      await page.waitForFunction(() => document.getElementById('qv').open === false, { timeout: 5000 });
       return { before, after, changed: before !== after, clicked: target, ariaPressed: pressed };
     });
 
     await step('clear filters restores', async () => {
       await page.click('#btnClearFilter');
-      await sleep(600);
-      return await page.evaluate(() => ({
+      await page.waitForFunction(() => document.getElementById('q').value === '' && document.getElementById('fStatus').value === '' && document.querySelectorAll('#grid .wishlist-card').length === 13, { timeout: 5000 });
+      const result = await page.evaluate(() => ({
         q: document.getElementById('q').value,
         status: document.getElementById('fStatus').value,
         cards: document.querySelectorAll('#grid .wishlist-card').length
       }));
+      if (result.q !== '' || result.status !== '' || result.cards !== 13) throw new Error('clear filters did not restore the collection: ' + JSON.stringify(result));
+      return result;
     });
 
     report.interaction.desktop = steps;
@@ -406,6 +467,11 @@ async function makePage(browser, width, height, seed) {
   head('PART C2 — mobile toolbar functional reachability (390px)');
   {
     const { ctx, page } = await makePage(browser, 390, 844, makeItems(12));
+    const sidebarVisible = await page.evaluate(() => {
+      const sidebar = document.querySelector('.collection-sidebar');
+      return !!sidebar && getComputedStyle(sidebar).display !== 'none' && sidebar.getBoundingClientRect().width > 0;
+    });
+    if (sidebarVisible) throw new Error('legacy sidebar is visible on mobile');
     const mob = await page.evaluate(() => {
       const shown = el => { if (!el) return false; const cs = getComputedStyle(el);
         const r = el.getBoundingClientRect();
@@ -429,72 +495,82 @@ async function makePage(browser, width, height, seed) {
     Object.keys(mob).forEach(k => line('  ' + k + ' :: ' + JSON.stringify(mob[k])));
 
     // functional proof: type in the VISIBLE mobile search and see if the grid reacts
-    const searchProbe = await page.evaluate(async () => {
-      const vis = Array.from(document.querySelectorAll('#q')).filter(el => {
+    const searchProbe = await page.evaluate(() => {
+      const vis = Array.from(document.querySelectorAll('#q')).find(el => {
         const cs = getComputedStyle(el); const r = el.getBoundingClientRect();
         return cs.display !== 'none' && r.width > 0 && r.height > 0;
-      })[0];
-      if (!vis) return { error: 'no visible #q' };
-      const before = document.querySelectorAll('#grid .wishlist-card').length;
-      vis.value = 'Món 3';
-      vis.dispatchEvent(new Event('input', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 500));
-      const after = document.querySelectorAll('#grid .wishlist-card').length;
-      const readBy = document.getElementById('q').closest('.collection-sidebar') ? 'SIDEBAR' : 'toolbar';
-      return { before, after, reacted: before !== after, appReadsFrom: readBy,
-               visibleIsToolbar: !!vis.closest('.collection-toolbar') };
+      });
+      return vis ? {
+        before: document.querySelectorAll('#grid .wishlist-card').length,
+        appReadsFrom: document.getElementById('q').closest('.collection-sidebar') ? 'SIDEBAR' : 'toolbar',
+        visibleIsToolbar: !!vis.closest('.collection-toolbar')
+      } : { error: 'no visible #q' };
     });
+    if (searchProbe.error) throw new Error(searchProbe.error);
+    await page.click('#q');
+    await page.type('#q', 'Món 3');
+    await page.waitForFunction(() => document.querySelectorAll('#grid .wishlist-card').length === 1, { timeout: 5000 });
+    searchProbe.after = await page.$$eval('#grid .wishlist-card', els => els.length);
+    searchProbe.reacted = searchProbe.before !== searchProbe.after;
     line('\n  MOBILE SEARCH PROBE: ' + JSON.stringify(searchProbe));
+    if (!searchProbe.reacted || !searchProbe.visibleIsToolbar) throw new Error('mobile search is not connected to the visible toolbar: ' + JSON.stringify(searchProbe));
     report.interaction.mobileSearchProbe = searchProbe;
 
     // functional proof: change the VISIBLE mobile status select.
     // At <=640px the four selects live behind the F4.4 disclosure, so the
     // toggle has to be opened first — that IS the phone contract.
     // The search box is cleared first so the ONLY predicate is the status.
-    const selectProbe = await page.evaluate(async () => {
-      const q = document.getElementById('q');
-      q.value = ''; q.dispatchEvent(new Event('input', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 400));
-      const toggle = document.getElementById('filterToggle');
-      const toggleVisible = toggle && getComputedStyle(toggle).display !== 'none';
-      if (toggleVisible) { toggle.click(); await new Promise(r => setTimeout(r, 400)); }
-      const vis = Array.from(document.querySelectorAll('#fStatus')).filter(el => {
-        const cs = getComputedStyle(el); const r = el.getBoundingClientRect();
-        return cs.display !== 'none' && r.width > 0 && r.height > 0;
-      })[0];
-      if (!vis) return { error: 'no visible #fStatus even after opening the disclosure' };
-      const before = document.querySelectorAll('#grid .wishlist-card').length;
-      const opts = Array.from(vis.options).map(o => o.value);
-      vis.value = 'purchased';
-      vis.dispatchEvent(new Event('change', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 700));
-      const after = document.querySelectorAll('#grid .wishlist-card').length;
-      const status = document.getElementById('resultStatus').textContent.trim();
-      // restore
-      vis.value = ''; vis.dispatchEvent(new Event('change', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 500));
-      return { disclosureOpened: !!toggleVisible, visibleOptions: opts, before, after,
-               narrowed: after < before, status };
-    });
+    await page.click('#btnClearFilter');
+    await page.waitForFunction(() => document.getElementById('q').value === '' && document.querySelectorAll('#grid .wishlist-card').length === 12, { timeout: 5000 });
+    const toggleVisible = await page.$eval('#filterToggle', el => getComputedStyle(el).display !== 'none');
+    if (!toggleVisible) throw new Error('mobile filter disclosure is not visible');
+    await page.click('#filterToggle');
+    await page.waitForFunction(() => document.getElementById('filterToggle').getAttribute('aria-expanded') === 'true' &&
+      getComputedStyle(document.getElementById('fStatus')).display !== 'none', { timeout: 5000 });
+    const visibleControls = await page.evaluate(() => ['fStatus', 'fPriority', 'fCategoryFilter', 'fSort', 'fSavings'].map(id => {
+      const el = document.getElementById(id), r = el.getBoundingClientRect();
+      return { id, visible: getComputedStyle(el).display !== 'none' && r.width > 0 && r.height > 0,
+        options: el.tagName === 'SELECT' ? el.options.length : 0 };
+    }));
+    const before = await page.$$eval('#grid .wishlist-card', els => els.length);
+    await page.select('#fStatus', 'purchased');
+    await page.waitForFunction(n => document.querySelectorAll('#grid .wishlist-card').length < n, { timeout: 5000 }, before);
+    const after = await page.$$eval('#grid .wishlist-card', els => els.length);
+    const status = await page.$eval('#resultStatus', el => el.textContent.trim());
+    const selectProbe = {
+      disclosureOpened: true,
+      visibleOptions: visibleControls,
+      before,
+      after,
+      narrowed: after < before,
+      status
+    };
+    await page.select('#fStatus', '');
+    await page.waitForFunction(n => document.querySelectorAll('#grid .wishlist-card').length === n, { timeout: 5000 }, before);
     line('  MOBILE STATUS SELECT PROBE: ' + JSON.stringify(selectProbe));
+    if (!selectProbe.disclosureOpened || !selectProbe.narrowed ||
+        visibleControls.some(c => !c.visible || c.options < 2)) {
+      throw new Error('mobile status filter is not usable through the disclosure: ' + JSON.stringify(selectProbe));
+    }
     report.interaction.mobileSelectProbe = selectProbe;
 
     // functional proof: the phone clear-filters button
-    const clearProbe = await page.evaluate(async () => {
-      const before = document.querySelectorAll('#grid .wishlist-card').length;
-      const vis = Array.from(document.querySelectorAll('#q')).filter(el => {
-        const cs = getComputedStyle(el); const r = el.getBoundingClientRect();
-        return cs.display !== 'none' && r.width > 0 && r.height > 0;
-      })[0];
-      if (vis) { vis.value = 'Món 1'; vis.dispatchEvent(new Event('input', { bubbles: true })); }
-      await new Promise(r => setTimeout(r, 500));
-      const filtered = document.querySelectorAll('#grid .wishlist-card').length;
-      document.getElementById('btnClearFilter').click();
-      await new Promise(r => setTimeout(r, 600));
-      return { before, filtered, afterClear: document.querySelectorAll('#grid .wishlist-card').length,
-               q: document.getElementById('q').value };
-    });
+    const clearBefore = await page.$$eval('#grid .wishlist-card', els => els.length);
+    await page.locator('#q').fill('Món 1');
+    await page.waitForFunction(() => document.querySelectorAll('#grid .wishlist-card').length < 12, { timeout: 5000 });
+    const filteredCount = await page.$$eval('#grid .wishlist-card', els => els.length);
+    await page.click('#btnClearFilter');
+    await page.waitForFunction(() => document.getElementById('q').value === '' && document.querySelectorAll('#grid .wishlist-card').length === 12, { timeout: 5000 });
+    const clearProbe = {
+      before: clearBefore,
+      filtered: filteredCount,
+      afterClear: await page.$$eval('#grid .wishlist-card', els => els.length),
+      q: await page.$eval('#q', el => el.value)
+    };
     line('  MOBILE CLEAR-FILTERS PROBE: ' + JSON.stringify(clearProbe));
+    if (clearProbe.filtered >= clearProbe.before || clearProbe.afterClear !== clearProbe.before || clearProbe.q !== '') {
+      throw new Error('mobile clear filters did not restore the search results: ' + JSON.stringify(clearProbe));
+    }
     report.interaction.mobileClearProbe = clearProbe;
 
     const file = path.join(OUT, 'ux03-390-toolbar.png');
@@ -582,6 +658,28 @@ async function makePage(browser, width, height, seed) {
     }
     line('  VIEW-01 style check: ' + runs.filter(Boolean).length + '/10 passes');
     report.interaction.view01Repeatability = runs;
+  }
+
+  const failedSteps = (report.interaction.desktop || []).filter(s => !s.ok);
+  const layoutFailures = report.layout.filter(a => a.overflow ||
+    (a.overlap && a.overlap.area > 0) ||
+    a.viewButtons.some(b => !b.visible) ||
+    (a.width === 1440 && (!a.sticky || !a.sticky.pinned || a.sticky.position !== 'sticky' || !a.sticky.footerReachable)) ||
+    Object.keys(a.reachable).some(k => ['q', 'btnClearFilter'].includes(k) && a.reachable[k].visibleCount === 0));
+  if (failedSteps.length || layoutFailures.length ||
+      !report.interaction.mobileSearchProbe?.reacted ||
+      !report.interaction.mobileSelectProbe?.narrowed ||
+      !report.interaction.mobileClearProbe ||
+      report.interaction.view01Repeatability.filter(Boolean).length !== 10) {
+    console.error('\nUX-03 VERIFICATION FAILED: ' + JSON.stringify({
+      failedSteps: failedSteps.map(s => ({ name: s.name, error: s.v })),
+      layoutFailures: layoutFailures.map(a => a.width),
+      mobileSearch: report.interaction.mobileSearchProbe,
+      mobileStatus: report.interaction.mobileSelectProbe,
+      mobileClear: report.interaction.mobileClearProbe,
+      view01Passes: report.interaction.view01Repeatability.filter(Boolean).length
+    }, null, 2));
+    process.exitCode = 1;
   }
 
   await browser.close();
