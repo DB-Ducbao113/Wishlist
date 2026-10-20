@@ -143,7 +143,7 @@ section {
 
 /* Note/lede inside hero band — mapped to supporting text */
 .dashboard-panel.dashboard-panel--v2.dv-dash .overview-heading__eyebrow {
-  color: rgba(255, 255, 255, .78);
+  color: var(--dream-muted, #625979);
   font-size: .92rem;
   margin: 0 0 20px;
   max-width: 31rem;
@@ -436,5 +436,87 @@ section {
   .own-ring { /* fallback if referenced */
     width: 60px !important;
     height: 60px !important;
+  }
+}
+
+/* Reference-aligned dashboard polish (existing DOM only).
+   The old .dash-hero-band and .stats-grid selectors are absent in wishlist.html;
+   use .overview-heading and .total.stats-dashboard without changing structure. */
+body.dreamscape-v5 .panel.dashboard-panel.dashboard-panel--v2.dv-dash {
+  border-radius: clamp(20px, 2.8vw, 30px);
+  border-color: rgba(104, 80, 188, .14);
+  background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(246,241,255,.88));
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: clamp(24px, 3.3vw, 42px);
+  color: #fff;
+  background: linear-gradient(125deg, #43307e 0%, #5f43c4 46%, #7c5cfc 78%, #8f6bee 100%);
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: min(60vw, 440px);
+  aspect-ratio: 1;
+  right: -13%;
+  top: -145%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.30), rgba(232,185,255,.15) 45%, transparent 70%);
+  pointer-events: none;
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading__title {
+  color: #fff;
+  max-width: 18ch;
+  text-wrap: balance;
+  font-size: clamp(1.75rem, 3vw, 2.8rem);
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading__eyebrow {
+  color: rgba(255,255,255,.78);
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading__no {
+  color: #fff;
+  border-color: rgba(255,255,255,.3);
+  background: rgba(255,255,255,.13);
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add {
+  border-radius: 999px;
+  min-height: 44px;
+  background: #fff;
+  color: #5940b0;
+  box-shadow: 0 12px 30px rgba(28,18,78,.2);
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .total.stats-dashboard .stat-card {
+  border: 1px solid rgba(104,80,188,.13);
+  border-radius: 18px;
+  background: rgba(255,255,255,.83);
+  box-shadow: 0 14px 36px rgba(60,38,130,.07);
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .total.stats-dashboard .stat-card__label {
+  color: #625979;
+}
+body.dreamscape-v5 .dashboard-panel.dv-dash .total.stats-dashboard .stat-card__value {
+  color: #2b2052;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 640px) {
+  body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+  body.dreamscape-v5 .dashboard-panel.dv-dash .total.stats-dashboard .stat-card {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add {
+    transition: none;
   }
 }
