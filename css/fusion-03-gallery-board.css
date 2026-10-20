@@ -146,6 +146,28 @@ body.dreamscape-v5 .v13-viewbar__button[aria-pressed="true"] {
   box-shadow: 0 10px 24px rgba(84, 63, 158, .28);
 }
 
+/* The reference treats Gallery / Focus / Board as first-class modes.
+   Improve pointer and keyboard affordance without touching the JS state
+   or the display/visibility contract used by F1 VIEW-01. */
+body.dreamscape-v5 .v13-viewbar__button {
+  min-height: 44px;
+  min-width: 44px;
+  cursor: pointer;
+  position: relative;
+}
+body.dreamscape-v5 .v13-viewbar__button:focus-visible {
+  outline: 3px solid #6850BC;
+  outline-offset: 3px;
+}
+body.dreamscape-v5 .v13-viewbar__button[aria-pressed="false"]:hover {
+  background: rgba(104, 80, 188, .10);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .v13-viewbar__button {
+    transition: none;
+  }
+}
+
 /* ---- Media stage + framed artwork ---- */
 body.dreamscape-v5
 #grid.gallery--v2.gallery--v4.gallery--v6
