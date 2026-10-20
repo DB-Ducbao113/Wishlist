@@ -1304,15 +1304,32 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         <div class="field">
           <label for="fName">Tên món *</label>
           <input id="fName" required maxlength="120"
+                 aria-describedby="fNameError"
                  placeholder="Ví dụ: Tai nghe chống ồn">
+          <p class="field-error" id="fNameError" role="alert" hidden></p>
         </div>
 
         <div class="row product-dialog__row">
           <div class="field">
-            <label for="fPrice">Giá (VND) *</label>
-            <input id="fPrice" type="number" min="0"
-                   step="1000" required
-                   placeholder="1500000">
+            <label for="fPrice">Giá (VND)</label>
+            <!-- UX-04.1 — a TEXT field with a numeric keypad, not type="number".
+                 A number input silently swallows anything it cannot parse, so
+                 typing "abc" left the field EMPTY and the user got no feedback
+                 at all — the app could not tell "left empty" from "typed
+                 garbage". The app already owns this validation, so the field
+                 now shows what was actually typed and the app rejects it
+                 with a located message. inputmode keeps the phone keypad
+                 numeric. The saved schema is unchanged: price is still a
+                 number on the item. -->
+            <input id="fPrice" type="text" inputmode="numeric"
+                   maxlength="15" autocomplete="off"
+                   aria-describedby="fPriceError fPriceHint"
+                   placeholder="Ví dụ: 1500000">
+            <p class="field-hint" id="fPriceHint">
+              Không bắt buộc. Bỏ trống nếu bạn chưa biết giá — món vẫn được
+              lưu với giá 0.
+            </p>
+            <p class="field-error" id="fPriceError" role="alert" hidden></p>
           </div>
 
           <div class="field">
@@ -1332,6 +1349,21 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
             <label for="fPriority2">Mức độ ưu tiên</label>
             <select id="fPriority2"></select>
           </div>
+        </div>
+
+      </section>
+
+      <!-- UX-04.1 — Ghi chú nằm NGAY dưới phần thông tin chính: ghi chú là
+           thứ người dùng gõ thường xuyên nhất sau tên, nên nó không được chôn
+           sau một bảng "chi tiết" phải mở ra. -->
+      <section class="product-dialog__section"
+               aria-label="Ghi chú">
+
+        <h3>Ghi chú</h3>
+
+        <div class="field">
+          <label for="fNote">Ghi chú của bạn</label>
+          <textarea id="fNote" rows="3" maxlength="500" placeholder="Kích cỡ, màu sắc, nơi mua..."></textarea>
         </div>
 
       </section>
@@ -1365,6 +1397,25 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         </div>
 
       </section>
+
+      <!-- UX-04.1 — PROGRESSIVE DISCLOSURE.
+           The two heavy optional groups (savings goal, image & link) sit behind
+           ONE disclosure, so the first screen of the form holds only what a
+           quick add actually needs: name, price, category, status, priority
+           and a note. The fields stay in the DOM at every state, so nothing is
+           removed from the form and openForm() still reads the same values —
+           the disclosure only changes whether they are VISIBLE. -->
+      <button type="button"
+              id="fMoreToggle"
+              class="product-dialog__more-toggle"
+              aria-expanded="false"
+              aria-controls="fMorePanel">
+        <span class="product-dialog__more-toggle-icon" aria-hidden="true">＋</span>
+        <span class="product-dialog__more-toggle-text">Thêm chi tiết</span>
+        <span class="product-dialog__more-toggle-hint">Ảnh, liên kết, mục tiêu tiết kiệm</span>
+      </button>
+
+      <div id="fMorePanel" class="product-dialog__more" hidden>
 
       <!-- V16.1 F5 — savings goal. Independent of "Chi tiết mua hàng": the
            goal normally exists BEFORE the purchase, so this section is always
@@ -1415,13 +1466,17 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         <div class="field">
           <label for="fLink">Liên kết mua hàng</label>
           <input id="fLink" type="url"
+                 aria-describedby="fLinkError"
                  placeholder="https://...">
+          <p class="field-error" id="fLinkError" role="alert" hidden></p>
         </div>
 
         <div class="field">
           <label for="fImageUrl">Đường dẫn ảnh</label>
           <input id="fImageUrl" type="url"
+                 aria-describedby="fImageUrlError"
                  placeholder="https://.../anh.jpg">
+          <p class="field-error" id="fImageUrlError" role="alert" hidden></p>
         </div>
 
         <div class="field">
@@ -1445,17 +1500,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
       </section>
 
-      <section class="product-dialog__section"
-               aria-label="Ghi chú">
-
-        <h3>Ghi chú</h3>
-
-        <div class="field">
-          <label for="fNote">Ghi chú của bạn</label>
-          <textarea id="fNote" rows="3" maxlength="500" placeholder="Kích cỡ, màu sắc, nơi mua..."></textarea>
-        </div>
-
-      </section>
+      </div><!-- /.product-dialog__more -->
 
     </div>
 
@@ -1470,7 +1515,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
           Hủy
         </button>
 
-        <button type="submit" class="primary">
+        <button type="submit" class="primary" id="fSubmit">
           Lưu món
         </button>
       </div>
@@ -2160,6 +2205,9 @@ function validImageSrc(u){
    =================================================================== */
 let items = [];              // danh sach mon do hien tai
 let pendingDataUrl = "";     // anh upload dang cho (data-URL) khi them/sua
+// UX-04.1 — one save at a time. The add/edit form used to run the whole
+// save path once per click, so a double click created two items.
+let formSaving = false;
 let cloudSync = null;
 let cloudSyncPromise = null;
 // V16 — phien hien tai: null = khach; uid = dang xem du lieu cua tai khoan do.
@@ -5548,6 +5596,81 @@ function syncFormSavingsPreview(){
     : "Còn thiếu " + fmtMoney(goal - saved) + " để đạt " + fmtMoney(goal) + ".";
 }
 
+/* ===================================================================
+   UX-04.1 — PROGRESSIVE DISCLOSURE + INLINE VALIDATION
+   ---------------------------------------------------------------------
+   Two helpers, one owner each:
+
+   setMoreOpen(open)  the "Thêm chi tiết" disclosure. It only changes
+                      whether the optional group is VISIBLE; every field
+                      stays in the DOM, so openForm() and the submit
+                      handler read exactly the same values in every state.
+   setFieldError()    an inline error UNDER the field it belongs to, with
+                      aria-invalid + aria-describedby so the message is
+                      announced and tied to the control. The toast stays
+                      exactly as it was — it is what the QA contract reads —
+                      so the user now gets BOTH a persistent, located
+                      message and the transient one.
+   =================================================================== */
+
+function setMoreOpen(open){
+  const panel = $("fMorePanel");
+  const toggle = $("fMoreToggle");
+  if(!panel || !toggle) return;
+  panel.hidden = !open;
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  const icon = toggle.querySelector(".product-dialog__more-toggle-icon");
+  if(icon) icon.textContent = open ? "－" : "＋";
+  const text = toggle.querySelector(".product-dialog__more-toggle-text");
+  if(text) text.textContent = open ? "Ít chi tiết hơn" : "Thêm chi tiết";
+  // The savings preview lives inside the group, so it is refreshed when the
+  // group opens — the user never meets a stale bar.
+  if(open && typeof syncFormSavingsPreview === "function") syncFormSavingsPreview();
+}
+
+// The optional group is opened on its own when it already holds data, so
+// editing an item never hides a value the user has to see.
+function syncMoreDisclosure(item){
+  const has = !!(item && (
+    readSavingGoal(item) !== null ||
+    readSavedAmount(item) !== null ||
+    (item.image || "") ||
+    (item.link || "")
+  ));
+  setMoreOpen(has);
+}
+
+const FIELD_ERRORS = {
+  fName: "fNameError",
+  fPrice: "fPriceError",
+  fLink: "fLinkError",
+  fImageUrl: "fImageUrlError"
+};
+
+function setFieldError(fieldId, message){
+  const field = $(fieldId);
+  const errId = FIELD_ERRORS[fieldId];
+  const err = errId ? $(errId) : null;
+  if(!field) return;
+  if(message){
+    field.setAttribute("aria-invalid", "true");
+    if(err){
+      err.textContent = message;
+      err.hidden = false;
+    }
+  }else{
+    field.removeAttribute("aria-invalid");
+    if(err){
+      err.textContent = "";
+      err.hidden = true;
+    }
+  }
+}
+
+function clearFieldErrors(){
+  Object.keys(FIELD_ERRORS).forEach(id => setFieldError(id, ""));
+}
+
 function openForm(item, draft = null){
   const editing = !!item;
   const values = item || draft || {};
@@ -5573,6 +5696,13 @@ function openForm(item, draft = null){
   pendingDataUrl        = editing && /^data:/.test(item.image || "") ? item.image : "";
   $("fFile").value      = "";
   setFileError("");
+  // UX-04.1 — a fresh form starts clean: no stale inline error, the
+  // optional group closed unless it already holds data, and the primary
+  // button says what it will actually do.
+  clearFieldErrors();
+  syncMoreDisclosure(editing ? item : null);
+  const submit = $("fSubmit");
+  if(submit) submit.textContent = editing ? "Lưu thay đổi" : "Lưu món";
   updatePreview();
   $("dlg").showModal();
   $("fName").focus();
@@ -6384,6 +6514,26 @@ function init(){
     $("dlg").close();
   });
 
+  // UX-04.1 — the "Thêm chi tiết" disclosure. It only reveals the optional
+  // group; every field stays in the DOM, so nothing about the saved schema
+  // or the read path changes.
+  const fMoreToggle = $("fMoreToggle");
+  if(fMoreToggle){
+    fMoreToggle.addEventListener("click", () => {
+      const open = fMoreToggle.getAttribute("aria-expanded") === "true";
+      setMoreOpen(!open);
+    });
+  }
+
+  // UX-04.1 — an inline error disappears as soon as the user starts fixing
+  // the field, so the message never contradicts what is on screen.
+  ["fName", "fPrice", "fLink", "fImageUrl"].forEach(id => {
+    const el = $(id);
+    if(!el) return;
+    const ev = (el.tagName === "SELECT") ? "change" : "input";
+    el.addEventListener(ev, () => setFieldError(id, ""));
+  });
+
   // ===== V8 Quick View listeners =====
   buildQuickViewStatusOptions();
   $("qvClose").addEventListener("click", closeQuickView);
@@ -6469,6 +6619,30 @@ function init(){
 
   $("form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    // UX-04.1 — duplicate-submit guard. A double click (or an Enter key
+    // held down) used to run the whole save path more than once and create
+    // one item per click. The guard is released in `finally`, so a FAILED
+    // save still leaves the form ready to try again — the input the user
+    // typed is never lost.
+    if(formSaving) return;
+    formSaving = true;
+    const submitBtn = $("fSubmit");
+    if(submitBtn){
+      submitBtn.disabled = true;
+      submitBtn.setAttribute("aria-busy", "true");
+    }
+    try {
+      await submitProductForm();
+    } finally {
+      formSaving = false;
+      if(submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute("aria-busy");
+      }
+    }
+  });
+
+  async function submitProductForm(){
     // Safari may still be decoding/compressing the chosen photo.
     // Wait before capturing pendingDataUrl for the save/upload flow.
     try {
@@ -6479,13 +6653,28 @@ function init(){
     }
     if (!$("fileErr").classList.contains("hidden")) return;
     let uploadedNow = false;
+    clearFieldErrors();
     const name = $("fName").value.trim();
-    const priceRaw = $("fPrice").value;
-    if(!name){ toast("Vui lòng nhập tên món."); $("fName").focus(); return; }
-    const price = Number(priceRaw);
-    if(priceRaw === "" || !Number.isFinite(price) || price < 0 || !Number.isSafeInteger(Math.round(price))){
+    const priceRaw = $("fPrice").value.trim();
+    if(!name){
+      toast("Vui lòng nhập tên món.");
+      setFieldError("fName", "Bắt buộc — hãy nhập tên món.");
+      $("fName").focus();
+      return;
+    }
+    // UX-04.1 — the NAME is the one required field. An empty price means
+    // "chưa biết giá" and is stored as 0; a price that IS typed still has
+    // to be a safe, non-negative number. The field is a text input, so the
+    // value here is exactly what the user typed — "abc" arrives as "abc"
+    // and is rejected with a message next to the field.
+    const priceField = $("fPrice");
+    const priceBadInput = !!(priceField && priceField.validity && priceField.validity.badInput);
+    const price = priceRaw === "" ? 0 : Number(priceRaw);
+    if(priceBadInput || (priceRaw !== "" && (!Number.isFinite(price) || price < 0 || !Number.isSafeInteger(Math.round(price))))){
       toast("Giá phải là số không âm và nằm trong giới hạn an toàn.");
-      $("fPrice").focus(); return;
+      setFieldError("fPrice", "Giá phải là số không âm. Bỏ trống nếu chưa biết.");
+      $("fPrice").focus();
+      return;
     }
 
     const normUrl = (v) => {
@@ -6505,10 +6694,12 @@ function init(){
     let image = enteredImage ? normUrl(enteredImage) : pendingDataUrl;
     if($("fLink").value.trim() && !link){
       toast("Liên kết mua hàng không hợp lệ. Chỉ chấp nhận địa chỉ HTTP hoặc HTTPS.");
+      setFieldError("fLink", "Chỉ chấp nhận địa chỉ HTTP hoặc HTTPS.");
       $("fLink").focus(); return;
     }
     if(enteredImage && !image){
       toast("Đường dẫn ảnh không hợp lệ. Chỉ chấp nhận địa chỉ HTTP hoặc HTTPS.");
+      setFieldError("fImageUrl", "Chỉ chấp nhận địa chỉ HTTP hoặc HTTPS.");
       $("fImageUrl").focus(); return;
     }
 
@@ -6521,9 +6712,10 @@ function init(){
     }
 
     if (image.startsWith("data:image/") && cloudSync?.user) {
-      const button = $("form").querySelector('button[type="submit"]');
-      if (button?.disabled) return;
-      if (button) button.disabled = true;
+      // UX-04.1 — the submit button is already held by the duplicate-submit
+      // guard, so this block must NOT re-check `disabled` (that would abort
+      // the upload on every save) and must not disable it a second time.
+      const button = $("fSubmit");
       // Cho phép "Thử lại" gửi lại biểu mẫu đang mở (ảnh vẫn còn trong form).
       imageRetryAction = () => { if($("dlg").open) $("form").requestSubmit(); };
       setImageSync("uploading", "Đang tải ảnh lên máy chủ ảnh…");
@@ -6534,8 +6726,6 @@ function init(){
         setImageSync("error", "Tải ảnh thất bại: " + error.message + ". Ảnh vẫn được giữ trong biểu mẫu.");
         showCloudError("Upload ảnh thất bại: " + error.message + ". Ảnh vẫn được giữ trong form.");
         return;
-      } finally {
-        if (button) button.disabled = false;
       }
     }
     const id = $("fId").value;
@@ -6623,7 +6813,7 @@ function init(){
     if(uploadedNow) setImageSync("synced", "Ảnh đã tải lên và lưu. Danh sách sẽ đồng bộ với máy chủ.");
     render(); $("dlg").close();
     toast(image.startsWith("data:image/") && !cloudSync?.user ? "Đã lưu trên thiết bị này — ảnh chưa đồng bộ." : (id ? "Đã cập nhật món." : "Đã thêm món."));
-  });
+  }
 
   // Loc / tim kiem / sap xep: search debounce, select phan hoi tuc thi
   $("q").addEventListener(
