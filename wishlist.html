@@ -3427,6 +3427,9 @@ function render(){
   const empty = $("empty");
   const isEmpty = list.length === 0;
   const hasItems = items.length > 0;
+  // UX-02: total collection state, never the filtered result count.
+  // Cosmetic only: no persistence and no changes to rendering or metrics.
+  document.body.classList.toggle("dv-library-empty", !hasItems);
 
   empty.classList.toggle("hidden", !isEmpty);
 
