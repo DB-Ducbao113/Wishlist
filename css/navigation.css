@@ -196,15 +196,14 @@
 
 /* #dvProgressFill — width driven by JS setting --dv-fill CSS variable */
 .dv-progress__track #dvProgressFill {
-  height: 100%;
+  width: 100%;
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   background: var(--progress-fill);
-  --dv-fill: 0%; /* default 0%, JavaScript overrides this */
-  width: 0%;
   transform: scaleX(var(--dv-fill));
+  transform-origin: left;
 }
 
 /* Caption below progress bar */
