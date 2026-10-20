@@ -472,9 +472,10 @@ body.dreamscape-v5 #qv::backdrop {
   }
 
   body.dreamscape-v5 #qv .quick-view__close {
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
+    /* Accessible target stays >=44px across desktop and mobile. */
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
     font-size: 20px;
   }
 
@@ -624,5 +625,30 @@ body.dreamscape-v5 #qv :focus-visible {
   body.dreamscape-v5 #qv .quick-view__close,
   body.dreamscape-v5 #qv .quick-view__btn {
     transition: none;
+  }
+}
+
+
+/* Reference polish: gallery-to-detail presentation, no event/state changes. */
+body.dreamscape-v5 dialog#qv[open] {
+  border: 1px solid rgba(104, 80, 188, .16);
+}
+body.dreamscape-v5 #qv .quick-view__close:focus-visible,
+body.dreamscape-v5 #qv .quick-view__btn:focus-visible {
+  outline: 3px solid #6850bc;
+  outline-offset: 3px;
+}
+body.dreamscape-v5 #qv .quick-view__panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(104, 80, 188, .35) transparent;
+}
+@media (max-width: 640px) {
+  body.dreamscape-v5 dialog#qv[open] {
+    max-height: min(92dvh, 920px);
+    max-height: min(92svh, 920px);
+  }
+  body.dreamscape-v5 #qv .quick-view__close {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
