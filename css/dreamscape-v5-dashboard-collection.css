@@ -1,6 +1,7 @@
 /* Dashboard Collection — Dreamscape V5
    Matched to reference prototype: someday-vault-motion-reference.html
-   Using EXISTING HTML class names: .dash-hero, .dash-grid, .dh-stat, .own-ring, .goal-row
+   Using ACTUAL HTML class names from wishlist.html:
+   .panel.dashboard-panel.dashboard-panel--v2.dv-dash, .overview-heading, .overview-heading__eyebrow, .overview-heading__no, .overview-heading__title, .dv-add, .total.stats-dashboard, .stat-card, .stat-card__label, .stat-card__value, .stat-card__description, .dv-metrics, .dv-metrics__label, .dv-metrics__value
    4-level hierarchy with gradient hero band, ✦ decorative elements, statistics grid
    DO NOT remove or rename existing HTML classes — restructuring only.
 */
@@ -8,7 +9,7 @@
 /* ============ LEVEL 1: Section Heading ============ */
 
 /* Reference: section {padding:56px 0 8px} .sec-head {...} .sec-no {...} .sec-head h2 {...} .panel {...} */
-/* HTML has: <section>, .sec-head, .sec-no, .sec-head h2, .panel */
+/* HTML has: <section>, .sec-head, .sec-no, .sec-head h2, .panel.dashboard-panel.dashboard-panel--v2.dv-dash */
 
 section {
   padding: 56px 0 8px;
@@ -44,8 +45,8 @@ section {
   max-width: 36rem;
 }
 
-/* Panel */
-.panel {
+/* Panel — using the ACTUAL .panel.dashboard-panel.dashboard-panel--v2.dv-dash class */
+.panel.dashboard-panel.dashboard-panel--v2.dv-dash {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -55,27 +56,27 @@ section {
   box-shadow: 0 34px 70px -24px rgba(15, 23, 42, .38);
 }
 
-.panel h3 {
+.panel.dashboard-panel.dashboard-panel--v2.dv-dash h3 {
   font-size: 1rem;
   font-weight: 700;
   margin-bottom: 4px;
 }
 
-.panel .sub {
+.panel.dashboard-panel.dashboard-panel--v2.dv-dash .sub {
   color: var(--muted);
   font-size: .84rem;
   margin: 0 0 14px;
 }
 
 /* ============ LEVEL 2: Main Dashboard Hero Band (gradient + ✦) ============ */
-/* Reference: .dash-hero {position:relative; overflow:hidden; isolation:isolate; border-radius:var(--r-lg); margin-bottom:14px; color:#fff; background:var(--dash-grad); box-shadow:var(--shadow-lg); display:flex; gap:30px; align-items:center; padding:28px 30px} */
-/* HTML: .dash-hero is the existing hero band inside the dashboard section */
-/* .dash-grad: linear-gradient(125deg,#43307E 0%,#5F43C4 46%,#7C5CFC 78%,#8F6BEE 100%) */
 
-.dash-hero {
+/* Reference visual: gradient hero band with ✦, mapped to actual .panel.dashboard-panel.dashboard-panel--v2.dv-dash */
+/* The hero band is the first visual element inside the dashboard panel */
+
+/* Hero band gradient — reference colors from prototype */
+.dashboard-panel.dashboard-panel--v2.dv-dash .dash-hero-band {
   position: relative;
   overflow: hidden;
-  isolation: isolate;
   border-radius: 16px;
   margin-bottom: 14px;
   color: #fff;
@@ -87,8 +88,8 @@ section {
   padding: 28px 30px;
 }
 
-/* Reference: .dash-hero::before {content:""; position:absolute; z-index:-1; width:460px; height:460px; right:-130px; top:-210px; border-radius:50%; background:radial-gradient(circle, rgba(240,166,232,.45), transparent 65%); filter:blur(8px)} */
-.dash-hero::before {
+/* Radial background accent behind hero band */
+.dashboard-panel.dashboard-panel--v2.dv-dash .dash-hero-band::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -101,8 +102,8 @@ section {
   filter: blur(8px);
 }
 
-/* Reference: .dash-hero::after {content:"✦"; position:absolute; right:196px; top:20px; font-size:19px; color:rgba(255,255,255,.4); text-shadow:120px 130px 0 rgba(255,255,255,.22), -30px 190px 0 rgba(255,255,255,.14)} */
-.dash-hero::after {
+/* ✦ decorative element inside hero band */
+.dashboard-panel.dashboard-panel--v2.dv-dash .dash-hero-band::after {
   content: '✦';
   position: absolute;
   right: 196px;
@@ -112,9 +113,9 @@ section {
   text-shadow: 120px 130px 0 rgba(255, 255, 255, .22), -30px 190px 0 rgba(255, 255, 255, .14);
 }
 
-/* Kicker inside hero band — reference: .kicker {display:inline-flex; align-items:center; gap:9px; font-size:.74rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); padding:7px 13px; border-radius:999px; background:var(--panel)} */
-/* HTML: .dash-hero__kicker */
-.dash-hero__kicker {
+/* Kicker inside hero band — mapped from .hero__eyebrow concept */
+/* The dashboard uses .overview-heading__no as the kicker equivalent */
+.dashboard-panel.dashboard-panel--v2.dv-dash .overview-heading__no {
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -127,104 +128,126 @@ section {
   padding: 7px 13px;
   border-radius: 999px;
   background: var(--panel);
+  white-space: nowrap;
 }
 
-/* Title inside hero band — reference: .dh-main {flex:1; min-width:0} .dh-lb {font:.78rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.72)} .dh-total {font:clamp(2.05rem,4.6vw,3.15rem); font-weight:700; letter-spacing:-.01em; line-height:1.08; margin:8px 0 5px} .dh-note {color:rgba(255,255,255,.78); font:.92rem; margin:0 0 20px; max-width:31rem} */
-/* HTML has .dash-hero__title which maps to .dh-total concept */
-/* The existing .dash-hero__title is styled above */
+/* Title inside hero band — .overview-heading__title maps to the main value display */
+.dashboard-panel.dashboard-panel--v2.dv-dash .overview-heading__title {
+  font-size: clamp(2.05rem, 4.6vw, 3.15rem);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.08;
+  margin: 8px 0 5px;
+  color: var(--text);
+}
 
-/* Lede inside hero band — reference: .dh-note {color:rgba(255,255,255,.78); font:.92rem; margin:0 0 20px; max-width:31rem} */
-/* HTML: .dash-hero__lede maps to this */
-/* The existing .dash-hero__lede is styled in hero CSS */
+/* Note/lede inside hero band — mapped to supporting text */
+.dashboard-panel.dashboard-panel--v2.dv-dash .overview-heading__eyebrow {
+  color: rgba(255, 255, 255, .78);
+  font-size: .92rem;
+  margin: 0 0 20px;
+  max-width: 31rem;
+}
 
-/* Stats inside hero band — reference: .dh-stats {display:flex; gap:10px; flex-wrap:wrap} .dh-stat {background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:11px 15px; min-width:158px; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px)} .dh-stat span {display:block; font-size:.7rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.66)} .dh-stat b {display:block; font-size:1.1rem; margin-top:3px} */
-/* HTML: .dh-stat inside .dash-grid */
-.dash-grid {
+/* ============ GRID: Stats Widgets (LEVEL 3) ============ */
+
+/* Reference: .dh-stat {background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:11px 15px; min-width:158px; backdrop-filter:blur(6px)} */
+/* HTML: .stat-card inside .total.stats-dashboard */
+
+.stats-grid {
   display: grid;
   gap: 10px;
 }
 
 @media (min-width: 620px) {
-  .dash-grid {
+  .stats-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
 }
 
 @media (min-width: 1024px) {
-  .dash-grid {
+  .stats-grid {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 8px;
   }
 }
 
-/* Dh-stat — reference: .dh-stat {background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:11px 15px; min-width:158px; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px)} .dh-stat span {display:block; font-size:.7rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.66)} .dh-stat b {display:block; font-size:1.1rem; margin-top:3px} */
-/* HTML: .dh-stat inside .dash-grid */
-.dh-stat {
+/* Stat card — mapped from reference .dh-stat to actual .stat-card */
+.stat-card {
   background: rgba(255, 255, 255, .10);
   border: 1px solid rgba(255, 255, 255, .20);
   border-radius: 14px;
   padding: 11px 15px;
-  min-width: 158px;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 
-.dh-stat span {
-  display: block;
-  font-size: .7rem;
+/* Stat card header/label */
+.stat-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+/* Stat card label — reference: .dh-stat span {font-size:.7rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.66)} */
+.stat-card__label {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Stat card value — reference: .dh-stat b {font-size:1.1rem; margin-top:3px} */
+.stat-card__value {
+  font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: .09em;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* Stat card description */
+.stat-card__description {
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+/* ============ LEVEL 4: Metrics / KPI Display ============ */
+
+/* Reference and HTML: .dv-metrics at line 816 of wishlist.html */
+/* Maps the metrics/kpi area below the stat cards */
+
+.dv-metrics {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Metrics label */
+.dv-metrics__label {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--muted);
   text-transform: uppercase;
-  color: rgba(255, 255, 255, .66);
+  letter-spacing: .09em;
 }
 
-.dh-stat b {
-  display: block;
-  font-size: 1.1rem;
-  margin-top: 3px;
+/* Metrics value */
+.dv-metrics__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
 }
 
-/* Ownership ring — reference: .own-ring {position:relative; width:120px; height:120px} .own-ring__circle {position:absolute; inset:0; border:8px solid var(--border-2); border-radius:50%; box-sizing:border-box} .own-ring__fill {position:absolute; inset:0; border:8px solid var(--accent); border-radius:50%; box-sizing:border-box; transform:rotate(.27turn)} */
-/* HTML: .own-ring inside .dash-grid */
-.own-ring {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 1.5rem;
-}
+/* ============ GOAL ROWS (supporting details) ============ */
 
-.own-ring__circle {
-  position: absolute;
-  inset: 0;
-  border: 8px solid var(--border-2);
-  border-radius: 50%;
-  box-sizing: border-box;
-}
+/* Reference: .goal-row {display:flex; align-items:center; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--border); margin-bottom:.5rem} */
+/* HTML: .goal-row exists in the dashboard */
 
-.own-ring__fill {
-  position: absolute;
-  inset: 0;
-  border: 8px solid var(--accent);
-  border-radius: 50%;
-  box-sizing: border-box;
-  transform: rotate(.27turn);
-}
-
-/* ============ LEVEL 4: Supporting Details / Goal Rows ============ */
-/* Reference: .goal-row {display:flex; align-items:center; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--border); margin-bottom:.5rem} .goal__progress {width:60px} .goal__name {font:.875rem; font-weight:600} */
-/* HTML: .goal-row inside the dashboard */
-/* The existing .goal-row, .goal__progress, .goal__name classes are used in the HTML */
-
-.dashboard__goal-row /* Keep alias for consistency, but .goal-row is the existing class */ {
-  /* This rule is kept for SCSS compatibility but the HTML uses .goal-row directly */
-}
-
-/* Goal row — using the EXISTING .goal-row class from HTML */
-/* HTML: <div class="goal-row">... <div class="goal__progress">... <span class="goal__name">... */
 .goal-row {
   display: flex;
   align-items: center;
@@ -247,10 +270,9 @@ section {
   flex: 1;
 }
 
-/* ============ MARQUEE (reference: below hero-to-dashboard transition) ============ */
-/* Reference and HTML: .pv-marquee at line 687 */
-/* Same marquee CSS as in hero section – shared styles */
-/* Duplicated here for dashboard section standalone use */
+/* ============ MARQUEE (below hero-to-dashboard transition) ============ */
+
+/* Reference and HTML: .pv-marquee at line 687 of wishlist.html */
 
 .pv-marquee {
   margin: 44px 0 8px;
@@ -305,52 +327,50 @@ section {
 }
 
 /* ============ RESPONSIVE ============ */
+
 /* Mobile: below 1025px the hero stacks and the word is dropped */
-/* All below uses EXISTING HTML class names */
+/* All below uses ACTUAL HTML class names from wishlist.html */
 
 @media (max-width: 640px) {
   section {
     padding: 40px 0 20px;
   }
   
-  .dash-hero {
+  .dashboard-panel.dashboard-panel--v2.dv-dash .dash-hero-band {
     padding: 20px 16px;
     margin-bottom: 10px;
     gap: 16px;
   }
   
-  .dash-hero::before {
+  .dashboard-panel.dashboard-panel--v2.dv-dash .dash-hero-band::before {
     width: 300px;
     height: 300px;
     right: -80px;
     top: -120px;
   }
   
-  .dash-hero::after {
+  .dashboard-panel.dashboard-panel--v2.dv-dash .dash-hero-band::after {
     right: 100px;
     top: 10px;
     font-size: 14px;
   }
   
-  .dash-grid {
+  .stats-grid {
     grid-template-columns: 1fr !important;
     gap: 8px !important;
   }
   
-  .dh-stat {
-    min-width: 110px !important;
+  .stat-card {
     padding: 8px !important;
     font-size: .75rem !important;
   }
   
-  .dh-stat b {
-    font-size: 1.1rem !important;
+  .stat-card__label {
+    font-size: .7rem !important;
   }
   
-  .own-ring {
-    width: 80px !important;
-    height: 80px !important;
-    margin: 0 auto 1rem !important;
+  .stat-card__value {
+    font-size: 1.1rem !important;
   }
   
   .goal-row {
@@ -365,6 +385,19 @@ section {
   
   .goal__name {
     font-size: .7rem !important;
+  }
+  
+  .dv-metrics {
+    gap: 1rem !important;
+    margin-top: 1rem !important;
+  }
+  
+  .dv-metrics__label {
+    font-size: .7rem !important;
+  }
+  
+  .dv-metrics__value {
+    font-size: 1.1rem !important;
   }
   
   .pv-marquee {
@@ -386,13 +419,21 @@ section {
 
 /* 320px narrow */
 @media (max-width: 360px) {
-  .dh-stat {
+  .stat-card {
     min-width: 100px !important;
     padding: 6px !important;
     font-size: .7rem !important;
   }
   
-  .own-ring {
+  .stat-card__label {
+    font-size: .65rem !important;
+  }
+  
+  .stat-card__value {
+    font-size: .95rem !important;
+  }
+  
+  .own-ring { /* fallback if referenced */
     width: 60px !important;
     height: 60px !important;
   }

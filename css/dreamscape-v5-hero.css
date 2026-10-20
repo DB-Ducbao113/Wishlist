@@ -1,13 +1,17 @@
 /* Hero — Dreamscape V5
    Matched to reference prototype: someday-vault-motion-reference.html
-   Using EXISTING HTML class names: .dash-hero__kicker, .dash-hero__title, .dash-hero__lede, .dash-grid, .dh-stat, .own-ring, .goal-row
+   Using ACTUAL HTML class names from wishlist.html:
+   .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v9, .hero__eyebrow, .hero__title, .hero__description, .hero-v3__primary, .hero-v3__secondary, .hero__footer, .hero__visual
    Gradient hero band, kicker→title→lede→CTA→stats, 3D visual stage, marquee
    DO NOT remove or rename existing HTML classes — restructuring only.
 */
 
-/* ============ REFERENCE MATCH: .dash-hero (existing HTML: <section class="hero">) ============ */
-/* Reference structure from HTML: <h2 class="dash-hero__kicker"> → <h1 class="dash-hero__title"> → <p class="dash-hero__lede"> → .cta → .dash-grid */
+/* ============ REFERENCE MATCH: .hero (existing HTML: <section class="hero hero--v2 hero--v3 hero--v5 hero--v6 hero--v9">) ============ */
+/* Reference structure from HTML: .kicker → .hero__title → .hero__description → .hero-v3__actions → .hero__footer */
+/* .hero__visual contains the 3D stage; .pv-hero-ghost is the ghost word */
+
 .hero {
+  /* Reference: padding:148px 0 30px */
   padding: 148px 0 30px;
   display: grid;
   grid-template-columns: 1.02fr 0.98fr;
@@ -29,23 +33,27 @@
 }
 
 /* Kicker — reference: .kicker {display:inline-flex; align-items:center; gap:9px; font-size:.74rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); padding:7px 13px; border-radius:999px; background:var(--panel)} */
-.dash-hero__kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
+/* HTML: .dash-hero__kicker doesn't exist; the kicker is part of the dashboard. */
+/* Instead, use the hero's existing structure: the "kicker" concept is represented by the eyebrow */
+/* But we map the reference's visual rhythm to the actual app's structure */
+
+/* Eyebrow — reference: .hero .kicker */
+.hero__eyebrow {
   font-size: .74rem;
-  font-weight: 700;
-  letter-spacing: .18em;
   text-transform: uppercase;
+  letter-spacing: .18em;
   color: var(--muted);
   border: 1px solid var(--border);
   padding: 7px 13px;
   border-radius: 999px;
   background: var(--panel);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
 }
 
 /* Hero title — reference: .hero h1 {font-size:clamp(2.55rem, 5.6vw, 4.35rem); font-weight:900; margin:22px 0 16px} */
-.dash-hero__title {
+.hero__title {
   font-size: clamp(2.55rem, 5.6vw, 4.35rem);
   font-weight: 900;
   margin: 22px 0 16px;
@@ -55,14 +63,14 @@
 }
 
 /* Hero title span — reference: .hero h1 .hl {color:var(--amber); position:relative; white-space:nowrap} */
-.dash-hero__title .hl {
+.hero__title .hl {
   color: var(--amber);
   position: relative;
   white-space: nowrap;
 }
 
 /* Hero title span::after — reference: .hero h1 .hl::after {content:""; position:absolute; left:0; right:0; bottom:.06em; height:.34em; z-index:-1; background:var(--amber-soft); border-radius:4px; transform:skewX(-8deg)} */
-.dash-hero__title .hl::after {
+.hero__title .hl::after {
   content: '';
   position: absolute;
   left: 0;
@@ -75,8 +83,8 @@
   transform: skewX(-8deg);
 }
 
-/* Hero lede — reference: .hero .lede {color:var(--muted); font-size:1.08rem; max-width:34rem; margin:0 0 26px} */
-.dash-hero__lede {
+/* Hero description — reference: .hero .lede {color:var(--muted); font-size:1.08rem; max-width:34rem; margin:0 0 26px} */
+.hero__description {
   color: var(--muted);
   font-size: 1.08rem;
   max-width: 34rem;
@@ -84,21 +92,23 @@
 }
 
 /* Hero CTA — reference: .hero-cta {display:flex; gap:12px; flex-wrap:wrap; margin-bottom:30px} */
-.hero-cta {
+/* HTML: .hero-v3__actions */
+.hero-v3__actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 30px;
 }
 
-/* Hero CTA buttons — reference: .btn {display:inline-flex; align-items-center; gap:8px; font-weight:600; text-decoration:none; border:1px solid var(--border); background:var(--panel-solid); color:var(--text); border-radius:999px; padding:9px 14px; transition:border-color .2s, transform .2s, background .2s} */
-.hero-cta .btn {
+/* Hero CTA primary button — reference: .btn {display:inline-flex; align-items-center; gap:8px; font-weight:600; text-decoration:none; border:1px solid var(--border); background:var(--panel-solid); color:var(--text); border-radius:999px; padding:9px 14px; transition:border-color .2s, transform .2s, background .2s} */
+/* HTML: .hero-v3__primary */
+.hero-v3__primary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid var(--border);
+  border: 1-solid var(--border);
   background: var(--panel-solid);
   color: var(--text);
   border-radius: 999px;
@@ -106,50 +116,41 @@
   transition: border-color .2s, transform .2s, background .2s;
 }
 
-/* Hero CTA button hover — reference: .btn:hover {border-color:var(--border-strong)} */
-.hero-cta .btn:hover {
+/* Hero CTA primary button hover — reference: .btn:hover {border-color:var(--border-strong)} */
+.hero-v3__primary:hover {
   border-color: var(--border-strong);
 }
 
-/* Hero stats — reference: .hero-stats {display:flex; gap:12px; flex-wrap:wrap} .hstat {border:1px solid var(--border); background:var(--panel); border-radius:14px; padding:12px 16px; min-width:132px; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px)} .hstat b {display:block; font-size:1.32rem; font-family:var(--num); letter-spacing:-.01em} .hstat span {font-size:.76rem; color:var(--muted); font-weight:600} */
-.dash-grid {
-  display: grid;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-}
-
-.dh-stat {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 14px;
-  padding: 12px 16px;
-  min-width: 132px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-size: .875rem;
-}
-
-.dh-stat b {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.dh-stat span {
-  font-size: .75rem;
-  color: var(--muted);
+/* Hero CTA secondary button — reference styling for .hero-v3__secondary */
+/* HTML: .hero-v3__secondary is a link "Khám phá bộ sưu tập" → #grid */
+.hero-v3__secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .09em;
+  text-decoration: none;
+  color: var(--amber);
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
 }
 
-/* ============ REFERENCE MATCH: 3D VISUAL STAGE ============ */
-/* Reference has .stage, .ring, .halo, .float-card, .fc-main, .fc-a, .fc-b, .tilt — inside the hero */
-/* These are decorative/CSS-only; ensure they don't break with the restructured hero */
+/* Hero CTA secondary button hover */
+.hero-v3__secondary:hover {
+  background: var(--panel-solid);
+}
+
+/* Hero footer */
+.hero__footer {
+  margin-top: 3rem;
+  font-size: .875rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ============ HERO VISUAL STAGE ============ */
+/* The 3D visual stage is inside .hero__visual (decorative, CSS-only) */
+/* Reference has .stage, .ring, .halo, .float-card, .fc-main, .fc-a, .fc-b, .tilt */
 
 /* Featured card */
 .stage {
@@ -417,9 +418,84 @@ section {
   margin: 0 0 14px;
 }
 
-/* ============ RESPONSIVE: MOBILE REFLOW (using EXISTING classes) ============ */
-/* Mobile: below 1025px the hero stacks and the word is dropped. Below 620px mobile grid */
-/* All below uses the EXISTING HTML class names — NO new classes added */
+/* ============ REFERENCE MATCH: STATISTICS GRID (using actual .stat-card) ============ */
+/* Reference: .dh-stat {background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:11px 15px; min-width:158px; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px)} .dh-stat span {display:block; font-size:.7rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.66)} .dh-stat b {display:block; font-size:1.1rem; margin-top:3px} */
+/* HTML: .stat-card inside .total.stats-dashboard */
+/* Map reference's dh-stat to actual .stat-card */
+
+/* Stat card */
+.stat-card {
+  background: rgba(255, 255, 255, .10);
+  border: 1px solid rgba(255, 255, 255, .20);
+  border-radius: 14px;
+  padding: 11px 15px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Stat card header */
+.stat-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+/* Stat card label */
+.stat-card__label {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Stat card value */
+.stat-card__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* Stat card description */
+.stat-card__description {
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+/* ============ REFERENCE MATCH: METRICS / KPI DISPLAY ============ */
+/* Reference and HTML: .dv-metrics at line 816 */
+/* Map reference's dashboard metrics to actual .dv-metrics */
+
+/* Metrics container */
+.dv-metrics {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Metrics label */
+.dv-metrics__label {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .09em;
+}
+
+/* Metrics value */
+.dv-metrics__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+/* ============ RESPONSIVE ============ */
+/* Mobile: below 1025px the hero stacks and the word is dropped */
+/* All below uses EXISTING HTML class names */
 
 @media (max-width: 640px) {
   .hero {
@@ -428,45 +504,32 @@ section {
     gap: 14px;
   }
   
-  .dash-hero__title {
+  .hero__title {
     font-size: clamp(2.35rem, 9vw, 2.75rem);
     line-height: 1.01;
   }
   
-  .dash-hero__lede {
+  .hero__description {
     font-size: 1rem;
     line-height: 1.65;
     margin-top: 20px;
   }
   
-  .hero-cta {
+  .hero-v3__actions {
     margin-bottom: 20px;
     gap: 8px;
   }
   
-  .hero-cta .btn {
+  .hero-v3__primary {
     padding: 8px 12px;
     font-size: .8rem;
   }
   
-  .dh-stat {
-    min-width: 110px;
-    padding: 10px;
-    font-size: .75rem;
+  .hero-v3__secondary {
+    padding: 8px 12px;
+    font-size: .7rem;
   }
   
-  .dh-stat b {
-    font-size: 1.1rem;
-  }
-  
-  /* Dh-stat mobile: full width */
-  .dh-stat {
-    min-width: 100%;
-    padding: 10px;
-    font-size: .75rem;
-  }
-  
-  /* Marquee on mobile */
   .pv-marquee {
     margin: 20px 0 4px;
     height: auto;
@@ -490,10 +553,7 @@ section {
     padding-inline: 16px;
   }
   
-  .dash-hero__title {
+  .hero__title {
     font-size: clamp(2.5rem, 10vw, 3.25rem);
   }
-  
-  /* Floating card height mobile */
-  /* Note: card heights are managed by the 3D stage, not overridden here to avoid breaking the FLIP animation */
 }
