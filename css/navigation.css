@@ -204,8 +204,7 @@
   background: var(--progress-fill);
   --dv-fill: 0%; /* default 0%, JavaScript overrides this */
   width: 0%;
-  transition: transform .3s ease;
-  transform: scaleX(0);
+  transform: scaleX(var(--dv-fill));
 }
 
 /* Caption below progress bar */
