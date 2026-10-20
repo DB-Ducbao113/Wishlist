@@ -108,7 +108,7 @@
   gap: 8px;
   font-weight: 600;
   text-decoration: none;
-  border: 1-solid var(--border);
+  border: 1px solid var(--border);
   background: var(--panel-solid);
   color: var(--text);
   border-radius: 999px;
@@ -119,6 +119,8 @@
 /* Hero CTA primary button hover — reference: .btn:hover {border-color:var(--border-strong)} */
 .hero-v3__primary:hover {
   border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -17px rgba(67,48,126,.55);
 }
 
 /* Hero CTA secondary button — reference styling for .hero-v3__secondary */
@@ -138,6 +140,26 @@
 /* Hero CTA secondary button hover */
 .hero-v3__secondary:hover {
   background: var(--panel-solid);
+  transform: translateY(-2px);
+}
+
+/* Reference interaction parity: clear keyboard focus, with no action interception. */
+.hero-v3__primary:focus-visible,
+.hero-v3__secondary:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage .ring,
+  .fc-a,
+  .fc-b {
+    animation: none;
+  }
+  .hero-v3__primary,
+  .hero-v3__secondary {
+    transition: none;
+  }
 }
 
 /* Hero footer */
