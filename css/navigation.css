@@ -25,6 +25,39 @@
 /* Keep a minimal bottom border visible when scrolled past */
 .site-header.scrolled { border-bottom-color: var(--color-border) }
 
+/* ============================================================
+   SCROLL INSET — keep the fixed header from covering content
+   ------------------------------------------------------------
+   The site header is `position: fixed`, so it floats over the
+   document for the WHOLE scroll range. Without a scroll inset any
+   "scroll into view" — an anchor jump, a focus() on a control, or
+   the browser's own "scroll into view if needed" — can land its
+   target flush against the viewport top, exactly where the header
+   sits. A control hidden under the header is a control neither the
+   user nor the pointer can reach: the click lands on the header
+   instead. (This is what made the gallery/focus/board switcher
+   unclickable whenever the browser scrolled it to the very top.)
+
+   The inset is the REAL rendered header height at each breakpoint,
+   measured from the DOM, plus a small gap so a target never sits
+   flush against the header's lower edge:
+     <=640px : nav 58 + sync panel 102 = 183px
+     >=641px : nav 72 + sync panel  68 = 163px
+   ============================================================ */
+:root {
+  --dv-header-inset: 197px; /* 183 + 14 */
+}
+
+@media (min-width: 641px) {
+  :root {
+    --dv-header-inset: 177px; /* 163 + 14 */
+  }
+}
+
+html {
+  scroll-padding-top: var(--dv-header-inset);
+}
+
 /* ============ NAVIGATION CONTAINER ============ */
 /* Maps to the actual <nav> and .nav-account structure in wishlist.html */
 .site-nav {

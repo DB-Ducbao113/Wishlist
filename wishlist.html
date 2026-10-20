@@ -1025,6 +1025,18 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     </div>
   </div>
 
+<!-- UX-03 — the collection rail.
+     The search field, the four advanced selects, the savings facet and the
+     clear button live HERE and ONLY here. They were briefly duplicated into
+     a second `.collection-sidebar` block; that produced six duplicate DOM
+     ids (#q, #fStatus, #fPriority, #fCategoryFilter, #fSort, #btnClearFilter)
+     and, because every reader uses document.getElementById (first match in
+     document order), buildSelects() populated only the hidden copy — which
+     left the phone toolbar's selects with a single "Tất cả" option and made
+     status / priority / category filtering inert on mobile. The rail below
+     is the one and only set of controls; the desktop rail layout is CSS
+     (immersive-v11-workspace.css) and the phone layout is the same markup
+     behind the F4.4 disclosure. -->
 <div class="toolbar collection-toolbar" data-dv-section>
 
   <!-- Search -->
@@ -5705,9 +5717,18 @@ let flipAnimations = [];
 
 function captureCardRects(){
   const rects = new Map();
+  // V16.2 MOTION-03B fix — measure in DOCUMENT coordinates, not viewport
+  // ones. getBoundingClientRect() is viewport-relative, so any scroll
+  // between the capture and the flip (the browser scrolled the select into
+  // view, the user scrolled, scroll anchoring adjusted the offset) looked
+  // like the card had moved. The FLIP then slid a card that had not moved
+  // at all, by exactly the scroll delta — a spurious 260ms animation on
+  // every filter change. Document coordinates are immune to scrolling.
+  const sx = window.scrollX || 0;
+  const sy = window.scrollY || 0;
   document.querySelectorAll('#grid > .wishlist-card').forEach(card => {
     const r = card.getBoundingClientRect();
-    rects.set(card.dataset.id, { x: r.left, y: r.top, w: r.width, h: r.height });
+    rects.set(card.dataset.id, { x: r.left + sx, y: r.top + sy, w: r.width, h: r.height });
   });
   return rects;
 }
@@ -5718,6 +5739,8 @@ function flipSurvivingCards(oldRects){
   // cancel any in-flight FLIP before starting a new one
   flipAnimations.forEach(a => { try { a.cancel(); } catch (e) {} });
   flipAnimations = [];
+  const sx = window.scrollX || 0;
+  const sy = window.scrollY || 0;
   const cards = document.querySelectorAll('#grid > .wishlist-card');
   const work = [];
   cards.forEach(card => {
@@ -5725,8 +5748,9 @@ function flipSurvivingCards(oldRects){
     const old = oldRects.get(id);
     if(!old) return; // new card: handled by revealGridCards
     const r = card.getBoundingClientRect();
-    const dx = old.x - r.left;
-    const dy = old.y - r.top;
+    // document coordinates — see captureCardRects() for why.
+    const dx = old.x - (r.left + sx);
+    const dy = old.y - (r.top + sy);
     if(Math.abs(dx) < 1 && Math.abs(dy) < 1) return; // no movement
     work.push({ card, dx, dy });
   });

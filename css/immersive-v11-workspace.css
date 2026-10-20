@@ -7,10 +7,12 @@
      .v11-canvas  = list-heading + #grid + #empty + #resultStatus
    Both live inside .v11-workspace (shared wrapper, nodes moved in DOM).
 
-   Responsive:
-     >=1200px  → sticky discovery rail (left) + collection canvas (right)
-     768–1199  → compact toolbar above the gallery
-     <=767px   → search-first, single column
+   Responsive (UX-03 alignment with the collection-workspace brief and
+   with the 640px mobile convention used by controls.css / collection-v3.css
+   / f4-interaction-v16.css):
+     >=1025px  → sticky discovery rail (left) + collection canvas (right)
+     641–1024  → compact toolbar above the gallery
+     <=640px   → search-first, single column
 
    Constraints honoured:
      - No frozen V1–V10 CSS file modified (overrides via later layer).
@@ -21,7 +23,7 @@
    ============================================================ */
 
 :root {
-  --v11-rail-w: 320px;
+  --v11-rail-w: 280px;
   --v11-gap: clamp(26px, 2.8vw, 44px);
   --v11-hairline: rgba(104, 80, 188, .16);
 }
@@ -86,9 +88,9 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
 }
 
 /* ============================================================
-   DESKTOP >= 1200px — discovery rail + canvas
+   DESKTOP >= 1025px — discovery rail + canvas
    ============================================================ */
-@media (min-width: 1200px) {
+@media (min-width: 1025px) {
   body.dreamscape-v5 .v11-workspace {
     display: grid;
     grid-template-columns: minmax(0, var(--v11-rail-w)) minmax(0, 1fr);
@@ -189,9 +191,9 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
 }
 
 /* ============================================================
-   TABLET 768–1199px — rail collapses to a toolbar above gallery
+   TABLET 641–1024px — rail collapses to a toolbar above gallery
    ============================================================ */
-@media (min-width: 768px) and (max-width: 1199px) {
+@media (min-width: 641px) and (max-width: 1024px) {
   body.dreamscape-v5 .v11-workspace {
     display: block;
   }
@@ -218,9 +220,18 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
     margin: 12px 0 0;
   }
 
-  /* Search + a single tidy filter row */
+  /* Search + a single tidy filter row.
+     `flex-direction: row` is REQUIRED here and is not inherited by
+     accident: controls.css and desktop-showroom-v6-workspace.css both set
+     the toolbar to `flex-direction: column`, and a column container with
+     `flex-wrap: wrap` + `align-items: flex-end` lays the items out as
+     wrapped vertical COLUMNS pushed to the right — which left a large
+     void under the heading and orphaned the filter row. Declaring the
+     direction here makes the intended row (search + clear on line one,
+     the four selects wrapping to line two) actually render. */
   body.dreamscape-v5 #collection.v11-rail .collection-toolbar {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     align-items: flex-end;
     gap: 14px 16px;
@@ -251,10 +262,24 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
   }
 }
 
+/* Narrow tablet (641–767px): four selects in one row are too narrow to read
+   ("Giá tăng dần" is clipped), so they wrap to two columns of two. The rule
+   is nested in the tablet band on purpose: it only exists for widths that
+   used to belong to the phone band. */
+@media (min-width: 641px) and (max-width: 767px) {
+  body.dreamscape-v5 #collection.v11-rail .collection-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.dreamscape-v5 #collection.v11-rail .collection-toolbar {
+    gap: 12px;
+  }
+}
+
 /* ============================================================
-   MOBILE <= 767px — search-first, single column
+   MOBILE <= 640px — search-first, single column
    ============================================================ */
-@media (max-width: 767px) {
+@media (max-width: 640px) {
   body.dreamscape-v5 .v11-workspace {
     display: block;
   }
