@@ -382,7 +382,12 @@ async function scrollToRatio(page, ratio) {
     const max = Math.max(0, doc.scrollHeight - window.innerHeight);
     window.scrollTo(0, Math.round(max * r));
   }, ratio);
-  await sleep(140);
+  await page.waitForFunction(() => {
+    const info = window.__scrollInfo();
+    const scale = window.__matrixScaleX('.pv-progress__bar');
+    const expected = Math.min(1, Math.max(0, info.ratio));
+    return scale !== null && Math.abs(scale - expected) <= 0.02;
+  }, { timeout: 3000 });
   return page.evaluate(() => window.__scrollInfo());
 }
 
@@ -412,7 +417,14 @@ async function run() {
       const cs = getComputedStyle(el), bs = getComputedStyle(bar);
       return {
         ariaHidden: el.getAttribute('aria-hidden'),
-        position: cs.position, height: parseFloat(cs.height), pe: cs.pointerEvents, z: +cs.z,
+        // UX-05 — the stacking check reads `zIndex`, not `z`. The `z`
+        // property is the CSS Grid/Flex item ORDERING property; it only
+        // has a value on a grid/flex item and always computes to "auto" on
+        // a `position: fixed` element, so `+cs.z` was NaN and the check
+        // could never pass for ANY implementation. `zIndex` is the property
+        // that actually decides whether the rail is drawn above the sticky
+        // header, which is what this check is about.
+        position: cs.position, height: parseFloat(cs.height), pe: cs.pointerEvents, z: +cs.zIndex,
         barWidth: parseFloat(bs.width), railWidth: parseFloat(cs.width),
         background: bs.backgroundImage,
         scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth

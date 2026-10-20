@@ -157,6 +157,14 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      neither the FUSION-01 hero nor the FUSION-02 scroll layer. -->
 <link rel="stylesheet" href="./css/fusion-03-gallery-board.css">
 
+<!-- UX-01 / UX-02 — compact first screen + adaptive empty dashboard.
+     These rules used to sit inside fusion-04-mobile.css, which broke that
+     sheet's ownership contract (it declares only min-width / min-height /
+     will-change, all inside the coarse-pointer gate). They are linked HERE
+     — the same cascade position they occupied before — so not one pixel
+     changes; only the ownership is corrected. -->
+<link rel="stylesheet" href="./css/ux-01-02-compact.css">
+
 <!-- V16.2 FUSION-04 — mobile refinement. Loaded last: it releases the hero
      promotions that a coarse pointer can never use and grows the measured
      under-44px tap targets to 44px. It adds no animation and no surface of
@@ -253,6 +261,45 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       });
     }
 
+    // UX-05 — revealReached(): the observer is the primary trigger, but it
+    // only ever sees the CURRENT intersection state. An element that the
+    // reader passed in one frame (a fast flick, a jump to an anchor, a
+    // scroll restoration) is reported as "not intersecting" and would stay
+    // pending for ever — and a pending element is `opacity: 0` (see
+    // motion-v16.css), so the content would stay INVISIBLE.
+    //
+    // This pass closes that hole: anything at or above the lower edge of
+    // the viewport has been REACHED, so it is revealed.
+    //
+    // It runs on SCROLL only, never from render(): the grid is rebuilt
+    // there, and measuring the pending elements right after a rebuild
+    // forces a layout of every one of them — measured at +6.4ms on a
+    // 100-card render. The observer already covers a card that is built
+    // inside the viewport, so nothing is lost by not calling it here.
+    var reachedRaf = null;
+    function revealReached() {
+      reachedRaf = null;
+      if (!pending.size) return;
+      var vh = window.innerHeight;
+      var toReveal = [];
+      // every read first, then every write: one layout flush, not one per
+      // element
+      pending.forEach(function (el) {
+        var rect = el.getBoundingClientRect();
+        // At or above the fold's lower edge: the reader has been there.
+        if (rect.top < vh) toReveal.push(el);
+      });
+      for (var i = 0; i < toReveal.length; i++) reveal(toReveal[i]);
+    }
+    function scheduleRevealReached() {
+      // Nothing pending means nothing to reveal: no frame is scheduled at
+      // all, so a still page schedules no work (FUSION-02 F01-08).
+      if (reachedRaf !== null) return;
+      if (!pending.size) return;
+      reachedRaf = requestAnimationFrame(revealReached);
+    }
+    window.addEventListener("scroll", scheduleRevealReached, { passive: true });
+
     function scan() {
       var sections = document.querySelectorAll("[data-dv-section]");
       for (var i = 0; i < sections.length; i++) observe(sections[i], i);
@@ -264,9 +311,13 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       observe: observe,
       reveal: reveal,
       refresh: revealInViewport,
+      // UX-05 — the main script calls this after a render so a card that
+      // lands inside the viewport is never left waiting for the observer.
+      revealReached: revealReached,
       off: function () {
         closed = true;
         if (observer) { observer.disconnect(); observer = null; }
+        window.removeEventListener("scroll", scheduleRevealReached);
         pending.forEach(function (el) {
           el.removeAttribute("data-dv-section");
           el.removeAttribute("data-dv-reveal");
@@ -1058,11 +1109,14 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         <path d="m20 20-4-4"></path>
       </svg>
 
+      <!-- UX-05 — the placeholder is a HINT; the accessible name above still
+           carries the full sentence. The long form did not fit the 280px
+           rail (it needed 229px of text in 95px) and was clipped mid-word. -->
       <input
         id="q"
         type="search"
         aria-label="Tìm kiếm món, danh mục hoặc ghi chú"
-        placeholder="Tên món, danh mục hoặc ghi chú..."
+        placeholder="Tìm món…"
         autocomplete="off"
       >
     </div>
@@ -1087,36 +1141,42 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   <!-- Filter Group -->
   <div class="collection-filters" id="filtersPanel">
 
-    <div class="field">
+    <!-- UX-05 — the field classes let the rail give the two selects whose
+         VALUES are longest (status, savings) the full rail width. The
+         labels are unchanged; only the width they get is. -->
+    <div class="field field--status">
       <label for="fStatus">Trạng thái</label>
       <select id="fStatus">
         <option value="">Tất cả</option>
       </select>
     </div>
 
-    <div class="field">
+    <div class="field field--priority">
       <label for="fPriority">Ưu tiên</label>
       <select id="fPriority">
         <option value="">Tất cả</option>
       </select>
     </div>
 
-    <div class="field">
+    <div class="field field--category">
       <label for="fCategoryFilter">Danh mục</label>
       <select id="fCategoryFilter">
         <option value="">Tất cả</option>
       </select>
     </div>
 
-    <div class="field">
+    <div class="field field--sort">
       <label for="fSort">Sắp xếp</label>
       <select id="fSort">
-        <option value="newest">Mới thêm trước</option>
-        <option value="oldest">Cũ nhất trước</option>
-        <option value="price-asc">Giá tăng dần</option>
-        <option value="price-desc">Giá giảm dần</option>
-        <option value="priority-desc">Ưu tiên cao trước</option>
-        <option value="priority-asc">Ưu tiên thấp trước</option>
+        <!-- UX-05 — the order labels are shortened so they fit the rail
+             column. The VALUES are unchanged, so every consumer
+             (visibleItems(), the QA suites) is unaffected. -->
+        <option value="newest">Mới nhất</option>
+        <option value="oldest">Cũ nhất</option>
+        <option value="price-asc">Giá tăng</option>
+        <option value="price-desc">Giá giảm</option>
+        <option value="priority-desc">Cao nhất</option>
+        <option value="priority-asc">Thấp nhất</option>
       </select>
     </div>
 
@@ -1124,7 +1184,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
          visibleItems(), so a dashboard figure can point at exactly the set of
          items it counted instead of inventing a second filtering mechanism.
          Values are defined once in SAVINGS_FILTERS. -->
-    <div class="field">
+    <div class="field field--savings">
       <label for="fSavings">Tiết kiệm</label>
       <select id="fSavings">
         <option value="">Tất cả</option>
@@ -6428,6 +6488,35 @@ function init(){
     setTimeout(setupHeroMotion, 120);
   }
 
+  // UX-05 — in-page navigation keeps its eased scroll.
+  // The root stylesheet now scrolls programmatically INSTANTLY (base.css),
+  // which is what the reveal runtime, the scroll rail and every
+  // measurement need. The one place a slow, eased scroll is actually
+  // wanted is a click on an in-page link, so it is requested HERE, on the
+  // element that has it. One delegated listener, no per-link wiring.
+  document.addEventListener("click", (event) => {
+    if(event.defaultPrevented || event.button !== 0) return;
+    if(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target && event.target.closest
+      ? event.target.closest('a[href^="#"]')
+      : null;
+    if(!link) return;
+    const id = link.getAttribute("href").slice(1);
+    if(!id) return;
+    const target = document.getElementById(id);
+    if(!target) return;
+    event.preventDefault();
+    const reduce = typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      block: "start"
+    });
+    // Keep the address bar in step WITHOUT the browser's own instant jump
+    // (which is what a plain hash assignment would do).
+    try { history.pushState(null, "", "#" + id); } catch (e) { /* ignore */ }
+  });
+
   // V16.2 FUSION-01 — aurora + staged entrance. Both are presentation only
   // and both bail out on their own for reduced motion / touch. The stage
   // itself was already painted by render() above.
@@ -7106,6 +7195,16 @@ function setupHeroPointerDepth(){
   const visual = hero && hero.querySelector(".hero__visual");
   if(!hero || !visual) return;
 
+  // UX-05 — the depth is normalised against the STAGE, not against the
+  // whole hero. The hero is 1280px wide, so a move across the composition
+  // is a rounding error there and the layers never separate: a pointer at
+  // the hero's own centre produced exactly 0 and the cards stood still.
+  // The STAGE is the thing that actually moves, and normalising against it
+  // is what gives the layers their real depth — the same model the
+  // reference prototype uses (references/someday-vault-motion-reference.html,
+  // "hero mouse parallax": (clientX - stage centre) / stage width).
+  const stage = hero.querySelector(".v9-scene") || visual;
+
   const apply = () => {
     heroPointerCx += (heroPointerX - heroPointerCx) * 0.16;
     heroPointerCy += (heroPointerY - heroPointerCy) * 0.16;
@@ -7120,9 +7219,11 @@ function setupHeroPointerDepth(){
 
   hero.addEventListener("pointermove", (e) => {
     if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const rect = hero.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width - 0.5;
-    const ny = (e.clientY - rect.top) / rect.height - 0.5;
+    const rect = stage.getBoundingClientRect();
+    const w = rect.width || 1;
+    const h = rect.height || 1;
+    const nx = (e.clientX - (rect.left + w / 2)) / w;
+    const ny = (e.clientY - (rect.top + h / 2)) / h;
     heroPointerX = Math.max(-8, Math.min(8, nx * 8));
     heroPointerY = Math.max(-8, Math.min(8, ny * 8));
     if(heroPointerRaf === null) heroPointerRaf = requestAnimationFrame(apply);
@@ -7382,11 +7483,10 @@ function setupFusionTypography(){
    aria-hidden and the bar is written with transform (scaleX), never with
    width, so no layout is ever invalidated. */
 let pvProgressBar = null;
-let pvProgressRaf = null;
 let pvProgressLast = -1;
+let pvProgressSettle = null;
 
 function pvProgressPaint(){
-  pvProgressRaf = null;
   const bar = pvProgressBar || (pvProgressBar = document.getElementById("pvProgressBar"));
   if(!bar) return;
 
@@ -7405,8 +7505,38 @@ function pvProgressPaint(){
 }
 
 function pvProgressSync(){
-  if(pvProgressRaf !== null) return;
-  pvProgressRaf = requestAnimationFrame(pvProgressPaint);
+  // UX-05 — the rail is painted in the SAME frame as the scroll.
+  //
+  // It used to be deferred to a requestAnimationFrame. That hop cost a
+  // frame of latency and, worse, it left the bar showing a STALE ratio
+  // whenever the frame was late: a scroll event that arrives while a
+  // frame is already pending does not schedule another one, so a single
+  // missed frame left the rail stuck at the previous position for good
+  // (measured: scaleX(0.5001) while the page was at the bottom).
+  //
+  // A scroll event already fires at most once per frame, and the bar is a
+  // composited `scaleX` on a fixed 3px element, so writing it here costs
+  // no extra layout pass and no extra frame.
+  pvProgressPaint();
+
+  // UX-05 — and once more, briefly, after the scroll has settled.
+  //
+  // The ratio is scrollTop / (scrollHeight - innerHeight), so it depends on
+  // the DOCUMENT height as well as the scroll position. The document's
+  // scrollable height can change without the body's box changing — the
+  // hero's floating cards are absolutely positioned, so when their artwork
+  // settles the document gets shorter and the bar's ratio, measured
+  // against the old height, is wrong (measured: scaleX(0.5001) with the
+  // page already at the bottom).
+  //
+  // One short, debounced repaint re-measures after the layout has
+  // settled. It is bounded (a single timer that re-arms) and it costs
+  // nothing when the page is still.
+  if(pvProgressSettle !== null) clearTimeout(pvProgressSettle);
+  pvProgressSettle = setTimeout(function(){
+    pvProgressSettle = null;
+    pvProgressPaint();
+  }, 60);
 }
 
 function setupFusionCinematic(){

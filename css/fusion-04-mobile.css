@@ -81,78 +81,14 @@
   }
 }
 
-
-/* ================================================================
-   UX-01 / UX-02 — Compact first screen & adaptive empty dashboard
-   Intentionally loaded as final stylesheet. No data/auth changes.
-   ================================================================ */
-@media (min-width: 1025px) {
-  body.dreamscape-v5 .hero.hero--v9 {
-    padding-top: clamp(96px, 8vw, 122px);
-    padding-bottom: 20px;
-    min-height: 0;
-    gap: clamp(22px, 3vw, 46px);
-  }
-  body.dreamscape-v5 .hero--v9 .hero__title {
-    font-size: clamp(3rem, 4.3vw, 5rem);
-    line-height: 1.04;
-  }
-  body.dreamscape-v5 .hero--v9 .hero__description {
-    margin-block: 20px;
-    max-width: 33rem;
-  }
-  body.dreamscape-v5 .hero--v9 .hero__visual,
-  body.dreamscape-v5 .hero--v9 .v9-scene {
-    max-height: 450px;
-  }
-  body.dreamscape-v5 .pv-marquee {
-    margin-top: 12px;
-  }
-}
-body.dreamscape-v5 .site-header .nav-account {
-  margin-top: 0;
-}
-body.dreamscape-v5 .site-header .sync-panel {
-  min-height: 52px;
-  padding-block: 8px;
-}
-body.dreamscape-v5 #collection,
-body.dreamscape-v5 .dashboard-panel {
-  scroll-margin-top: 125px;
-}
-/* A truly empty library needs one next action, not an entire analytics wall.
-   We hide presentation only. Figures remain rendered and accurate and will
-   reappear immediately when a real item is created or imported. */
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .total.stats-dashboard,
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash #dvMetrics,
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-grid,
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash #dvActions {
-  display: none;
-}
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash {
-  margin-block: 16px 28px;
-  padding: clamp(16px, 2vw, 24px);
-}
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .overview-heading {
-  margin-bottom: 0;
-}
-body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .overview-heading__title {
-  max-width: 24ch;
-}
-@media (max-width: 1024px) {
-  body.dreamscape-v5 .hero.hero--v9 {
-    min-height: 0;
-    padding-bottom: 16px;
-  }
-  body.dreamscape-v5 .pv-marquee {
-    margin-top: 12px;
-  }
-}
-@media (max-width: 640px) {
-  body.dreamscape-v5 .site-header .sync-panel {
-    min-height: 44px;
-  }
-  body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash {
-    margin-block: 12px 24px;
-  }
-}
+/* ---------------------------------------------------------------------
+   OWNERSHIP NOTE
+   ---------------------------------------------------------------------
+   The UX-01/UX-02 rules (compact desktop hero, adaptive empty dashboard)
+   used to live here. They are layout and typography rules, and this sheet
+   owns exactly two property families inside the coarse-pointer gate, so
+   they broke the F04-A02 / F04-A03 contract and leaked onto fine
+   pointers. They now live in css/ux-01-02-compact.css, which is linked
+   immediately BEFORE this file — the same cascade position, so not one
+   pixel moved. Only the ownership was corrected.
+   --------------------------------------------------------------------- */

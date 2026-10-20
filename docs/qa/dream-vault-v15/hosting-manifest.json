@@ -7,7 +7,7 @@
  "generated": [
   "css/app.css"
  ],
- "stylesheetSourceCount": 58,
+ "stylesheetSourceCount": 59,
  "stylesheetOrder": [
   "css/legacy.css",
   "css/tokens.css",
@@ -66,6 +66,7 @@
   "css/fusion-01-aurora-hero.css",
   "css/fusion-02-cinematic-scroll.css",
   "css/fusion-03-gallery-board.css",
+  "css/ux-01-02-compact.css",
   "css/fusion-04-mobile.css"
  ],
  "fileCount": 5,
@@ -74,7 +75,7 @@
   "_headers",
   "_redirects"
  ],
- "totalBytes": 793506,
+ "totalBytes": 804036,
  "files": [
   "_headers",
   "_redirects",

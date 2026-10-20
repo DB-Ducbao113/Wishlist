@@ -23,7 +23,14 @@
    ============================================================ */
 
 :root {
-  --v11-rail-w: 280px;
+  /* UX-05 — the rail is back to the width the Dream Vault reference uses.
+     It was narrowed to 280px in UX-03, and the measurement showed why that
+     does not work: a two-column filter grid in 280px leaves each select
+     57px of text room (the select's own padding plus its arrow eat 44px of
+     the 101px column), so the sort order and the priority level were
+     clipped mid-word. At 320px the same two-column grid gives 73px, every
+     label fits, the heading fits on one line, and the rail is SHORTER. */
+  --v11-rail-w: 320px;
   --v11-gap: clamp(26px, 2.8vw, 44px);
   --v11-hairline: rgba(104, 80, 188, .16);
 }
@@ -154,10 +161,38 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
     font-size: 15px;
   }
 
+  /* UX-05 — the rail's filter grid. The rail is 320px, so a two-column
+     grid gives each select about 81px of text room once the select's own
+     padding and its arrow are taken off. The status, the priority and the
+     savings facet have the longest VALUES ("Đang để dành", "Trung bình",
+     "Chưa đạt mục tiêu") and were clipped mid-word in a two-column cell, so
+     those three take the full rail width. The category and the sort — whose
+     labels the rail controls and the user controls respectively — share the
+     remaining row. The labels themselves are unchanged. */
   body.dreamscape-v5 #collection.v11-rail .collection-filters {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  body.dreamscape-v5 #collection.v11-rail .collection-filters .field--status,
+  body.dreamscape-v5 #collection.v11-rail .collection-filters .field--priority,
+  body.dreamscape-v5 #collection.v11-rail .collection-filters .field--savings {
+    grid-column: 1 / -1;
+  }
+
+  /* A tighter select padding in the rail buys the room the labels need
+     without making the control any taller. */
+  body.dreamscape-v5 #collection.v11-rail .collection-filters select {
+    padding-inline: 10px;
+  }
+
+  /* UX-05 — the rail has to fit under the fixed header, and the extra
+     filter row above needs the room. The heading already says "Tìm món bạn
+     yêu thích."; this line only restates it, so the narrow rail drops it
+     and the tablet/phone layouts keep it. */
+  body.dreamscape-v5 #collection.v11-rail .collection-panel__description {
+    display: none;
   }
 
   body.dreamscape-v5 #collection.v11-rail .collection-toolbar__footer {
@@ -289,6 +324,10 @@ body.dreamscape-v5 .v11-canvas .list-heading--v3 h2 {
   body.dreamscape-v5 #collection.v11-rail {
     position: static;
     margin-bottom: 18px;
+  }
+
+  body.dreamscape-v5 #collection.v11-rail:has(#filtersPanel.is-open) {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
 
   body.dreamscape-v5 #collection.v11-rail .collection-toolbar {

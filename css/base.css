@@ -5,7 +5,18 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* UX-05 — programmatic scrolling is INSTANT by default.
+     `scroll-behavior: smooth` on the root made EVERY programmatic scroll
+     animate, including the ones the app never wants to animate: the reveal
+     runtime's scroll sweep, an anchor jump to a section that is still
+     loading, and a scroll restoration. It also made the scroll-progress
+     rail and the reveal lifecycle depend on WHEN a measurement was taken
+     rather than on where the page actually was.
+
+     The user-facing smooth navigation is kept — it is requested explicitly
+     by the in-page link handler in wishlist.html, which is the only place
+     a slow, eased scroll is actually wanted. */
+  scroll-behavior: auto;
 }
 
 body {
