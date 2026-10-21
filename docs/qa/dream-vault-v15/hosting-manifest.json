@@ -7,7 +7,7 @@
  "generated": [
   "css/app.css"
  ],
- "stylesheetSourceCount": 59,
+ "stylesheetSourceCount": 60,
  "stylesheetOrder": [
   "css/legacy.css",
   "css/tokens.css",
@@ -30,6 +30,7 @@
   "css/polish-v2.css",
   "css/homepage-v3.css",
   "css/collection-v3.css",
+  "css/design-overhaul.css",
   "css/dialog-v3.css",
   "css/mobile-v3.css",
   "css/gallery-v4.css",
@@ -75,7 +76,7 @@
   "_headers",
   "_redirects"
  ],
- "totalBytes": 804036,
+ "totalBytes": 808380,
  "files": [
   "_headers",
   "_redirects",
