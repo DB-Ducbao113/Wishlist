@@ -1,0 +1,126 @@
+/* Design Overhaul – Premium Apple-inspired styling */
+
+/* Import design tokens */
+@import url('./dreamscape-v5-tokens.css');
+
+/* Global body styles */
+body {
+  background: var(--dream-bg);
+  color: var(--dream-ink);
+  font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hero section – prominent, soft gradient */
+.hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--dream-bg) 0%, var(--dream-surface-soft) 100%);
+  border-radius: var(--dream-radius-lg);
+  box-shadow: var(--dream-shadow-soft);
+  margin-bottom: var(--dream-section-gap);
+}
+
+.hero h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--dream-ink);
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: var(--dream-muted);
+  margin-top: 0.2rem;
+}
+
+/* Card component – glassy surface with subtle interaction */
+.card {
+  background: var(--dream-glass);
+  border: 1px solid var(--dream-border);
+  border-radius: var(--dream-radius-md);
+  box-shadow: var(--dream-shadow-glass);
+  backdrop-filter: blur(var(--dream-glass-blur));
+  padding: 1.25rem;
+  transition: transform var(--dream-motion-fast) var(--dream-ease), box-shadow var(--dream-motion-fast) var(--dream-ease);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--dream-shadow-hover);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: var(--dream-ink);
+}
+
+.card p {
+  margin: 0;
+  color: var(--dream-muted);
+}
+
+/* Top navigation – refined, minimal backdrop */
+.topbar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--dream-bg) 72%, transparent);
+  border-bottom: 1px solid var(--dream-border);
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.topbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.topbar .brand .mark {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--dream-radius-pill);
+  background: var(--dream-accent);
+  color: var(--dream-surface);
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+}
+
+.topbar .nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.topbar button {
+  border-radius: var(--dream-radius-pill);
+  background: var(--dream-accent);
+  color: var(--dream-surface);
+  border: none;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+}
+
+.topbar button:hover {
+  background: var(--dream-accent-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .hero {
+    padding: 3rem 1rem;
+  }
+  .topbar {
+    height: 56px;
+  }
+}
