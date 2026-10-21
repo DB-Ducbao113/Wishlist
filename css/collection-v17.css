@@ -1,0 +1,1258 @@
+/* ============================================================
+   Collection v17 — reference-first redesign (milestone 1)
+   ------------------------------------------------------------
+   Scope: the collection workspace only (toolbar, tabs, view bar,
+   grid, product cards). Everything is prefixed with
+   `body.dreamscape-v5` and anchored on `.v11-workspace` / `#grid`,
+   so no other surface changes shape.
+
+   The reference (references/someday-vault-motion-reference.html)
+   uses one composited section head, one horizontal labelled toolbar
+   above the grid, and 4-up compact cards with the product image on
+   top. The previous layout put the same controls in a 320px sticky
+   rail and made the first card span the full canvas, which pushed
+   the products below the fold. This sheet keeps the DOM and every
+   JS hook intact and only changes presentation.
+
+   Loaded last, after every other sheet (see wishlist.html).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Workspace — one column, toolbar on top
+   ------------------------------------------------------------ */
+
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .v11-workspace {
+    display: block;
+  }
+
+  body.dreamscape-v5 #collection.v11-rail {
+    position: static;
+    top: auto;
+    max-height: none;
+    height: auto;
+    overflow: visible;
+    margin: 0 0 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+body.dreamscape-v5 #collection.v11-rail {
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   2. Section head — one head, like the reference
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__heading {
+  display: block;
+  margin: 0 0 14px;
+  padding: 0;
+  border-bottom: 0;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__section-no {
+  display: inline-grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+
+  background: rgba(104, 80, 188, .10);
+  color: var(--dream-accent, #6850BC);
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail h2#collection-controls-title {
+  margin: 10px 0 6px;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(26px, 2.55vw, 36px);
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__description {
+  display: block;
+  margin: 0;
+  max-width: 62ch;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+/* The canvas repeated the section head a second time ("Bộ sưu tập /
+   Món bạn đang để ý"). The reference has one head. The node stays in
+   the DOM (the fusion-01 checks read its decorative ::after), it just
+   stops taking space. */
+body.dreamscape-v5 .v11-canvas > .list-heading--v3 {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   3. Toolbar — one horizontal strip of labelled fields
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.25fr) minmax(0, 3.4fr) auto;
+  align-items: end;
+  gap: 6px 20px;
+
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 14px 18px 12px;
+
+  border: 1px solid rgba(104, 80, 188, .14);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 40px -32px rgba(40, 26, 92, .55);
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field > label {
+  margin: 0;
+
+  color: #8A7FA8;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 34px;
+  margin: 0;
+  padding: 0 24px 0 0;
+
+  border: 0;
+  border-bottom: 1px solid rgba(104, 80, 188, .22);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%238A7FA8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  box-shadow: none;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select:hover {
+  border-bottom-color: rgba(104, 80, 188, .45);
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select:focus,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 3px;
+  border-bottom-color: var(--dream-accent, #6850BC);
+}
+
+/* Search: same underline language, with the magnifier inline. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
+  grid-column: 1;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-bottom: 1px solid rgba(104, 80, 188, .22);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap:focus-within {
+  border-bottom-color: var(--dream-accent, #6850BC);
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__icon {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: #8A7FA8;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input::placeholder {
+  color: #A79DC0;
+  font-weight: 500;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input:focus,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 3px;
+}
+
+/* Footer: reset only. The hint is desktop noise in the new strip. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__hint {
+  display: none;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear {
+  box-sizing: border-box;
+  width: auto;
+  height: 34px;
+  margin: 0;
+  padding: 0 14px;
+  white-space: nowrap;
+
+  border: 1px solid rgba(104, 80, 188, .22);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: none;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
+  border-color: rgba(104, 80, 188, .45);
+  background: rgba(104, 80, 188, .06);
+}
+
+@media (min-width: 641px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-column: 2;
+    gap: 6px 16px;
+
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  /* The rail gave the three longest facets a full row. In a horizontal
+     strip all five are peers again. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters > .field {
+    grid-column: auto;
+  }
+}
+
+/* Tablet: search on its own line, the five facets below it. */
+@media (min-width: 641px) and (max-width: 1099px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 16px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
+    grid-column: 1 / -1;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters {
+    grid-column: 1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   4. Summary line — "what am I looking at"
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  margin: 14px 2px 0;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary strong {
+  color: var(--dream-ink, #19152C);
+  font-weight: 800;
+  font-size: 13.5px;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary__count {
+  color: var(--dream-muted, #625979);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------
+   5. Tabs + view switcher share one row above the grid
+   ------------------------------------------------------------ */
+
+@media (min-width: 641px) {
+  body.dreamscape-v5 .v11-canvas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 16px;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .dv-tabs {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .v13-viewbar {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  body.dreamscape-v5 .v11-canvas > #grid,
+  body.dreamscape-v5 .v11-canvas > #board,
+  body.dreamscape-v5 .v11-canvas > #empty,
+  body.dreamscape-v5 .v11-canvas > .board {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+  }
+}
+
+body.dreamscape-v5 .v13-viewbar__label {
+  font-size: 10px;
+  letter-spacing: .16em;
+  color: #8A7FA8;
+}
+
+@media (max-width: 1023px) {
+  body.dreamscape-v5 .v13-viewbar__label {
+    display: none;
+  }
+}
+
+body.dreamscape-v5 .v13-viewbar__switch {
+  padding: 3px;
+  border-color: rgba(104, 80, 188, .16);
+  background: #F1ECFF;
+}
+
+body.dreamscape-v5 .v13-viewbar__button {
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------
+   6. Grid — 4 / 3 / 2 / 1 columns, compact cards
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+
+  margin: 0;
+  padding: 18px 0 12px;
+  list-style: none;
+}
+
+@media (max-width: 1279px) {
+  body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding-top: 14px;
+  }
+}
+
+/* The old layout made the first card span the canvas. In a reference-style
+   gallery every card is a peer; Focus remains the deliberate hero view. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child {
+  grid-column: auto;
+  grid-row: auto;
+  min-width: 0;
+}
+
+/* The "featured first card" is not one rule: nine earlier sheets each raise
+   one property on `:first-child:not(:only-child)` (span, split surface,
+   taller media, larger title, extra padding). They are all tied to the
+   showroom layout this milestone replaces, so this one block neutralises
+   exactly the properties the browser probe proved differ. `!important` is
+   deliberate and bounded to gallery mode. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) {
+  grid-column: auto !important;
+  min-height: 0 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) > .wishlist-card__surface {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  min-height: 0 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .thumb.product-media {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 4 / 3 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .product-card__content {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  padding: 13px 15px 6px !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .product-card__actions {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  padding: 8px 15px 14px !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .product-card__title {
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+/* ------------------------------------------------------------
+   7. Product card — image on top, compact body, actions at the foot
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  border: 1px solid rgba(104, 80, 188, .12);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 44px -30px rgba(15, 23, 42, .45);
+
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(104, 80, 188, .26);
+  box-shadow: 0 24px 48px -28px rgba(40, 26, 92, .5);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card > .wishlist-card__surface {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  height: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Media ---------------------------------------------------- */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .thumb.product-media {
+  position: relative;
+  flex: 0 0 auto;
+
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(145deg, #F7F4FF, #EDE7FB);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: transparent;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+
+/* The exhibit plaque / caption / index belonged to the showroom first card;
+   in a 4-up gallery they only add noise. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__plaque,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .v12-stage-caption,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__index {
+  display: none;
+}
+
+/* Status + priority ride on the image, like the reference. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .badges.product-card__badges {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  box-sizing: border-box;
+  height: 22px;
+  margin: 0;
+  padding: 0 9px;
+
+  border: 0;
+  border-radius: 999px;
+
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge:first-child {
+  background: rgba(17, 12, 34, .62);
+  box-shadow: none;
+  color: #fff;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge:nth-child(2) {
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .12);
+}
+
+/* Body ----------------------------------------------------- */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  align-content: flex-start;
+  column-gap: 10px;
+  row-gap: 6px;
+
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 13px 15px 6px;
+
+  border: 0;
+  background: transparent;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__title {
+  order: 1;
+  flex: 0 0 100%;
+
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -.01em;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__price {
+  order: 2;
+  flex: 0 0 auto;
+  margin: 0;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .cat {
+  order: 2;
+  flex: 0 0 auto;
+  margin: 0 0 0 auto;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 55%;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .note {
+  order: 3;
+  flex: 0 0 100%;
+
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.45;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .meta {
+  order: 5;
+  flex: 0 0 100%;
+  margin: 2px 0 0;
+
+  color: #9A90B4;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Savings mini-goal (only rendered when an item carries a goal). */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal {
+  order: 4;
+  flex: 0 0 100%;
+  margin: 3px 0 0;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-row b {
+  color: var(--dream-accent, #6850BC);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-track {
+  height: 5px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8B7ED8, #A88BF7);
+}
+
+/* Actions -------------------------------------------------- */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  box-sizing: border-box;
+  width: auto;
+  margin: 0;
+  padding: 8px 15px 14px;
+
+  border: 0;
+  border-top: 1px solid rgba(104, 80, 188, .08);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mini,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  height: 36px;
+  margin: 0;
+  padding: 0 11px;
+
+  border-radius: 11px;
+
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .product-card__view {
+  flex: 0 0 100% !important;
+  border: 1px solid transparent;
+  background: var(--dream-accent, #6850BC);
+  color: #fff;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .product-card__view:hover {
+  background: var(--dream-accent-hover, #543F9E);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy {
+  flex: 1 1 auto;
+  border: 1px solid rgba(104, 80, 188, .22);
+  background: #fff;
+  color: var(--dream-accent, #6850BC);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mark-purchased {
+  flex: 1 1 auto;
+  border: 1px solid rgba(104, 80, 188, .14);
+  background: #F4F0FF;
+  color: #5B45A8;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mark-purchased:hover {
+  background: rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 0 0 auto;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+
+  border: 1px solid rgba(104, 80, 188, .18);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--dream-accent, #6850BC);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__menu {
+  /* The trigger shrink-wraps in the new shelf, so the absolute panel must
+     not inherit its 36px width (it used to inherit a full-width wrapper). */
+  left: auto;
+  right: 0;
+  z-index: 40;
+  width: max-content;
+  min-width: 190px;
+  max-width: min(260px, calc(100vw - 32px));
+}
+
+/* Purchased items read as a quiet archive row, not a dead card. */
+body.dreamscape-v5 .v11-workspace #grid > .wishlist-card.is-purchased .product-media__image {
+  filter: saturate(.55) brightness(1.02);
+}
+
+/* ------------------------------------------------------------
+   8. Focus view — keep the hero, align it with the new language
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card {
+  border: 1px solid rgba(104, 80, 188, .12);
+  border-radius: 22px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -40px rgba(15, 23, 42, .5);
+}
+
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__title {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--dream-ink, #19152C);
+}
+
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__plaque,
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .v12-stage-caption {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   9. Empty state — same voice as the head
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 #empty .empty__title,
+body.dreamscape-v5 #empty h2,
+body.dreamscape-v5 #empty h3 {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -.015em;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__title {
+  max-width: 26ch;
+  margin: 0;
+  text-align: center;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__eyebrow {
+  margin: 0;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__description {
+  max-width: 44ch;
+  margin: 0;
+  text-align: center;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------
+   10. Phones — compact head, disclosure kept, one card per row
+   ------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__heading {
+    margin-bottom: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail h2#collection-controls-title {
+    font-size: 27px;
+    margin: 8px 0 4px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__description {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+
+    padding: 12px 14px;
+    border-radius: 18px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
+    grid-column: 1 / -1;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle {
+    grid-column: 1 / -1;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters.is-open {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+    padding-top: 2px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary strong {
+    font-size: 13px;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .dv-tabs {
+    margin: 2px 0 10px;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .v13-viewbar {
+    padding: 0 0 12px;
+    gap: 8px;
+  }
+
+  body.dreamscape-v5 .v13-viewbar__label {
+    display: none;
+  }
+
+  body.dreamscape-v5 .v13-viewbar__switch {
+    width: 100%;
+  }
+
+  body.dreamscape-v5 .v13-viewbar__button {
+    flex: 1 1 0;
+    min-height: 44px;
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mini,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy {
+    height: 44px;
+    font-size: 12.5px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
+    width: 44px;
+    height: 44px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content {
+    padding: 12px 14px 4px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions {
+    padding: 8px 14px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card {
+    transition: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:hover {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   11. Last mile — properties several legacy sheets still raise
+   ------------------------------------------------------------
+   The card typography (title/price) and the decorative index/plaque
+   are set by compound selectors such as
+   `#grid.gallery--v2.gallery--v4.gallery--v6 .wishlist-card .product-card__title`.
+   Those layers belong to the showroom card this milestone replaces, so the
+   final values are asserted here. Only the contested properties are marked
+   important; everything else stays cascade-driven. */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content {
+  position: static !important;
+  /* The showroom pushed the body onto its own 3D layer. That transform
+     creates a containing block, which dragged the status chips down from
+     the image to the first text line. */
+  transform: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame {
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__plaque,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .v12-stage-caption,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__index,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame::before,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame::after,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media::after {
+  display: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__title {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -.01em !important;
+  color: var(--dream-ink, #19152C) !important;
+}
+
+/* A legacy rule underlines card text, and the decoration propagates from a
+   descendant that cannot be reached from the content subtree alone. Scoped to
+   the gallery card, this is the same bounded reset the browser probe proved
+   removes it. Action links keep an explicit `text-decoration: none`. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card * {
+  text-decoration: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__price {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.01em !important;
+  color: var(--dream-accent, #6850BC) !important;
+  text-decoration: none !important;
+  border: 0 !important;
+  width: auto !important;
+  flex: 0 1 auto !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__price::after {
+  display: none !important;
+}
+
+/* The decorative wall-text tile was sized for the old showroom grid; with
+   four columns it manufactures an extra empty row. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"]::after {
+  content: none !important;
+  display: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .cat,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .note,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .meta {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .cat {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: .07em !important;
+  color: var(--dream-muted, #625979) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .note {
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  color: var(--dream-muted, #625979) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .meta {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: .05em !important;
+  color: #9A90B4 !important;
+}
+
+/* Coarse pointers keep the 44px target contract that FUSION-04 owns, even
+   where the redesign makes a control visually smaller on a mouse. */
+@media (pointer: coarse) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap,
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input,
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mini,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .badge,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

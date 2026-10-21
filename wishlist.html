@@ -170,6 +170,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      under-44px tap targets to 44px. It adds no animation and no surface of
      its own; both blocks are inside the coarse-pointer gate. -->
 <link rel="stylesheet" href="./css/fusion-04-mobile.css">
+<link rel="stylesheet" href="./css/collection-v17.css">
 
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
@@ -1213,6 +1214,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   </div>
 
 </div>
+
+  <!-- Reference-first redesign — one summary line above the grid, the same
+       question the reference answers ("what am I looking at?"). Both values
+       are written by render() from visibleItems(); there is no second store
+       and no extra filtering path. -->
+  <p class="collection-summary">
+    <span>Tổng giá trị đang hiển thị: <strong id="collectionSummaryValue">0 ₫</strong></span>
+    <span class="collection-summary__count" id="collectionSummaryCount">0/0 món</span>
+  </p>
 
   </section>
 
@@ -3597,6 +3607,16 @@ function render(){
   $("resultStatus").textContent =
     "Đang hiển thị " + shown.totalCount + " trên " + metrics.totalCount + " món.";
 
+  // Reference-first redesign — the visible summary is the same data the
+  // screen-reader status already reports, written from the same `list`.
+  const summaryValue = $("collectionSummaryValue");
+  const summaryCount = $("collectionSummaryCount");
+  if(summaryValue && summaryCount){
+    const shownValue = list.reduce((sum, it) => sum + (Number(it.price) || 0), 0);
+    summaryValue.textContent = fmtMoney(shownValue);
+    summaryCount.textContent = shown.totalCount + "/" + metrics.totalCount + " món";
+  }
+
   const frag = document.createDocumentFragment();
 
   list.forEach(it => {
@@ -4067,6 +4087,23 @@ function card(it){
   if(it.note){
     const n = document.createElement("div"); n.className = "note";
     n.textContent = it.note; body.appendChild(n);
+  }
+  // Reference-first redesign — the reference's signature "mini goal" row.
+  // Rendered only for items that actually carry a saving goal, so a card
+  // never invents a 0/0 progress bar.
+  if(it.savingGoal > 0){
+    const pct = Math.max(0, Math.min(100, Math.round(((Number(it.savedAmount) || 0) / it.savingGoal) * 100)));
+    const goal = document.createElement("div"); goal.className = "product-card__goal";
+    const row = document.createElement("div"); row.className = "product-card__goal-row";
+    const label = document.createElement("span");
+    label.textContent = "Đã để dành " + fmtMoney(Number(it.savedAmount) || 0);
+    const badgePct = document.createElement("b"); badgePct.textContent = pct + "%";
+    row.append(label, badgePct);
+    const track = document.createElement("div"); track.className = "product-card__goal-track";
+    const fill = document.createElement("i"); fill.style.width = pct + "%";
+    track.appendChild(fill);
+    goal.append(row, track);
+    body.appendChild(goal);
   }
   const meta = document.createElement("div"); meta.className = "meta";
   meta.textContent = "Đã thêm " + daysAgo(it.createdAt) + " (" + fmtDate(it.createdAt) + ")";

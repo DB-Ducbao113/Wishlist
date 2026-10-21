@@ -327,11 +327,15 @@ const setView = (page, mode) => page.evaluate((m) => {
     const links = [...html.matchAll(/<link[^>]+href=["']?(\.\/css\/[^"'\s>]+\.css)/gi)].map(m => m[1]);
     const i4 = links.findIndex(h => /fusion-04-mobile\.css/.test(h));
     const i3 = links.findIndex(h => /fusion-03-gallery-board\.css/.test(h));
+    const i17 = links.findIndex(h => /collection-v17\.css/.test(h));
 
-    c('F04-A01', 'source', 'the sheet is linked exactly once, immediately after FUSION-03, at the end of the cascade',
-      'one <link> and no later stylesheet',
-      links.filter(h => /fusion-04-mobile\.css/.test(h)).length === 1 && i4 > i3 && i4 === links.length - 1,
-      { index: i4, total: links.length, order: links.slice(-3) });
+    c('F04-A01', 'source', 'the sheet is linked exactly once, after FUSION-03, and only the redesign sheet follows it',
+      'one <link>, after FUSION-03, with the collection redesign sheet as the single trailing stylesheet',
+      links.filter(h => /fusion-04-mobile\.css/.test(h)).length === 1 &&
+        i4 > i3 &&
+        i17 === links.length - 1 &&
+        i4 === links.length - 2,
+      { index: i4, redesign: i17, total: links.length, order: links.slice(-3) });
 
     c('F04-A02', 'source', 'all rules live inside the coarse-pointer gate (nothing leaks to fine pointers)',
       'stripping the two @media blocks leaves no declaration block behind',
