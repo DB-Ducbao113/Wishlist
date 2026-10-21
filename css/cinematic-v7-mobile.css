@@ -1,0 +1,1219 @@
+/* ==========================================================
+   Dream Vault V7 — Mobile Premium Adaptation (Task 17F)
+   Light Lavender × Premium Editorial × Cinematic Showroom
+   Phone 320–640 · Tablet 641–1024 — desktop ≥1025 untouched
+   ----------------------------------------------------------
+   · No Firebase / Auth / CRUD / ID / DOM changes
+   · Zero new libraries, $0 budget, system Georgia serif
+   · No ambient animation loops on mobile (17B loops are
+     desktop-only at min-width: 1025px)
+   · No whole-page pointer tracking, no animated blur
+   · Never overrides Product Card Tilt transform
+   · Short-viewport CTA/Dock hotfix (320x700 / 375x667)
+     preserved — see §F (no hotfix property is restyled)
+   ========================================================== */
+
+/* ==========================================================
+   §A — HERO · signature editorial stage (≤1024)
+   Does NOT touch: padding, gap, min-height, title font-size,
+   description margin/line-height, actions margin/gap,
+   footer margin → V5 short-viewport hotfix stays authoritative
+========================================================== */
+
+@media (max-width: 1024px) {
+
+  /* Deeper cinematic canvas, same DNA as desktop 17E */
+  body.dreamscape-v5
+  .hero.hero--v5.hero--v6.hero--v7 {
+    border-radius: 34px;
+    border-color: rgba(255, 255, 255, .9);
+
+    background:
+      radial-gradient(
+        ellipse 90% 62% at 84% 14%,
+        rgba(168, 139, 247, .42),
+        transparent 64%
+      ),
+      radial-gradient(
+        ellipse 80% 54% at 6% 96%,
+        rgba(222, 213, 255, .56),
+        transparent 66%
+      ),
+      radial-gradient(
+        ellipse 60% 44% at 56% 80%,
+        rgba(255, 255, 255, .7),
+        transparent 72%
+      ),
+      linear-gradient(
+        150deg,
+        #FDFCFF 0%,
+        #F2ECFF 50%,
+        #E3D7FD 100%
+      );
+
+    box-shadow:
+      0 34px 90px rgba(76, 50, 154, .16),
+      inset 0 1px 0 rgba(255, 255, 255, .95);
+  }
+
+  /* Editorial edition numeral (decorative, behind content) */
+  body.dreamscape-v5
+  .hero--v7::after {
+    content: "07";
+    position: absolute;
+    right: clamp(16px, 3vw, 44px);
+    bottom: clamp(4px, 1.4vw, 24px);
+    z-index: -1;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(96px, 15vw, 170px);
+    line-height: .8;
+    letter-spacing: -.08em;
+    color: rgba(104, 80, 188, .10);
+
+    pointer-events: none;
+  }
+
+  /* Kicker with ✦ + editorial rule */
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--dream-accent);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .26em;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow::before {
+    content: "✦";
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--dream-highlight);
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow::after {
+    content: "";
+    flex: 0 0 40px;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(104, 80, 188, .55),
+      transparent
+    );
+  }
+
+  /* Signature line: Georgia italic (identity, size from V5/hotfix) */
+  body.dreamscape-v5
+  .hero--v7 .hero__title span {
+    display: block;
+    color: var(--dream-accent);
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -.04em;
+  }
+
+  /* Description as a quoted editorial note */
+  body.dreamscape-v5
+  .hero--v7 .hero__description {
+    padding-left: 14px;
+    border-left: 2px solid rgba(104, 80, 188, .35);
+    color: var(--dream-muted);
+  }
+
+  /* CTAs as a confident pair of pills */
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__primary {
+    min-height: 52px;
+    padding-inline: 26px;
+    border-radius: 999px;
+    border-color: transparent;
+
+    background: linear-gradient(
+      135deg,
+      #6E57CB 0%,
+      #7E66D6 55%,
+      #5B45AD 100%
+    );
+    color: #fff;
+    box-shadow: 0 16px 38px rgba(84, 63, 158, .34);
+    font-size: 15px;
+    font-weight: 750;
+    letter-spacing: .01em;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__secondary {
+    min-height: 50px;
+    padding-inline: 24px;
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, .9);
+    border-color: rgba(255, 255, 255, .95);
+    color: var(--dream-ink);
+    box-shadow: 0 10px 26px rgba(76, 50, 154, .12);
+    font-weight: 700;
+  }
+
+  /* Brief touch feedback (short, no loop) */
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__actions
+  :is(button, a) {
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background 160ms ease,
+      border-color 160ms ease;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__actions
+  :is(button, a):active {
+    transform: translateY(1px) scale(.985);
+  }
+
+  /* Footer as tracked micro-label */
+  body.dreamscape-v5
+  .hero--v7 .hero__footer {
+    color: var(--dream-muted);
+    font-size: 10.5px;
+    font-weight: 650;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__indicator {
+    width: 9px;
+    height: 9px;
+    background: var(--dream-accent);
+    box-shadow: 0 0 0 4px rgba(104, 80, 188, .15);
+  }
+
+  /* Stage halo + dashed orbit ring (decorative, behind scene) */
+  body.dreamscape-v5
+  .hero--v7 .hero__visual::before {
+    content: "";
+    position: absolute;
+    inset: -6% -8%;
+    z-index: -1;
+
+    background: radial-gradient(
+      ellipse 62% 54% at 52% 46%,
+      rgba(140, 108, 238, .34),
+      rgba(222, 213, 255, .22) 46%,
+      transparent 74%
+    );
+    pointer-events: none;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__visual::after {
+    content: "";
+    position: absolute;
+    left: 52%;
+    top: 50%;
+    width: min(70%, 320px);
+    aspect-ratio: 1;
+    z-index: -1;
+    transform: translate(-50%, -50%) rotate(-6deg);
+
+    border: 1px dashed rgba(104, 80, 188, .26);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ======================================================
+     §B — DASHBOARD · one dominant violet stat card
+  ====================================================== */
+
+  /* Lavender glass with more depth, no backdrop-filter (perf) */
+  body.dreamscape-v5
+  .dashboard-panel.dashboard-panel--v2 {
+    border-radius: 30px;
+    border-color: rgba(255, 255, 255, .85);
+
+    background:
+      radial-gradient(
+        ellipse 70% 90% at 0% 0%,
+        rgba(168, 139, 247, .26),
+        transparent 62%
+      ),
+      radial-gradient(
+        ellipse 60% 80% at 100% 100%,
+        rgba(184, 166, 255, .32),
+        transparent 62%
+      ),
+      linear-gradient(150deg, #FBFAFF, #F1EBFF);
+
+    box-shadow:
+      0 24px 64px rgba(70, 46, 143, .11),
+      inset 0 1px 0 rgba(255, 255, 255, .9);
+
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Card surfaces: soft lavender paper (static, no blur) */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    position: relative;
+    overflow: hidden;
+    gap: 10px;
+
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, .98),
+      rgba(250, 248, 255, .96)
+    );
+    border-color: rgba(255, 255, 255, .95);
+    box-shadow:
+      0 14px 34px rgba(67, 52, 132, .09),
+      inset 0 1px 0 rgba(255, 255, 255, .9);
+
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Uppercase micro labels */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card
+  .stat-card__label {
+    color: var(--dream-muted);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card
+  .stat-card__value {
+    color: var(--dream-ink);
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card
+  .stat-card__description {
+    color: var(--dream-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  /* Glass icon chip */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card
+  .stat-card__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+
+    background: rgba(168, 139, 247, .16);
+    border: 1px solid rgba(168, 139, 247, .3);
+    color: var(--dream-accent);
+    font-size: 18px;
+  }
+
+  /* Editorial index numerals */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card::after {
+    content: "01";
+    position: absolute;
+    right: 16px;
+    bottom: -10px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(46px, 12vw, 60px);
+    line-height: 1;
+    letter-spacing: -.06em;
+    color: rgba(104, 80, 188, .10);
+    pointer-events: none;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:nth-child(2)::after {
+    content: "02";
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:nth-child(3)::after {
+    content: "03";
+  }
+
+  /* Hero stat: violet signature card (all mobile/tablet ranges) */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child {
+    background:
+      radial-gradient(
+        ellipse 120% 140% at 6% 4%,
+        rgba(255, 255, 255, .26),
+        transparent 58%
+      ),
+      linear-gradient(150deg, #6E57CB 0%, #8268DB 55%, #9377E4 100%);
+    border-color: rgba(255, 255, 255, .4);
+    box-shadow:
+      0 20px 46px rgba(79, 55, 156, .26),
+      inset 0 1px 0 rgba(255, 255, 255, .4);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child::after {
+    content: "01";
+    color: rgba(255, 255, 255, .18);
+    right: 18px;
+    bottom: -8px;
+    font-size: clamp(56px, 14vw, 76px);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child
+  .stat-card__label,
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child
+  .stat-card__description {
+    color: rgba(255, 255, 255, .82);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child
+  .stat-card__value {
+    color: #FFFFFF;
+    font-size: clamp(1.9rem, 6.6vw, 2.45rem);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child
+  .stat-card__icon {
+    background: rgba(255, 255, 255, .18);
+    border-color: rgba(255, 255, 255, .38);
+    color: #FFFFFF;
+  }
+
+  /* ======================================================
+     §C — COLLECTION · editorial heading + dominant search
+  ====================================================== */
+
+  body.dreamscape-v5
+  #collection.collection-panel--v3 {
+    border-radius: 30px;
+    border-color: rgba(255, 255, 255, .9);
+
+    background:
+      radial-gradient(
+        ellipse 70% 70% at 100% 0%,
+        rgba(168, 139, 247, .20),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 60% at 0% 100%,
+        rgba(222, 213, 255, .42),
+        transparent 62%
+      ),
+      linear-gradient(165deg, #FFFFFF 0%, #FBFAFF 62%, #F5F0FF 100%);
+
+    box-shadow:
+      0 22px 60px rgba(70, 46, 143, .10),
+      inset 0 1px 0 rgba(255, 255, 255, .95);
+  }
+
+  /* Eyebrow with ✦ */
+  body.dreamscape-v5
+  #collection .collection-panel__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px;
+
+    color: var(--dream-accent);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .24em;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-panel__eyebrow::before {
+    content: "✦";
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--dream-highlight);
+  }
+
+  /* Serif italic heading (Premium Editorial) */
+  body.dreamscape-v5
+  #collection .collection-panel__heading h2 {
+    margin: 12px 0 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.9rem, 5.4vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    color: var(--dream-ink);
+    text-wrap: balance;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-panel__description {
+    margin: 14px 0 0;
+    padding-left: 14px;
+    border-left: 2px solid rgba(104, 80, 188, .3);
+
+    color: var(--dream-muted);
+    font-size: 14.5px;
+    line-height: 1.7;
+  }
+
+  /* Micro labels for every control */
+  body.dreamscape-v5
+  #collection .collection-search label,
+  body.dreamscape-v5
+  #collection .collection-filters .field label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--dream-muted);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search label {
+    color: var(--dream-accent);
+  }
+
+  /* Search as the dominant interaction (≥16px = no iOS zoom) */
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap {
+    height: 60px;
+    padding-inline: 18px;
+    border-radius: 20px;
+
+    background: #FFFFFF;
+    border: 1.5px solid rgba(104, 80, 188, .24);
+    box-shadow: 0 18px 44px rgba(65, 43, 139, .12);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap:focus-within {
+    border-color: var(--dream-accent);
+    box-shadow:
+      0 0 0 4px rgba(104, 80, 188, .14),
+      0 18px 44px rgba(65, 43, 139, .12);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search__icon {
+    color: var(--dream-accent);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap input {
+    font-size: 16px;
+  }
+
+  /* Filters as organized soft pills */
+  body.dreamscape-v5
+  #collection .collection-filters select {
+    min-height: 52px;
+    padding: 0 16px;
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, .95);
+    border: 1px solid rgba(104, 80, 188, .22);
+    color: var(--dream-ink);
+    font-size: 14.5px;
+    font-weight: 600;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters select:focus,
+  body.dreamscape-v5
+  #collection .collection-filters select:focus-visible {
+    border-color: var(--dream-accent);
+    box-shadow: 0 0 0 4px rgba(104, 80, 188, .14);
+  }
+
+  /* Footer: italic hint + pill clear */
+  body.dreamscape-v5
+  #collection .collection-toolbar__footer {
+    border-top-color: rgba(104, 80, 188, .16);
+  }
+
+  body.dreamscape-v5
+  #collection .collection-toolbar__hint {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--dream-muted);
+    letter-spacing: .02em;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-clear {
+    min-height: 44px;
+    padding-inline: 20px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(104, 80, 188, .38);
+    background: rgba(255, 255, 255, .85);
+    color: var(--dream-accent);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+
+  /* ======================================================
+     §D — GALLERY · premium exhibition surfaces (≤1024)
+     Featured hierarchy is phone-only (§E) — tablet keeps
+     its uniform 2-column grid (no desktop layout forced)
+  ====================================================== */
+
+  /* Placard heading */
+  body.dreamscape-v5
+  .list-heading.list-heading--v3 {
+    margin: 36px 2px 20px;
+    align-items: end;
+  }
+
+  body.dreamscape-v5
+  .list-heading--v3 .list-heading__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--dream-accent);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .24em;
+  }
+
+  body.dreamscape-v5
+  .list-heading--v3 .list-heading__eyebrow::before {
+    content: "✦";
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--dream-highlight);
+  }
+
+  body.dreamscape-v5
+  .list-heading--v3 h2 {
+    margin: 8px 0 0;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.6rem, 6.4vw, 2.1rem);
+    line-height: 1.06;
+    letter-spacing: -.03em;
+    color: var(--dream-ink);
+  }
+
+  body.dreamscape-v5
+  .list-heading--v3 .list-heading__decoration {
+    font-size: clamp(24px, 7vw, 30px);
+    color: rgba(168, 139, 247, .65);
+  }
+
+  /* Grid rhythm */
+  body.dreamscape-v5
+  #grid.grid.gallery--v2.gallery--v4.gallery--v6 {
+    gap: 20px;
+    row-gap: 24px;
+  }
+
+  /* Regular card surfaces: soft lavender paper */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card__surface {
+    border: 1px solid rgba(255, 255, 255, .95);
+    border-radius: 26px;
+    background: linear-gradient(
+      165deg,
+      #FFFFFF 0%,
+      #FDFCFF 58%,
+      #F7F3FF 100%
+    );
+    box-shadow:
+      0 18px 46px rgba(57, 43, 122, .10),
+      0 3px 10px rgba(57, 43, 122, .05),
+      inset 0 1px 0 rgba(255, 255, 255, .95);
+  }
+
+  /* Exhibition media stage (all cards) */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-media {
+    border-radius: 26px 26px 0 0;
+    background:
+      radial-gradient(
+        ellipse at 50% 38%,
+        rgba(168, 139, 247, .3),
+        transparent 70%
+      ),
+      linear-gradient(150deg, #F5F1FF, #E7DEFC);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-media__image {
+    padding: 18px;
+  }
+
+  /* Content: editorial hierarchy */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__content {
+    padding: 20px 20px 10px;
+    gap: 10px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__title {
+    font-size: clamp(1.25rem, 5.2vw, 1.32rem);
+    line-height: 1.26;
+    letter-spacing: -.035em;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__price {
+    font-size: clamp(1.45rem, 5.6vw, 1.6rem);
+    color: var(--dream-accent);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__content .cat {
+    color: var(--dream-accent);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__content .meta {
+    color: var(--dream-muted);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  /* Actions: full pill language, ≥44px touch targets */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions {
+    padding: 12px 20px 20px;
+    gap: 10px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .buy {
+    min-height: 48px;
+    border-radius: 999px;
+
+    background: linear-gradient(
+      135deg,
+      #6E57CB 0%,
+      #7E66D6 55%,
+      #5B45AD 100%
+    );
+    border-color: transparent;
+    color: #fff;
+    font-weight: 750;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions .mini {
+    min-height: 44px;
+    padding-inline: 16px;
+    border-radius: 999px;
+  }
+
+  /* Purchased state keeps its owned look (re-asserted after
+     the V7 surface rules above; purchased-motion.css owns it) */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card.is-purchased
+  .wishlist-card__surface {
+    border-color: #d5eadd;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .wishlist-card.is-purchased .thumb {
+    background: linear-gradient(145deg, #f7fbf8, #eef8f1);
+  }
+}
+
+/* ==========================================================
+   §D2 — Phone dashboard structure (≤760): featured spans
+   full width + two balanced supporting cards
+========================================================== */
+
+@media (max-width: 760px) {
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child {
+    grid-column: 1 / -1;
+    min-height: 148px;
+    gap: 8px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child) {
+    min-height: 96px;
+    padding: 16px 16px 14px;
+    gap: 6px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child)
+  .stat-card__value {
+    font-size: clamp(1.05rem, 4.6vw, 1.45rem);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child)
+  .stat-card__description {
+    font-size: 11.5px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child)
+  .stat-card__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 12px;
+    font-size: 15px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child)::after {
+    right: 10px;
+    bottom: -8px;
+    font-size: clamp(40px, 11vw, 52px);
+  }
+}
+
+/* ==========================================================
+   §D3 — Tablet dashboard (761–1024): desktop-inspired
+   1.45 : 1 : 1 with the violet signature card leading
+========================================================== */
+
+@media (min-width: 761px) and (max-width: 1024px) {
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard {
+    grid-template-columns:
+      minmax(0, 1.45fr)
+      repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card {
+    min-height: 164px;
+    gap: 12px;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card .stat-card__value {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:first-child
+  .stat-card__value {
+    font-size: clamp(1.9rem, 3.4vw, 2.4rem);
+  }
+}
+
+/* ==========================================================
+   §E — Phone gallery (≤640): featured exhibition hierarchy
+   Single column only — never forces the desktop split grid
+========================================================== */
+
+@media (max-width: 640px) {
+
+  /* Compact hero sizing refinements stay with V5 (see §A) */
+
+  /* Featured exhibit: taller stage + plaque + larger type */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .wishlist-card__surface {
+    background: linear-gradient(
+      150deg,
+      #FFFFFF 0%,
+      #F7F3FF 58%,
+      #EFE7FF 100%
+    );
+    box-shadow:
+      0 34px 80px rgba(65, 43, 139, .16),
+      0 4px 14px rgba(65, 43, 139, .06),
+      inset 0 0 0 1px rgba(255, 255, 255, .85);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media {
+    aspect-ratio: 1 / 0.92;
+    background:
+      radial-gradient(
+        ellipse 85% 60% at 50% 30%,
+        rgba(168, 139, 247, .45),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 70% 45% at 50% 112%,
+        rgba(104, 80, 188, .35),
+        transparent 72%
+      ),
+      linear-gradient(168deg, #F3EEFF 0%, #E3D8FC 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, .55),
+      inset 0 -70px 90px -70px rgba(65, 43, 139, .45);
+  }
+
+  /* Exhibition plaque (decorative — never covers controls) */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media::before {
+    content: "01 / TÁC PHẨM NỔI BẬT";
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 3;
+
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .85);
+    border: 1px solid rgba(255, 255, 255, .95);
+    box-shadow: 0 8px 20px rgba(65, 43, 139, .16);
+
+    color: var(--dream-accent);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .2em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media__image {
+    padding: 24px;
+    filter: drop-shadow(0 16px 30px rgba(65, 43, 139, .26));
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__content {
+    padding: 22px 20px 8px;
+    gap: 12px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__title {
+    font-size: clamp(1.45rem, 6vw, 1.7rem);
+    line-height: 1.16;
+    letter-spacing: -.04em;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__price {
+    font-size: clamp(1.5rem, 6vw, 1.7rem);
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions {
+    padding: 14px 20px 22px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-card__actions .buy {
+    min-height: 50px;
+    font-size: 15px;
+  }
+
+  /* Featured + purchased: owned look wins over exhibition */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child).is-purchased
+  .wishlist-card__surface {
+    border-color: #d5eadd;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child).is-purchased
+  .product-media,
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child).is-purchased
+  .thumb {
+    background: linear-gradient(145deg, #f7fbf8, #eef8f1);
+    box-shadow: none;
+  }
+}
+
+/* ==========================================================
+   §E2 — Narrow phones (≤380): keep 320px fully usable
+========================================================== */
+
+@media (max-width: 380px) {
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow {
+    font-size: 10px;
+    letter-spacing: .16em;
+    gap: 6px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow::after {
+    flex: 0 0 20px;
+  }
+
+  /* Keep the description on the same line count as V5 at 320px
+     (hairline indent must not push CTAs into the fixed dock) */
+  body.dreamscape-v5
+  .hero--v7 .hero__description {
+    padding-left: 10px;
+    font-size: .88rem;
+  }
+
+  /* Footer micro-label stays on one line at 320 */
+  body.dreamscape-v5
+  .hero--v7 .hero__footer {
+    font-size: 9px;
+    letter-spacing: .08em;
+  }
+
+  /* Supporting stat labels stay on one line at 320/375 */
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child)
+  .stat-card__icon {
+    display: none;
+  }
+
+  body.dreamscape-v5
+  .panel.dashboard-panel--v2
+  .total.stats-dashboard > .stat-card:not(:first-child)
+  .stat-card__label {
+    font-size: 10px;
+    letter-spacing: .12em;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-panel__eyebrow,
+  body.dreamscape-v5
+  .list-heading--v3 .list-heading__eyebrow {
+    font-size: 10px;
+    letter-spacing: .2em;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-search__input-wrap {
+    padding-inline: 14px;
+  }
+
+  body.dreamscape-v5
+  #collection .collection-filters select {
+    padding: 0 14px;
+    font-size: 14px;
+  }
+
+  /* Two-line titles wrap cleanly at 320 */
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__content {
+    padding: 18px 16px 8px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  .product-card__actions {
+    padding: 12px 16px 18px;
+  }
+
+  body.dreamscape-v5
+  #grid.gallery--v2.gallery--v4.gallery--v6
+  > .wishlist-card:first-child:not(:only-child)
+  .product-media::before {
+    font-size: 9px;
+    letter-spacing: .16em;
+    padding: 6px 10px;
+  }
+}
+
+/* ==========================================================
+   §E3 — Mobile Dock (≤640): V5/V6 mechanism untouched,
+   only material harmony (visibility/dialog rules untouched)
+========================================================== */
+
+@media (max-width: 640px) {
+  body.dreamscape-v5 .mobile-dock {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, .97) 0%,
+      rgba(246, 243, 255, .95) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, .9);
+    border-radius: 26px;
+    box-shadow:
+      0 18px 46px rgba(65, 43, 139, .18),
+      0 4px 12px rgba(65, 43, 139, .08);
+
+    /* static gradient replaces blur — cheaper while scrolling */
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  body.dreamscape-v5 .mobile-dock__item {
+    color: var(--dream-muted);
+    transition: color 140ms ease, transform 140ms ease;
+  }
+
+  body.dreamscape-v5 .mobile-dock__item:active {
+    color: var(--dream-accent);
+    transform: scale(.96);
+  }
+
+  body.dreamscape-v5 .mobile-dock__add {
+    border-radius: 999px;
+    background: linear-gradient(
+      135deg,
+      #6E57CB 0%,
+      #7E66D6 55%,
+      #5B45AD 100%
+    );
+    box-shadow: 0 12px 30px rgba(84, 63, 158, .36);
+    transition: transform 140ms ease, box-shadow 140ms ease;
+  }
+
+  body.dreamscape-v5 .mobile-dock__add:active {
+    transform: scale(.94);
+  }
+}
+
+/* ==========================================================
+   §G — Reduced motion: kill every transition/animation this
+   layer introduces (decorative motion never loops here)
+========================================================== */
+
+@media (max-width: 1024px) and (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__actions
+  :is(button, a),
+  body.dreamscape-v5 .mobile-dock,
+  body.dreamscape-v5 .mobile-dock * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ==========================================================
+   17G — Final Release Hotfix: Hero CTA / Mobile Dock clearance
+   Short phones (same trigger as the V5 short-viewport hotfix:
+   max-width 640 + max-height 740) keep BOTH Hero CTAs fully
+   tappable above the fixed Dock at scroll 0 — verified at
+   320x700 and 375x667. 375x812 / 430x932 unaffected
+   (height > 740). Vertical rhythm only: same elements, same
+   order, pill targets stay 48px (>= 44px). Dock, z-index,
+   safe-area and desktop >= 1025 untouched.
+========================================================== */
+
+@media (max-width: 640px) and (max-height: 740px) {
+  body.dreamscape-v5
+  .hero.hero--v5 {
+    padding-top: 16px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__eyebrow {
+    margin-bottom: 8px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero__description {
+    margin-top: 6px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__actions {
+    margin-top: 8px;
+    gap: 6px;
+  }
+
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__primary,
+  body.dreamscape-v5
+  .hero--v7 .hero-v3__secondary {
+    min-height: 48px;
+  }
+}

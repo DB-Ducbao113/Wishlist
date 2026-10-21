@@ -61,12 +61,6 @@
     display: none;
   }
 
-  /* The expanded filter panel uses the dock's screen space for its reset
-     action; hide the dock until the user collapses the panel again. */
-  .dreamscape-v5:has(#filtersPanel.is-open) .mobile-dock {
-    display: none;
-  }
-
   /* Mobile header */
   .dreamscape-v5 .site-header {
     border-bottom-color: var(--dream-border);

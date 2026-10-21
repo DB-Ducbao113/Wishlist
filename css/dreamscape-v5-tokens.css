@@ -3,17 +3,17 @@
 
 :root {
   /* Foundation */
-  --dream-bg: #F5F5F7; /* Light neutral background */
+  --dream-bg: #F8F6FF;
   --dream-surface: #FFFFFF;
-  --dream-surface-soft: #FAFAFC;
-  --dream-mist: #EAEAEA;
+  --dream-surface-soft: #F3EFFF;
+  --dream-mist: #DED5FF;
 
   /* Identity */
-  --dream-accent: #007AFF; /* Apple blue */
-  --dream-accent-hover: #005FCC;
-  --dream-highlight: #34C759; /* Apple green */
-  --dream-ink: #1C1C1E;
-  --dream-muted: #8E8E93;
+  --dream-accent: #6850BC;
+  --dream-accent-hover: #543F9E;
+  --dream-highlight: #A88BF7;
+  --dream-ink: #19152C;
+  --dream-muted: #625979;
 
   /* Glass materials */
   --dream-glass:
@@ -24,10 +24,10 @@
     #E5DDF6;
 
   /* Shapes */
-  --dream-radius-sm: 8px;
-  --dream-radius-md: 12px;
-  --dream-radius-lg: 16px;
-  --dream-radius-xl: 24px;
+  --dream-radius-sm: 16px;
+  --dream-radius-md: 22px;
+  --dream-radius-lg: 28px;
+  --dream-radius-xl: 36px;
   --dream-radius-pill: 999px;
 
   /* Shadows */
@@ -42,15 +42,15 @@
     0 28px 70px rgba(65, 43, 139, .14);
 
   /* Layout */
-  --dream-container: 1240px;
-  --dream-section-gap: 24px;
+  --dream-container: 1280px;
+  --dream-section-gap: 32px;
 
   /* Motion */
-  --dream-motion-fast: 120ms;
-  --dream-motion-normal: 200ms;
-  --dream-motion-slow: 350ms;
+  --dream-motion-fast: 160ms;
+  --dream-motion-normal: 260ms;
+  --dream-motion-slow: 550ms;
   --dream-ease:
-    cubic-bezier(.25, .8, .25, 1);
+    cubic-bezier(.22, 1, .36, 1);
 
   /* Layering */
   --dream-glass-blur: 12px;

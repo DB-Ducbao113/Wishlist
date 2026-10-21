@@ -7,7 +7,7 @@
 
 /* ============ SITE HEADER (fixed topbar) ============ */
 /* The fixed header that covers the top of the page. */
-.site-header, .topbar {
+.site-header {
   display: block;
   position: fixed;
   top: 0;
@@ -21,8 +21,6 @@
   -webkit-backdrop-filter: blur(14px);
   background: color-mix(in srgb, var(--bg) 72%, transparent);
 }
-/* .site-header specific scrolled state remains */
-.site-header.scrolled { border-bottom-color: var(--color-border) }
 
 /* Keep a minimal bottom border visible when scrolled past */
 .site-header.scrolled { border-bottom-color: var(--color-border) }
