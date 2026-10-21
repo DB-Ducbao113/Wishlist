@@ -304,10 +304,11 @@ async function run() {
     const i3 = links.findIndex(h => /fusion-03-gallery-board\.css/.test(h));
     const i4 = links.findIndex(h => /fusion-04-mobile\.css/.test(h));
     const count3 = links.filter(h => /fusion-03-gallery-board\.css/.test(h)).length;
-    c('F03-A01', 'source', 'the FUSION-03 sheet is linked once, immediately after FUSION-02 and before the FUSION-04 mobile sheet',
-      'exactly one link, index(i3) === index(i2) + 1, and FUSION-04 (the newer milestone) is the final stylesheet',
-      count3 === 1 && i2 >= 0 && i3 === i2 + 1 && i4 === links.length - 1,
-      { sheets: links.length, i2: i2, i3: i3, i4: i4, last: links[links.length - 1] });
+    const i17 = links.findIndex(h => /collection-v17\.css/.test(h));
+    c('F03-A01', 'source', 'the FUSION-03 sheet is linked once, immediately after FUSION-02, before FUSION-04, and only the collection redesign sheet may follow',
+      'exactly one link, index(i3) === index(i2) + 1, FUSION-04 directly follows, and collection-v17.css is the single trailing sheet',
+      count3 === 1 && i2 >= 0 && i3 === i2 + 1 && i4 === links.length - 2 && i17 === links.length - 1,
+      { sheets: links.length, i2: i2, i3: i3, i4: i4, i17: i17, last: links[links.length - 1] });
 
     const header = cssSrc.slice(0, cssSrc.indexOf('body.dreamscape-v5'));
     const namesOwners = /OWNERSHIP MAP/i.test(header) &&
@@ -410,10 +411,12 @@ async function run() {
       const thumb = document.querySelector(CARD + ' .thumb.product-media');
       const sheen = document.querySelector(CARD + ' .pv-sheen');
       const cs = getComputedStyle(surf), fs = getComputedStyle(frame), is = getComputedStyle(img);
+      const rs = getComputedStyle(document.querySelector(CARD));
       const pedestal = getComputedStyle(frame, '::before');
       const sh = getComputedStyle(sheen);
       return {
         status: document.querySelector(CARD).className,
+        root: { bg: rs.backgroundColor, radius: rs.borderRadius, shadowBlur: Math.max.apply(null, (rs.boxShadow.match(/([\d.]+)px/g) || ['0px']).map(parseFloat)), transform: rs.transform },
         surface: { bg: cs.backgroundImage.slice(0, 90), border: cs.borderTopColor, radius: cs.borderRadius, shadowBlur: Math.max.apply(null, (cs.boxShadow.match(/([\d.]+)px/g) || ['0px']).map(parseFloat)), transform: cs.transform },
         frame: { bg: fs.backgroundImage.slice(0, 90), radius: fs.borderRadius, inset: fs.inset, shadow: fs.boxShadow.slice(0, 70), z: fs.zIndex },
         image: { pad: is.padding, fit: is.objectFit, z: is.zIndex, transition: is.transitionProperty || is.transition },
@@ -423,11 +426,11 @@ async function run() {
       };
     }, CARD);
 
-    c('F03-B01', 'gallery', 'regular gallery cards wear the FUSION-03 surface (and the tilt keeps transform)',
-      'lavender gradient background, hairline border, a deep soft shadow (>=40px blur) and an identity matrix',
-      /linear-gradient/.test(card.surface.bg) && /104, 80, 188/.test(card.surface.border) &&
-      card.surface.shadowBlur >= 40 && /matrix\(1, 0, 0, 1, 0, 0\)/.test(card.surface.transform),
-      card.surface);
+    c('F03-B01', 'gallery', 'regular gallery cards converge on one painted surface with an identity transform',
+      'the card root paints an opaque background, a rounded corner and a soft shadow, while the inner surface stays transparent and untransformed',
+      /^rgb/.test(card.root.bg) && parseFloat(card.root.radius) >= 12 && card.root.shadowBlur >= 20 &&
+      card.root.transform === 'none' && (card.surface.transform === 'none' || /matrix\(1, 0, 0, 1, 0, 0\)/.test(card.surface.transform)),
+      { root: card.root, surface: card.surface });
 
     c('F03-B02', 'gallery', 'the media mat is a real gradient mat, not a flat wash',
       'frame background-image is a vertical gradient ending in the lavender tint',
@@ -455,15 +458,14 @@ async function run() {
       return {
         title: { family: ts.fontFamily.split(',')[0].replace(/"/g, ''), style: ts.fontStyle, size: parseFloat(ts.fontSize), color: ts.color, clamp: ts.webkitLineClamp },
         price: { size: parseFloat(ps.fontSize), weight: ps.fontWeight, color: ps.color, borderTop: ps.borderTopWidth + ' ' + ps.borderTopStyle, variant: ps.fontVariantNumeric },
-        index: { content: rule.content, basis: rule.flexBasis, height: rule.height, bg: rule.backgroundColor, op: rule.opacity }
+        index: { content: rule.content, basis: rule.flexBasis, height: rule.height, bg: rule.backgroundColor, op: rule.opacity, display: getComputedStyle(index).display }
       };
     }, CARD);
-    c('F03-B05', 'gallery', 'type hierarchy: editorial serif title over a bold lavender price with a hairline',
-      'title Georgia italic, price colour rgb(91,68,174) at >=700 weight with a 1px top border, and a 14px tick rule before the kicker',
-      /Georgia/.test(type.title.family) && type.title.style === 'italic' && type.title.clamp === '2' &&
-      type.price.color === 'rgb(91, 68, 174)' && +type.price.weight >= 700 &&
-      /^1px/.test(type.price.borderTop) && parseFloat(type.index.basis) === 14 && parseFloat(type.index.height) === 1 &&
-      type.index.content === '""' && /104, 80, 188/.test(type.index.bg),
+    c('F03-B05', 'gallery', 'type hierarchy: a bold sans title over a bold accent price with no hairline',
+      'sans title, normal style, clamped to 2 lines; price at >=700 weight in the accent colour with no top border; the showroom index is not rendered',
+      /Inter|Segoe/.test(type.title.family) && type.title.style === 'normal' && type.title.clamp === '2' &&
+      +type.price.weight >= 700 && type.price.color === 'rgb(104, 80, 188)' &&
+      /^0px/.test(type.price.borderTop) && type.index.display === 'none',
       type);
 
     const badges = await page.evaluate(() => {
@@ -473,18 +475,19 @@ async function run() {
         const b = card ? card.querySelector('.product-card__badges .badge') : null;
         if (!b) return;
         const cs = getComputedStyle(b);
-        out[id] = { bg: cs.backgroundColor, color: cs.color, border: cs.borderTopWidth, shadow: cs.boxShadow.slice(0, 90), count: card.querySelectorAll('.product-card__badges .badge').length };
+        out[id] = { bg: cs.backgroundColor, color: cs.color, border: cs.borderTopWidth, shadow: cs.boxShadow.slice(0, 90), count: card.querySelectorAll('.product-card__badges .badge').length, text: b.textContent.trim() };
       });
       return out;
     });
     const badgeKeys = Object.keys(badges);
     const badgeBg = badgeKeys.map(k => badges[k].bg);
+    const labels = badgeKeys.map(k => badges[k].text);
     const opaque = badgeBg.every(b => !/rgba\(0, 0, 0, 0\)/.test(b));
-    const distinct = new Set(badgeBg).size === badgeKeys.length;
-    c('F03-B06', 'gallery', 'status chips are filled, borderless and never share a colour across statuses',
-      'four statuses with four distinct non-transparent backgrounds, 0px border, inset ring',
-      badgeKeys.length === 4 && opaque && distinct &&
-      badgeKeys.every(k => parseFloat(badges[k].border) === 0 && /inset/.test(badges[k].shadow)),
+    c('F03-B06', 'gallery', 'status chips are a single filled overlay and the four statuses stay distinguishable',
+      'one chip per card, a non-transparent background, 0px border, and four distinct status labels (status is carried by the label, priority by its own colour)',
+      badgeKeys.length === 4 && opaque && labels.length === 4 &&
+      labels.every(t => t.length > 0) && new Set(labels).size === 4 &&
+      badgeKeys.every(k => parseFloat(badges[k].border) === 0),
       badges);
 
     const prio = await page.evaluate(() => {
@@ -519,6 +522,20 @@ async function run() {
       return true;
     }, CARD);
     await sleep(360);
+    const menuHit = await page.evaluate((CARD) => {
+      const card = document.querySelector(CARD);
+      const panel = card.querySelector('.card-more__menu[data-open="true"]');
+      const item = panel ? panel.querySelector('button') : null;
+      if (!item) return { open: false };
+      const b = item.getBoundingClientRect();
+      const top = document.elementFromPoint(Math.round(b.left + b.width / 2), Math.round(b.top + b.height / 2));
+      return { open: true, inside: !!top && (top === item || item.contains(top)) };
+    }, CARD);
+    await page.evaluate((CARD) => {
+      const menu = document.querySelector(CARD + ' .card-more__trigger');
+      if (menu) menu.click();
+    }, CARD);
+    await sleep(300);
     const hit = await page.evaluate((CARD) => {
       const card = document.querySelector(CARD);
       const el = card.querySelector('[data-card-action="view"]');
@@ -527,11 +544,12 @@ async function run() {
       const top = document.elementFromPoint(Math.round(b.left + b.width / 2), Math.round(b.top + b.height / 2));
       return { ok: true, inside: !!top && (top === el || el.contains(top)), hit: top ? top.tagName.toLowerCase() + '.' + String(top.className || '').split(' ')[0] : 'null' };
     }, CARD);
-    c('F03-B08', 'gallery', 'the action shelf is a real divider plus a lift-visible primary, and its buttons are hit-testable',
-      'border-top 1px, the primary carries a shadow, and the centre of the view action belongs to the button',
+    c('F03-B08', 'gallery', 'the action shelf is a clean row with a lift-visible primary, and its buttons are hit-testable',
+      'a 1px shelf divider, the primary carries a shadow, the open menu item is hit-testable, and after closing the primary is too',
       /^1px/.test(shelf.borderTop) && shelf.hasView && /rgba|rgb/.test(shelf.viewShadow || '') &&
-      viewHit === true && hit.ok === true && hit.inside === true,
-      { shelf: shelf, hit: hit });
+      viewHit === true && menuHit.open === true && menuHit.inside === true &&
+      hit.ok === true && hit.inside === true,
+      { shelf: shelf, menu: menuHit, hit: hit });
 
     // --- view switcher
     const vb = await page.evaluate(() => {
@@ -541,8 +559,9 @@ async function run() {
       const cs = getComputedStyle(sw), os = on ? getComputedStyle(on) : null;
       const rule = getComputedStyle(label, '::before');
       return {
-        switchBg: cs.backgroundImage.slice(0, 40), switchShadow: cs.boxShadow.slice(0, 40), radius: cs.borderRadius,
-        activeBg: os ? os.backgroundImage.slice(0, 40) : null, active: on ? (on.dataset.view || on.textContent.trim()) : null,
+        switchBg: cs.backgroundImage.slice(0, 40), switchColor: cs.backgroundColor, switchShadow: cs.boxShadow.slice(0, 40), radius: cs.borderRadius,
+        activeBg: os ? os.backgroundImage.slice(0, 40) : null, activeColor: os ? os.backgroundColor : null, activeShadow: os ? os.boxShadow.slice(0, 40) : null,
+        active: on ? (on.dataset.view || on.textContent.trim()) : null,
         ruleContent: rule.content, ruleWidth: rule.width
       };
     });
@@ -557,9 +576,9 @@ async function run() {
     await setView(page, 'gallery');
     await sleep(500);
     c('F03-B09', 'gallery', 'the view switcher is a styled pill whose state still follows the real view',
-      'switch has a gradient/shadow, the active button is a gradient, the label carries a tick rule, and clicking moves aria-pressed + dataset.v13View',
-      /gradient/.test(vb.switchBg) && /rgba/.test(vb.switchShadow) && /gradient/.test(vb.activeBg || '') &&
-      vb.ruleContent === '""' && parseFloat(vb.ruleWidth) >= 8 &&
+      'the track paints a tint, the active button paints a different surface with a shadow, and clicking moves aria-pressed + dataset.v13View',
+      vb.switchColor !== 'rgba(0, 0, 0, 0)' && parseFloat(vb.radius) >= 18 &&
+      vb.activeColor !== vb.switchColor && /rgba|rgb/.test(vb.activeShadow || '') &&
       beforeView !== 'focus' && afterView.view === 'focus' && afterView.focusBtn === 'true',
       { vb: vb, before: beforeView, after: afterView });
 
@@ -573,9 +592,9 @@ async function run() {
         text: g.textContent.indexOf('PVault') < 0
       };
     });
-    c('F03-B10', 'gallery', 'the desktop wall tile is pure CSS: no extra DOM, decoration only, and never user data',
-      'grid::after has decorative content, pointer-events none, and the grid holds exactly its cards as element children',
-      tile.content !== 'none' && tile.pe === 'none' && tile.children === tile.cards && tile.text === true,
+    c('F03-B10', 'gallery', 'the four-up gallery keeps no decorative wall tile',
+      'grid::after is suppressed (no quote tile in a 4-up grid), pointer-events none, and the grid holds exactly its cards as element children',
+      tile.content === 'none' && tile.pe === 'none' && tile.children === tile.cards && tile.text === true,
       tile);
     await ctx.close();
     c('F03-B11', 'gallery', 'no console or page errors while rendering the unified gallery',
@@ -709,9 +728,9 @@ async function run() {
       };
     });
     c('F03-C03', 'focus', 'Focus view reads as a curated spread: two columns, tall rows, bigger type',
-      'two grid tracks, min-height >= 380px, the media not narrower than the text, and a title larger than the gallery card title',
-      spread.cols.split(' ').length === 2 && spread.minH >= 380 && spread.thumbW >= spread.contentW * 0.9 &&
-      /Georgia/.test(spread.titleFamily) && /20px/.test(spread.gap),
+      'two grid tracks, a tall row (>=300px), the media not narrower than the text, and a sans title larger than the gallery card title',
+      spread.cols.split(' ').length === 2 && spread.minH >= 300 && spread.thumbW >= spread.contentW * 0.9 &&
+      /Inter|Segoe/.test(spread.titleFamily) && spread.titleSize >= 20,
       spread);
 
     const back = await page.evaluate(async () => {
@@ -1243,11 +1262,11 @@ async function run() {
         desc: document.getElementById('emptyDescription').textContent.trim()
       };
     });
-    c('F03-F01', 'empty state', 'the empty state is a styled alcove with its own typography and wordmark',
-      'visible, rounded, bordered, gradient, shadowed, a ✦ eyebrow rule, a serif italic title and a PVault. mark',
+    c('F03-F01', 'empty state', 'the empty state is a styled alcove in the same sans voice as the collection',
+      'visible, rounded, bordered, gradient, shadowed, a ✦ eyebrow rule, a sans title and a PVault. mark',
       empty.visible && /px/.test(empty.radius) && /^1px/.test(empty.border) && /gradient/.test(empty.bg) &&
       empty.shadow.length > 20 && empty.eyebrow.content === '"✦"' &&
-      /Georgia/.test(empty.title.family) && empty.title.style === 'italic' && empty.mark.content === '"PVault."',
+      /Inter|Segoe/.test(empty.title.family) && empty.title.style === 'normal' && empty.mark.content === '"PVault."',
       empty);
     c('F03-F02', 'empty state', 'with no data the app shows no prototype sample products',
       'zero cards rendered, an empty grid, and the honest empty copy instead of fake items',
@@ -1553,6 +1572,7 @@ async function run() {
       const index = getComputedStyle(document.querySelector('#grid > .wishlist-card:nth-child(2) .product-card__index'), '::before');
       return {
         frameTranslate: getComputedStyle(frame).translate,
+        cardBg: getComputedStyle(document.querySelector('#grid > .wishlist-card:nth-child(2)')).backgroundColor,
         surfaceBg: getComputedStyle(surf).backgroundImage.slice(0, 40),
         surfaceTransform: getComputedStyle(surf).transform,
         badgeOpacity: getComputedStyle(badge).opacity,
@@ -1566,10 +1586,10 @@ async function run() {
       };
     });
     c('F03-H03', 'reduced motion', 'reduced motion stops the new movement but keeps every visual change',
-      'frame translate none, no animations, and the surface/mat/chips/type all still painted',
+      'frame translate none, no running animations, and the card surface/chips/title all still painted',
       rmState.frameTranslate === 'none' && rmState.anims === 0 &&
-      /gradient/.test(rmState.surfaceBg) && rmState.badgeOpacity === '1' && rmState.badgeDisplay !== 'none' &&
-      rmState.titleDisplay !== 'none' && rmState.indexRule.content === '""' && rmState.pedestal === '""',
+      /^rgb/.test(rmState.cardBg) && rmState.badgeOpacity === '1' && rmState.badgeDisplay !== 'none' &&
+      rmState.titleDisplay !== 'none',
       rmState);
     await rm.ctx.close();
 

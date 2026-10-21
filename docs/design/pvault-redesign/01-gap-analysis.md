@@ -229,8 +229,46 @@ Functional verification for this milestone:
 * `node scripts/qa/ux05-browser-qa.js` → **121 / 121 PASS** (add / edit /
   delete / undo, search, filters, sort, gallery / focus / board, quick view,
   keyboard, empty state, import / export, reduced motion).
-* `node scripts/qa/qa-run.js` → full battery; see the commit message for the
-  pass counts and the known machine-bound timing gate.
+* `node scripts/qa/qa-run.js` → **1367 / 1367 PASS**, 20 suites, zero
+  deterministic failures, zero timing failures (F1 107, F2 168, F3 167,
+  F4 65, F5 97, F6 28, MOTION-02..06 219, FUSION-01..04 361, V16 36,
+  M1..M4 119). The pre-redesign baseline was 1366/1367 with the
+  machine-bound `F6-6-01` render-cost gate failing.
+
+### 8.1 Test contracts that were rewritten (and why)
+
+The previous suites encoded the *old* card design, so a redesign necessarily
+invalidates some of their expectations. Each affected assertion was rewritten
+to the new contract with the same intent — none were skipped, deleted or
+loosened to “anything passes”.
+
+| Check | Old expectation | New expectation (same intent) |
+| --- | --- | --- |
+| `F03-A01`, `F04-A01` | FUSION-04 is the final stylesheet | FUSION-04 is followed by exactly one trailing sheet, `collection-v17.css`; the cascade guard still forbids anything else |
+| `F03-B01` | the inner surface paints the lavender gradient, hairline and deep shadow | the card root paints an opaque surface, 20px radius and soft shadow; the inner surface stays transparent with an identity transform |
+| `F03-B05` | serif italic title, accent price with a 1px hairline, tick rule | bold sans title (2-line clamp), accent price at ≥700 with **no** hairline, showroom index not rendered |
+| `F03-B06` | four statuses with four distinct chip backgrounds | one filled status chip per card and four distinct status **labels** (status by label, priority by its own colour — see `F03-B07`, unchanged) |
+| `F03-B08` | 1px shelf divider, primary hit-testable with the menu open | 1px shelf divider kept, the open menu item is hit-testable, and after closing it the primary is hit-testable again (the new menu is wider, so the old “with the menu open” sample would hit the panel) |
+| `F03-B09` | gradient track, gradient active pill, tick rule before the label | tinted track (`background-color`), a different active surface with a shadow, and the real state transition; the tick rule was removed with the label |
+| `F03-B10` | a CSS wall tile is painted on `#grid::after` | the tile is suppressed in the four-up gallery; no extra DOM, pointer-events none |
+| `F03-C03` | two columns, ≥380px, Georgia title, 20px gap | two columns, ≥300px, sans title ≥20px (still larger than the gallery title) |
+| `F03-F01` | serif italic empty title | sans empty title, same alcove, ✦ rule and `PVault.` mark |
+| `F03-H03` | reduced motion keeps the gradient surface, index rule and pedestal | reduced motion keeps the painted card, chips and title, and still stops all animations |
+| `M05-20` | the close proxy width had to sit above the dialog image and at/below the featured first card | the proxy width must be strictly between the dialog image and the card image — layout-independent, sampled mid-flight (200ms of a 300ms flight) |
+
+Real regressions found by the battery and fixed in this milestone (not test
+edits): 200 `backdrop-filter` surfaces in the gallery (perf gates), sub-44px
+coarse-pointer targets, a collapsed card “more” menu (its panel inherited the
+36px trigger and clipped item text), a re-anchored menu that froze Chrome's
+input pipeline on the primary action, and the purchase celebration pseudo
+being hidden by the gallery cleanup (the class was never removed because
+`animationend` never fired).
+
+Known remaining check: none. The battery is green. The two guards that used to
+be listed here (the Quick View close proxy width and the idle rAF probe) are
+now measured in a layout-independent way, and the render-cost gates
+(`F4-6-04`, `F6-6-01`, `M3-16`) pass on an idle machine but remain
+load-sensitive by nature — they are reported as timing, never as behaviour.
 
 ---
 

@@ -183,7 +183,7 @@ async function run() {
     await openQvFromCard(page, 'a1');
     await page.waitForFunction(() => !document.querySelector('.qv-proxy'), { timeout: 3000 });
     await page.evaluate(() => document.getElementById('qvClose').click());
-    await sleep(80);
+    await sleep(200);
     const midClose = await page.evaluate(() => {
       const p = document.querySelector('.qv-proxy');
       const card = document.querySelector('#grid > .wishlist-card[data-id="a1"] .product-media__image');
@@ -199,7 +199,14 @@ async function run() {
       };
     });
     c('M05-19', 'close flight', 'proxy measurable mid-close', 'proxy present while dialog is closing', midClose.proxy === true && midClose.closing === true, midClose);
-    c('M05-20', 'close flight', 'proxy rect mid-close between target and source', 'rect in flight', midClose.rect && midClose.target && midClose.card && midClose.rect.w > midClose.target.w && midClose.rect.w <= midClose.card.w + 2, midClose.rect);
+    c('M05-20', 'close flight', 'proxy rect mid-close strictly between the dialog image and the card image',
+      'the proxy width is inside the open interval bounded by the two images, so it is genuinely in flight (not snapped to either end)',
+      (() => {
+        if (!midClose.rect || !midClose.target || !midClose.card) return false;
+        const lo = Math.min(midClose.target.w, midClose.card.w) + 2;
+        const hi = Math.max(midClose.target.w, midClose.card.w) - 2;
+        return midClose.rect.w > lo && midClose.rect.w < hi;
+      })(), midClose);
     const midA11yOk = midClose.a11y && midClose.a11y.ariaHidden === 'true' && midClose.a11y.inert === true && midClose.a11y.pe === 'none' && midClose.a11y.noTab && midClose.a11y.noId && midClose.a11y.text;
     c('M05-21', 'close flight', 'proxy a11y hygiene', 'aria-hidden+inert+pointer-events none+no focusable+no id+no text', midA11yOk, midClose.a11y);
     await page.waitForFunction(() => !document.querySelector('.qv-proxy') && document.getElementById('qv').open === false, { timeout: 3000 });

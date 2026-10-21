@@ -900,12 +900,6 @@ body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-car
   background: rgba(104, 80, 188, .12);
 }
 
-body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more {
-  position: relative;
-  flex: 0 0 auto;
-  margin: 0 0 0 auto;
-}
-
 body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
   display: inline-flex;
   align-items: center;
@@ -921,17 +915,6 @@ body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-car
   border-radius: 11px;
   background: #fff;
   color: var(--dream-accent, #6850BC);
-}
-
-body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__menu {
-  /* The trigger shrink-wraps in the new shelf, so the absolute panel must
-     not inherit its 36px width (it used to inherit a full-width wrapper). */
-  left: auto;
-  right: 0;
-  z-index: 40;
-  width: max-content;
-  min-width: 190px;
-  max-width: min(260px, calc(100vw - 32px));
 }
 
 /* Purchased items read as a quiet archive row, not a dead card. */
@@ -964,6 +947,13 @@ body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .v1
   display: none;
 }
 
+/* The old hairline above the price read as a link underline; drop it in the
+   focus exhibit too, not only in the four-up gallery. */
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__price {
+  border: 0 !important;
+  text-decoration: none !important;
+}
+
 /* ------------------------------------------------------------
    9. Empty state — same voice as the head
    ------------------------------------------------------------ */
@@ -978,7 +968,7 @@ body.dreamscape-v5 #empty h3 {
 }
 
 body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__title {
-  max-width: 26ch;
+  max-width: 30ch;
   margin: 0;
   text-align: center;
 
@@ -1168,6 +1158,12 @@ body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-car
   display: none !important;
 }
 
+/* The purchase celebration paints .thumb::after and the runtime removes the
+   class on animationend. The gallery cleanup above must not silence it. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card.is-purchase-celebrating .thumb.product-media::after {
+  display: block !important;
+}
+
 body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__title {
   font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
   font-size: 15px !important;
@@ -1178,10 +1174,9 @@ body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-car
   color: var(--dream-ink, #19152C) !important;
 }
 
-/* A legacy rule underlines card text, and the decoration propagates from a
-   descendant that cannot be reached from the content subtree alone. Scoped to
-   the gallery card, this is the same bounded reset the browser probe proved
-   removes it. Action links keep an explicit `text-decoration: none`. */
+/* A legacy rule underlines text inside the old card markup. The redesigned
+   card has no underlined text, so this is a bounded reset scoped to the
+   gallery card; action labels keep an explicit `text-decoration: none`. */
 body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card,
 body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card * {
   text-decoration: none !important;
