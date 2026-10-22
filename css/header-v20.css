@@ -47,17 +47,31 @@ body.dreamscape-v5 .site-header.scrolled {
   background: rgba(250, 248, 255, .94);
 }
 
-/* One row: brand | navigation | sync | actions. The element chain in
+/* One row: brand | navigation | right cluster. The element chain in
    the selector is REQUIRED — navigation.css declares
    `header.top.site-header .site-nav { display: flex }` later in the
    sheet, and a two-class anchor lost to it (measured: the band
    rendered as a wrapping flex row at 390px). */
 body.dreamscape-v5 header.top.site-header .site-nav {
   display: grid;
-  grid-template-columns: auto minmax(0, auto) minmax(0, 1fr) auto;
-  grid-template-areas: "brand nav sync actions";
+  /* Owner: the workspace pill should sit in the MIDDLE of the header
+     ("Trang chủ / Bộ sưu tập nên để xích qua phải vào giữa"). A 1fr
+     middle track cannot achieve that: the brand (358px) is much heavier
+     than the right cluster, so a centred pill lands 31px left of the
+     page centre (measured). Three equal 1fr tracks with the pill
+     centred in the middle one DO hit the page centre, while the brand
+     and the right cluster stay pinned to their own edges. The sync
+     cluster and the actions share the right track as one flex row. */
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "brand nav right";
   align-items: center;
-  gap: clamp(12px, 1.6vw, 26px);
+  /* 26px of track gap is too generous once the right track carries both
+     the sync cluster AND the actions: at 1440 the band totalled 1372px
+     against a 1360px content box and the sync status was ellipsised
+     mid-word ("…thiết bị na…", owner screenshot). The tracks now take
+     the slack; 10px keeps the four groups distinct without starving
+     them. */
+  gap: clamp(10px, 1vw, 14px);
   min-height: 66px;
   padding: 0 clamp(16px, 3vw, 40px);
   max-width: 1440px;
@@ -70,16 +84,34 @@ body.dreamscape-v5 header.top.site-header .site-nav > .nav-brand {
 
 body.dreamscape-v5 header.top.site-header .site-nav > .v11-workspace-nav {
   grid-area: nav;
+  justify-self: center;
 }
 
 body.dreamscape-v5 header.top.site-header .site-nav > .nav-account {
-  grid-area: sync;
+  grid-area: right;
   justify-self: end;
 }
 
-body.dreamscape-v5 header.top.site-header .site-nav > .nav-actions {
-  grid-area: actions;
-  justify-self: end;
+/* The right track is one flex row: sync status/auth first, then Add +
+   Tools. Both keep their own inner layouts. */
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* The sync cluster is the flexible part: it yields before the auth
+     button and the two action pills do, so nothing overlaps and the
+     status text keeps its full sentence until the band truly runs out. */
+  gap: 12px;
+  min-width: 0;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-right > .nav-account {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-right > .nav-actions {
+  flex: 0 0 auto;
 }
 
 /* ------------------------------------------------------------
@@ -117,7 +149,15 @@ body.dreamscape-v5 .nav-brand__tagline {
 body.dreamscape-v5 .nav-account {
   flex: 0 1 auto;
   min-width: 0;
-  margin: 0 0 0 auto;
+  margin: 0;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-account {
+  justify-self: end;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-actions {
+  justify-self: end;
 }
 
 body.dreamscape-v5 .nav-account .sync-panel {
@@ -234,6 +274,15 @@ body.dreamscape-v5 .nav-actions .nav-more summary {
   border-color: var(--dream-border, rgba(104, 80, 188, .16));
 }
 
+/* The chevron is an inline SVG (wishlist.html): flexbox centres it on
+   the same axis as the label, and it inherits the summary's text colour
+   so it darkens with :hover/:focus without a second rule. */
+body.dreamscape-v5 .nav-more__chev {
+  flex: 0 0 auto;
+  display: block;
+  margin-top: 1px; /* optical: the caret sits a hair above true centre */
+}
+
 /* The fixed band must not cover the first screen. #main-content used to
    carry a hard-coded `padding-top: 64px` — smaller than the old 163px
    header, which is exactly why the hero copy sat under it. The inset
@@ -308,12 +357,12 @@ body.dreamscape-v5 #main-content {
    it can never squeeze the brand or wrap character-by-character. */
 @media (max-width: 860px) {
   body.dreamscape-v5 header.top.site-header .site-nav {
-    /* The actions column is sized by its content — an `auto` track
-       beside a 1fr spacer is what clipped the Tools pill at 320px. */
+    /* The right cluster keeps its own track (sized to content) so the
+       Tools pill is never clipped by a 1fr spacer. */
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      "brand   actions"
-      "sync    sync";
+      "brand   right"
+      "right   right";
     row-gap: 2px;
     padding: 7px 16px 7px;
     min-height: 0;
@@ -323,12 +372,31 @@ body.dreamscape-v5 #main-content {
     display: none;
   }
 
-  body.dreamscape-v5 header.top.site-header .site-nav > .nav-account {
-    grid-area: sync;
+  body.dreamscape-v5 header.top.site-header .site-nav > .nav-right {
+    grid-area: right;
+    /* Row 1: actions pinned right; row 2: sync status stretched. The
+       wrapper becomes a two-row grid and each child is placed. */
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "actions actions"
+      "account account";
+    row-gap: 2px;
+    justify-items: end;
+  }
+
+  body.dreamscape-v5 header.top.site-header .site-nav > .nav-right > .nav-account {
+    grid-area: account;
     justify-self: stretch;
     display: flex;
     align-items: center;
     min-height: 0;
+  }
+
+  body.dreamscape-v5 header.top.site-header .site-nav > .nav-right > .nav-actions {
+    grid-area: actions;
+    justify-self: end;
+    min-width: max-content;
   }
 
   body.dreamscape-v5 .nav-account .sync-panel {
@@ -363,12 +431,6 @@ body.dreamscape-v5 #main-content {
 
   body.dreamscape-v5 header.top.site-header .site-nav > .nav-brand {
     min-width: 0;
-  }
-
-  body.dreamscape-v5 header.top.site-header .site-nav > .nav-actions {
-    grid-area: actions;
-    justify-self: end;
-    min-width: max-content;
   }
 }
 

@@ -463,12 +463,13 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       </a>
     </div>
 
-    <!-- Existing Firebase synchronization — now inline in the header band.
-         The role="status" / aria-live contract of #syncStatus, the image-sync
-         live region and the sync-error alert all keep working as before; the
-         summary/notice rows are collapsed in CSS only. -->
-    <div class="nav-account">
-      <section class="sync-panel" aria-label="Đồng bộ thiết bị">
+    <!-- Right cluster: sync status/auth + primary actions share one flex
+         row. The header grid hands them a single "right" area; this
+         wrapper is what makes them siblings of one flex line instead of
+         two grid items stacked on the same cell. -->
+    <div class="nav-right">
+      <div class="nav-account">
+        <section class="sync-panel" aria-label="Đồng bộ thiết bị">
 
         <div class="sync-copy">
           <span
@@ -532,10 +533,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         ></p>
 
       </section>
-    </div>
+    </div><!-- /.nav-account -->
 
-    <!-- Primary actions -->
-    <div class="nav-actions">
+      <!-- Primary actions -->
+      <div class="nav-actions">
 
       <button
         type="button"
@@ -550,7 +551,26 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <details class="nav-more">
         <summary aria-label="Công cụ bộ sưu tập">
           <span class="nav-more__label">Công cụ</span>
-          <span aria-hidden="true">⌄</span>
+          <!-- SVG chevron instead of the text glyph ⌄: the glyph's own
+               em-box rides high in Inter, so it read as "lôi" (dragged
+               off the baseline) inside the pill. An inline SVG is
+               vertically centred by flexbox exactly like the label. -->
+          <svg
+            class="nav-more__chev"
+            aria-hidden="true"
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+          >
+            <path
+              d="M2 3.5 5 6.5 8 3.5"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </summary>
 
         <div class="nav-more__menu">
@@ -571,7 +591,8 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
         class="hidden"
       >
 
-    </div>
+      </div><!-- /.nav-actions -->
+    </div><!-- /.nav-right -->
   </nav>
 
 </header>
