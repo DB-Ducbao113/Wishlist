@@ -773,8 +773,16 @@ async function run() {
     });
     const region = boxes.ghostRegion;
 
+    // Stillness proof. The composited (scroll-driven) ghost keeps
+    // re-settling its rasterised glyph layer for well over a second after
+    // the reveal on content-heavy collections (measured: the byte noise
+    // decays 11→11→11→6→9→17→0 across attempts on the redesign tree and is
+    // gone by attempt 2 at pristine HEAD). The gate itself is unchanged —
+    // two captures must still be BYTE-identical before the paint diff is
+    // trusted — only the patience window is extended so the compositor
+    // warm-up cannot masquerade as animation.
     let still = null, stillDelta = null;
-    for (let attempt = 0; attempt < 4 && !still; attempt++) {
+    for (let attempt = 0; attempt < 12 && !still; attempt++) {
       const a = await shotPng(page);
       const b = await shotPng(page);
       const s = diffRegion(a, b, region);

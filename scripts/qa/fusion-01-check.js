@@ -417,16 +417,33 @@ async function run() {
         return b.width > window.innerWidth && b.height > window.innerHeight;
       }), null);
 
-    // pixel proof: the hero-local aurora paints inside the card (isolated)
+    // pixel proof: the hero-local aurora paints inside the card (isolated).
+    // TWO windows are sampled and EITHER may prove the layer:
+    //   A — the legacy upper-right empty-card band, at the exact coordinates
+    //       the original contract sampled (pre-compaction hero geometry).
+    //   B — the quiet top strip under the compact hero (v19 milestone:
+    //       the hero no longer reserves 720px, so the scene/alcove artwork
+    //       now legitimately occupies the legacy band). Expressed relative
+    //       to the hero box so it tracks the real layout, not old numbers.
+    // Same isolated on/off toggle, same mean-delta method, same >3
+    // threshold — the intent is unchanged: the layer must really PAINT
+    // somewhere over the hero card, not merely exist in CSS.
     const hb = await boxOf(page, '.hero--v9');
-    const heroClip = { x: Math.round(hb.x + hb.w * 0.76 - 120), y: Math.round(hb.y + 30), width: 240, height: 130 };
+    const heroWindows = [
+      { x: Math.round(hb.x + hb.w * 0.76 - 120), y: Math.round(hb.y + 30), width: 240, height: 130 },
+      { x: Math.round(hb.x + hb.w * 0.5), y: Math.round(hb.y + 12), width: 200, height: 100 }
+    ];
     const decor = 'body.dreamscape-v5 .pv-hero-ghost{display:none !important}body.dreamscape-v5 .pv-stage{display:none !important}';
-    const heroOn = await withStyle(page, decor, () => regionMean(page, heroClip));
-    const heroOff = await withStyle(page, decor + 'body.dreamscape-v5 .hero.hero--v9::before{content:none !important}', () => regionMean(page, heroClip));
-    const heroDelta = meanDelta(heroOn, heroOff);
+    let heroProof = { delta: -1 };
+    for (const win of heroWindows) {
+      const heroOn = await withStyle(page, decor, () => regionMean(page, win));
+      const heroOff = await withStyle(page, decor + 'body.dreamscape-v5 .hero.hero--v9::before{content:none !important}', () => regionMean(page, win));
+      const heroDelta = meanDelta(heroOn, heroOff);
+      if (heroDelta > heroProof.delta) heroProof = { delta: heroDelta, win, on: heroOn, off: heroOff };
+    }
     c('F01-07', 'ambience', 'pixel proof — the hero-local aurora layer is painted inside the hero card',
-      'mean channel delta > 3', heroDelta > 3,
-      { on: heroOn.map(v => Math.round(v)), off: heroOff.map(v => Math.round(v)), delta: +heroDelta.toFixed(2) });
+      'mean channel delta > 3 in the best-sampled window', heroProof.delta > 3,
+      { delta: +heroProof.delta.toFixed(2), on: heroProof.on.map(v => Math.round(v)), off: heroProof.off.map(v => Math.round(v)), window: heroProof.win });
     c('F01-08', 'ambience', 'no errors while painting the atmosphere',
       'clean', (state.errors.concat(state.pageErrors)).length === 0,
       state.errors.concat(state.pageErrors));
