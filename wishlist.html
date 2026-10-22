@@ -176,6 +176,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      before the trailing trio so dialogs-v18 stays the final sheet and the
      later sheets, which own no hero/dashboard rule, cannot be re-ordered. -->
 <link rel="stylesheet" href="./css/hero-dashboard-v19.css">
+
+<!-- Phase 4A — final header & hero redesign. One compact header band
+     (no second sync surface) and one compact hero. Both sheets are
+     scoped on body.dreamscape-v5, keep every id / event contract, and
+     speak the V17–V19 voice; they load AFTER the V19 sheet so the hero
+     geometry they own wins, and BEFORE dialogs-v18, which stays last. -->
+<link rel="stylesheet" href="./css/header-v20.css">
+<link rel="stylesheet" href="./css/hero-v20.css">
+
 <link rel="stylesheet" href="./css/fusion-04-mobile.css">
 <link rel="stylesheet" href="./css/collection-v17.css">
 <!-- Reference-first redesign · milestone 2 — Quick View + Add/Edit.
@@ -417,6 +426,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <div class="wrap">
 <header class="top site-header">
 
+  <!-- V20 — one header surface: brand · navigation · account · actions.
+       The sync strip is no longer a second full-width row under the nav;
+       its controls and status live in the same band as the navigation.
+       Every id, role, live region and event contract is unchanged. -->
   <nav class="site-nav" aria-label="Điều hướng Personal Vault">
 
     <!-- Brand -->
@@ -436,7 +449,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       </span>
     </div>
 
-    <!-- V11 — desktop workspace orientation (reuses existing anchors) -->
+    <!-- V11 — workspace orientation (reuses existing anchors) -->
     <div class="v11-workspace-nav">
       <!-- V16 — pill trượt giữa hai mục, thuần trang trí. -->
       <span class="v11-workspace-nav__indicator" aria-hidden="true"></span>
@@ -448,6 +461,77 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <a href="#collection" class="v11-workspace-nav__link is-active">
         Bộ sưu tập
       </a>
+    </div>
+
+    <!-- Existing Firebase synchronization — now inline in the header band.
+         The role="status" / aria-live contract of #syncStatus, the image-sync
+         live region and the sync-error alert all keep working as before; the
+         summary/notice rows are collapsed in CSS only. -->
+    <div class="nav-account">
+      <section class="sync-panel" aria-label="Đồng bộ thiết bị">
+
+        <div class="sync-copy">
+          <span
+            id="syncStatus"
+            class="sync-status"
+            role="status"
+            aria-live="polite"
+            data-state="local"
+          >
+            Chỉ lưu trên thiết bị này
+          </span>
+
+          <span id="syncEmail" class="sync-email"></span>
+        </div>
+
+        <div class="btns">
+          <button id="btnSignIn" type="button">
+            Đăng nhập để đồng bộ
+          </button>
+
+          <button
+            id="btnSignOut"
+            type="button"
+            class="hidden"
+          >
+            Đăng xuất
+          </button>
+        </div>
+
+        <dl class="sync-summary">
+          <div class="sync-summary__item">
+            <dt>Wishlist và hình ảnh</dt>
+            <dd id="syncListState">Chỉ trên thiết bị này</dd>
+          </div>
+          <div class="sync-summary__item">
+            <dt>Tài khoản</dt>
+            <dd id="syncAccountState">Chưa đăng nhập</dd>
+          </div>
+        </dl>
+
+        <p class="sync-email nav-account__notice">
+          Ảnh mới sẽ đồng bộ sau khi tải lên và lưu thành công.
+        </p>
+
+        <div
+          id="imageSyncBar"
+          class="image-sync hidden"
+          role="status"
+          aria-live="polite"
+        >
+          <span id="imageSyncStatus" class="image-sync__text"></span>
+          <button type="button" id="btnImageRetry" class="image-sync__retry hidden">
+            Thử lại
+          </button>
+        </div>
+
+        <p
+          id="syncError"
+          class="sync-error hidden"
+          role="alert"
+        ></p>
+
+      </section>
     </div>
 
     <!-- Primary actions -->
@@ -490,77 +574,9 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     </div>
   </nav>
 
-  <!-- Existing Firebase synchronization -->
-  <div class="nav-account">
-    <section class="sync-panel" aria-label="Đồng bộ thiết bị">
-
-      <div class="sync-copy">
-        <span
-          id="syncStatus"
-          class="sync-status"
-          role="status"
-          aria-live="polite"
-          data-state="local"
-        >
-          Chỉ lưu trên thiết bị này
-        </span>
-
-        <span id="syncEmail" class="sync-email"></span>
-      </div>
-
-      <div class="btns">
-        <button id="btnSignIn" type="button">
-          Đăng nhập để đồng bộ
-        </button>
-
-        <button
-          id="btnSignOut"
-          type="button"
-          class="hidden"
-        >
-          Đăng xuất
-        </button>
-      </div>
-
-      <dl class="sync-summary">
-        <div class="sync-summary__item">
-          <dt>Wishlist và hình ảnh</dt>
-          <dd id="syncListState">Chỉ trên thiết bị này</dd>
-        </div>
-        <div class="sync-summary__item">
-          <dt>Tài khoản</dt>
-          <dd id="syncAccountState">Chưa đăng nhập</dd>
-        </div>
-      </dl>
-
-      <p class="sync-email nav-account__notice">
-        Ảnh mới sẽ đồng bộ sau khi tải lên và lưu thành công.
-      </p>
-
-      <div
-        id="imageSyncBar"
-        class="image-sync hidden"
-        role="status"
-        aria-live="polite"
-      >
-        <span id="imageSyncStatus" class="image-sync__text"></span>
-        <button type="button" id="btnImageRetry" class="image-sync__retry hidden">
-          Thử lại
-        </button>
-      </div>
-
-      <p
-        id="syncError"
-        class="sync-error hidden"
-        role="alert"
-      ></p>
-
-    </section>
-  </div>
-
 </header>
 
-<main id="main-content" style="padding-top: 64px; scroll-margin-top: 64px">
+<main id="main-content" style="scroll-margin-top: 64px">
 
 <!-- V9 Hero — The Signature Collection -->
 <section
@@ -572,36 +588,38 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
        Desktop only: below 1025px the hero stacks and the word is dropped. -->
   <span class="pv-hero-ghost" aria-hidden="true">Vault</span>
 
+  <!-- V20 — compact hero copy: eyebrow, two-line headline, one short lede,
+       one primary path (the collection). The add action stays available as
+       the quiet secondary pill; #heroAddWish and its handler are unchanged. -->
   <div class="hero__content">
     <p class="hero__eyebrow">
       KHÔNG GIAN ƯỚC MƠ
     </p>
 
     <h1 class="hero__title" id="hero-title">
-      Mọi điều
-      <span>bạn mong ước.</span>
+      <span class="hero__title-line">Mọi điều</span>
+      <span class="hero__title-line hero__title-line--accent">bạn mong ước.</span>
     </h1>
 
     <p class="hero__description">
-      Một nơi nhỏ dành cho những món đồ
-      bạn yêu thích, những dự định và
-      những điều đang chờ trở thành hiện thực.
+      Lưu lại những món đồ bạn yêu thích và biến từng điều ước
+      thành hiện thực — trong một không gian của riêng bạn.
     </p>
 
     <div class="hero-v3__actions">
+      <a class="hero-v3__primary" href="#collection">
+        Khám phá bộ sưu tập
+        <span aria-hidden="true">↗</span>
+      </a>
+
       <button
         type="button"
-        class="hero-v3__primary"
+        class="hero-v3__secondary"
         id="heroAddWish"
       >
         <span aria-hidden="true">＋</span>
         Thêm món yêu thích
       </button>
-
-      <a class="hero-v3__secondary" href="#grid">
-        Khám phá bộ sưu tập
-        <span aria-hidden="true">↗</span>
-      </a>
     </div>
 
     <div class="hero__footer">

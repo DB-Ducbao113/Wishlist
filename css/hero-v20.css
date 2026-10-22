@@ -1,0 +1,885 @@
+/* ============================================================
+   Hero v20 — compact, balanced introduction (Phase 4A)
+   ------------------------------------------------------------
+   The owner's screenshot showed a hero that:
+     · reserved a large empty band above the headline (an absolutely
+       positioned 3D composition overflowing a 350–420px column);
+     · stacked three voices in the headline (sans + gradient fill +
+       uppercase secondary CTA);
+     · let the composition overflow the hero and land under the fixed
+       header, where the ghost "Vault", the "01" numeral, the caption
+       and the floating cards collided;
+     · offered TWO competing primary actions.
+
+   This sheet makes the hero one compact band:
+       copy (eyebrow · 2-line headline · 1 short lede · 1 primary CTA
+       + 1 quiet secondary)   |   the alcove composition as a
+       SUPPORTING element, fully inside its own column.
+
+   Iteration note: the FIRST pass enforced fixed pixel heights. Real
+   browser evidence (qa-out/redesign/header-hero) showed a 430px
+   mismatch at 1440 and a hero 708px tall at 768 — so the geometry is
+   now expressed as max-heights tied to the viewport (clamp / dvh),
+   which keeps the first screen short WITHOUT clipping the copy at
+   short desktop heights.
+
+   OWNERSHIP
+   ---------
+   Owned here      hero grid ratio + gap + padding, headline scale and
+                   the two-line lockup, lede width, CTA sizes and
+                   hierarchy, the scene/ghost/no/caption geometry and
+                   the phone composition.
+   Kept elsewhere  gradient fills (fusion-01 F03-07/08 + V19 keeps the
+                   family/weight only), the alcove SVG, the breathing
+                   product animation, pv-rise entrance, pointer depth,
+                   every id and handler (#heroAddWish, .hero-v3__primary).
+   No new colour is introduced: accent / ink / line come from the V19
+   tokens. No global sheet is touched.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. The hero box — one compact band
+   ------------------------------------------------------------ */
+
+/* Full class chain: cinematic-v7 owns `.hero--v5.hero--v6.hero--v7`
+   and out-specifies a bare `.hero--v9` anchor. */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v7.hero--v9 {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;              /* nothing escapes the band any more */
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+    align-items: center;
+    gap: clamp(24px, 3vw, 56px);
+    min-height: 0;
+    /* Vertically centred, but never taller than the first screen. */
+    padding-block:
+      clamp(20px, 2.2vw, 32px)
+      clamp(20px, 2.2vw, 32px);
+    padding-inline: clamp(24px, 3.4vw, 56px);
+    border-radius: clamp(22px, 2.2vw, 30px);
+  }
+
+  /* The alcove column is a real column now: it has a height and the
+     composition is fitted inside it, not floating in empty space.
+     The bottom padding is the caption's and the numeral's room — they
+     are absolutely positioned INSIDE the stage in V9, and the first
+     pass clipped both against the hero's `overflow: clip`. */
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    display: grid;
+    place-items: center;
+    align-self: center;
+    min-height: 0;
+    /* 16px of bottom room for the caption, which is absolutely
+       positioned BELOW the scene's bottom edge (V9's own geometry) —
+       without it the hero's overflow clip slices the caption. */
+    padding-block: 0 16px;
+  }
+
+  /* An explicit height, tied to the WIDTH so the floating bands keep
+     their clearance at every desktop size. Width is derived from the
+     height (3/4), and the height leaves room for the four evidence
+     bands plus the caption baseline. */
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: auto;
+    height: clamp(300px, calc(30vw + 80px), 440px);
+    max-width: 100%;
+    aspect-ratio: 3 / 4;
+    margin-inline: auto;
+  }
+
+  /* Captions must not truncate the NAME to four characters (measured:
+     "MacB…" at 1440). The featured caption becomes a two-line stack —
+     name on top, price under it — and the secondary cards clamp their
+     name to two lines instead of one. Same evidence, readable. */
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap span {
+    justify-self: end;
+    font-size: 10.5px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--a .pv-card__cap b,
+  body.dreamscape-v5 .hero--v9 .pv-card--b .pv-card__cap b {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+  }
+}
+
+/* ------------------------------------------------------------
+   2. Copy — one voice, two lines, one lede
+   ------------------------------------------------------------ */
+/* The eyebrow is a micro-label on the copy column's edge, not a pill:
+   V9's 26px leading rule + V19's colour are kept, but its "rule" is
+   pulled in line with the headline so the whole column starts on one
+   optical margin. */
+body.dreamscape-v5 .hero--v9 .hero__eyebrow {
+  margin: 0;
+  padding-left: 0;
+  /* V7 paints "✦ … <gradient rule>" around the eyebrow. On the compact
+     band the trailing rule lands on empty air at desktop and forced a
+     wrap at 1024 (measured), so the star is kept as the single marker
+     and the rule is retired here. */
+  font-family: var(--v19-sans);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .28em;
+  line-height: 1.4;
+  color: var(--dream-accent);
+}
+
+body.dreamscape-v5 .hero--v9 .hero__eyebrow::after {
+  content: none;
+}
+
+/* The headline is TWO spans in the markup. V9 makes every span
+   display:block with a serif-italic voice; V19 repaints the accent one
+   as sans. Here the lockup itself is normalised: both lines share the
+   same family, weight, tracking and colour model. */
+body.dreamscape-v5 .hero--v9 .hero__title {
+  margin: clamp(10px, 1.2vw, 16px) 0 0;
+  max-width: 15ch;
+  font-family: var(--v19-sans);
+  font-size: clamp(2.5rem, 4.1vw, 3.75rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.045em;
+  color: var(--v19-ink);
+  text-wrap: balance;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__title > span {
+  display: block;
+  margin: 0;
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+/* The accent line keeps fusion-01's gradient (F03-07/08 reads
+   backgroundImage + background-clip + -webkit-text-fill-color on the
+   FIRST span of .hero__title — which is now the accent line) and
+   carries a solid fallback so the emphasis survives any engine. */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  body.dreamscape-v5 .hero--v9 .hero__title-line--accent {
+    background-image: linear-gradient(104deg, #7E66D6 0%, #6850BC 42%, #A88BF7 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+body.dreamscape-v5 .hero--v9 .hero__title-line {
+  color: var(--v19-ink);
+}
+
+body.dreamscape-v5 .hero--v9 .hero__title-line--accent {
+  color: var(--dream-accent);
+}
+
+body.dreamscape-v5 .hero--v9 .hero__description {
+  max-width: 46ch;
+  margin: clamp(12px, 1.4vw, 18px) 0 0;
+  padding: 0;
+  /* cinematic-v7 paints a 2px "quoted note" bar on the lede's left
+     edge. On the compact band it reads as a stray rule and swallows
+     20px of the copy column. */
+  padding-left: 0;
+  border-left: 0;
+  font-family: var(--v19-sans);
+  font-size: clamp(.94rem, 1vw, 1.02rem);
+  font-weight: 450;
+  line-height: 1.6;
+  text-wrap: pretty;
+  color: var(--v19-muted);
+}
+
+/* V9 draws a 44px rule above the lede. On the compact band the spacing
+   does that job; a second divider only adds ink. */
+body.dreamscape-v5 .hero--v9 .hero__description::before {
+  content: none;
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   3. Actions — ONE primary (the collection), ONE quiet secondary
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: clamp(16px, 1.8vw, 22px);
+}
+
+/* - primary: solid accent pill, same construction as V19's dv-add.
+   It is an <a> to #collection, so it needs the inline-flex layout
+   that a <button> gets for free. */
+body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7E66D6, #5D45B2);
+  color: #fff;
+  font-family: var(--v19-sans);
+  font-size: 13.5px;
+  font-weight: 750;
+  letter-spacing: .01em;
+  text-transform: none;
+  text-decoration: none;
+  box-shadow: 0 12px 26px -14px rgba(84, 63, 158, .55);
+  transition: background var(--v9-ease) 160ms, box-shadow var(--v9-ease) 160ms;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary > span {
+  font-size: 14px;
+  opacity: .9;
+  transition: transform 200ms var(--v9-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary:hover {
+    background: linear-gradient(135deg, #7159C8, #54399E);
+    box-shadow: 0 16px 30px -14px rgba(84, 63, 158, .6);
+    color: #fff;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary:hover > span {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* - secondary: the add action, quiet outline (never a second fill). */
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgba(104, 80, 188, .26);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .72);
+  color: var(--dream-accent);
+  font-family: var(--v19-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .005em;
+  text-transform: none;
+  box-shadow: none;
+  transition: background 160ms var(--v9-ease),
+    border-color 160ms var(--v9-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary:hover {
+    background: #FFFFFF;
+    border-color: rgba(104, 80, 188, .42);
+    box-shadow: none;
+  }
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary:focus-visible,
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary:focus-visible {
+  outline: 2px solid var(--dream-accent);
+  outline-offset: 3px;
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__primary:active {
+  background: linear-gradient(135deg, #664FBC, #4A3590);
+}
+
+body.dreamscape-v5 .hero--v9 .hero-v3__secondary:active {
+  background: #EFE8FB;
+}
+
+/* The old all-caps footnote duplicated the lede. A single hairline
+   caption was enough; drop the line so the band stays compact. */
+body.dreamscape-v5 .hero--v9 .hero__footer {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   4. Composition — supporting, contained, no collisions
+   ------------------------------------------------------------ */
+
+/* Ghost word: slower, quieter, and kept inside the left column’s
+   bottom edge instead of running under the composition. */
+@media (min-width: 1025px) {
+  /* Sits behind the copy column's lower edge (line-height .8 means the
+     glyph box starts where the visible letters end, so one line of
+     leading is added to keep the whole word inside the hero). */
+  body.dreamscape-v5 .hero--v9 .pv-hero-ghost {
+    top: auto;
+    bottom: calc(clamp(4.5rem, 8vw, 8rem) * .2);
+    right: auto;
+    left: clamp(20px, 3vw, 44px);
+    font-size: clamp(4.5rem, 8vw, 8rem);
+    line-height: .8;
+    letter-spacing: -.045em;
+    color: rgba(104, 80, 188, .035);
+    -webkit-text-stroke: 1.2px rgba(104, 80, 188, .10);
+    z-index: 0;
+  }
+
+  /* The caption is the stage's baseline. The "01" numeral sits above
+     it, clear of card B (bottom-right) and of the goal chip (left
+     gutter, above the caption). `bottom` is 6% so the glyph box —
+     whose line-height (.8) ends BELOW its digits — stays whole inside
+     the stage; the previous `bottom: 0` sliced the digits in half
+     against the hero's overflow clip (measured at 1440). */
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    right: 30%;
+    left: auto;
+    bottom: 5%;
+    font-size: clamp(2.2rem, 3.4vw, 3.4rem);
+    line-height: .8;
+    color: rgba(104, 80, 188, .09);
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+    bottom: -11px;
+    left: 3%;
+    right: auto;
+    transform: none;
+    max-width: 66%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 7.5px;
+    letter-spacing: .12em;
+    line-height: 1.4;
+    text-align: left;
+  }
+}
+
+/* The floating layers form ONE cluster around the featured card, in
+   FOUR horizontal bands so no evidence box is ever painted over and
+   nothing lands on the "01" numeral or the caption.
+
+   Every value below comes from the MEASURED boxes (tmp-overlap.js,
+   1440×900): the featured card is 180×140, card A 96×109, card B
+   96×72, a chip is 132×38. Stage height is 450px, so the bands are:
+     card A      8 → 117      owned chip  124 → 162
+     featured   170 → 310     goal chip   318 → 356  (+ card B beside it)
+     numeral    362 → 414     caption     428 → 440
+   Card A's caption sits at the bottom of its box, so card A ends at
+   117 and the chip starts at 124 — seven pixels of real clearance. */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .hero--v9 .pv-stage__badge {
+    right: 10px;
+    top: 0;
+    width: 52px;
+  }
+
+  /* Featured card: centred, 46% of the stage. The chips sit in the two
+     free side gutters, so the card is the reference for every band. */
+  body.dreamscape-v5 .hero--v9 .pv-card--main {
+    left: 57%;
+    top: 186px;
+    width: 50%;
+    max-width: 180px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--a {
+    left: 6%;
+    top: 46px;
+    width: 32%;
+    max-width: 108px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--b {
+    left: 74%;
+    top: 318px;
+    width: 30%;
+    max-width: 106px;
+  }
+
+  /* Chips: wide enough for their real labels ("ĐÃ SỞ HỮU / 1 / 8 món"),
+     narrow enough to end before the featured card's left edge (which
+     sits at 52% − 22% = 30% of the stage). 28% keeps a 2% gutter. */
+  body.dreamscape-v5 .hero--v9 .pv-chip {
+    width: 28%;
+    min-width: 92px;
+    max-width: 132px;
+    padding: 5px 8px;
+    gap: 5px;
+    border-radius: 10px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip__icon {
+    width: 19px;
+    height: 19px;
+    border-radius: 6px;
+    font-size: 9px;
+    flex: 0 0 auto;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip__text {
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip__text small {
+    font-size: 7px;
+    letter-spacing: .03em;
+    /* Wrapping the micro-label to two lines is honest; clipping it
+       mid-glyph is not (measured: "ĐÃ SỞ HỮ…" at 92px). */
+    white-space: normal;
+    line-height: 1.15;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip__text b {
+    font-size: 9.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Band 2: above the featured card (which starts at y≈196).
+     Measured at 1440: card A's box ends at y≈237 but the owned chip
+     with its 2-line label is 42px tall, so 138 + 42 = 180 still grazed
+     the card at top 196 (2px). 130 + 42 = 172 keeps a 24px gutter. */
+  body.dreamscape-v5 .hero--v9 .pv-chip--owned {
+    right: auto;
+    left: 0;
+    top: 130px;
+    bottom: auto;
+  }
+
+  /* Band 4: below the featured card (whose two-line caption ends at
+     ~338px), left gutter; card B right. The numeral sits at bottom 4%
+     in the 34–70% slot, so the chip's 0–28% never meets it. */
+  body.dreamscape-v5 .hero--v9 .pv-chip--goal {
+    left: 0;
+    right: auto;
+    top: 348px;
+    bottom: auto;
+  }
+}
+
+/* ≤1240px: the stage narrows, so the featured card and the chips need
+   a little more separation in proportion. The card stays centred; the
+   chips keep the outer 24% and the gap between them and the card is
+   what changes (the chips never scale their text). */
+@media (min-width: 1025px) and (max-width: 1240px) {
+  body.dreamscape-v5 .hero--v9 .pv-card--main {
+    left: 57%;
+    width: 46%;
+    max-width: 150px;
+    top: 196px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip--goal {
+    top: 340px;
+  }
+
+  /* The stage is narrower here, so the featured card shifts right of
+     the owned chip's gutter and the chip loses its min-width floor:
+     the base chip carries min-width 92px (for the real label at 1440),
+     which would end at 92px and graze the card at 1025–1040. Dropping
+     the floor to 80px inside this band keeps a real gutter without
+     clipping the label (7px type + 80px still fits "ĐÃ SỞ HỮU").
+
+     Card B also lifts 16px: the numeral (bottom 5%, cap-height ~34px
+     at this scale) otherwise reaches its caption band at 1025–1100 —
+     measured 28×16 of overlap at 1025. */
+  body.dreamscape-v5 .hero--v9 .pv-chip {
+    width: 23%;
+    min-width: 80px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--b {
+    top: 300px;
+  }
+
+  /* The stage bottoms out at 348px here: chipGoal at its desktop top
+     (328px + 42px tall) reached 370px, i.e. 22px INTO the caption band
+     (measured 72×11 overlap at 1025). 292 + 42 = 334 clears it. */
+  body.dreamscape-v5 .hero--v9 .pv-chip--goal {
+    top: 292px;
+  }
+
+  /* The numeral's own slot: between the goal chip (which ends at
+     ~24% of the stage width) and card B (which starts at 74%).
+     `right: 30%` / `left: auto` is too far right — card B's caption
+     band reaches it; `left: 4%` collides with the goal chip. The free
+     horizontal slot is 30–70%, so the numeral is anchored there. */
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    left: 34%;
+    right: auto;
+    bottom: 4%;
+  }
+}
+
+/* ------------------------------------------------------------
+   5. ≤1024 — the scene becomes a supporting band, not a poster
+   ------------------------------------------------------------ */
+@media (max-width: 1024px) and (min-width: 641px) {
+  body.dreamscape-v5 .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v7.hero--v9 {
+    position: relative;
+    isolation: isolate;
+    /* Tablet keeps the two-column idea: the copy column and the
+       supporting alcove beside it. Stacking them here left the copy
+       in the top-left corner with a large dead area to its right and
+       the illustration hanging at the bottom (measured at 1024). */
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
+    align-items: center;
+    min-height: 0;
+    gap: clamp(16px, 3vw, 32px);
+    padding-block: 20px 22px;
+    padding-inline: clamp(20px, 3.4vw, 34px);
+    overflow: clip;
+  }
+
+  /* V7 (and its mobile adaptation) paint a SECOND oversized numeral,
+     "07", as .hero--v7::after at z-index -1. On the compact band it
+     showed through as a cropped watermark at the hero's edge — the
+     very collision the owner reported. The scene's own "01" numeral
+     is the only one this surface needs. */
+  body.dreamscape-v5 .hero--v9.hero--v7::after {
+    content: none;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__content {
+    order: 1;
+    max-width: none;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    order: 2;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    margin-top: 0;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 300px);
+    aspect-ratio: 5 / 6;
+  }
+
+  /* The tablet caption is a 34-char micro-label on a 250px stage:
+     full width + a smaller tracking is what fits it (measured clipped
+     at 150px). The stage keeps 12px bottom padding so the caption's
+     -11px offset stays INSIDE the clipped hero. */
+  body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+    /* Centred on the stage, allowed to be WIDER than it (the scene is
+       inset inside the hero, so the label can use the column gap).
+       max-width caps it only on the narrowest phones. */
+    left: 50%;
+    right: auto;
+    bottom: -11px;
+    width: max-content;
+    max-width: min(420px, 96vw);
+    transform: translateX(-50%);
+    font-size: 7.5px;
+    letter-spacing: .04em;
+    white-space: nowrap;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    padding-bottom: 16px;
+  }
+
+  /* At this stage size the seal and the owned chip genuinely collide,
+     and every extra floating box costs more clarity than it adds.
+     The phone/tablet composition keeps the REAL evidence that matters
+     — the featured card and the goal chip — plus the orbit, halo,
+     sparks and seal; the secondary cards and the owned chip return at
+     ≥1025px where there is room for them.
+
+     Placement is on the OUTER EDGES, clear of the centred featured
+     card: the goal chip sits in the right gutter (the card occupies
+     the middle band), and the numeral/caption live on the LEFT
+     baseline. Measured at 768: cardMain 67px overlap with chipGoal
+     when both were left-anchored. */
+  body.dreamscape-v5 .hero--v9 .pv-card--a,
+  body.dreamscape-v5 .hero--v9 .pv-card--b,
+  body.dreamscape-v5 .hero--v9 .pv-chip--owned {
+    display: none;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main {
+    top: 40%;
+    width: 56%;
+  }
+
+  /* Tablet card captions are two-line stacks too (name + price): the
+     card is 138px wide here, so a one-line 24-char name would clip
+     (measured 106/58 and 96/24). The name clamps to two lines, the
+     price sits under it. */
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap b {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    font-size: 8.5px;
+    line-height: 1.2;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap span {
+    justify-self: end;
+    font-size: 8.5px;
+    line-height: 1.2;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip--goal {
+    left: auto;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 46%;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    max-width: 18ch;
+    font-size: clamp(2rem, 4.4vw, 2.7rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    left: 2%;
+    right: auto;
+    bottom: 8%;
+    font-size: clamp(2.2rem, 4.4vw, 3rem);
+    color: rgba(104, 80, 188, .09);
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+    /* The 31-char micro-label needs the whole visual column, not 60%
+       of the stage (measured: clipped at 164/182px). Centred and capped
+       so it can never cross the hero's edge. */
+    bottom: -13px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 110%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 7.5px;
+    letter-spacing: .04em;
+    text-align: center;
+  }
+}
+
+/* ------------------------------------------------------------
+   6. ≤640 — phone: copy first, then a small alcove
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  body.dreamscape-v5 .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v7.hero--v9 {
+    /* Stacked on a phone: the headline and the CTA come before the
+       decorative alcove, so the path to the collection is readable
+       without scrolling. */
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
+    padding: 16px 16px 18px;
+    border-radius: 22px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    order: 2;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__eyebrow {
+    font-size: 9.5px;
+    letter-spacing: .24em;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    margin-top: 10px;
+    max-width: 18ch;
+    font-size: clamp(1.9rem, 9.2vw, 2.4rem);
+    line-height: 1.04;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-top: 10px;
+    max-width: 38ch;
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 14px;
+    gap: 8px;
+    /* Both CTAs share one row where they fit, and wrap cleanly when
+       they do not — neither may overflow the card. */
+    flex-wrap: wrap;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary,
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+    min-height: 44px;
+    padding: 0 15px;
+    font-size: 12.5px;
+  }
+
+  /* Phone alcove: a supporting element under the copy. The smaller the
+     stage, the fewer floating boxes it can carry: card A and the owned
+     chip are already hidden at ≤1024; here the seal is raised above
+     the card and the numeral/caption split the two baselines so no
+     box touches another (measured at 390 and 320). */
+  body.dreamscape-v5 .hero--v9 .hero__visual {
+    height: auto;
+    overflow: visible;
+    margin-top: 2px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 190px);
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-stage__badge {
+    right: 0;
+    top: -4%;
+    width: 32%;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main {
+    width: 64%;
+    top: 46%;
+  }
+
+  /* The featured caption is a two-line stack here too (name + price),
+     but the card is only ~120px wide: the name clamps to two lines at
+     8.5px and the price sits under it, so the caption never clips a
+     glyph (measured 21px tall vs 32px needed at 390). */
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap b {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    font-size: 8.5px;
+    line-height: 1.2;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap span {
+    justify-self: end;
+    font-size: 8.5px;
+    line-height: 1.2;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-chip--goal {
+    bottom: 2%;
+    right: 0;
+    width: 52%;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene__no {
+    left: 0;
+    right: auto;
+    bottom: 0;
+    font-size: clamp(2rem, 8vw, 2.6rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+    /* The V9 caption is a 34-character micro-label; at a 190px scene it
+       needs the FULL stage width. Ellipsis is the honest fallback for
+       the narrowest phones (320) where even that is not enough. */
+    left: 0;
+    right: 0;
+    bottom: -14px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: none;
+    text-align: center;
+    font-size: 7.5px;
+    letter-spacing: .06em;
+    white-space: nowrap;
+  }
+}
+
+/* 320px phones: one short line per CTA, no horizontal squeeze. */
+@media (max-width: 380px) {
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    font-size: clamp(1.75rem, 9vw, 2.05rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary,
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 160px);
+  }
+}
+
+/* Short laptop screens (900px tall is common): keep the collection
+   heading reachable without collapsing the copy. */
+@media (min-width: 1025px) and (max-height: 820px) {
+  body.dreamscape-v5 .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v7.hero--v9 {
+    padding-block: 18px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    font-size: clamp(2.2rem, 3.5vw, 3.1rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-top: 10px;
+    font-size: .94rem;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 14px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__visual,
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    max-height: 320px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Reduced motion: the reusable entrance hooks (fusion-01) are already
+   disabled there; this sheet adds no motion of its own beyond the two
+   hover transitions, which are dropped here.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary,
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary > span,
+  body.dreamscape-v5 .hero--v9 .hero-v3__secondary {
+    transition: none !important;
+  }
+}

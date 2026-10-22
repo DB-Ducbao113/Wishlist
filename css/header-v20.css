@@ -1,0 +1,483 @@
+/* ============================================================
+   Header v20 — one compact surface (Phase 4A, milestone 4)
+   ------------------------------------------------------------
+   The owner's screenshot showed two stacked navigation surfaces:
+   a 72px nav band plus a 68px sync plate = a 163px fixed header
+   (183px on phones), which pushed the hero copy under the header
+   and left a large empty band above the headline.
+
+   This sheet removes the SECOND surface. The header becomes one
+   band that carries, left to right:
+       brand · navigation · sync status + auth action · add · tools
+   The sync panel is no longer a full-width row under the nav — it
+   is a quiet inline cluster in the same band. Nothing about the
+   Firebase/auth/sync contract changes: every id, role, aria-live
+   region and event handler stays exactly where it was, and the
+   summary/notice rows are collapsed in CSS only.
+
+   OWNERSHIP
+   ---------
+   Owned here      header band geometry (height, padding, alignment),
+                   the inline sync cluster, the nav action sizes and
+                   the fixed-header scroll inset (--dv-header-inset).
+   Kept elsewhere  brand mark gradient + name (editorial-v10),
+                   workspace pill (immersive-v11 + motion-v16),
+                   sign-in/out button look (base/controls),
+                   sync dot colours + states (editorial-v10).
+   The V19 hero/dashboard voice and collection-v17 are untouched.
+
+   Accessibility: the sync cluster keeps its text at >= 12px, its
+   contrast on the off-white band is AA, and the two auth buttons
+   keep a >= 32px target (>= 44px on coarse pointers, where the band
+   stacks and the buttons grow back to 40px).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. The band — one surface, one hairline, no second row
+   ------------------------------------------------------------ */
+body.dreamscape-v5 header.site-header {
+  padding: 0;
+  border-bottom: 1px solid var(--dream-border, rgba(104, 80, 188, .16));
+  background: rgba(252, 251, 255, .86);
+}
+
+/* The scrolled state keeps the same surface, only a touch denser. */
+body.dreamscape-v5 .site-header.site-header--scrolled,
+body.dreamscape-v5 .site-header.scrolled {
+  background: rgba(250, 248, 255, .94);
+}
+
+/* One row: brand | navigation | sync | actions. The element chain in
+   the selector is REQUIRED — navigation.css declares
+   `header.top.site-header .site-nav { display: flex }` later in the
+   sheet, and a two-class anchor lost to it (measured: the band
+   rendered as a wrapping flex row at 390px). */
+body.dreamscape-v5 header.top.site-header .site-nav {
+  display: grid;
+  grid-template-columns: auto minmax(0, auto) minmax(0, 1fr) auto;
+  grid-template-areas: "brand nav sync actions";
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 26px);
+  min-height: 66px;
+  padding: 0 clamp(16px, 3vw, 40px);
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-brand {
+  grid-area: brand;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .v11-workspace-nav {
+  grid-area: nav;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-account {
+  grid-area: sync;
+  justify-self: end;
+}
+
+body.dreamscape-v5 header.top.site-header .site-nav > .nav-actions {
+  grid-area: actions;
+  justify-self: end;
+}
+
+/* ------------------------------------------------------------
+   2. Brand — smaller mark, name and tagline on one baseline row
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .nav-brand {
+  flex: 0 0 auto;
+  gap: 11px;
+}
+
+body.dreamscape-v5 .nav-brand__mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 17px;
+}
+
+body.dreamscape-v5 .nav-brand__text {
+  gap: 3px;
+}
+
+body.dreamscape-v5 .nav-brand__name {
+  font-size: 1.28rem;
+  line-height: 1;
+}
+
+body.dreamscape-v5 .nav-brand__tagline {
+  font-size: 9px;
+  letter-spacing: .22em;
+}
+
+/* ------------------------------------------------------------
+   3. Sync cluster — inline in the band, right-aligned
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .nav-account {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0 0 0 auto;
+}
+
+body.dreamscape-v5 .nav-account .sync-panel {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .sync-panel .sync-copy {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0 10px;
+  min-width: 0;
+}
+
+body.dreamscape-v5 .sync-panel .sync-status {
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: .005em;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: var(--v10-muted, #625979);
+}
+
+/* Slightly smaller dot so the status reads as a caption, not a badge. */
+body.dreamscape-v5 .sync-panel .sync-status::before {
+  width: 7px;
+  height: 7px;
+  box-shadow: 0 0 0 3px rgba(168, 139, 247, .16);
+}
+
+body.dreamscape-v5 .sync-panel #syncEmail {
+  max-width: 22ch;
+  font-size: 12px;
+}
+
+body.dreamscape-v5 .sync-panel .btns {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+}
+
+body.dreamscape-v5 .sync-panel .btns button {
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Feedback rows: only render when they actually have something to say.
+   They sit UNDER the band as a full-width strip so a long error can never
+   stretch the fixed header over the page. */
+body.dreamscape-v5 .sync-panel .image-sync:not(.hidden),
+body.dreamscape-v5 .sync-panel .sync-error:not(.hidden) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 0;
+  padding: 8px clamp(16px, 3vw, 40px);
+  border-bottom: 1px solid var(--dream-border, rgba(104, 80, 188, .16));
+  background: #FFFFFF;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+body.dreamscape-v5 .sync-panel .image-sync.hidden,
+body.dreamscape-v5 .sync-panel .sync-error.hidden {
+  display: none;
+}
+
+/* The summary and the upload notice stay in the DOM (screen readers still
+   get #syncListState / #syncAccountState when the region is read) but no
+   longer paint a second, taller row. */
+body.dreamscape-v5 .sync-panel .sync-summary,
+body.dreamscape-v5 .sync-panel .nav-account__notice {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   4. Nav actions — compact pills on the same band
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .nav-actions {
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+body.dreamscape-v5 .nav-actions .nav-add {
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  box-shadow: 0 8px 20px rgba(84, 64, 153, .20);
+}
+
+body.dreamscape-v5 .nav-actions .nav-more summary {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 650;
+  border-color: var(--dream-border, rgba(104, 80, 188, .16));
+}
+
+/* The fixed band must not cover the first screen. #main-content used to
+   carry a hard-coded `padding-top: 64px` — smaller than the old 163px
+   header, which is exactly why the hero copy sat under it. The inset
+   token below is the measured band height + 14px, so the hero always
+   starts BELOW the header at every breakpoint. */
+body.dreamscape-v5 #main-content {
+  padding-top: var(--dv-header-inset);
+  scroll-margin-top: var(--dv-header-inset);
+}
+
+/* ------------------------------------------------------------
+   5. Scroll inset — the fixed header no longer covers anchors
+   ------------------------------------------------------------
+   These are the MEASURED band heights (see header-hero-metrics.json),
+   not estimates: 67px on desktop/tablet and 104px on phones, +14px of
+   breathing room. An anchor jump, a focus() and the hero's own top
+   edge all use this one value. */
+:root {
+  --dv-header-inset: 82px; /* 67 band + 15 gap */
+}
+
+/* Phones: the band wraps to two short rows (brand+actions / sync). */
+@media (max-width: 560px) {
+  :root {
+    --dv-header-inset: 118px; /* 104 band + 14 gap */
+  }
+}
+
+/* ------------------------------------------------------------
+   6. Responsive band geometry
+   ------------------------------------------------------------ */
+
+/* ≤1100px: the tagline is the first thing to go — the name carries the
+   identity and the navigation needs the room. */
+@media (max-width: 1100px) {
+  body.dreamscape-v5 .nav-brand__tagline {
+    display: none;
+  }
+}
+
+/* ≤1024px: keep one row, compress the sync text. */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 header.top.site-header .site-nav {
+    gap: 14px;
+    padding-inline: 18px;
+    min-height: 62px;
+  }
+
+  body.dreamscape-v5 .sync-panel .sync-status {
+    font-size: 12px;
+  }
+
+  body.dreamscape-v5 .sync-panel #syncEmail {
+    max-width: 16ch;
+  }
+
+  body.dreamscape-v5 .nav-actions .nav-add,
+  body.dreamscape-v5 .nav-actions .nav-more summary {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 12.5px;
+  }
+}
+
+/* ≤860px: the workspace pill leaves the band — the mobile dock owns the
+   Home / Collection navigation at this width, so the band does not need
+   a third copy of it. The links stay in the DOM for anchors and for the
+   indicator script.
+
+   The band becomes TWO rows: [brand ....... add + tools] and
+   [sync status ....... auth]. The sync cluster keeps its own line so
+   it can never squeeze the brand or wrap character-by-character. */
+@media (max-width: 860px) {
+  body.dreamscape-v5 header.top.site-header .site-nav {
+    /* The actions column is sized by its content — an `auto` track
+       beside a 1fr spacer is what clipped the Tools pill at 320px. */
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand   actions"
+      "sync    sync";
+    row-gap: 2px;
+    padding: 7px 16px 7px;
+    min-height: 0;
+  }
+
+  body.dreamscape-v5 .v11-workspace-nav {
+    display: none;
+  }
+
+  body.dreamscape-v5 header.top.site-header .site-nav > .nav-account {
+    grid-area: sync;
+    justify-self: stretch;
+    display: flex;
+    align-items: center;
+    min-height: 0;
+  }
+
+  body.dreamscape-v5 .nav-account .sync-panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  /* header-sync-v1 puts .btns in a grid area ("actions") and .sync-copy
+     in "status"; inside this flex row those areas are meaningless and
+     collapsed .sync-copy to 0 × 90px. Reset both here. */
+  body.dreamscape-v5 .nav-account .sync-panel .sync-copy {
+    grid-area: auto;
+    flex: 1 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 8px;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .nav-account .sync-panel .btns {
+    grid-area: auto;
+    flex: 0 0 auto;
+    margin: 0;
+    width: auto;
+  }
+
+  body.dreamscape-v5 header.top.site-header .site-nav > .nav-brand {
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 header.top.site-header .site-nav > .nav-actions {
+    grid-area: actions;
+    justify-self: end;
+    min-width: max-content;
+  }
+}
+
+/* ≤560px: the tightest version of the same two rows. */
+@media (max-width: 560px) {
+  body.dreamscape-v5 header.top.site-header .site-nav {
+    padding: 7px 14px 6px;
+    column-gap: 8px;
+  }
+
+  body.dreamscape-v5 .nav-brand {
+    gap: 9px;
+  }
+
+  body.dreamscape-v5 .nav-brand__mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  body.dreamscape-v5 .nav-brand__name {
+    font-size: 1.12rem;
+  }
+
+  body.dreamscape-v5 .sync-panel .sync-status {
+    font-size: 11.5px;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  body.dreamscape-v5 .sync-panel #syncEmail {
+    max-width: 100%;
+    font-size: 11px;
+  }
+
+  /* Tools keeps its label: the dropdown is the only route to Import /
+     Export on a phone, so hiding the text would leave a bare chevron. */
+  body.dreamscape-v5 .nav-actions .nav-more summary {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  /* The dashboard already carries a labelled Add action; on the phone
+     the band keeps the icon-only Add so the tools pill fits beside it. */
+  body.dreamscape-v5 .nav-actions .nav-add {
+    width: 34px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    line-height: 1;
+  }
+
+  body.dreamscape-v5 .nav-actions .nav-add__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  body.dreamscape-v5 .sync-panel .btns {
+    flex: 0 0 auto;
+  }
+
+  body.dreamscape-v5 .sync-panel .btns button {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+
+/* 320px: the auth label is long. Keep the target, shorten the wording
+   surface by letting it wrap inside a fixed max-width instead of the
+   full band. */
+@media (max-width: 380px) {
+  body.dreamscape-v5 header.top.site-header .site-nav {
+    padding-inline: 12px;
+  }
+
+  body.dreamscape-v5 .sync-panel .btns button {
+    padding: 0 10px;
+    font-size: 11.5px;
+  }
+}
+
+/* Coarse pointers: restore comfortable targets even in the compact band. */
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .nav-actions .nav-add,
+  body.dreamscape-v5 .nav-actions .nav-more summary {
+    min-height: 40px;
+  }
+
+  body.dreamscape-v5 .sync-panel .btns button {
+    min-height: 38px;
+  }
+}
+
+/* Reduced motion: the band gains no motion of its own. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .site-header,
+  body.dreamscape-v5 .site-nav,
+  body.dreamscape-v5 .nav-actions .nav-add,
+  body.dreamscape-v5 .nav-actions .nav-more summary {
+    transition: none !important;
+    animation: none !important;
+  }
+}
