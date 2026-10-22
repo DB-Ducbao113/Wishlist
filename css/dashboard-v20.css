@@ -1,0 +1,395 @@
+/* ============================================================
+   Dashboard v20 — calm, scannable overview (Phase 4B.2)
+   ------------------------------------------------------------
+
+   The owner found the current dashboard cluttered. Looking at the
+   rendered page, the sources of noise are concrete:
+
+     • SIX separate white cards stacked in alternating grids
+       (progress / dist, breakdown / priority, savings / insights),
+       each with its own border, radius, padding and heading row —
+       the eye has no single surface to rest on.
+     • "Nên xem tiếp" is a list of four BARE text rows that look
+       exactly like the plain paragraphs around them — no card, no
+       action affordance — while the row it points to (the collection)
+       is far below.
+     • "Những gì nên làm tiếp" shows SEVEN same-looking pills in one
+       long strip. Primary (Thêm món mới), navigation (xem món chưa
+       mua / đã mua / ưu tiên cao), reset (xóa bộ lọc) and I/O (xuất /
+       nhập JSON) all carry equal weight.
+     • The two plain "metrics" plates (Chi tiêu thực tế / Món đã mua
+       chưa nhập giá) add two more boxes between the KPIs and the
+       charts.
+
+   This sheet reorganizes the SAME data (no new numbers, no second
+   tally, no JS change) into four calm bands:
+
+     1. The KPI row (unchanged, already clean).
+     2. ONE merged "Bức tranh tổng thể" band: ownership progress and
+        the status distribution side by side, framed by a single
+        surface instead of two.
+     3. ONE merged "Chi tiết" band: category breakdown and priority
+        side by side.
+     4. "Nên xem tiếp" as a real ACTION LIST — each row a card with a
+        right-aligned price and a "Xem món" affordance, so it reads as
+        something you can click.
+     5. "Những gì nên làm tiếp" demoted to a quiet single-line toolbar:
+        the primary add action stands out, everything else is small,
+        muted text buttons with separators instead of seven pills.
+
+   The wrapper bands (2 and 3) are pure CSS: the DOM keeps its four
+   sections and both grids; the grids are told to share one visual
+   card. Everything is scoped on body.dreamscape-v5 and anchored on the
+   existing class names, so no other surface changes shape.
+
+   OWNERSHIP
+   ---------
+   Owned here      band merging, the insights action-list look, the
+                   actions demotion, spacing rhythm inside the
+                   dashboard panel.
+   Kept elsewhere  every id, every renderer, the progress/dist/breakdown/
+                   priority/savings row markup, the F04 hover contracts,
+                   the ARIA attributes, the V19 voice (sans, micro
+                   labels, hairlines).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Panel rhythm — fewer, wider gaps; a calmer canvas
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash {
+  padding: clamp(14px, 1.6vw, 22px);
+}
+
+/* ------------------------------------------------------------
+   2. The overview band: progress + status distribution in ONE card
+   ------------------------------------------------------------
+   The two sections keep their own headings and content; the grid
+   itself gets the card surface (border + radius + padding) and the
+   two child widgets drop their individual borders. One frame, two
+   columns. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split {
+  padding: clamp(12px, 1.4vw, 18px);
+  border: 1px solid var(--v19-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split .dv-progress,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split .dv-dist {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* A hairline divider between the two columns instead of two frames. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split .dv-col--dist {
+  border-left: 1px solid var(--v19-line);
+  padding-left: clamp(14px, 1.6vw, 22px);
+}
+
+@media (max-width: 1199px) {
+  /* When the grid stacks, the divider becomes a top rule. */
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split .dv-col--dist {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--v19-line);
+    padding-top: 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   3. The detail band: breakdown + priority in ONE card
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight {
+  padding: clamp(12px, 1.4vw, 18px);
+  border: 1px solid var(--v19-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-breakdown,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* The priority items and breakdown rows each carry their own card
+   surface from V16; nested inside the merged band they read as boxes
+   within boxes (owner screenshot: "Thấp / Trung bình / Cao" each in a
+   bordered pill). Flatten them: the merged band is the card, the rows
+   are its quiet content with hairline separators. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority__item,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-breakdown__row {
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority__rows,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-breakdown__rows {
+  gap: 0;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority__item + .dv-priority__item,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-breakdown__row + .dv-breakdown__row {
+  border-top: 1px solid var(--v19-line);
+}
+
+/* The selected state keeps a visible affordance without a second card. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-breakdown__row[aria-pressed="true"],
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority__item[aria-pressed="true"] {
+  background: var(--v19-tint);
+  border-top-color: transparent;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority {
+  border-left: 1px solid var(--v19-line);
+  padding-left: clamp(14px, 1.6vw, 22px);
+}
+
+@media (max-width: 899px) {
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight .dv-priority {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--v19-line);
+    padding-top: 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   4. The plain metrics plates join the KPI row's voice
+   ------------------------------------------------------------
+   Two boxes of the same size sitting between the KPIs and the charts
+   added visual noise. They now read as one quiet line of facts. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics {
+  border: 0;
+  background: none;
+  gap: clamp(14px, 2vw, 28px);
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__item {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__label {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--v19-soft);
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__value {
+  font-size: 1.05rem;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__hint {
+  font-size: 11px;
+  color: var(--v19-soft);
+}
+
+/* ------------------------------------------------------------
+   5. "Nên xem tiếp" — a real action list
+   ------------------------------------------------------------
+   The rows are rendered as plain paragraphs; here they become cards:
+   padded, hairline-separated, with the price and the "Xem món" action
+   pushed to the right edge. The renderer keeps its markup; the CSS
+   gives each row the affordance the data already implies. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights {
+  padding: clamp(12px, 1.4vw, 18px);
+  border: 1px solid var(--v19-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__rows {
+  gap: 0;
+}
+
+/* The F5 renderer already gives each row a grid with name / price /
+   reason / go areas and a bordered card look; V19 flattened it into a
+   bare paragraph list. Restore the affordance: card surface on hover,
+   hairline separators, and the "Xem món" affordance anchored right. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__row {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  transition: background 140ms ease;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__row + .dv-insights__row {
+  border-top: 1px solid var(--v19-line);
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__name {
+  font-size: 13px;
+  font-weight: 750;
+  color: var(--v19-ink);
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__reason {
+  color: var(--dream-accent);
+}
+
+/* Price and "Xem món" anchor the right edge as one quiet column. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__price {
+  justify-self: end;
+  color: var(--v19-ink);
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__go {
+  justify-self: end;
+  color: var(--dream-accent);
+}
+
+/* ------------------------------------------------------------
+   6. "Những gì nên làm tiếp" — a quiet toolbar, not seven pills
+   ------------------------------------------------------------
+   The primary add action keeps its tint; every other action becomes a
+   small text button in one wrapping line, separated by dots, so the
+   hierarchy is finally readable. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions {
+  padding: clamp(12px, 1.4vw, 18px);
+  border: 1px solid var(--v19-line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0 0 10px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__lead {
+  color: var(--v19-soft);
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 6px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid > .dv-actions__btn:not(.dv-actions__btn--primary) {
+  min-height: 0;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--v19-muted);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid > .dv-actions__btn:not(.dv-actions__btn--primary):hover {
+    background: var(--v19-tint);
+    border: 0;
+    color: var(--dream-accent);
+  }
+}
+
+/* A subtle separator so the de-emphasized actions don't read as one word. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid > .dv-actions__btn:not(.dv-actions__btn--primary):not(:first-of-type)::before {
+  content: "·";
+  margin-right: 6px;
+  color: var(--v19-line, rgba(104, 80, 188, .4));
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid > .dv-actions__btn:not(.dv-actions__btn--primary):focus-visible {
+  outline: 2px solid var(--dream-accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* The primary add action keeps a real button presence. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn--primary {
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+}
+
+/* The conditional "Đánh dấu đã mua" keeps its emphasis but stays calm. */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn--buy {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(104, 80, 188, .24);
+  background: #fff;
+  color: var(--dream-accent);
+}
+
+/* ------------------------------------------------------------
+   7. Rhythm: the three bands breathe together
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--split,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--insight,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--f5 {
+  margin-block: 14px;
+}
+
+/* ------------------------------------------------------------
+   8. ≤1024: stack the bands, keep the same voice
+   ------------------------------------------------------------ */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight {
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash {
+    padding: 12px;
+  }
+
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--split,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-grid--insight,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-actions,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-insights {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  /* On phones the two metrics facts stack; the KPI cards already do. */
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics {
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__row {
+    padding: 10px 8px;
+  }
+
+  /* The action toolbar keeps one calm line; the primary button stays
+     full-width so it is the obvious tap target. */
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid {
+    gap: 10px 4px;
+  }
+
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn--primary {
+    flex: 1 1 100%;
+  }
+}
+
+/* Reduced motion: the only transition this sheet adds is the row hover;
+   drop it. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__row {
+    transition: none !important;
+  }
+}
