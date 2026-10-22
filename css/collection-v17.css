@@ -466,27 +466,43 @@ body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
   }
 }
 
-/* ------------------------------------------------------------
-   Rail form (>= 1025px) — every facet on its own row
-   ------------------------------------------------------------
-   The console strip beside the grid used four shortcuts in a 944px
-   browser looked cramped. A 280px rail has 242px of content box, which the
-   measurement (ux06-rail-measure.js) shows is enough for every facet's
-   longest VALUE (the one clipped case is an unbounded user category name,
-   which grows without limit at any rail width). One facet per row also makes
-   each control a full-width 42px target instead of a 100px sliver. */
 @media (min-width: 1025px) {
+  /* Owner: the search + filter group sat in a 280px LEFT RAIL, where the
+     five facets could only wrap one-per-line — the whole control group
+     read as a vertical column. The reference layout is ONE HORIZONTAL
+     labelled toolbar ABOVE the grid (this sheet's own header comment),
+     which the tablet band already implements. So the workspace is one
+     column at desktop too: the toolbar becomes a full-width nav strip
+     (search on line one, the five facets + clear wrapping beside each
+     other on the next) and the grid takes the whole width. The rail
+     markup, every id and the sticky behaviour of the discovery panel
+     are untouched — only the track layout changes. */
+  body.dreamscape-v5 .v11-workspace {
+    display: block;
+  }
+
+  body.dreamscape-v5 #collection.v11-rail {
+    position: static;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    padding: clamp(24px, 2.4vw, 34px);
+    margin: 0 0 clamp(22px, 2vw, 30px);
+    border: 1px solid rgba(104, 80, 188, .14);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 18px 40px -34px rgba(40, 26, 92, .4);
+  }
+
+  /* The rail's own section head stays sr-only: the canvas title still
+     names the results. */
+
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
     display: flex;
-    flex-direction: column;
-    gap: 0;
-    /* The base toolbar rule sets `align-items: end` for its old grid
-       layout. In a flex COLUMN that means "shrink each child to its
-       content and pin it to the right edge" — which is exactly the
-       sideways-hanging filter block the owner screenshotted (search
-       left-aligned at 242px, the facet group shrunk to 159px and pinned
-       right). In a column the children must stretch. */
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 18px;
 
     box-sizing: border-box;
     width: 100%;
@@ -503,16 +519,15 @@ body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
      rule above (… .collection-toolbar .field) sets flex-direction: column
      with FIVE classes — one more than a plain `.collection-search` anchor,
      so it would keep the stack vertical. Anchoring on `.field.search`
-     (six classes) is what actually turns the row horizontal. */
+     (six classes) is what keeps the row horizontal. */
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search {
     display: flex;
-    /* Owner: the search was a vertical stack (label above input). The rail
-       is one labelled column, so the label sits LEFT of the input and the
-       two share one row. */
+    /* One strip line for the search: label left, input filling the rest. */
     flex-direction: row;
     align-items: center;
+    flex: 1 1 100%;
     gap: 12px;
-    margin-bottom: 16px;
+    margin: 0;
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search > label {
@@ -527,10 +542,16 @@ body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters {
+    /* Line two of the strip: the five facets sit BESIDE each other, and
+       the clear button joins the same line (flex 1 1 auto lets the group
+       share the row with the footer instead of forcing it to wrap). */
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    grid-column: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: end;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 14px 18px;
     margin: 0;
     padding: 0;
     border: 0;
@@ -538,34 +559,49 @@ body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters > .field {
+    flex: 1 1 150px;
+    min-width: 0;
     grid-column: auto;
     gap: 6px;
   }
 
-  /* The facet group gets a quiet label of its own, so "Trạng thái" is
-     understood as one of a set, not a stray field. */
+  /* The "BỘ LỌC" ghost label was a ::before flex item of the old vertical
+     stack; on one horizontal row it became a sixth slice and wrapped to
+     its own line (owner screenshot). Every facet already carries its own
+     visible label, so the group label is retired. */
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters::before {
-    content: "Bộ lọc";
-    margin: -2px 0 0;
-
-    color: #8A7FA8;
-    font-family: Inter, "Segoe UI", system-ui, sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: .14em;
-    text-transform: uppercase;
+    content: none;
   }
 
-  /* Click-away close for the rail's own disclosure. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+}
+
+  /* The facet-group ghost label and the vertical footer/summary stack
+     belonged to the old RAIL layout (280px column, facets one per row).
+     The toolbar is a horizontal strip now, so:
+       - the "BỘ LỌC" ghost label is retired — every facet already shows
+         its own visible label, and as a sixth flex slice it wrapped to
+         its own line;
+       - the footer (Xóa bộ lọc) joins the facet row instead of stacking
+         under it;
+       - the summary stays a single inline line. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters::before {
+    content: none;
+  }
+
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    margin: 14px 0 0;
-    padding: 12px 0 0;
-    border-top: 1px solid rgba(104, 80, 188, .10);
+    flex-direction: row;
+    align-items: end;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0;
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__hint {
@@ -573,19 +609,19 @@ body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear {
-    width: 100%;
-    height: 40px;
+    width: auto;
+    height: 42px;
     border-radius: 11px;
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin: 14px 0 0;
-    padding: 12px 0 0;
-    border-top: 1px solid rgba(104, 80, 188, .10);
-    font-size: 12px;
+    flex-direction: row;
+    gap: 10px;
+    margin: 12px 0 0;
+    padding: 0;
+    border: 0;
+    font-size: 12.5px;
   }
 }
 
@@ -1650,24 +1686,26 @@ body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__description {
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    /* Same right-pin bug as the tablet band: the base `align-items: end`
-       shrinks the toolbar's children and pins them to the right edge.
-       Stretch fills the one-column track. */
-    align-items: stretch;
-
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
     padding: 12px 14px;
     border-radius: 18px;
   }
 
+  /* Search spans the first strip line: its own internal row (label left,
+       input right) with the whole width of the panel. */
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
-    grid-column: 1 / -1;
+    flex: 1 1 100%;
   }
 
+  /* The filter toggle joins the strip as an inline element and only takes
+       the room its label needs; the facets wrap below it in two columns
+       when the disclosure opens. */
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle {
-    grid-column: 1 / -1;
+    flex: 1 1 auto;
     min-height: 44px;
     padding: 0 14px;
     border-radius: 12px;
@@ -1675,13 +1713,15 @@ body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__description {
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters.is-open {
+    flex: 1 1 100%;
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 14px;
     padding-top: 2px;
   }
 
   body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
-    grid-column: 1 / -1;
+    flex: 1 1 100%;
     justify-content: stretch;
   }
 
