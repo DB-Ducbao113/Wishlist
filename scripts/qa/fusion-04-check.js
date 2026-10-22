@@ -329,13 +329,19 @@ const setView = (page, mode) => page.evaluate((m) => {
     const i3 = links.findIndex(h => /fusion-03-gallery-board\.css/.test(h));
     const i17 = links.findIndex(h => /collection-v17\.css/.test(h));
 
-    c('F04-A01', 'source', 'the sheet is linked exactly once, after FUSION-03, and only the redesign sheet follows it',
-      'one <link>, after FUSION-03, with the collection redesign sheet as the single trailing stylesheet',
+    // The dialogs milestone appends ./css/dialogs-v18.css as the final sheet
+    // (after collection-v17.css) to override the Quick View + Add/Edit in the
+    // same token system. The trailing contract becomes the exact ordered pair;
+    // anything unknown after dialogs-v18.css is still a failure.
+    const i18 = links.findIndex(h => /dialogs-v18\.css/.test(h));
+    c('F04-A01', 'source', 'the sheet is linked exactly once, after FUSION-03, followed by the redesign sheet and then the dialogs sheet (nothing unknown after)',
+      'one <link>, after FUSION-03, with the trailing order collection-v17.css -> dialogs-v18.css',
       links.filter(h => /fusion-04-mobile\.css/.test(h)).length === 1 &&
         i4 > i3 &&
-        i17 === links.length - 1 &&
-        i4 === links.length - 2,
-      { index: i4, redesign: i17, total: links.length, order: links.slice(-3) });
+        i17 === i18 - 1 &&
+        i4 === i17 - 1 &&
+        i18 === links.length - 1,
+      { index: i4, redesign: i17, dialogs: i18, total: links.length, order: links.slice(-4) });
 
     c('F04-A02', 'source', 'all rules live inside the coarse-pointer gate (nothing leaks to fine pointers)',
       'stripping the two @media blocks leaves no declaration block behind',

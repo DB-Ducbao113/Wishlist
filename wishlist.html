@@ -171,6 +171,10 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
      its own; both blocks are inside the coarse-pointer gate. -->
 <link rel="stylesheet" href="./css/fusion-04-mobile.css">
 <link rel="stylesheet" href="./css/collection-v17.css">
+<!-- Reference-first redesign · milestone 2 — Quick View + Add/Edit.
+     Scoped to dialog#qv and dialog#dlg only, loaded last so the older
+     V8/V9/V12/V16 dialog sheets keep owning their behaviour. -->
+<link rel="stylesheet" href="./css/dialogs-v18.css">
 
 <!-- V16 — Premium scroll motion runtime.
      Self-contained so a failure anywhere else can never leave content hidden:
@@ -1349,7 +1353,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
           Thêm món
         </h2>
 
-        <p class="product-dialog__subtitle">
+        <p class="product-dialog__subtitle" id="dlgSubtitle">
           Lưu lại món đồ bạn đang yêu thích.
         </p>
       </div>
@@ -1396,8 +1400,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
                    aria-describedby="fPriceError fPriceHint"
                    placeholder="Ví dụ: 1500000">
             <p class="field-hint" id="fPriceHint">
-              Không bắt buộc. Bỏ trống nếu bạn chưa biết giá — món vẫn được
-              lưu với giá 0.
+              Không bắt buộc — bỏ trống nếu chưa biết giá.
             </p>
             <p class="field-error" id="fPriceError" role="alert" hidden></p>
           </div>
@@ -5772,6 +5775,14 @@ function openForm(item, draft = null){
   const editing = !!item;
   const values = item || draft || {};
   $("dlgTitle").textContent = editing ? "Sửa món" : "Thêm món";
+  // Same dialog, two jobs. The subtitle used to say "save the item you love"
+  // while editing an item that is already saved; it now states the job.
+  const dlgSubtitle = $("dlgSubtitle");
+  if(dlgSubtitle){
+    dlgSubtitle.textContent = editing
+      ? "Cập nhật thông tin cho món này."
+      : "Lưu lại món đồ bạn đang yêu thích.";
+  }
   $("fId").value        = editing ? item.id : "";
   $("fName").value      = values.name || "";
   $("fPrice").value     = values.price || "";
@@ -6648,6 +6659,15 @@ function init(){
     fMoreToggle.addEventListener("click", () => {
       const open = fMoreToggle.getAttribute("aria-expanded") === "true";
       setMoreOpen(!open);
+      // A revealed group that stays below the fold looks like nothing
+      // happened. Bring the first revealed plate into the body's viewport;
+      // the scroll container is the dialog body, so the page never moves.
+      if(!open){
+        requestAnimationFrame(() => {
+          const panel = $("fMorePanel");
+          if(panel) panel.scrollIntoView({ block: "start", behavior: "auto" });
+        });
+      }
     });
   }
 

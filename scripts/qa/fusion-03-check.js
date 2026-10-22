@@ -305,10 +305,20 @@ async function run() {
     const i4 = links.findIndex(h => /fusion-04-mobile\.css/.test(h));
     const count3 = links.filter(h => /fusion-03-gallery-board\.css/.test(h)).length;
     const i17 = links.findIndex(h => /collection-v17\.css/.test(h));
-    c('F03-A01', 'source', 'the FUSION-03 sheet is linked once, immediately after FUSION-02, before FUSION-04, and only the collection redesign sheet may follow',
-      'exactly one link, index(i3) === index(i2) + 1, FUSION-04 directly follows, and collection-v17.css is the single trailing sheet',
-      count3 === 1 && i2 >= 0 && i3 === i2 + 1 && i4 === links.length - 2 && i17 === links.length - 1,
-      { sheets: links.length, i2: i2, i3: i3, i4: i4, i17: i17, last: links[links.length - 1] });
+    // The dialogs milestone (F03 Phase 2) appends ./css/dialogs-v18.css AFTER
+    // collection-v17.css so the dialog redesign overrides the collection
+    // tokens for Quick View + Add/Edit only. The cascade contract therefore
+    // becomes an exact ORDER of the trailing sheets; anything unknown after
+    // dialogs-v18.css is still a failure.
+    const i18 = links.findIndex(h => /dialogs-v18\.css/.test(h));
+    const count17 = links.filter(h => /collection-v17\.css/.test(h)).length;
+    const count18 = links.filter(h => /dialogs-v18\.css/.test(h)).length;
+    c('F03-A01', 'source', 'the FUSION-03 sheet is linked once, immediately after FUSION-02, before FUSION-04, followed by the collection sheet and then the dialogs sheet (nothing unknown after)',
+      'exactly one link, index(i3) === index(i2) + 1, FUSION-04 directly follows, and the trailing order is collection-v17.css then dialogs-v18.css as the final sheet',
+      count3 === 1 && count17 === 1 && count18 === 1 && i2 >= 0 && i3 === i2 + 1 && i4 === i17 - 1 && i17 === links.length - 2 &&
+        i18 === links.length - 1 && i17 === i18 - 1 &&
+        [...links.slice(i17)].every(h => /collection-v17\.css|dialogs-v18\.css/.test(h)),
+      { sheets: links.length, i2: i2, i3: i3, i4: i4, i17: i17, i18: i18, last: links[links.length - 1] });
 
     const header = cssSrc.slice(0, cssSrc.indexOf('body.dreamscape-v5'));
     const namesOwners = /OWNERSHIP MAP/i.test(header) &&
