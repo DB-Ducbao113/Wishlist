@@ -1,0 +1,94 @@
+/* =====================================================================
+   DREAM VAULT V16.2 — FUSION-04
+   MOBILE REFINEMENT, COARSE-POINTER COST CONTROL & TOUCH TARGETS
+
+   Last sheet in the cascade (linked after fusion-03-gallery-board.css), so
+   every rule here may override FUSION-01..03 and all V4..V18 sheets.
+
+   OWNERSHIP — two families of properties only:
+     will-change               F04.2  release hero promotions that can never move
+     min-width / min-height    F04.1  measured coarse-pointer tap targets
+   No animation, no keyframes, no filter/backdrop-filter, no colour, no layout
+   structure and no data behaviour.
+
+   MEASURED BASIS (F04.1 real-browser audit; qa-out/fusion-04-*.json)
+     - page overflow 0 and zero hero-layer overlap at 320/375/390/430/768/1024/
+       1440/1920 (fusion-04-audit.json)
+     - .board__columns keeps overflow-x:auto and really scrolls (229px from a
+       touch drag); a vertical pan over the board chains to the page in both
+       directions (145px up / 145px down) — no gesture trap, so no rule here
+       (fusion-04-pan-confirm.json)
+     - no backdrop-filter survives the coarse-pointer cascade except the QV's
+       sticky .quick-view__top; forcing all of them off changed scroll task time
+       by +1.6% (noise), so the QV look is kept (fusion-04-blur-ab.json)
+     - filter: grayscale(.25) on the 25 purchased cards of a 100-card gallery:
+       removing it changed the mobile render by -2.1% (noise), so V8's
+       colour-independent "owned" signal is kept (fusion-04-grayscale-ab.json)
+     - html.motion-lite already stops the aurora drift (fusion-01:831), the
+       marquee (fusion-02:161) and the hero scene (motion-v18:140)
+   ===================================================================== */
+
+/* F04.2 — COARSE POINTER: RELEASE THE PROMOTIONS THAT CAN NEVER MOVE
+   motion-v16.css switches the hero depth off on touch (`transform: none
+   !important` in its coarse block, `translate: none !important` further down)
+   but keeps `will-change: transform` on the same three nodes, so every phone
+   holds composited layers for motion it is forbidden to run. Releasing the
+   hint changes no pixel — the motion properties are already inert.
+   `.hero--v9::before` is NOT listed: it keeps its working scroll-linked
+   `translate: 0 var(--hero-bg-y)`, so its promotion is real work. */
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .hero--v9 .hero__visual,
+  body.dreamscape-v5 .hero--v9 .hero__content,
+  body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+    will-change: auto;
+  }
+}
+
+/* F04.1 / F04.3 — COARSE POINTER: 44 x 44 TAP TARGETS
+   Measured on the real page at 320/375/768 with the menus open
+   (fusion-04-targets.json). These were the only interactive elements under
+   44px; everything else already cleared it (viewbar 44, search 56, card
+   actions 44, card-menu items 44, QV close 44, QV status 44, purchase
+   buttons 45, dock 54, filter toggle 48). Only the hit area grows — type,
+   colour, order, wording and behaviour are untouched, and every rule sits
+   inside the coarse gate so no fine-pointer layout shifts. */
+@media (hover: none), (pointer: coarse) {
+  /* The primary add button collapses to a 34px icon at 320. */
+  body.dreamscape-v5 #btnAdd {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Header + collection chrome (40-43px measured). */
+  body.dreamscape-v5 #btnImport,
+  body.dreamscape-v5 #btnSignIn,
+  body.dreamscape-v5 .site-header button,
+  body.dreamscape-v5 .site-header a {
+    min-height: 44px;
+  }
+
+  /* Dashboard: tabs 33px, distribution rows 39px, "add item" 42px. */
+  body.dreamscape-v5 #dvAddItem,
+  body.dreamscape-v5 .dv-tabs__tab,
+  body.dreamscape-v5 .dv-dist__item {
+    min-height: 44px;
+  }
+
+  /* Purchase dialog close (40px square). */
+  body.dreamscape-v5 #pdClose {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   OWNERSHIP NOTE
+   ---------------------------------------------------------------------
+   The UX-01/UX-02 rules (compact desktop hero, adaptive empty dashboard)
+   used to live here. They are layout and typography rules, and this sheet
+   owns exactly two property families inside the coarse-pointer gate, so
+   they broke the F04-A02 / F04-A03 contract and leaked onto fine
+   pointers. They now live in css/ux-01-02-compact.css, which is linked
+   immediately BEFORE this file — the same cascade position, so not one
+   pixel moved. Only the ownership was corrected.
+   --------------------------------------------------------------------- */

@@ -1,0 +1,1072 @@
+[
+  {
+    "id": "KPI-01",
+    "area": "KPI",
+    "entry": "sumTotal/sumSpent/sumCount",
+    "expected": "all zero, count \"0 món\"",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"0 ₫\",\"spent\":\"0 ₫\",\"count\":\"0 món\",\"progress\":\"0%\",\"caption\":\"Chưa có món nào trong bộ sưu tập.\",\"ariaNow\":\"0\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"0% — 0 trên 0 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"0%\",\"result\":\"Đang hiển thị 0 trên 0 món.\"}"
+  },
+  {
+    "id": "KPI-02",
+    "area": "KPI",
+    "entry": "globalMetrics()",
+    "expected": "totalCount 0, progress 0 (not NaN)",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":0,\"ownedCount\":0,\"pendingCount\":0,\"ownedValue\":0,\"pendingValue\":0,\"trackedValue\":0,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "KPI-03",
+    "area": "KPI",
+    "entry": "#dvProgressValue / aria",
+    "expected": "0% and aria-valuenow 0",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"0 ₫\",\"spent\":\"0 ₫\",\"count\":\"0 món\",\"progress\":\"0%\",\"caption\":\"Chưa có món nào trong bộ sưu tập.\",\"ariaNow\":\"0\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"0% — 0 trên 0 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"0%\",\"result\":\"Đang hiển thị 0 trên 0 món.\"}"
+  },
+  {
+    "id": "KPI-04",
+    "area": "KPI",
+    "entry": "#dvProgressCaption",
+    "expected": "explicit empty message, no NaN",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Chưa có món nào trong bộ sưu tập.\""
+  },
+  {
+    "id": "KPI-05",
+    "area": "KPI",
+    "entry": "#resultStatus",
+    "expected": "\"Đang hiển thị 0 trên 0 món.\"",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đang hiển thị 0 trên 0 món.\""
+  },
+  {
+    "id": "KPI-06",
+    "area": "KPI",
+    "entry": "progressbar a11y",
+    "expected": "role=progressbar with min/max set",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"0 ₫\",\"spent\":\"0 ₫\",\"count\":\"0 món\",\"progress\":\"0%\",\"caption\":\"Chưa có món nào trong bộ sưu tập.\",\"ariaNow\":\"0\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"0% — 0 trên 0 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"0%\",\"result\":\"Đang hiển thị 0 trên 0 món.\"}"
+  },
+  {
+    "id": "KPI-07",
+    "area": "KPI",
+    "entry": "no sample data",
+    "expected": "items stays empty (no fixtures injected)",
+    "name": "S1 EMPTY · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "0"
+  },
+  {
+    "id": "UI-01",
+    "area": "Empty state",
+    "entry": "#empty panel",
+    "expected": "visible with first-run copy",
+    "name": "S1 EMPTY · Empty state",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"hidden\":false,\"title\":\"Bộ sưu tập của bạn bắt đầu từ đây.\",\"action\":\"+ Thêm món đầu tiên\"}"
+  },
+  {
+    "id": "UI-02",
+    "area": "Empty state",
+    "entry": "#emptyAction",
+    "expected": "offers \"+ Thêm món đầu tiên\"",
+    "name": "S1 EMPTY · Empty state",
+    "pass": true,
+    "gate": true,
+    "actual": "\"+ Thêm món đầu tiên\""
+  },
+  {
+    "id": "BUG-00",
+    "area": "Console",
+    "entry": "page load",
+    "expected": "no NaN/TypeError noise",
+    "name": "S1 EMPTY · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "KPI-10",
+    "area": "KPI",
+    "entry": "globalMetrics() 1 item",
+    "expected": "owned 0 / pending 1 / pendingValue 250000",
+    "name": "S2 ONE ITEM · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":0,\"pendingCount\":1,\"ownedValue\":0,\"pendingValue\":250000,\"trackedValue\":250000,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "KPI-11",
+    "area": "KPI",
+    "entry": "#sumCount",
+    "expected": "\"1 món\"",
+    "name": "S2 ONE ITEM · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "\"1 món\""
+  },
+  {
+    "id": "KPI-12",
+    "area": "KPI",
+    "entry": "progress 0/1",
+    "expected": "0%",
+    "name": "S2 ONE ITEM · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"250.000 ₫\",\"spent\":\"0 ₫\",\"count\":\"1 món\",\"progress\":\"0%\",\"caption\":\"0 trên 1 món đã sở hữu.\",\"ariaNow\":\"0\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"0% — 0 trên 1 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"0%\",\"result\":\"Đang hiển thị 1 trên 1 món.\"}"
+  },
+  {
+    "id": "UI-03",
+    "area": "Card render",
+    "entry": "#grid",
+    "expected": "exactly 1 card",
+    "name": "S2 ONE ITEM · Card render",
+    "pass": true,
+    "gate": true,
+    "actual": "1"
+  },
+  {
+    "id": "CRUD-01",
+    "area": "Mark purchased",
+    "entry": ".mark-purchased button",
+    "expected": "labelled \"Đánh dấu đã mua\" when not owned",
+    "name": "S2 ONE ITEM · Mark purchased",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đánh dấu đã mua\""
+  },
+  {
+    "id": "CRUD-02",
+    "area": "Mark purchased",
+    "entry": ".mark-purchased click",
+    "expected": "status -> purchased, toast confirms",
+    "name": "S2 ONE ITEM · Mark purchased",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"purchased\",\"toast\":\"Đã đánh dấu \\\"Tai nghe\\\" là đã mua.\"}"
+  },
+  {
+    "id": "KPI-13",
+    "area": "KPI",
+    "entry": "after mark purchased",
+    "expected": "progress 100%, owned 250000, pending 0",
+    "name": "S2 ONE ITEM · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":1,\"pendingCount\":0,\"ownedValue\":250000,\"pendingValue\":0,\"trackedValue\":250000,\"progress\":1,\"progressPercent\":100}"
+  },
+  {
+    "id": "KPI-14",
+    "area": "KPI",
+    "entry": "#dvProgressCaption",
+    "expected": "1 trên 1 món đã sở hữu",
+    "name": "S2 ONE ITEM · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "\"1 trên 1 món đã sở hữu.\""
+  },
+  {
+    "id": "PERSIST-01",
+    "area": "Persistence",
+    "entry": "localStorage guest list",
+    "expected": "status persisted as purchased",
+    "name": "S2 ONE ITEM · Persistence",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"one-1\",\"name\":\"Tai nghe\",\"price\":250000,\"status\":\"purchased\",\"priority\":\"high\",\"category\":\"Công nghệ\"}"
+  },
+  {
+    "id": "PERSIST-02",
+    "area": "Persistence",
+    "entry": "wishlist.guest.items",
+    "expected": "stored status === \"purchased\"",
+    "name": "S2 ONE ITEM · Persistence",
+    "pass": true,
+    "gate": true,
+    "actual": "\"purchased\""
+  },
+  {
+    "id": "CRUD-03",
+    "area": "Undo purchased",
+    "entry": ".mark-purchased button",
+    "expected": "labelled \"Hoàn tác\" when owned",
+    "name": "S2 ONE ITEM · Undo purchased",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Hoàn tác\""
+  },
+  {
+    "id": "CRUD-04",
+    "area": "Undo purchased",
+    "entry": ".mark-purchased click",
+    "expected": "status -> ordered (previous step), progress 0%",
+    "name": "S2 ONE ITEM · Undo purchased",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"ordered\",\"p\":\"0%\"}"
+  },
+  {
+    "id": "KPI-15",
+    "area": "KPI",
+    "entry": "after undo",
+    "expected": "pending value back to 250000",
+    "name": "S2 ONE ITEM · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":0,\"pendingCount\":1,\"ownedValue\":0,\"pendingValue\":250000,\"trackedValue\":250000,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "BUG-01",
+    "area": "Console",
+    "entry": "single item flow",
+    "expected": "no console errors",
+    "name": "S2 ONE ITEM · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "KPI-20",
+    "area": "KPI",
+    "entry": "globalMetrics() 50 items",
+    "expected": "matches independent Node expectation",
+    "name": "S3 50 ITEMS · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"got\":{\"totalCount\":50,\"ownedCount\":12,\"pendingCount\":38,\"ownedValue\":1500000,\"pendingValue\":4775000,\"trackedValue\":6275000,\"progress\":0.24,\"progressPercent\":24},\"want\":{\"totalCount\":50,\"ownedCount\":12,\"pendingCount\":38,\"ownedValue\":1500000,\"pendingValue\":4775000,\"progressPercent\":24}}"
+  },
+  {
+    "id": "KPI-21",
+    "area": "KPI",
+    "entry": "#sumCount",
+    "expected": "\"50 món\" (whole collection)",
+    "name": "S3 50 ITEMS · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "\"50 món\""
+  },
+  {
+    "id": "KPI-22",
+    "area": "KPI",
+    "entry": "progress 12/50",
+    "expected": "24%",
+    "name": "S3 50 ITEMS · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"4.775.000 ₫\",\"spent\":\"1.500.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"24% — 12 trên 50 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"24%\",\"result\":\"Đang hiển thị 50 trên 50 món.\"}"
+  },
+  {
+    "id": "KPI-23",
+    "area": "KPI",
+    "entry": "#sumTotal / #sumSpent",
+    "expected": "text equals fmtMoney(independent expectation)",
+    "name": "S3 50 ITEMS · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"total\":\"4.775.000 ₫\",\"spent\":\"1.500.000 ₫\"}"
+  },
+  {
+    "id": "UI-04",
+    "area": "Card render",
+    "entry": "#grid",
+    "expected": "all 50 cards rendered",
+    "name": "S3 50 ITEMS · Card render",
+    "pass": true,
+    "gate": true,
+    "actual": "50"
+  },
+  {
+    "id": "FILTER-01",
+    "area": "Search",
+    "entry": "#q input (debounced)",
+    "expected": "resultStatus reflects the filtered subset",
+    "name": "S3 50 ITEMS · Search",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đang hiển thị 11 trên 50 món.\""
+  },
+  {
+    "id": "KPI-30",
+    "area": "KPI under search",
+    "entry": "#q = \"Món 4\"",
+    "expected": "globalMetrics + all 6 KPI texts unchanged",
+    "name": "S3 50 ITEMS · KPI under search",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"kpi\":{\"total\":\"4.775.000 ₫\",\"spent\":\"1.500.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"24% — 12 trên 50 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"24%\",\"result\":\"Đang hiển thị 11 trên 50 món.\"},\"metrics\":{\"totalCount\":50,\"ownedCount\":12,\"pendingCount\":38,\"ownedValue\":1500000,\"pendingValue\":4775000,\"trackedValue\":6275000,\"progress\":0.24,\"progressPercent\":24}}"
+  },
+  {
+    "id": "FILTER-02",
+    "area": "Search",
+    "entry": "search must not mutate data",
+    "expected": "items.length still 50 and no write spike",
+    "name": "S3 50 ITEMS · Search",
+    "pass": true,
+    "gate": true,
+    "actual": "50"
+  },
+  {
+    "id": "FILTER-03",
+    "area": "Clear filters",
+    "entry": "#btnClearFilter",
+    "expected": "search box, selects reset and 50 cards return",
+    "name": "S3 50 ITEMS · Clear filters",
+    "pass": true,
+    "gate": true,
+    "actual": "50"
+  },
+  {
+    "id": "FILTER-04",
+    "area": "Status filter",
+    "entry": "#fStatus = \"wish\"",
+    "expected": "resultStatus counts filtered subset only",
+    "name": "S3 50 ITEMS · Status filter",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đang hiển thị 12 trên 50 món.\""
+  },
+  {
+    "id": "KPI-31",
+    "area": "KPI under filter",
+    "entry": "#fStatus = \"wish\"",
+    "expected": "all 6 KPI texts unchanged",
+    "name": "S3 50 ITEMS · KPI under filter",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"got\":{\"t\":\"4.775.000 ₫\",\"s\":\"1.500.000 ₫\",\"c\":\"50 món\",\"p\":\"24%\"}}"
+  },
+  {
+    "id": "KPI-32",
+    "area": "KPI under filter",
+    "entry": "#fPriority = \"high\"",
+    "expected": "all 6 KPI texts unchanged",
+    "name": "S3 50 ITEMS · KPI under filter",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"t\":\"4.775.000 ₫\",\"c\":\"50 món\"}"
+  },
+  {
+    "id": "KPI-33",
+    "area": "KPI under filter",
+    "entry": "#fCategoryFilter = \"Nhóm 1\"",
+    "expected": "all 6 KPI texts unchanged",
+    "name": "S3 50 ITEMS · KPI under filter",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"t\":\"4.775.000 ₫\",\"c\":\"50 món\"}"
+  },
+  {
+    "id": "SORT-01",
+    "area": "Sort",
+    "entry": "#fSort = \"price-asc\"",
+    "expected": "card order actually changes",
+    "name": "S3 50 ITEMS · Sort",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"changed\":true}"
+  },
+  {
+    "id": "SORT-02",
+    "area": "Sort",
+    "entry": "price-asc correctness",
+    "expected": "first card is the cheapest, last the dearest",
+    "name": "S3 50 ITEMS · Sort",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"first\":\"f1-1\",\"last\":\"f1-50\"}"
+  },
+  {
+    "id": "KPI-34",
+    "area": "KPI under sort",
+    "entry": "#fSort = \"price-asc\"",
+    "expected": "all 6 KPI texts unchanged",
+    "name": "S3 50 ITEMS · KPI under sort",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"t\":\"4.775.000 ₫\",\"c\":\"50 món\"}"
+  },
+  {
+    "id": "KPI-35",
+    "area": "KPI combined",
+    "entry": "search + status + sort together",
+    "expected": "KPI still equal to full-collection values",
+    "name": "S3 50 ITEMS · KPI combined",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"m\":{\"totalCount\":50,\"ownedCount\":12,\"pendingCount\":38,\"ownedValue\":1500000,\"pendingValue\":4775000,\"trackedValue\":6275000,\"progress\":0.24,\"progressPercent\":24},\"kpi\":{\"total\":\"4.775.000 ₫\",\"spent\":\"1.500.000 ₫\",\"count\":\"50 món\",\"progress\":\"24%\",\"caption\":\"12 trên 50 món đã sở hữu.\",\"ariaNow\":\"24\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"24% — 12 trên 50 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"24%\",\"result\":\"Đang hiển thị 12 trên 50 món.\"}}"
+  },
+  {
+    "id": "KPI-36",
+    "area": "KPI empty filter result",
+    "entry": "search with 0 matches",
+    "expected": "cards 0, KPI untouched, progress kept",
+    "name": "S3 50 ITEMS · KPI empty filter result",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"cards\":0,\"count\":\"50 món\",\"result\":\"Đang hiển thị 0 trên 50 món.\"}"
+  },
+  {
+    "id": "UI-05",
+    "area": "Empty state",
+    "entry": "filters active, items exist",
+    "expected": "distinguishes \"no match\" from \"no data\"",
+    "name": "S3 50 ITEMS · Empty state",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"t\":\"Không tìm thấy món phù hợp\",\"a\":\"Xóa bộ lọc\"}"
+  },
+  {
+    "id": "FILTER-05",
+    "area": "Clear filters",
+    "entry": "#btnClearFilter after empty result",
+    "expected": "50 cards restored, KPI unchanged",
+    "name": "S3 50 ITEMS · Clear filters",
+    "pass": true,
+    "gate": true,
+    "actual": "50"
+  },
+  {
+    "id": "BUG-02",
+    "area": "Console",
+    "entry": "50 item + filter flow",
+    "expected": "no console errors",
+    "name": "S3 50 ITEMS · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "CRUD-10",
+    "area": "Create",
+    "entry": "#btnAdd",
+    "expected": "dialog opens on the add form",
+    "name": "S4 CRUD · Create",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Thêm món\""
+  },
+  {
+    "id": "CRUD-11",
+    "area": "Create",
+    "entry": "form submit",
+    "expected": "item saved, dialog closed, card rendered",
+    "name": "S4 CRUD · Create",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"it-1792169383893-vfmus\",\"name\":\"Áo khoác mùa đông\",\"price\":850000,\"status\":\"wish\",\"priority\":\"high\",\"category\":\"Thời trang\"}"
+  },
+  {
+    "id": "KPI-40",
+    "area": "KPI after create",
+    "entry": "#sumTotal",
+    "expected": "pending value = 850000, count \"1 món\"",
+    "name": "S4 CRUD · KPI after create",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":0,\"pendingCount\":1,\"ownedValue\":0,\"pendingValue\":850000,\"trackedValue\":850000,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "CRUD-12",
+    "area": "Create validation",
+    "entry": "submit without name",
+    "expected": "rejected with toast, dialog stays open",
+    "name": "S4 CRUD · Create validation",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"toast\":\"Vui lòng nhập tên món.\",\"items\":1}"
+  },
+  {
+    "id": "CRUD-13",
+    "area": "Create validation",
+    "entry": "submit with non-numeric price",
+    "expected": "rejected with toast, nothing saved",
+    "name": "S4 CRUD · Create validation",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"toast\":\"Giá phải là số không âm và nằm trong giới hạn an toàn.\",\"items\":1}"
+  },
+  {
+    "id": "CRUD-14",
+    "area": "Update",
+    "entry": "card \"Sửa\" button",
+    "expected": "form pre-filled with existing values",
+    "name": "S4 CRUD · Update",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"name\":\"Áo khoác mùa đông\",\"price\":\"850000\"}"
+  },
+  {
+    "id": "CRUD-15",
+    "area": "Update",
+    "entry": "form submit",
+    "expected": "same id, name changed, price preserved, count still 1",
+    "name": "S4 CRUD · Update",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"id\":\"it-1792169383893-vfmus\",\"name\":\"Áo khoác mùa đông (đã sửa)\",\"price\":850000,\"status\":\"wish\",\"priority\":\"high\",\"category\":\"Thời trang\"}"
+  },
+  {
+    "id": "KPI-41",
+    "area": "KPI after update",
+    "entry": "#sumTotal",
+    "expected": "still 850000 — edit must not double-count",
+    "name": "S4 CRUD · KPI after update",
+    "pass": true,
+    "gate": true,
+    "actual": "850000"
+  },
+  {
+    "id": "CRUD-16",
+    "area": "Delete",
+    "entry": "card \"Xóa\" + confirm dismissed",
+    "expected": "item survives, confirm text names the item",
+    "name": "S4 CRUD · Delete",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":1,\"dialog\":\"Xóa \\\"Áo khoác mùa đông (đã sửa)\\\"?\"}"
+  },
+  {
+    "id": "CRUD-17",
+    "area": "Delete",
+    "entry": "card \"Xóa\" + confirm accepted",
+    "expected": "item removed, empty state returns",
+    "name": "S4 CRUD · Delete",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":0}"
+  },
+  {
+    "id": "KPI-42",
+    "area": "KPI after delete",
+    "entry": "#sumTotal/sumCount",
+    "expected": "back to zero / \"0 món\"",
+    "name": "S4 CRUD · KPI after delete",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":0,\"ownedCount\":0,\"pendingCount\":0,\"ownedValue\":0,\"pendingValue\":0,\"trackedValue\":0,\"progress\":0,\"progressPercent\":0}"
+  },
+  {
+    "id": "BUG-03",
+    "area": "Console",
+    "entry": "CRUD flow",
+    "expected": "no console errors",
+    "name": "S4 CRUD · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "STATUS-01",
+    "area": "Status cycle",
+    "entry": ".status-chip click",
+    "expected": "wish -> saving -> ordered -> purchased, then stops",
+    "name": "S5 STATUS / QUICK VIEW · Status cycle",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"saving\",\"ordered\",\"purchased\"]"
+  },
+  {
+    "id": "STATUS-02",
+    "area": "Status cycle",
+    "entry": "after 4 clicks",
+    "expected": "chip is no longer actionable at purchased",
+    "name": "S5 STATUS / QUICK VIEW · Status cycle",
+    "pass": true,
+    "gate": true,
+    "actual": "\"purchased\""
+  },
+  {
+    "id": "KPI-50",
+    "area": "KPI",
+    "entry": "status cycle to purchased",
+    "expected": "progress 100% and owned value recorded",
+    "name": "S5 STATUS / QUICK VIEW · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":1,\"pendingCount\":0,\"ownedValue\":3200000,\"pendingValue\":0,\"trackedValue\":3200000,\"progress\":1,\"progressPercent\":100}"
+  },
+  {
+    "id": "QV-01",
+    "area": "Quick View",
+    "entry": ".product-card__view click",
+    "expected": "dialog opens with this item, read-only fields correct",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"title\":\"Máy ảnh cũ\",\"price\":\"3.200.000 ₫\",\"status\":\"Đã mua\",\"purchase\":\"Hoàn tác đã mua\",\"buy\":true,\"href\":\"https://example.com/mua\"}"
+  },
+  {
+    "id": "QV-02",
+    "area": "Quick View",
+    "entry": "purchase button",
+    "expected": "reflects purchased state as \"Hoàn tác đã mua\"",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Hoàn tác đã mua\""
+  },
+  {
+    "id": "QV-03",
+    "area": "Quick View",
+    "entry": "#qvPurchase click (undo)",
+    "expected": "item back to ordered, KPI progress resets",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"ordered\",\"p\":\"0%\"}"
+  },
+  {
+    "id": "QV-07",
+    "area": "Quick View",
+    "entry": "#qvPurchase (undo) then read the open panel",
+    "expected": "panel status ring + button label refresh in place",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"observed\":{\"ring\":\"Đã đặt hàng\",\"btn\":\"Đánh dấu đã mua\"},\"itemStatus\":\"ordered\"}"
+  },
+  {
+    "id": "QV-04",
+    "area": "Quick View",
+    "entry": "#qvPurchase click (mark)",
+    "expected": "item purchased again, progress 100%",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"st\":\"purchased\"}"
+  },
+  {
+    "id": "QV-08",
+    "area": "Quick View",
+    "entry": "#qvPurchase (mark) then read the open panel",
+    "expected": "panel status ring + button label refresh in place",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"observed\":{\"ring\":\"Đã mua\",\"btn\":\"Hoàn tác đã mua\"},\"itemStatus\":\"purchased\"}"
+  },
+  {
+    "id": "QV-05",
+    "area": "Quick View",
+    "entry": "#qvEdit",
+    "expected": "quick view closes BEFORE the form opens (no stacked modals)",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"qvOpen\":false,\"dlgOpen\":true}"
+  },
+  {
+    "id": "QV-06",
+    "area": "Quick View",
+    "entry": "#qvClose",
+    "expected": "dialog closes cleanly",
+    "name": "S5 STATUS / QUICK VIEW · Quick View",
+    "pass": true,
+    "gate": true,
+    "actual": "false"
+  },
+  {
+    "id": "VIEW-01",
+    "area": "View mode",
+    "entry": "#v13FocusView",
+    "expected": "grid switches to focus + aria-pressed toggles",
+    "name": "S5 STATUS / QUICK VIEW · View mode",
+    "pass": true,
+    "gate": true,
+    "actual": "\"focus\""
+  },
+  {
+    "id": "VIEW-02",
+    "area": "View mode",
+    "entry": "focus view",
+    "expected": "KPI unaffected by view mode",
+    "name": "S5 STATUS / QUICK VIEW · View mode",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":1,\"ownedCount\":1,\"pendingCount\":0,\"ownedValue\":3200000,\"pendingValue\":0,\"trackedValue\":3200000,\"progress\":1,\"progressPercent\":100}"
+  },
+  {
+    "id": "VIEW-03",
+    "area": "View mode",
+    "entry": "#v13GridView",
+    "expected": "back to gallery",
+    "name": "S5 STATUS / QUICK VIEW · View mode",
+    "pass": true,
+    "gate": true,
+    "actual": "\"gallery\""
+  },
+  {
+    "id": "BUG-04",
+    "area": "Console",
+    "entry": "status + quick view flow",
+    "expected": "no console errors",
+    "name": "S5 STATUS / QUICK VIEW · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "IO-00",
+    "area": "Export",
+    "entry": ".nav-more summary",
+    "expected": "opens the tools menu and reveals \"#btnExport\"",
+    "name": "S6 IMPORT / EXPORT · Export",
+    "pass": true,
+    "gate": true,
+    "actual": "true"
+  },
+  {
+    "id": "IO-01",
+    "area": "Export",
+    "entry": "#btnExport",
+    "expected": "downloads a JSON array of the whole list",
+    "name": "S6 IMPORT / EXPORT · Export",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"name\":\"wishlist-2026-10-16.json\",\"parsed\":[{\"id\":\"io-1\",\"name\":\"Ghế công thái học\",\"price\":4200000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"high\",\"category\":\"Nội thất\",\"note\":\"lưng lưới\",\"createdAt\":1700000000000}]}"
+  },
+  {
+    "id": "IO-02",
+    "area": "Export",
+    "entry": "filename",
+    "expected": "dated .json filename",
+    "name": "S6 IMPORT / EXPORT · Export",
+    "pass": true,
+    "gate": true,
+    "actual": "\"wishlist-2026-10-16.json\""
+  },
+  {
+    "id": "IO-03",
+    "area": "Export",
+    "entry": "toast",
+    "expected": "confirms how many items were written",
+    "name": "S6 IMPORT / EXPORT · Export",
+    "pass": true,
+    "gate": true,
+    "actual": "\"Đã xuất 1 món ra tệp JSON.\""
+  },
+  {
+    "id": "IO-04",
+    "area": "Import",
+    "entry": "#importFile with malformed JSON",
+    "expected": "rejected, existing list untouched",
+    "name": "S6 IMPORT / EXPORT · Import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":1,\"toast\":\"Tệp không chứa JSON hợp lệ.\"}"
+  },
+  {
+    "id": "IO-05",
+    "area": "Import",
+    "entry": "#importFile with wrong shape",
+    "expected": "rejected, existing list untouched",
+    "name": "S6 IMPORT / EXPORT · Import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":1,\"toast\":\"JSON sai định dạng: cần một danh sách món.\"}"
+  },
+  {
+    "id": "IO-06",
+    "area": "Import",
+    "entry": "#importFile valid + confirm",
+    "expected": "list replaced by the file contents",
+    "name": "S6 IMPORT / EXPORT · Import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"items\":[{\"id\":\"imp-1\",\"name\":\"Bàn làm việc\",\"price\":2500000,\"status\":\"wish\",\"priority\":\"low\",\"category\":\"Nội thất\"},{\"id\":\"imp-2\",\"name\":\"Đèn bàn\",\"price\":500000,\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"Nội thất\"}]}"
+  },
+  {
+    "id": "IO-07",
+    "area": "Import",
+    "entry": "confirm prompt",
+    "expected": "asks before replacing the current list",
+    "name": "S6 IMPORT / EXPORT · Import",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Nhập 2 món từ tệp? Danh sách hiện tại (1 món) sẽ bị thay thế.\"]"
+  },
+  {
+    "id": "KPI-60",
+    "area": "KPI after import",
+    "entry": "globalMetrics()",
+    "expected": "recomputed from the imported list",
+    "name": "S6 IMPORT / EXPORT · KPI after import",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":2,\"ownedCount\":1,\"pendingCount\":1,\"ownedValue\":500000,\"pendingValue\":2500000,\"trackedValue\":3000000,\"progress\":0.5,\"progressPercent\":50}"
+  },
+  {
+    "id": "IO-08",
+    "area": "Import",
+    "entry": "confirm dismissed",
+    "expected": "list left exactly as it was",
+    "name": "S6 IMPORT / EXPORT · Import",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"Bàn làm việc\",\"Đèn bàn\"]"
+  },
+  {
+    "id": "BUG-05",
+    "area": "Console",
+    "entry": "import/export flow",
+    "expected": "no console errors",
+    "name": "S6 IMPORT / EXPORT · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "SESSION-01",
+    "area": "Guest boot",
+    "entry": "first resolved session is guest",
+    "expected": "guest list shown with guest KPI",
+    "name": "S7 SESSION · Guest boot",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":2,\"ownedCount\":1,\"pendingCount\":1,\"ownedValue\":200000,\"pendingValue\":100000,\"trackedValue\":300000,\"progress\":0.5,\"progressPercent\":50}"
+  },
+  {
+    "id": "SESSION-02",
+    "area": "Sign in",
+    "entry": "onUserChanged(uid-demo)",
+    "expected": "list swaps to the ACCOUNT cache (no guest mix)",
+    "name": "S7 SESSION · Sign in",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":3,\"ownedCount\":1,\"pendingCount\":2,\"ownedValue\":500000,\"pendingValue\":700000,\"trackedValue\":1200000,\"progress\":0.3333333333333333,\"progressPercent\":33}"
+  },
+  {
+    "id": "SESSION-03",
+    "area": "Sign in",
+    "entry": "KPI after sign in",
+    "expected": "progress 1/3 -> 33%, count \"3 món\"",
+    "name": "S7 SESSION · Sign in",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"p\":\"33%\",\"c\":\"3 món\"}"
+  },
+  {
+    "id": "SESSION-04",
+    "area": "Sign in",
+    "entry": "#syncAccountState",
+    "expected": "shows the signed-in email",
+    "name": "S7 SESSION · Sign in",
+    "pass": true,
+    "gate": true,
+    "actual": "\"demo@example.com\""
+  },
+  {
+    "id": "SESSION-05",
+    "area": "Remote snapshot",
+    "entry": "onRemoteItems(initial)",
+    "expected": "union by id, KPI recomputed from merged list",
+    "name": "S7 SESSION · Remote snapshot",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":4,\"ownedCount\":1,\"pendingCount\":3,\"ownedValue\":500000,\"pendingValue\":1300000,\"trackedValue\":1800000,\"progress\":0.25,\"progressPercent\":25}"
+  },
+  {
+    "id": "SESSION-06",
+    "area": "Remote snapshot",
+    "entry": "KPI after merge",
+    "expected": "progress 1/4 -> 25%",
+    "name": "S7 SESSION · Remote snapshot",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"p\":\"25%\",\"c\":\"4 món\"}"
+  },
+  {
+    "id": "SESSION-07",
+    "area": "Sign out",
+    "entry": "#btnSignOut",
+    "expected": "returns to the GUEST list, KPI back to guest values",
+    "name": "S7 SESSION · Sign out",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"m\":{\"totalCount\":2,\"ownedCount\":1,\"pendingCount\":1,\"ownedValue\":200000,\"pendingValue\":100000,\"trackedValue\":300000,\"progress\":0.5,\"progressPercent\":50},\"kpi\":{\"total\":\"100.000 ₫\",\"spent\":\"200.000 ₫\",\"count\":\"2 món\",\"progress\":\"50%\",\"caption\":\"1 trên 2 món đã sở hữu.\",\"ariaNow\":\"50\",\"ariaMin\":\"0\",\"ariaMax\":\"100\",\"ariaText\":\"50% — 1 trên 2 món đã sở hữu\",\"role\":\"progressbar\",\"fillWidth\":\"50%\",\"result\":\"Đang hiển thị 2 trên 2 món.\"}}"
+  },
+  {
+    "id": "SESSION-08",
+    "area": "Sign out",
+    "entry": "account data untouched",
+    "expected": "account cache still holds all 4 account items",
+    "name": "S7 SESSION · Sign out",
+    "pass": true,
+    "gate": true,
+    "actual": "4"
+  },
+  {
+    "id": "SESSION-09",
+    "area": "Sign out",
+    "entry": "guest data untouched",
+    "expected": "guest list unchanged by the A->guest swap",
+    "name": "S7 SESSION · Sign out",
+    "pass": true,
+    "gate": true,
+    "actual": "2"
+  },
+  {
+    "id": "SESSION-10",
+    "area": "Stale snapshot",
+    "entry": "onRemoteItems after logout",
+    "expected": "ignored — guest list unchanged (M1 guard)",
+    "name": "S7 SESSION · Stale snapshot",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"g-1\",\"g-2\"]"
+  },
+  {
+    "id": "SESSION-11",
+    "area": "Sync safety",
+    "entry": "window.__cloud.syncs after logout",
+    "expected": "no sync recorded for the guest session",
+    "name": "S7 SESSION · Sync safety",
+    "pass": true,
+    "gate": true,
+    "actual": "[[\"a-1\",\"a-2\",\"a-3\",\"a-4\"]]"
+  },
+  {
+    "id": "SESSION-12",
+    "area": "Re-login",
+    "entry": "onUserChanged(uid-demo) again",
+    "expected": "account list restored exactly (4 items)",
+    "name": "S7 SESSION · Re-login",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":4,\"ownedCount\":1,\"pendingCount\":3,\"ownedValue\":500000,\"pendingValue\":1300000,\"trackedValue\":1800000,\"progress\":0.25,\"progressPercent\":25}"
+  },
+  {
+    "id": "SESSION-13",
+    "area": "A -> B",
+    "entry": "onUserChanged(uid-other)",
+    "expected": "B sees only B data, no A leakage",
+    "name": "S7 SESSION · A -> B",
+    "pass": true,
+    "gate": true,
+    "actual": "[\"b-1\"]"
+  },
+  {
+    "id": "BUG-06",
+    "area": "Console",
+    "entry": "session flow",
+    "expected": "no console errors",
+    "name": "S7 SESSION · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "KPI-70",
+    "area": "KPI robustness",
+    "entry": "corrupt prices in storage",
+    "expected": "each bad price counts as 0, total is finite",
+    "name": "S8 DEFENSIVE KPI · KPI robustness",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":5,\"ownedCount\":1,\"pendingCount\":4,\"ownedValue\":0,\"pendingValue\":750000,\"trackedValue\":750000,\"progress\":0.2,\"progressPercent\":20}"
+  },
+  {
+    "id": "KPI-71",
+    "area": "KPI robustness",
+    "entry": "#sumTotal",
+    "expected": "renders as a number, never \"NaN\"",
+    "name": "S8 DEFENSIVE KPI · KPI robustness",
+    "pass": true,
+    "gate": true,
+    "actual": "\"750.000 ₫\""
+  },
+  {
+    "id": "KPI-72",
+    "area": "KPI robustness",
+    "entry": "progress with 5 items / 1 owned",
+    "expected": "20%, no division by zero",
+    "name": "S8 DEFENSIVE KPI · KPI robustness",
+    "pass": true,
+    "gate": true,
+    "actual": "\"20%\""
+  },
+  {
+    "id": "KPI-73",
+    "area": "KPI robustness",
+    "entry": "items without a price field",
+    "expected": "counted in count, excluded from value",
+    "name": "S8 DEFENSIVE KPI · KPI robustness",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"totalCount\":5,\"ownedCount\":1,\"pendingCount\":4,\"ownedValue\":0,\"pendingValue\":750000,\"trackedValue\":750000,\"progress\":0.2,\"progressPercent\":20}"
+  },
+  {
+    "id": "BUG-07",
+    "area": "Console",
+    "entry": "corrupt data",
+    "expected": "no console errors while rendering",
+    "name": "S8 DEFENSIVE KPI · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  },
+  {
+    "id": "MOBILE-01",
+    "area": "Layout",
+    "entry": "dashboard at 390px",
+    "expected": "no horizontal overflow",
+    "name": "S9 MOBILE · Layout",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":390,\"innerWidth\":390,\"width\":330,\"trackWidth\":292,\"fillWidth\":70,\"fillStyle\":\"24%\"}"
+  },
+  {
+    "id": "MOBILE-02",
+    "area": "Layout",
+    "entry": "progress track",
+    "expected": "fill is 24% of the track width",
+    "name": "S9 MOBILE · Layout",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":390,\"innerWidth\":390,\"width\":330,\"trackWidth\":292,\"fillWidth\":70,\"fillStyle\":\"24%\"}"
+  },
+  {
+    "id": "MOBILE-03",
+    "area": "Layout",
+    "entry": "progress block",
+    "expected": "fits inside the viewport",
+    "name": "S9 MOBILE · Layout",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"scrollWidth\":390,\"innerWidth\":390,\"width\":330,\"trackWidth\":292,\"fillWidth\":70,\"fillStyle\":\"24%\"}"
+  },
+  {
+    "id": "KPI-80",
+    "area": "KPI",
+    "entry": "mobile",
+    "expected": "same numbers as desktop (metrics are layout independent)",
+    "name": "S9 MOBILE · KPI",
+    "pass": true,
+    "gate": true,
+    "actual": "{\"c\":\"50 món\",\"p\":\"24%\"}"
+  },
+  {
+    "id": "BUG-08",
+    "area": "Console",
+    "entry": "mobile",
+    "expected": "no console errors",
+    "name": "S9 MOBILE · Console",
+    "pass": true,
+    "gate": true,
+    "actual": "[]"
+  }
+]

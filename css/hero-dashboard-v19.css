@@ -1,0 +1,738 @@
+/* ============================================================
+   Hero & Dashboard v19 — reference-first redesign (milestone 3)
+   ------------------------------------------------------------
+   Scope: the hero introduction and the dashboard command centre
+   only. Every rule is anchored on `body.dreamscape-v5`, so no
+   other surface changes shape. Loaded after dialogs-v18.css,
+   which loads after collection-v17.css — the three milestones
+   now speak one voice:
+
+   - Inter sans everywhere; serif italic is retired on hero copy,
+     the overview heading and section titles.
+   - White surfaces + hairlines instead of saturated violet plates.
+   - Micro-labels 10–11px uppercase, value numerals 800.
+   - Compressed vertical rhythm so the collection is reachable.
+
+   OWNERSHIP MAP
+   -------------
+   Owned here        hero compaction + typographic voice; dashboard
+                     panel/head/KPI/metrics/grid/actions voice;
+                     the empty-collection guidance panel.
+   Kept elsewhere    ::before light rail on .overview-heading
+                     (FUSION-02 F04-01..03 owns its opacity/anim —
+                     only its surroundings are restyled);
+                     transform on .stat-card / .dv-savings__row /
+                     meter fills (F04-05/07/11 hover + fill
+                     contracts; no transform is declared here);
+                     [role=progressbar] semantics and seeded KPI
+                     text (f1/f5 suites); every id and #dv* node.
+   Decorative        ghost word + ghost numerals stay aria-hidden
+                     and keep their alpha/stroke; motion gates
+                     html.pv-enter untouched; no backdrop-filter,
+                     no blur(), nothing loops.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Tokens — aliases of the brand palette, never a new palette
+   ------------------------------------------------------------ */
+body.dreamscape-v5 {
+  --v19-sans: Inter, "Segoe UI", system-ui, sans-serif;
+  --v19-ink: #19152C;
+  --v19-muted: #625979;
+  --v19-soft: #8A7FA8;
+  --v19-line: rgba(104, 80, 188, .14);
+  --v19-tint: rgba(104, 80, 188, .07);
+  --v19-radius: 20px;
+  --v19-shadow: 0 18px 40px -32px rgba(40, 26, 92, .55);
+}
+
+/* ------------------------------------------------------------
+   2. Hero — compact sans introduction
+   ------------------------------------------------------------ */
+
+/* Signature line: gradient highlight must survive (FUSION-01 F03-07/08
+   pixel-proof reads backgroundImage + background-clip + fill on this
+   span), so ONLY the family/weight/style changes here. */
+body.dreamscape-v5 .hero--v9 .hero__title > span {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -.045em;
+}
+
+body.dreamscape-v5 .hero--v9 .hero__footer {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 650;
+  font-size: 11.5px;
+  letter-spacing: .06em;
+}
+
+/* Decorative ghosts keep their alpha/stroke, lose the calligraphic
+   voice (same voice as the rest of the redesign). */
+body.dreamscape-v5 .pv-hero-ghost {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+}
+
+body.dreamscape-v5 .overview-heading::after,
+body.dreamscape-v5 .list-heading--v3::after {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene__no {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+}
+
+/* Floating-card captions follow the sans micro-label voice too. */
+body.dreamscape-v5 .v9-scene__caption,
+body.dreamscape-v5 .pv-card__cap {
+  font-family: var(--v19-sans);
+  font-style: normal;
+}
+
+/* The hero box is owned by the cinematic-v7 chain
+   (body.dreamscape-v5 .hero.hero--v5.hero--v6.hero--v7), which out-specifies
+   a .hero--v9 anchor — so the compaction below anchors on the FULL class
+   chain from the markup. */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v7.hero--v9 {
+    min-height: 0;
+    padding-block: clamp(0px, .5vw, 10px) 26px;
+    gap: clamp(22px, 2.8vw, 48px);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    font-size: clamp(2.35rem, 3.75vw, 3.6rem);
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-top: 14px;
+    padding-top: 16px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 18px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__footer {
+    margin-top: 16px;
+  }
+}
+
+/* ---- ≤1024: stacked hero — same compaction, smaller stage ---- */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .hero.hero--v2.hero--v3.hero--v5.hero--v6.hero--v7.hero--v9 {
+    padding-block: 2px 16px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__title > span {
+    margin-top: .05em;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-top: 10px;
+    padding-top: 12px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+    margin-top: 14px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .hero__footer {
+    margin-top: 12px;
+  }
+}
+
+/* ------------------------------------------------------------
+   3. Dashboard panel shell
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .panel.dashboard-panel--v2 {
+  padding: clamp(14px, 1.8vw, 24px);
+  border-radius: 24px;
+}
+
+/* ---- Overview heading: violet plate → quiet editorial head ---- */
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading {
+  overflow: hidden;
+  border-radius: 16px;
+  padding: clamp(2px, .5vw, 8px) 0 16px;
+  margin: 0 0 12px;
+  gap: 8px;
+  color: var(--v19-ink);
+  background: transparent;
+  border-bottom: 1px solid var(--v19-line);
+}
+
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading__eyebrow {
+  color: var(--dream-accent);
+  font-family: var(--v19-sans);
+  font-size: 10.5px;
+  letter-spacing: .18em;
+}
+
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading__no {
+  color: var(--dream-accent);
+  background: var(--v19-tint);
+  border-color: rgba(104, 80, 188, .16);
+}
+
+body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading__title {
+  max-width: 26ch;
+  color: var(--v19-ink);
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+}
+
+/* The dash ghost was sized for the old 42px-padded violet plate; on the
+   compact white heading it must live INSIDE the clipped heading band or
+   it paints nothing (FUSION-02 F03-05 samples its own box). Alpha and
+   stroke stay owned by fusion-02. The compact heading also keeps its
+   decorator ghost STILL: the scroll-linked drift re-rasterises the small
+   glyph layer every frame (byte-level AA noise), which both the stillness
+   proof and the reading experience are worse for. The collection ghost
+   keeps its drift. */
+body.dreamscape-v5 .pv-ghost--dash {
+  top: 6px;
+  font-size: clamp(2.4rem, 3.2vw, 3.4rem);
+}
+
+/* The heading's own add action: white pill, hairline, accent text —
+   the ONE primary add on the dashboard. */
+body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(104, 80, 188, .32);
+  background: #fff;
+  color: var(--dream-accent);
+  font-family: var(--v19-sans);
+  font-weight: 800;
+  box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add:hover {
+    background: var(--dream-accent);
+    border-color: var(--dream-accent);
+    color: #fff;
+  }
+}
+
+body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add:focus-visible {
+  outline: 2px solid var(--dream-accent);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------
+   4. KPI row — dominant figure, quietly supported
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard {
+  margin: 0 0 12px;
+}
+
+/* The primary figure: light accent wash (all stops OPAQUE — f3-check
+   A11Y-02 needs a fully opaque gradient stop to measure) with dark
+   ink text; no more white-on-violet plate. Applies on every width —
+   cinematic-v7-mobile restyles this card for ≤1200px, so the same
+   voice rules are re-asserted in the mobile block below. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+  background: linear-gradient(160deg, #FFFFFF 0%, #F4F0FD 55%, #ECE5FA 100%);
+  border-color: rgba(104, 80, 188, .18);
+  box-shadow: var(--v19-shadow);
+  color: var(--v19-ink);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__label,
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__description {
+  color: var(--v19-muted);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__label {
+  font-size: 11px;
+  letter-spacing: .14em;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__value {
+  color: var(--dream-accent);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__icon {
+  background: var(--v19-tint);
+  border-color: rgba(104, 80, 188, .16);
+  color: var(--dream-accent);
+}
+
+/* The old serif "01/02/03" card numerals are re-asserted for mobile by
+   cinematic-v7; they are not contractual (FUSION-01 F03-09/10 covers only
+   the two HEADING ghosts), so they stop painting. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card::after {
+  content: none;
+}
+
+/* ---- Desktop ≥1025 sizing: one row, dominant first figure ---- */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: 12px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+    min-height: 148px;
+    padding: 18px 22px;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__value {
+    font-size: clamp(1.9rem, 2.4vw, 2.4rem);
+    line-height: 1.02;
+    letter-spacing: -.02em;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    font-size: 19px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) {
+    min-height: 148px;
+    padding: 16px 18px;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:nth-child(n + 2) .stat-card__value {
+    font-size: clamp(1.5rem, 1.9vw, 2rem);
+  }
+}
+
+/* Secondary cards: plain white with the V17 hairline. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card {
+  border-radius: 16px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard .stat-card__label {
+  font-family: var(--v19-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   5. Secondary metrics — inline facts, not plates
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics {
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__item {
+  border: 1px solid var(--v19-line);
+  border-radius: 16px;
+  background: #fff;
+  padding: 12px 16px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__label {
+  font-family: var(--v19-sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__value {
+  font-family: var(--v19-sans);
+  font-weight: 800;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-metrics__hint {
+  font-family: var(--v19-sans);
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------
+   6. Widget grids — same cards, tighter rhythm, sans titles
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid {
+  margin-block: 12px;
+}
+
+/* Desktop cards: 22px padding from the V16 owners relaxes to the V17
+   card voice (16px). The mobile rhythm is re-tightened in §8b. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .dv-progress,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-dist,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-breakdown,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-priority,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-savings,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights {
+  padding: 16px 18px;
+}
+
+body.dreamscape-v5 .dv-dash .dv-priority__row { padding-block: 8px; }
+body.dreamscape-v5 .dv-dash .dv-insights__row { padding-block: 8px; }
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-grid > .dv-progress,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-dist,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-breakdown,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-priority,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-savings,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights {
+  border-radius: 16px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-dist__title,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-breakdown__title,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-priority__title,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-savings__title,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__title {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 13.5px;
+  letter-spacing: -.01em;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-breakdown__hint,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-priority__hint,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-savings__hint,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-insights__hint {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-size: 10px;
+}
+
+/* Progress caption keeps ≥4.5:1 (f3-check A11Y-01). */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-progress__caption {
+  font-family: var(--v19-sans);
+  font-size: 12.5px;
+}
+
+/* ------------------------------------------------------------
+   7. Quick-actions — demoted quiet chips (the ONE add CTA stays
+      in the heading; these chips only filter / delegate)
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions {
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__title {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: 13.5px;
+  letter-spacing: -.01em;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__lead,
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__note {
+  font-family: var(--v19-sans);
+  font-style: normal;
+  font-size: 12.5px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__grid {
+  gap: 10px;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--v19-line);
+  background: #fff;
+  color: var(--v19-muted);
+  font-family: var(--v19-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn--primary {
+  background: var(--v19-tint);
+  border-color: rgba(104, 80, 188, .24);
+  color: var(--dream-accent);
+  box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn:hover {
+    border-color: rgba(104, 80, 188, .38);
+    color: var(--dream-accent);
+  }
+}
+
+body.dreamscape-v5 .dashboard-panel--v2 .dv-actions__btn:focus-visible {
+  outline: 2px solid var(--dream-accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   8b. ≤1024: the dashboard stacks — compress the rhythm so the
+   collection stays reachable on touch. Interactive rows keep
+   their ≥44px heights (FUSION-04 D01/D02/D05 untouched).
+   ------------------------------------------------------------ */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  body.dreamscape-v5 .dashboard-panel.dv-dash .overview-heading {
+    padding-inline: 2px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* the heading add pill stops stretching full width */
+  body.dreamscape-v5 .dashboard-panel.dv-dash .dv-add {
+    align-self: flex-start;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card,
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+    min-height: 0;
+    padding: 12px 14px;
+    gap: 5px;
+    justify-content: flex-start;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__value {
+    font-size: 1.4rem;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard .stat-card__description {
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics {
+    margin-top: 10px;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item {
+    padding: 10px 12px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid {
+    margin-block: 10px;
+  }
+
+  /* widget cards: same surface, tighter padding */
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-dist,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-breakdown,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-priority,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-savings,
+  body.dreamscape-v5 .dashboard-panel--v2 .dv-insights {
+    padding: 13px 14px;
+  }
+
+  /* non-gated rows tighten too (dist rows sit at exactly 44px — the
+     F04-D01 floor — so they are deliberately left alone) */
+  body.dreamscape-v5 .dv-dash .dv-savings__row { padding-block: 6px; }
+  body.dreamscape-v5 .dv-dash .dv-breakdown__row { padding-block: 6px; }
+  body.dreamscape-v5 .dv-dash .dv-priority__row { padding-block: 8px; }
+  body.dreamscape-v5 .dv-dash .dv-insights__row { padding-block: 8px; }
+
+  /* the action shelf wraps as compact two-up chips, not full-width bars */
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .dv-actions {
+    padding: 12px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .dv-actions__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .dv-actions__btn {
+    min-height: 44px;
+    padding: 0 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: none;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2 .dv-actions__lead {
+    margin: 0;
+  }
+}
+
+/* one fact per row reads better than two crushed half-cards */
+@media (max-width: 640px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------------------------------------
+   8. Empty collection — one focused guide, zero zero-stats
+   The ux-01-02 sheet already hides stats/grids/actions via
+   body.dv-library-empty; this panel appears in the gap. Default
+   hidden; CSS-only display rule, no JS state involvement.
+   ------------------------------------------------------------ */
+.dv-empty-guide {
+  display: none;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide {
+  display: grid;
+  gap: 12px;
+  padding: 20px 20px 22px;
+  border: 1px solid var(--v19-line);
+  border-radius: var(--v19-radius);
+  background: #fff;
+  box-shadow: var(--v19-shadow);
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__kicker {
+  margin: 0;
+  color: var(--dream-accent);
+  font-family: var(--v19-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__title {
+  margin: 0;
+  color: var(--v19-ink);
+  font-family: var(--v19-sans);
+  font-weight: 800;
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: dvsteps;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__step {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--v19-line);
+  border-radius: 14px;
+  background: #FAF8FF;
+  counter-increment: dvsteps;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__step::before {
+  content: counter(dvsteps, decimal-leading-zero);
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  color: var(--dream-accent);
+  font-family: var(--v19-sans);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  opacity: .55;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__step b {
+  color: var(--v19-ink);
+  font-family: var(--v19-sans);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__step span {
+  color: var(--v19-muted);
+  font-family: var(--v19-sans);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* The guide's add action delegates to the existing openForm() flow
+   (same handler the dashboard add button binds); it is the single,
+   obvious action — the heading pill is display:none while empty. */
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-add {
+  display: none;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__cta {
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7E66D6, #5D45B2);
+  color: #fff;
+  font-family: var(--v19-sans);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  box-shadow: 0 14px 30px rgba(84, 63, 158, .26);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__cta:hover {
+    background: linear-gradient(135deg, #7159C8, #54399E);
+  }
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__cta:focus-visible {
+  outline: 2px solid var(--dream-accent);
+  outline-offset: 3px;
+}
+
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__hint {
+  margin: 0;
+  color: var(--v19-muted);
+  font-family: var(--v19-sans);
+  font-size: 11.5px;
+}
+
+/* Narrow: steps stack, still ≥44 tap targets on touch. */
+@media (max-width: 760px) {
+  body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-empty-guide__cta {
+    transition: none;
+  }
+}

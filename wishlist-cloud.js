@@ -75,7 +75,7 @@ function authLog(event, detail = "") {
   if (AUTH_DEBUG) console.info("[dv-auth] " + event + (detail ? " :: " + detail : ""));
 }
 
-export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError }) {
+export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError, onUserChanged }) {
   if(!isConfigured){
     onStatus("unconfigured");
     return {
@@ -95,6 +95,9 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
   let isFirstSnapshot = true;
   let remoteDocumentIds = new Set();
   let writeQueue = Promise.resolve();
+  // V16 — "thế hệ" của phiên đăng nhập. Mỗi lần user đổi thì tăng lên, để mọi
+  // callback còn treo của phiên cũ (snapshot, lỗi) tự động bị bỏ qua.
+  let sessionGeneration = 0;
 
   authLog("init", "authDomain=" + firebaseConfig.authDomain);
 
@@ -128,6 +131,13 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
     remoteDocumentIds = new Set();
     isFirstSnapshot = true;
 
+    // Phiên mới: tăng thế hệ để snapshot/lỗi của phiên cũ không còn hiệu lực.
+    const generation = ++sessionGeneration;
+
+    // Báo cho UI biết danh tính vừa đổi TRƯỚC khi áp dụng bất kỳ dữ liệu nào,
+    // để UI đổi danh sách hiển thị (khách hoặc tài khoản) trước.
+    if(onUserChanged) onUserChanged(user ? user.uid : null);
+
     if(!user){
       onStatus("local");
       return;
@@ -140,6 +150,8 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
       { includeMetadataChanges: true },
 
       snapshot => {
+        if(generation !== sessionGeneration) return;
+
         remoteDocumentIds = new Set(
           snapshot.docs.map(itemDoc => itemDoc.id)
         );
@@ -173,6 +185,8 @@ export async function initializeWishlistCloud({ onStatus, onRemoteItems, onError
       },
 
       error => {
+        if(generation !== sessionGeneration) return;
+
         onError(
           "Không đọc được dữ liệu Firebase: " +
           error.message

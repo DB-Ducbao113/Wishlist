@@ -1,0 +1,31 @@
+{
+  "note": "Lighthouse 11.7.1, identical flags for both sides (throttlingMethod=simulate, Chrome headless new). Sides served as plain static files over http://127.0.0.1 so the Firebase SDK never loads. The F1 tree is `git archive 2305a0f`; the F2 tree is the freshly built `dist/`.",
+  "flags": {
+    "lighthouse": "11.7.1",
+    "categories": ["performance", "accessibility", "best-practices"],
+    "desktop": "--preset=desktop --chrome-flags=\"--headless=new --no-sandbox\"",
+    "mobile": "default mobile emulation --chrome-flags=\"--headless=new --no-sandbox\""
+  },
+  "runs": [
+    { "label": "F1 desktop", "formFactor": "desktop", "performance": 87, "accessibility": 95, "bestPractices": 100, "fcp": "1.6 s", "lcp": "1.6 s", "cls": "0", "tbt": "0 ms", "speedIndex": "1.6 s" },
+    { "label": "F2 desktop", "formFactor": "desktop", "performance": 87, "accessibility": 96, "bestPractices": 100, "fcp": "1.6 s", "lcp": "1.6 s", "cls": "0", "tbt": "0 ms", "speedIndex": "1.6 s" },
+    { "label": "F1 mobile", "formFactor": "mobile", "performance": 62, "accessibility": 95, "bestPractices": 100, "fcp": "6.3 s", "lcp": "6.3 s", "cls": "0", "tbt": "0 ms", "speedIndex": "6.3 s" },
+    { "label": "F2 mobile", "formFactor": "mobile", "performance": 61, "accessibility": 96, "bestPractices": 100, "fcp": "6.5 s", "lcp": "6.5 s", "cls": "0", "tbt": "0 ms", "speedIndex": "6.5 s" }
+  ],
+  "delta": {
+    "desktopPerformance": 0,
+    "mobilePerformance": -1,
+    "desktopAccessibility": 1,
+    "mobileAccessibility": 1,
+    "bestPractices": 0,
+    "cls": 0
+  },
+  "remainingAccessibilityFinding": {
+    "id": "color-contrast",
+    "node": "#emptyAction (button.primary.wishlist-empty__action)",
+    "presentInF1": true,
+    "presentInF2": true,
+    "status": "pre-existing P2, unchanged by F2"
+  },
+  "noteOnF1ReportedNumbers": "The F1 report recorded desktop 62 / mobile 82. Those runs used a different harness. This table is a like-for-like pair produced in one sitting with identical flags, which is what the no-regression claim rests on."
+}

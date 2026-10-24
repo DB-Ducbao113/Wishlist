@@ -1,0 +1,1116 @@
+/* =====================================================================
+   DREAM VAULT V16.1 — DASHBOARD FOUNDATION
+   ---------------------------------------------------------------------
+   Additive only. The brand palette lives in css/dreamscape-v5-tokens.css
+   and stays the single source of truth; this file NAMES its dashboard
+   roles so every dashboard component can be built from tokens instead of
+   hard-coded values. No dark-purple reference theme is copied here.
+
+   Nothing in this file is required for F1 to work — the KPI metrics are
+   pure JS. It exists so F2 (Purchase Flow) and the dashboard build can be
+   assembled from a contract instead of ad-hoc styles.
+   ===================================================================== */
+
+:root {
+  /* ---- Brand roles (aliases; never redefine the palette) ---- */
+  --dv-bg:            var(--dream-bg);            /* #F8F6FF */
+  --dv-surface:       var(--dream-surface);       /* #FFFFFF */
+  --dv-surface-2:     var(--dream-surface-soft);  /* #F3EFFF */
+  --dv-accent:        var(--dream-accent);        /* #6850BC */
+  --dv-accent-hover:  var(--dream-accent-hover);  /* #543F9E */
+  --dv-highlight:     var(--dream-highlight);     /* #A88BF7 */
+  --dv-ink:           var(--dream-ink);           /* #19152C */
+  --dv-muted:         var(--dream-muted);         /* #625979 */
+  --dv-mist:          var(--dream-mist);          /* #DED5FF */
+  --dv-border:        var(--dream-border);        /* #E5DDF6 */
+  --dv-hairline:      var(--v11-hairline, #E5DDF6);
+
+  /* ---- Surfaces / elevation ---- */
+  --dv-radius-card:   var(--dream-radius-md);     /* 22px */
+  --dv-radius-inner:  var(--dream-radius-sm);     /* 16px */
+  --dv-radius-pill:   var(--dream-radius-pill);
+  --dv-elev-1:        var(--dream-shadow-soft);
+  --dv-elev-2:        var(--dream-shadow-glass);
+
+  /* ---- Typography ---- */
+  --dv-text-kpi:      clamp(22px, 2.2vw, 30px);
+  --dv-text-value:    15px;
+  --dv-text-caption:  12.5px;
+  --dv-text-label:    11px;
+  --dv-tracking-label: .12em;
+
+  /* ---- Spacing rhythm ---- */
+  --dv-gap-1: 8px;
+  --dv-gap-2: 12px;
+  --dv-gap-3: 16px;
+  --dv-gap-4: 24px;
+
+  /* ---- Motion ---- */
+  --dv-motion:   var(--dream-motion-normal);      /* 260ms */
+  --dv-ease-out: var(--dream-ease);
+
+  /* ---- Status semantics ----
+     Traceable to what the cards already render:
+       wish      badge.b-wish      -> immersive-v8-gallery.css (#6850BC)
+       saving    badge.b-saving    -> #8B7ED8
+       ordered   badge.b-ordered   -> --ex-highlight (#A88BF7)
+       purchased badge.b-purchased -> --ex-ink on rgba(25,21,44,.06)
+     plus the legacy chip fills in legacy.css for soft backgrounds. */
+  --dv-status-wish:        #6850BC;
+  --dv-status-saving:      #8B7ED8;
+  --dv-status-ordered:     #A88BF7;
+  --dv-status-purchased:   #19152C;
+  --dv-status-wish-soft:   #E8EDF1;
+  --dv-status-saving-soft: #DCECFF;
+  --dv-status-ordered-soft:#EFE4FF;
+  --dv-status-purchased-soft: #DFF3E6;
+
+  /* ---- Priority semantics ---- */
+  --dv-priority-low:       #9A93AD;
+  --dv-priority-medium:    #8B7ED8;
+  --dv-priority-high:      #B3261E;
+
+  /* ---- Data-visualisation ramp ----
+     Sequential lavender, ordered so that adjacent slices stay
+     distinguishable. Slot 1 is the accent so the primary metric reads as
+     "brand"; slot 5 is the lightest surface tint. */
+  --dv-chart-1: #6850BC;
+  --dv-chart-2: #8B7ED8;
+  --dv-chart-3: #A88BF7;
+  --dv-chart-4: #C7BEF2;
+  --dv-chart-5: #DED5FF;
+
+  /* ---- Positive/negative emphasis (never colour alone) ---- */
+  --dv-positive: #2F7D5B;
+  --dv-negative: #B3261E;
+}
+
+/* =====================================================================
+   KPI CARD CONTRACT
+   The markup already exists (.stat-card / __header / __label / __icon /
+   __value / __description). These rules only bind it to the tokens and
+   keep the numeric value optically stable while counts change.
+   ===================================================================== */
+
+body.dreamscape-v5 .stats-dashboard .stat-card__value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+body.dreamscape-v5 .stats-dashboard .stat-card__label {
+  text-transform: uppercase;
+  letter-spacing: var(--dv-tracking-label);
+}
+
+/* V16.1 F3.6 — AA CONTRAST ON THE DOMINANT CARD
+   The first card is the one KPI painted on a gradient, and its label and
+   description are small text, so they need 4.5:1 — not the 3:1 that large
+   text needs. Measured worst case before this rule: 2.7:1 (the label sits in
+   the top-left corner, where the white glow lifted the gradient furthest).
+   The palette is unchanged: the gradient now runs from --dream-accent-hover
+   to --dream-accent, both already in the Light Lavender set, the white glow
+   drops from .28 to .10, and the two small lines go full white. Measured
+   worst case after: 4.9:1. The rules below mirror the editorial selectors
+   exactly so the cascade needs no !important. */
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child {
+  background:
+    radial-gradient(ellipse 130% 120% at 8% 4%, rgba(255, 255, 255, .10), transparent 56%),
+    linear-gradient(152deg, #543F9E 0%, #5E48AD 52%, #6850BC 100%);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__label,
+body.dreamscape-v5 .panel.dashboard-panel--v2 .total.stats-dashboard > .stat-card:first-child .stat-card__description {
+  color: #FFFFFF;
+}
+
+/* =====================================================================
+   OWNERSHIP PROGRESS
+   purchasedCount / totalCount. 0 items resolves to 0% (never NaN), and
+   the bar is a real progressbar for assistive tech.
+   ===================================================================== */
+
+.dv-progress {
+  margin-top: clamp(18px, 2vw, 26px);
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-progress__label {
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-progress__value {
+  font-size: var(--dv-text-kpi);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--dv-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.dv-progress__track {
+  position: relative;
+  height: 10px;
+  margin-top: var(--dv-gap-2);
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+  overflow: hidden;
+}
+
+.dv-progress__fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--dv-chart-1), var(--dv-chart-3));
+  transition: width var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-progress__caption {
+  margin: var(--dv-gap-2) 0 0;
+  font-size: var(--dv-text-caption);
+  color: var(--dv-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dv-progress__fill {
+    transition: none !important;
+  }
+}
+
+/* =====================================================================
+   SECONDARY METRICS (V16.1 F2)
+   ---------------------------------------------------------------------
+   Read-only label/value pairs under the ownership progress bar. They are
+   deliberately plainer than the three KPI cards: recorded spending is not
+   the headline number, and it must never be confused with the owned value.
+   ===================================================================== */
+
+.dv-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--dv-gap-2);
+  margin: var(--dv-gap-2) 0 0;
+  padding: 0;
+}
+
+/* V16.1 F3.2 — the two secondary figures belong to the same KPI band as the
+   three cards above: same surface, radius and elevation, so all six numbers
+   read as one family instead of "three cards plus two footnotes". */
+.dv-metrics__item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--dv-gap-3);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-metrics__label {
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-metrics__value {
+  margin: var(--dv-gap-2) 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.015em;
+  line-height: 1.15;
+  color: var(--dv-ink);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* Recorded spending is one of the two numbers the user came for, so it takes
+   the brand accent. It is still plain text with its label directly above, so
+   colour is never the only thing carrying the meaning. */
+.dv-metrics__item:first-child .dv-metrics__value {
+  color: var(--dv-accent);
+}
+
+/* "Chưa ghi nhận" is a sentence, not a figure: it steps down to muted so it
+   can never be misread as a large amount of money. */
+.dv-metrics__value[data-empty="true"] {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--dv-muted);
+}
+
+.dv-metrics__hint {
+  margin: var(--dv-gap-1) 0 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.5;
+  color: var(--dv-muted);
+}
+
+@media (max-width: 430px) {
+  .dv-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* =====================================================================
+   COLLECTION QUICK TABS (V16.1 F2)
+   ---------------------------------------------------------------------
+   A segmented control over the one `items` array. Same visual language as
+   the gallery / focus switch already in use, so it reads as one toolbar.
+   ===================================================================== */
+
+.dv-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: var(--dv-gap-3) 0 var(--dv-gap-2);
+  padding: 5px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.dv-tabs__tab {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--dv-radius-pill);
+  padding: 9px 18px;
+  background: transparent;
+  color: var(--dv-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              color var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-tabs__tab:focus-visible {
+  outline: 2px solid var(--dv-accent);
+  outline-offset: 2px;
+}
+
+.dv-tabs__tab.is-active,
+.dv-tabs__tab[aria-pressed="true"] {
+  background: var(--dv-surface);
+  border-color: var(--dv-border);
+  color: var(--dv-accent);
+  box-shadow: var(--dv-elev-1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-tabs__tab:not(.is-active):hover {
+    background: rgba(255, 255, 255, .62);
+    color: var(--dv-accent);
+  }
+}
+
+@media (max-width: 430px) {
+  .dv-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dv-tabs__tab {
+    padding: 9px 6px;
+    text-align: center;
+  }
+}
+
+/* =====================================================================
+   V16.1 F3.1 — DASHBOARD INFORMATION ARCHITECTURE
+   ---------------------------------------------------------------------
+   The command center keeps the F1/F2 blocks exactly where they are and
+   adds the structure the new insight panels need:
+
+     1. heading + "Thêm món"           (.overview-heading + .dv-add)
+     2. KPI cards                      (.stats-dashboard, .dv-metrics)
+     3. ownership progress             (.dv-grid--split › .dv-col--progress)
+        status distribution            (.dv-col--dist, added in F3.3)
+     4. category + priority            (.dv-grid--insight, F3.4)
+     5. quick actions                  (.dv-actions, F3.5)
+
+   The heading is the only pre-existing block that has to change shape:
+   it becomes a wrap row so the action can sit on the title's baseline
+   without disturbing the eyebrow / title stack.
+   ===================================================================== */
+
+@media (min-width: 768px) {
+  body.dreamscape-v5 .overview-heading {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: var(--dv-gap-3);
+  }
+
+  /* The eyebrow keeps a row of its own; the title and the action share
+     the next one. This needs no wrapper element, so the existing
+     eyebrow / number / title contract is untouched. */
+  body.dreamscape-v5 .overview-heading > .overview-heading__eyebrow {
+    flex: 1 0 100%;
+  }
+
+  body.dreamscape-v5 .overview-heading > .overview-heading__title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .overview-heading > .dv-add {
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+}
+
+/* ---- Dashboard call to action -------------------------------------- */
+
+.dv-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dv-gap-1);
+  margin: 0;
+  padding: 9px 18px 9px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-accent);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 12px 24px -14px rgba(104, 80, 188, .85);
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-add__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .2);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dv-add:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-add:hover {
+    background: var(--dv-accent-hover);
+  }
+}
+
+.dv-add:active {
+  transform: translateY(1px);
+}
+
+/* ---- Section grid --------------------------------------------------
+   Every column can shrink, so a long money string or a chart label can
+   never widen the panel and cause horizontal overflow at 320px. */
+
+.dv-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--dv-gap-3);
+  margin-top: var(--dv-gap-3);
+}
+
+.dv-grid > * {
+  min-width: 0;
+}
+
+/* Inside the grid the spacing belongs to the grid, not to the block. */
+.dv-col--progress {
+  display: flex;
+}
+
+.dv-col--progress .dv-progress {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 0;
+}
+
+@media (min-width: 1200px) {
+  .dv-grid--split {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--dv-gap-4);
+  }
+}
+
+/* =====================================================================
+   V16.1 F3.3 — STATUS DISTRIBUTION
+   ---------------------------------------------------------------------
+   A segmented bar plus a legend. The bar is role="img" with a full text
+   alternative, every legend row is a real <button> with aria-pressed, and
+   the row text (label + count + share) carries the meaning — the swatch is
+   decorative. Segment colours reuse --dv-status-*, the same values the
+   status badges on the cards already use, so the chart and the cards speak
+   one colour language instead of two.
+   ===================================================================== */
+
+.dv-dist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-2);
+  height: 100%;
+  margin-top: 0;
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-dist__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-dist__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-dist__total {
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dv-dist__bar {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-dist__seg {
+  flex: 0 1 0%;
+  min-width: 4px;
+  border-radius: var(--dv-radius-pill);
+  /* V16.1 F3.6 — tỉ lệ phân đoạn là dữ liệu nên nó đổi tức thời; cảm giác
+     chuyển động do một lần mờ dần trên cả thanh (transform/opacity, không
+     animate flex-grow nên không đẩy layout mỗi khung hình). */
+}
+
+.dv-dist__seg[data-status="wish"]      { background: var(--dv-status-wish); }
+.dv-dist__seg[data-status="saving"]    { background: var(--dv-status-saving); }
+.dv-dist__seg[data-status="ordered"]   { background: var(--dv-status-ordered); }
+.dv-dist__seg[data-status="purchased"] { background: var(--dv-status-purchased); }
+.dv-dist__seg--other                   { background: var(--dv-mist); }
+
+.dv-dist__legend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dv-dist__legend-item {
+  min-width: 0;
+}
+
+.dv-dist__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+/* The "unclassified" row has no filter behind it, so it is a plain row and
+   does not pretend to be clickable. */
+.dv-dist__item--static {
+  cursor: default;
+}
+
+.dv-dist__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--dv-mist);
+}
+
+.dv-dist__swatch[data-status="wish"]      { background: var(--dv-status-wish); }
+.dv-dist__swatch[data-status="saving"]    { background: var(--dv-status-saving); }
+.dv-dist__swatch[data-status="ordered"]   { background: var(--dv-status-ordered); }
+.dv-dist__swatch[data-status="purchased"] { background: var(--dv-status-purchased); }
+
+.dv-dist__name {
+  min-width: 0;
+  font-weight: 700;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-dist__count,
+.dv-dist__share {
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-dist__share {
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Selected state: surface + border + weight, never colour alone — and
+   aria-pressed="true" carries the same fact for assistive tech. */
+.dv-dist__item[aria-pressed="true"] {
+  border-color: var(--dv-accent);
+  background: rgba(104, 80, 188, .09);
+}
+
+.dv-dist__item[aria-pressed="true"] .dv-dist__name {
+  color: var(--dv-accent);
+}
+
+.dv-dist__item[aria-pressed="true"] .dv-dist__count,
+.dv-dist__item[aria-pressed="true"] .dv-dist__share {
+  color: var(--dv-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-dist__item:not(.dv-dist__item--static):hover {
+    background: var(--dv-surface-2);
+  }
+
+  .dv-dist__item[aria-pressed="true"]:hover {
+    background: rgba(104, 80, 188, .14);
+  }
+}
+
+.dv-dist__item:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 1px;
+}
+
+.dv-dist__empty {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.6;
+  color: var(--dv-muted);
+}
+
+/* A class selector would otherwise beat the UA [hidden] rule. */
+.dv-dist__bar[hidden],
+.dv-dist__legend[hidden],
+.dv-dist__empty[hidden] {
+  display: none;
+}
+
+/* The dashboard short-cut scrolls the collection into view and moves focus
+   there. The panel must not grow a ring for a programmatic move, but a
+   keyboard user should still see where focus went. */
+#collection[tabindex="-1"]:focus {
+  outline: none;
+}
+
+#collection[tabindex="-1"]:focus-visible {
+  outline: 2px solid var(--dv-accent);
+  outline-offset: 4px;
+  border-radius: var(--dv-radius-card);
+}
+
+/* =====================================================================
+   V16.1 F3.4 — CATEGORY BREAKDOWN + PRIORITY WIDGET
+   ---------------------------------------------------------------------
+   Both panels are the same card as .dv-progress and .dv-dist, so the whole
+   dashboard reads as one surface family. Each row is: a name line with its
+   value, then the bar underneath — a shape that survives 320px without
+   shrinking either number into illegibility.
+   ===================================================================== */
+
+@media (min-width: 900px) {
+  .dv-grid--insight {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--dv-gap-4);
+  }
+}
+
+.dv-breakdown,
+.dv-priority {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-2);
+  height: 100%;
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+/* A hidden panel must not leave its half of the grid behind. */
+.dv-breakdown[hidden],
+.dv-priority[hidden] {
+  display: none;
+}
+
+.dv-breakdown__head,
+.dv-priority__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dv-gap-2);
+}
+
+.dv-breakdown__title,
+.dv-priority__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-breakdown__hint,
+.dv-priority__hint {
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-muted);
+}
+
+/* ---- Category breakdown ------------------------------------------- */
+
+.dv-breakdown__rows,
+.dv-priority__rows {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+
+.dv-breakdown__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name value"
+    "bar  bar";
+  align-items: center;
+  gap: 6px var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+/* The "Khác" aggregate has no single filter behind it. */
+.dv-breakdown__row--static {
+  cursor: default;
+}
+
+.dv-breakdown__name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-breakdown__value {
+  grid-area: value;
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-breakdown__bar {
+  grid-area: bar;
+  display: block;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-breakdown__bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* V16.1 F3.6 — độ dài chạy bằng transform:scaleX() (compositor) chứ không
+     phải width; rãnh cha đã overflow:hidden nên bo góc vẫn đúng và không cần
+     bo góc riêng cho phần đầy. */
+  transform-origin: left center;
+  transform: scaleX(var(--dv-fill, 0));
+  background: var(--dv-accent);
+  transition: transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-breakdown__row[aria-pressed="true"] {
+  border-color: var(--dv-accent);
+  background: rgba(104, 80, 188, .09);
+}
+
+.dv-breakdown__row[aria-pressed="true"] .dv-breakdown__name,
+.dv-breakdown__row[aria-pressed="true"] .dv-breakdown__value {
+  color: var(--dv-accent);
+}
+
+/* ---- Priority widget ---------------------------------------------- */
+
+.dv-priority__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name  count"
+    "bar   bar"
+    "value value";
+  align-items: center;
+  gap: 5px var(--dv-gap-2);
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-priority__name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dv-ink);
+  overflow-wrap: anywhere;
+}
+
+.dv-priority__name::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 3px;
+  vertical-align: baseline;
+  background: var(--dv-mist);
+}
+
+.dv-priority__item[data-priority="low"] .dv-priority__name::before    { background: var(--dv-priority-low); }
+.dv-priority__item[data-priority="medium"] .dv-priority__name::before { background: var(--dv-priority-medium); }
+.dv-priority__item[data-priority="high"] .dv-priority__name::before   { background: var(--dv-priority-high); }
+
+.dv-priority__count {
+  grid-area: count;
+  font-size: var(--dv-text-caption);
+  font-weight: 700;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dv-priority__bar {
+  grid-area: bar;
+  display: block;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--dv-radius-pill);
+  background: var(--dv-surface-2);
+}
+
+.dv-priority__bar-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--dv-fill, 0));
+  transition: transform var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-priority__item[data-priority="low"] .dv-priority__bar-fill    { background: var(--dv-priority-low); }
+.dv-priority__item[data-priority="medium"] .dv-priority__bar-fill { background: var(--dv-priority-medium); }
+.dv-priority__item[data-priority="high"] .dv-priority__bar-fill   { background: var(--dv-priority-high); }
+
+.dv-priority__value {
+  grid-area: value;
+  font-size: var(--dv-text-caption);
+  font-weight: 600;
+  color: var(--dv-muted);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* The highest rank that actually has items gets the accent outline. */
+.dv-priority__item[data-emphasis="true"] {
+  border-color: var(--dv-accent);
+}
+
+.dv-priority__item[aria-pressed="true"] {
+  border-color: var(--dv-accent);
+  background: rgba(104, 80, 188, .09);
+}
+
+.dv-priority__item[aria-pressed="true"] .dv-priority__value {
+  color: var(--dv-accent);
+}
+
+/* aria-disabled, not disabled: the row stays reachable by keyboard so its
+   "0 món" can be read, but it cannot be activated. */
+.dv-priority__item[aria-disabled="true"] {
+  cursor: default;
+  opacity: .62;
+}
+
+/* ---- Shared row states -------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-breakdown__row:not(.dv-breakdown__row--static):hover,
+  .dv-priority__item:not([aria-disabled="true"]):hover {
+    background: var(--dv-surface-2);
+  }
+
+  .dv-breakdown__row[aria-pressed="true"]:hover,
+  .dv-priority__item[aria-pressed="true"]:hover {
+    background: rgba(104, 80, 188, .14);
+  }
+}
+
+.dv-breakdown__row:focus-visible,
+.dv-priority__item:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 1px;
+}
+
+/* =====================================================================
+   V16.1 F3.5 — QUICK ACTIONS
+   ---------------------------------------------------------------------
+   Every entry is a real <button> with a visible text label (no icon-only
+   buttons), at least 44px tall, in one card so the "what next" block reads
+   as one group. Only "Thêm món mới" is filled: it is the one action that
+   creates something. Nothing here is destructive, and the purchase
+   short-cut is outlined rather than filled so it never looks like a
+   one-click buy.
+   ===================================================================== */
+
+.dv-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dv-gap-3);
+  padding: clamp(18px, 1.8vw, 26px);
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-card);
+  background: var(--dv-surface);
+  box-shadow: var(--dv-elev-1);
+}
+
+.dv-actions__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dv-actions__title {
+  margin: 0;
+  font-family: inherit;
+  font-size: var(--dv-text-label);
+  font-weight: 800;
+  letter-spacing: var(--dv-tracking-label);
+  text-transform: uppercase;
+  color: var(--dv-muted);
+}
+
+.dv-actions__lead {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.5;
+  color: var(--dv-muted);
+}
+
+.dv-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: var(--dv-gap-2);
+}
+
+.dv-actions__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 11px 16px;
+  border: 1px solid var(--dv-border);
+  border-radius: var(--dv-radius-inner);
+  background: var(--dv-surface-2);
+  color: var(--dv-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--dv-motion) var(--dv-ease-out),
+              border-color var(--dv-motion) var(--dv-ease-out),
+              color var(--dv-motion) var(--dv-ease-out);
+}
+
+.dv-actions__glyph {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* The only filled action: it creates the one thing the dashboard is for. */
+.dv-actions__btn--primary {
+  border-color: var(--dv-accent);
+  background: var(--dv-accent);
+  color: #FFFFFF;
+}
+
+/* Outlined, not filled: this button opens a confirmation, it does not buy. */
+.dv-actions__btn--buy {
+  border-color: var(--dv-accent);
+  background: var(--dv-surface);
+  color: var(--dv-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dv-actions__btn:hover {
+    border-color: var(--dv-accent);
+    background: var(--dv-surface);
+  }
+
+  .dv-actions__btn--primary:hover {
+    border-color: var(--dv-accent-hover);
+    background: var(--dv-accent-hover);
+    color: #FFFFFF;
+  }
+
+  .dv-actions__btn--buy:hover {
+    background: var(--dv-surface-2);
+  }
+}
+
+.dv-actions__btn:focus-visible {
+  outline: 2px solid var(--dv-ink);
+  outline-offset: 2px;
+}
+
+.dv-actions__note {
+  margin: 0;
+  font-size: var(--dv-text-caption);
+  line-height: 1.5;
+  color: var(--dv-muted);
+  overflow-wrap: anywhere;
+}
+
+/* A class selector would otherwise beat the UA [hidden] rule. */
+.dv-actions__btn[hidden],
+.dv-actions__note[hidden] {
+  display: none;
+}
+
+/* At 320px a single column of eight buttons is a very long scroll, so the
+   grid tightens to two columns and the primary action keeps the full row. */
+@media (max-width: 480px) {
+  .dv-actions__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dv-actions__btn--primary,
+  .dv-actions__btn--buy {
+    grid-column: 1 / -1;
+  }
+
+  .dv-actions__btn {
+    padding: 10px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dv-actions__btn,
+  .dv-breakdown__bar-fill,
+  .dv-priority__bar-fill,
+  .dv-breakdown__row,
+  .dv-priority__item,
+  .dv-dist__item,
+  .dv-add {
+    transition: none;
+  }
+
+  /* Not decoration, but with motion off the button should not move at all. */
+  .dv-add:active {
+    transform: none;
+  }
+}
+

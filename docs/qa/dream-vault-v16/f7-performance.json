@@ -1,0 +1,45 @@
+{
+  "milestone": "F7.6",
+  "label": "F6 delivery tree (f1f1d65) - final performance",
+  "generatedAt": "2026-10-17",
+  "lighthouse": {
+    "repeats": 3,
+    "note": "Same flags, categories, form factors and throttling as the F4/F5/F6 runners. Raw = the test server sends uncompressed bytes. Gzip = the same server compresses text the way Cloudflare does.",
+    "source": {
+      "raw":  { "desktop": { "perf": [58,58,58], "LCP": [4688,4664,4664], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [561,561,561], "requests": [53,53,53] },
+                "mobile":  { "perf": [71,71,71], "LCP": [4663,4664,4670], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [561,561,561], "requests": [53,53,53] } },
+      "gzip": { "desktop": { "perf": [71,71,71], "LCP": [2594,2574,2573], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [162,162,162], "requests": [53,53,53] },
+                "mobile":  { "perf": [93,93,93], "LCP": [2569,2582,2586], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [162,162,162], "requests": [53,53,53] } }
+    },
+    "dist": {
+      "raw":  { "desktop": { "perf": [63,63,63], "LCP": [3496,3458,3516], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [550,550,550], "requests": [2,2,2] },
+                "mobile":  { "perf": [84,84,84], "LCP": [3453,3453,3453], "CLS": [0,0,0], "TBT": [0,0,0], "transferKB": [550,550,550], "requests": [2,2,2] } },
+      "gzip": { "desktop": { "perf": [89,91,89], "LCP": [1435,1396,1514], "CLS": [0,0,0], "TBT": [33,19,83], "transferKB": [124,124,124], "requests": [2,2,2] },
+                "mobile":  { "perf": [99,100,100], "LCP": [1418,1483,1386], "CLS": [0,0,0], "TBT": [79,7,0], "transferKB": [124,124,124], "requests": [2,2,2] } }
+    },
+    "a11y": 100, "bestPractices": 100, "seo": 100
+  },
+  "render": {
+    "note": "3 runs per size, medians. firstRender is the initial paint; forced is 3 explicit render() calls after load.",
+    "table": {
+      "0":   { "firstRenderMed": 1,  "forcedMed": 1,  "ltMax": 52,  "fcp": 280, "lcp": 280, "cls": 0,     "nodes": 531 },
+      "1":   { "firstRenderMed": 2,  "forcedMed": 1,  "ltMax": 75,  "fcp": 324, "lcp": 324, "cls": 0.002, "nodes": 605 },
+      "12":  { "firstRenderMed": 6,  "forcedMed": 4,  "ltMax": 103, "fcp": 288, "lcp": 288, "cls": 0.002, "nodes": 946 },
+      "50":  { "firstRenderMed": 18, "forcedMed": 11, "ltMax": 142, "fcp": 300, "lcp": 300, "cls": 0.002, "nodes": 1924 },
+      "100": { "firstRenderMed": 37, "forcedMed": 21, "ltMax": 180, "fcp": 312, "lcp": 312, "cls": 0.002, "nodes": 3212 }
+    },
+    "perCardMs": 0.28,
+    "listenersPerCard": 12,
+    "intersectionObservers": 1,
+    "animateCallsAtLoad": 0
+  },
+  "responsive": [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920],
+  "reducedMotion": "all CSS files carry a prefers-reduced-motion block; dvNudge, dvFadeOnce and animatePurchasedTransition check matchMedia",
+  "safari": "NOT VERIFIED - real device only, no Safari/WebKit available in this environment",
+  "consoleErrors": 0,
+  "payload": {
+    "htmlRaw": 211.6, "htmlGzip": 59.7,
+    "cssRaw": 337.6, "cssGzip": 62.8, "cssFiles": 1,
+    "totalRaw": 549.2, "totalGzip": 122.5, "requests": 2
+  }
+}

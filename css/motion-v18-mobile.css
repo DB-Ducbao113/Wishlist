@@ -1,0 +1,181 @@
+/* =====================================================================
+   DREAM VAULT V16.2 — MOTION-06 — MOBILE GESTURES & ADAPTIVE MOTION
+   ---------------------------------------------------------------------
+   Quyền sở hữu chuyển động (kết quả audit M06.1):
+   - sheetQuick View #qv: swipe-to-dismiss CHỈ khởi từ thanh tiêu đề dính
+     (.quick-view__top) bằng Pointer Events; nội dung cuộn giữ nguyên
+     cuộn tự nhiên; đóng luôn đi qua closeQuickView() chính tắc
+     (không bypass qvClosing / trả focus).
+   - Thẻ sản phẩm: phản hồi nhấn trên thiết bị chạm (giả lập hover 3D
+     đã bị chặn sẵn bằng (hover: hover) và (pointer: fine) ở các sheet
+     trước — nơi đây chỉ THÊM trạng thái :active cho touch).
+   - Board: touch-action:none chỉ trên tay cầm kéo (đã có), không chặn
+     cột cuộn ngang hay trang cuộn dọc; select trạng thái là fallback.
+   - Adaptive: html.motion-lite tắt chuyển động trang trí khi thiết bị
+     đo được tốc độ khung thấp (dựa trên bằng chứng đo được, xem
+     sampleMotionBudget() trong wishlist.html).
+   ===================================================================== */
+
+/* =====================================================================
+   M06.2 — QUICK VIEW SWIPE-TO-DISMISS
+   ===================================================================== */
+
+/* Vùng cầm bar (handle) — decor cho touch: tay cầm nhỏ ở đỉnh sheet.
+   Chỉ hiển thị trên coarse pointer / khung màn hình dạng sheet. */
+body.dreamscape-v5 #qv .quick-view__grabber {
+  display: none;
+}
+
+@media (pointer: coarse), (max-width: 640px) {
+  body.dreamscape-v5 #qv .quick-view__grabber {
+    display: block;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    margin-left: -24px;
+    width: 48px;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(104, 80, 188, .30);
+    pointer-events: none;
+  }
+}
+
+/* Vùng nghi thức: thanh tiêu đề dính nhận pointer gesture trên touch.
+   touch-action: none CHỈ trên thanh này — cuộn tự nhiên của nội dung
+   panel (bên dưới) không bị chặn. */
+@media (pointer: coarse), (max-width: 640px) {
+  body.dreamscape-v5 #qv .quick-view__top {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Trong drag: sheet đi theo ngón bằng transform inline (do JS đặt).
+   Không transition ở đây — JS tự quản cả transition snap-back để
+   animation ấn định giờ chính xác. */
+body.dreamscape-v5 #qv.qv--dragging,
+body.dreamscape-v5 #qv.qv--drag-closing {
+  touch-action: none;
+}
+
+body.dreamscape-v5 #qv.qv--dragging * {
+  cursor: grabbing;
+}
+
+/* Backdrop mờ dần theo tiến trình vuốt: JS đặt --qv-swipe-progress
+   (0 → 1) trên chính dialog; ::backdrop kế thừa biến của phần tử gốc
+   nên không cần đụng vào animation backdrop v8-qv-backdrop. */
+body.dreamscape-v5 #qv.qv--dragging::backdrop,
+body.dreamscape-v5 #qv.qv--drag-closing::backdrop {
+  background: rgba(31, 25, 53,
+    calc(0.38 - 0.30 * var(--qv-swipe-progress, 0)));
+}
+
+/* =====================================================================
+   M06.3 — TOUCH-FIRST PRODUCT CARDS
+   ===================================================================== */
+
+@media (hover: none), (pointer: coarse) {
+  /* Double-tap-zoom tắt trên vùng thao tác chính để nhấn phản hồi tức thì;
+     vẫn cho phép pan (cuộn trang) và pinch-zoom truy cập. */
+  body.dreamscape-v5 .wishlist-card,
+  body.dreamscape-v5 .wishlist-card button,
+  body.dreamscape-v5 .wishlist-card a,
+  body.dreamscape-v5 .card-more__menu {
+    touch-action: manipulation;
+  }
+
+  /* Phản hồi nhấn thật sự bằng :active — không phải hover giả. */
+  body.dreamscape-v5 .wishlist-card__surface:active {
+    transform: scale(.985);
+    transition: transform 90ms ease-out;
+  }
+
+  body.dreamscape-v5 .wishlist-card .mini:active,
+  body.dreamscape-v5 .wishlist-card .buy:active,
+  body.dreamscape-v5 .wishlist-card .card-more__trigger:active {
+    background: #EFE7FF;
+    transform: scale(.97);
+    transition: transform 80ms ease-out, background 80ms ease-out;
+  }
+
+  /* Mọi hover-còn-xót từ các sheet trước: trên thiết bị chạm, không mô
+     phỏng dáng hover 3D nào (đủ theo M06.3). */
+  body.dreamscape-v5 .wishlist-card__surface,
+  body.dreamscape-v5 .product-media__image {
+    transform: none !important;
+  }
+}
+
+/* =====================================================================
+   M06.4 — BOARD MOBILE INTERACTION
+   ===================================================================== */
+
+/* Board cuộn ngang giữ nguyên: chỉ tay cầm kéo có touch-action:none
+   (đã có từ interactive-v13-collection.css). Card board nhận phản hồi
+   nhấn nhẹ khi chọn select trạng thái (fallback dễ đọc-dễ dùng). */
+body.dreamscape-v5 .board__status-select {
+  touch-action: manipulation;
+}
+
+body.dreamscape-v5 .board__handle:active {
+  background: #EFE7FF;
+  border-radius: 6px;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .board__card:active {
+    background: rgba(104, 80, 188, .05);
+  }
+}
+
+/* =====================================================================
+   M06.5 — ADAPTIVE MOTION (html.motion-lite)
+   Thiết bị đo được tốc độ khung thấp liên tục → tắt chuyển động trang
+   trí AMBIENT (không bao giờ đụng phản hồi bắt buộc: busy/spinner/entrance).
+   ===================================================================== */
+
+html.motion-lite body.dreamscape-v5 .hero--v9::before,
+html.motion-lite body.dreamscape-v5 .hero--v9 .hero-v3__primary {
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Sâu hoá hero depth — vẫn hiển thị đầy đủ nội dung. */
+html.motion-lite body.dreamscape-v5 .hero--v9 .hero__visual,
+html.motion-lite body.dreamscape-v5 .hero--v9 .hero__content {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Ring trạng thái QV: đổi màu gờ tĩnh, không nhấp nháy ambient thêm. */
+html.motion-lite body.dreamscape-v5 #qv .quick-view__stage .quick-view__ring,
+html.motion-lite body.dreamscape-v5 .quick-view__ring {
+  animation: none !important;
+}
+
+/* Parallax của ảnh thẻ tắt trọn vẹn (JS cũng dừng vẽ theo MotionBudget). */
+html.motion-lite .wishlist-card[data-dv-parallax] .product-media__image {
+  translate: none !important;
+}
+
+/* =====================================================================
+   Reduced motion — swipe gesture TẮT HOÀN TOÀN (không cài listener),
+   nút × luôn còn. Dự phòng: nếu class drag nào kẹt lại thì ẩn gọn.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 #qv .quick-view__grabber {
+    display: none;
+  }
+
+  body.dreamscape-v5 #qv.qv--dragging {
+    transform: none !important;
+  }
+
+  body.dreamscape-v5 #qv.qv--dragging::backdrop,
+  body.dreamscape-v5 #qv.qv--drag-closing::backdrop {
+    background: rgba(31, 25, 53, .38);
+  }
+}

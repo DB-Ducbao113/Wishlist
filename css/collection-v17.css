@@ -1,0 +1,1924 @@
+/* ============================================================
+   Collection v17 — reference-first redesign (milestone 1)
+   ------------------------------------------------------------
+   Scope: the collection workspace only (toolbar, tabs, view bar,
+   grid, product cards). Everything is prefixed with
+   `body.dreamscape-v5` and anchored on `.v11-workspace` / `#grid`,
+   so no other surface changes shape.
+
+   The reference (references/someday-vault-motion-reference.html)
+   uses one composited section head, one horizontal labelled toolbar
+   above the grid, and 4-up compact cards with the product image on
+   top. The previous layout put the same controls in a 320px sticky
+   rail and made the first card span the full canvas, which pushed
+   the products below the fold. This sheet keeps the DOM and every
+   JS hook intact and only changes presentation.
+
+   Loaded last, after every other sheet (see wishlist.html).
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. Workspace — 280px rail + canvas (>=1025px), one column below
+   ------------------------------------------------------------ */
+
+/* UX-03 — the workspace is TWO columns again: a 280px discovery rail and the
+   collection canvas. The v17 milestone briefly flattened this to `display:
+   block`, which put search + five facets + the summary above the grid and
+   pushed the products below the fold (measured: 0 cards fully visible at
+   1440px, 1024px AND 390px). The rail layout is inherited from
+   immersive-v11-workspace.css (grid + sticky rail); only its width and its
+   surface are restated here, because the rail is now a framed panel rather
+   than a bare strip. Every control keeps the id the app reads. */
+body.dreamscape-v5 .v11-workspace {
+  --v11-rail-w: 280px;
+  --v11-gap: clamp(22px, 2vw, 32px);
+}
+
+@media (min-width: 1025px) {
+  /* editorial-v10 gives the collection a clamp(34px, 3.4vw, 56px) inset as
+     a full-width "discovery studio". In a 280px rail that inset leaves a
+     168px control column and the sticky panel runs past the viewport, so the
+     rail resets it (measured: 280 -> 168 before this rule). */
+  body.dreamscape-v5 #collection.v11-rail {
+    box-sizing: border-box;
+    width: auto;
+    padding: 20px 18px 16px;
+    margin: 0;
+    border: 1px solid rgba(104, 80, 188, .14);
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 18px 40px -34px rgba(40, 26, 92, .4);
+  }
+
+  /* The rail owns the controls; its own section head is redundant with the
+     canvas title, so it keeps only its accessible name (still the element
+     #collection is labelled by). */
+  body.dreamscape-v5 #collection.v11-rail .collection-panel__heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Sticky rail must never be taller than the viewport or its last control
+     (Xóa bộ lọc) becomes unreachable without scrolling the page. */
+  body.dreamscape-v5 #collection.v11-rail .collection-toolbar {
+    gap: 0;
+  }
+}
+
+body.dreamscape-v5 #collection.v11-rail {
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   2. Section head — the rail's own head at table + phone size
+   ------------------------------------------------------------
+   At >=1025px the rule in §1 hides it as sr-only text, because the canvas
+   title names the results and the rail is a control panel. */
+
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__heading {
+    display: block;
+    margin: 0 0 14px;
+    padding: 0;
+    border-bottom: 0;
+  }
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__section-no {
+  display: inline-grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+
+  background: rgba(104, 80, 188, .10);
+  color: var(--dream-accent, #6850BC);
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+/* The table/phone head keeps the original compact type. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail h2#collection-controls-title {
+  margin: 10px 0 6px;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__description {
+  display: block;
+  margin: 0;
+  max-width: 62ch;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+/* The canvas repeated the section head a second time ("Bộ sưu tập /
+   Món bạn đang để ý"). The reference has one head. The node stays in
+   the DOM (the fusion-01 checks read its decorative ::after), it just
+   stops taking space. */
+body.dreamscape-v5 .v11-canvas > .list-heading--v3 {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   3. Toolbar — one horizontal strip of labelled fields
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.25fr) minmax(0, 3.4fr) auto;
+  align-items: end;
+  gap: 6px 20px;
+
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 14px 18px 12px;
+
+  border: 1px solid rgba(104, 80, 188, .14);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 40px -32px rgba(40, 26, 92, .55);
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field > label {
+  margin: 0;
+
+  color: #8A7FA8;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select {
+  appearance: none;
+  -webkit-appearance: none;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 42px;
+  margin: 0;
+  padding: 0 32px 0 12px;
+
+  border: 1px solid rgba(104, 80, 188, .18);
+  border-radius: 12px;
+  background-color: #FCFBFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%238A7FA8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  box-shadow: none;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select:hover {
+  border-color: rgba(104, 80, 188, .4);
+}
+
+/* A facet that is actually filtering is tinted, so the rail shows at a
+   glance WHICH predicates are narrowing the grid. `is-set` is written by
+   syncFilterDisclosure() — the same function that owns the phone badge — so
+   there is one owner for "this filter is live", not a second state store. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select.is-set {
+  border-color: rgba(104, 80, 188, .5);
+  background-color: #F4F0FF;
+  color: #4A3691;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select:focus,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 2px;
+  border-color: var(--dream-accent, #6850BC);
+}
+
+/* Search: same underline language, with the magnifier inline. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
+  grid-column: 1;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 10px 0 12px;
+
+  border: 1px solid rgba(104, 80, 188, .18);
+  border-radius: 13px;
+  background: #FCFBFF;
+  box-shadow: none;
+
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap:focus-within {
+  border-color: var(--dream-accent, #6850BC);
+  box-shadow: 0 0 0 3px rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  color: #8A7FA8;
+}
+
+/* The input is a native type=search: hide the UA clear affordance so the
+   rail's own 44px target is the one and only reset control. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input::-webkit-search-cancel-button,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* UX-03 — the visible clear action. 28px of visual weight, 44px of hit area
+   (::after expands the box without moving the icon). */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__clear {
+  position: relative;
+  flex: 0 0 auto;
+
+  display: inline-grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .10);
+  color: #5B45A8;
+  cursor: pointer;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__clear::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__clear:hover {
+  background: rgba(104, 80, 188, .18);
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__clear:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 3px;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__clear[hidden] {
+  display: none;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input::placeholder {
+  color: #A79DC0;
+  font-weight: 500;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input:focus,
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 3px;
+}
+
+/* Footer: reset only. The hint is desktop noise in the new strip. */
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__hint {
+  display: none;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear {
+  box-sizing: border-box;
+  width: auto;
+  height: 34px;
+  margin: 0;
+  padding: 0 14px;
+  white-space: nowrap;
+
+  border: 1px solid rgba(104, 80, 188, .22);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: none;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear:hover {
+  border-color: rgba(104, 80, 188, .45);
+  background: rgba(104, 80, 188, .06);
+}
+
+@media (min-width: 641px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    /* UX-03 fix — this was `grid-column: 2`, a leftover from the old
+       toolbar grid (search in column 1, facets in column 2). At >=1025px
+       the rail toolbar is a flex COLUMN (collection-v17 §rail), so that
+       column assignment had no grid to live in and pushed the whole facet
+       group sideways inside the flex parent, leaving the search block at
+       the rail's left edge while the filters hung right (measured at
+       1440: search x=99 w=242, filters x=182 w=159). The group now flows
+       full-width like every other block in the stack. */
+    grid-column: auto;
+    gap: 6px 16px;
+
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters > .field {
+    grid-column: auto;
+  }
+}
+
+/* Tablet: search on its own line, the facets below it. Still the horizontal
+   STACK of the pre-UX-03 layout — the rail only exists from 1025px. */
+@media (min-width: 641px) and (max-width: 1024px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px 16px;
+    /* The base rule's `align-items: end` belongs to the 3-column desktop
+       strip (bottom-align label + control). In this single-column grid it
+       shrinks every child to its content and pins it to the RIGHT edge —
+       the sideways filter block on the owner's phone screenshot. In a
+       one-column track the children must stretch. */
+    align-items: stretch;
+  }
+
+  /* Search horizontal here too: label left of the field (owner request). */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search > label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
+    grid-column: 1 / -1;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 12px;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* Owner: the search + filter group sat in a 280px LEFT RAIL, where the
+     five facets could only wrap one-per-line — the whole control group
+     read as a vertical column. The reference layout is ONE HORIZONTAL
+     labelled toolbar ABOVE the grid (this sheet's own header comment),
+     which the tablet band already implements. So the workspace is one
+     column at desktop too: the toolbar becomes a full-width nav strip
+     (search on line one, the five facets + clear wrapping beside each
+     other on the next) and the grid takes the whole width. The rail
+     markup, every id and the sticky behaviour of the discovery panel
+     are untouched — only the track layout changes. */
+  body.dreamscape-v5 .v11-workspace {
+    display: block;
+  }
+
+  body.dreamscape-v5 #collection.v11-rail {
+    position: static;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    padding: clamp(24px, 2.4vw, 34px);
+    margin: 0 0 clamp(22px, 2vw, 30px);
+    border: 1px solid rgba(104, 80, 188, .14);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 18px 40px -34px rgba(40, 26, 92, .4);
+  }
+
+  /* The rail's own section head stays sr-only: the canvas title still
+     names the results. */
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 18px;
+
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  /* NOTE on specificity: the element also carries `.field`, and the base
+     rule above (… .collection-toolbar .field) sets flex-direction: column
+     with FIVE classes — one more than a plain `.collection-search` anchor,
+     so it would keep the stack vertical. Anchoring on `.field.search`
+     (six classes) is what keeps the row horizontal. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search {
+    display: flex;
+    /* One strip line for the search: label left, input filling the rest. */
+    flex-direction: row;
+    align-items: center;
+    flex: 1 1 100%;
+    gap: 12px;
+    margin: 0;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search > label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search .collection-search__input-wrap {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters {
+    /* Line two of the strip: the five facets sit BESIDE each other, and
+       the clear button joins the same line (flex 1 1 auto lets the group
+       share the row with the footer instead of forcing it to wrap). */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: end;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 14px 18px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters > .field {
+    flex: 1 1 150px;
+    min-width: 0;
+    grid-column: auto;
+    gap: 6px;
+  }
+
+  /* The "BỘ LỌC" ghost label was a ::before flex item of the old vertical
+     stack; on one horizontal row it became a sixth slice and wrapped to
+     its own line (owner screenshot). Every facet already carries its own
+     visible label, so the group label is retired. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters::before {
+    content: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+}
+
+  /* The facet-group ghost label and the vertical footer/summary stack
+     belonged to the old RAIL layout (280px column, facets one per row).
+     The toolbar is a horizontal strip now, so:
+       - the "BỘ LỌC" ghost label is retired — every facet already shows
+         its own visible label, and as a sixth flex slice it wrapped to
+         its own line;
+       - the footer (Xóa bộ lọc) joins the facet row instead of stacking
+         under it;
+       - the summary stays a single inline line. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters::before {
+    content: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__hint {
+    display: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear {
+    width: auto;
+    height: 42px;
+    border-radius: 11px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin: 12px 0 0;
+    padding: 0;
+    border: 0;
+    font-size: 12.5px;
+  }
+}
+
+/* ------------------------------------------------------------
+   4. Summary line — "what am I looking at"
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  margin: 14px 2px 0;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary strong {
+  color: var(--dream-ink, #19152C);
+  font-weight: 800;
+  font-size: 13.5px;
+}
+
+body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary__count {
+  color: var(--dream-muted, #625979);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------
+   4b. Canvas title — "what am I looking at" + how many
+   ------------------------------------------------------------
+   The rail no longer carries a visible section head (it is a control
+   panel, not a chapter). The title moves into the canvas, where it
+   labels the results it describes. */
+
+body.dreamscape-v5 .v11-canvas > .collection-title {
+  grid-area: title;
+
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+
+  margin: 0;
+}
+
+body.dreamscape-v5 .v11-canvas > .collection-title .collection-title__heading {
+  margin: 0;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(20px, 1.9vw, 25px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+body.dreamscape-v5 .v11-canvas > .collection-title .collection-title__count {
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------
+   4c. Active-filter chips — visible, removable, one clear-all
+   ------------------------------------------------------------
+   One chip per live predicate. Each chip is a real button that resets
+   exactly that predicate; the whole row is rebuilt from the same four
+   selects visibleItems() reads. Nothing new is stored. */
+
+body.dreamscape-v5 .v11-canvas > .collection-active {
+  grid-area: active;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin: 0;
+}
+
+body.dreamscape-v5 .collection-active[hidden] {
+  display: none;
+}
+
+/* The chips are a wrapping flex row of their own; below 641px the canvas is
+   a plain block, and here the group keeps its label on one line. */
+body.dreamscape-v5 .collection-active__chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+body.dreamscape-v5 .collection-active__label {
+  color: #8A7FA8;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .collection-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  box-sizing: border-box;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 6px 0 12px;
+
+  border: 1px solid rgba(104, 80, 188, .3);
+  border-radius: 999px;
+  background: #F6F2FF;
+
+  color: #4A3691;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.dreamscape-v5 .collection-chip:hover {
+  background: rgba(104, 80, 188, .14);
+}
+
+body.dreamscape-v5 .collection-chip:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 2px;
+}
+
+body.dreamscape-v5 .collection-chip__x {
+  display: inline-grid;
+  place-items: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .14);
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+body.dreamscape-v5 .collection-active__clear {
+  min-height: 32px;
+  margin: 0 0 0 2px;
+  padding: 0 12px;
+
+  border: 1px solid rgba(104, 80, 188, .22);
+  border-radius: 999px;
+  background: #fff;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.dreamscape-v5 .collection-active__clear:focus-visible {
+  outline: 2px solid var(--dream-accent, #6850BC);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   5. Tabs + view switcher share one row above the grid
+   ------------------------------------------------------------ */
+
+@media (min-width: 641px) {
+  /* Named areas, not row numbers. interactive-v13 gives #grid
+     `grid-row: 1 / span 2`; implicit rows would then stack the title and the
+     toolbar BEFORE the grid while the grid reserves rows 1–2 — which pushed
+     the whole toolbar out of view. Every band is placed explicitly. */
+  body.dreamscape-v5 .v11-canvas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "title   title"
+      "tabs    view"
+      "active  active"
+      "results results";
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 14px;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .dv-tabs {
+    grid-area: tabs;
+    justify-self: start;
+
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .v13-viewbar {
+    grid-area: view;
+    justify-self: end;
+
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  body.dreamscape-v5 .v11-canvas > #grid,
+  body.dreamscape-v5 .v11-canvas > #board,
+  body.dreamscape-v5 .v11-canvas > #empty,
+  body.dreamscape-v5 .v11-canvas > .board {
+    grid-area: results;
+    min-width: 0;
+  }
+}
+
+/* <= 640px: the canvas is one flow box, so DOM order IS visual order. The
+   title, the chips, the tabs and the view switcher all come before #grid in
+   the markup — nothing has to be re-ordered, only spaced. */
+@media (max-width: 640px) {
+  body.dreamscape-v5 .v11-canvas > .collection-title {
+    align-items: center;
+    margin: 2px 0 10px;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .collection-title .collection-title__count {
+    font-size: 12.5px;
+  }
+
+  body.dreamscape-v5 .collection-active {
+    margin: 0 0 10px;
+  }
+
+  body.dreamscape-v5 .collection-chip,
+  body.dreamscape-v5 .collection-active__clear {
+    min-height: 36px;
+  }
+}
+
+/* Rail table (641–1024px) — the toolbar sits ABOVE the grid and the facet
+   disclosure is a real button again. It is driven by `.is-collapsed`,
+   which JS only writes at this width; the phone keeps its own F4.4
+   mechanism and F4-4-11 keeps the desktop rail permanently open. */
+@media (min-width: 641px) and (max-width: 1024px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    grid-column: 1 / -1;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 16px;
+
+    border: 1px solid rgba(104, 80, 188, .22);
+    border-radius: 12px;
+    background: #FCFBFF;
+    color: var(--dream-ink, #19152C);
+
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 22px;
+    min-height: 22px;
+    margin-left: auto;
+    padding: 0 6px;
+
+    border-radius: 999px;
+    background: var(--dream-accent, #6850BC);
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle-count[hidden] {
+    display: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle:focus-visible {
+    outline: 2px solid var(--dream-accent, #6850BC);
+    outline-offset: 2px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters.is-collapsed {
+    display: none;
+  }
+}
+
+/* The rail and the table never need the phone disclosure. */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle {
+    display: none !important;
+  }
+}
+
+body.dreamscape-v5 .v13-viewbar__label {
+  font-size: 10px;
+  letter-spacing: .16em;
+  color: #8A7FA8;
+}
+
+@media (max-width: 1023px) {
+  body.dreamscape-v5 .v13-viewbar__label {
+    display: none;
+  }
+}
+
+body.dreamscape-v5 .v13-viewbar__switch {
+  padding: 3px;
+  border-color: rgba(104, 80, 188, .16);
+  background: #F1ECFF;
+}
+
+body.dreamscape-v5 .v13-viewbar__button {
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------
+   6. Grid — 4 / 3 / 2 / 1 columns, compact cards
+   ------------------------------------------------------------ */
+
+/* UX-03 — the column count follows the CANVAS, not the window. With a
+   280px rail + gap, 1440px leaves ~1060px (4 columns) and 1025px leaves
+   ~690px (2). Fixed counts keyed on the viewport gave 4 columns in a 690px
+   canvas, which turned every product name into a 2-line ellipsis. 240px is
+   the width a card needs for a 17px price and a 2-line title. */
+body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+
+  margin: 0;
+  padding: 4px 0 12px;
+  list-style: none;
+}
+
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  body.dreamscape-v5 .v11-workspace #grid.gallery--v2.gallery--v4.gallery--v6 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding-top: 14px;
+  }
+}
+
+/* The old layout made the first card span the canvas. In a reference-style
+   gallery every card is a peer; Focus remains the deliberate hero view. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child {
+  grid-column: auto;
+  grid-row: auto;
+  min-width: 0;
+}
+
+/* The "featured first card" is not one rule: nine earlier sheets each raise
+   one property on `:first-child:not(:only-child)` (span, split surface,
+   taller media, larger title, extra padding). They are all tied to the
+   showroom layout this milestone replaces, so this one block neutralises
+   exactly the properties the browser probe proved differ. `!important` is
+   deliberate and bounded to gallery mode. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) {
+  grid-column: auto !important;
+  min-height: 0 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) > .wishlist-card__surface {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  min-height: 0 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .thumb.product-media {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 4 / 3 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .product-card__content {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  padding: 13px 15px 6px !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .product-card__actions {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  padding: 8px 15px 14px !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:first-child:not(:only-child) .product-card__title {
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+/* ------------------------------------------------------------
+   7. Product card — image on top, compact body, actions at the foot
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  border: 1px solid rgba(104, 80, 188, .12);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 44px -30px rgba(15, 23, 42, .45);
+
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(104, 80, 188, .26);
+  box-shadow: 0 24px 48px -28px rgba(40, 26, 92, .5);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card > .wishlist-card__surface {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  height: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Media ---------------------------------------------------- */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .thumb.product-media {
+  position: relative;
+  flex: 0 0 auto;
+
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(145deg, #F7F4FF, #EDE7FB);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: transparent;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+}
+
+/* The exhibit plaque / caption / index belonged to the showroom first card;
+   in a 4-up gallery they only add noise. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__plaque,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .v12-stage-caption,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__index {
+  display: none;
+}
+
+/* Status + priority ride on the image, like the reference. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .badges.product-card__badges {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  box-sizing: border-box;
+  height: 22px;
+  margin: 0;
+  padding: 0 9px;
+
+  border: 0;
+  border-radius: 999px;
+
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge:first-child {
+  background: rgba(17, 12, 34, .62);
+  box-shadow: none;
+  color: #fff;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge:nth-child(2) {
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .12);
+}
+
+/* Body ----------------------------------------------------- */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  align-content: flex-start;
+  column-gap: 10px;
+  row-gap: 6px;
+
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 13px 15px 6px;
+
+  border: 0;
+  background: transparent;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__title {
+  order: 1;
+  flex: 0 0 100%;
+
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -.01em;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__price {
+  order: 2;
+  flex: 0 0 auto;
+  margin: 0;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .cat {
+  order: 2;
+  flex: 0 0 auto;
+  margin: 0 0 0 auto;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 55%;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .note {
+  order: 3;
+  flex: 0 0 100%;
+
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.45;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .meta {
+  order: 5;
+  flex: 0 0 100%;
+  margin: 2px 0 0;
+
+  color: #9A90B4;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Savings mini-goal (only rendered when an item carries a goal). */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal {
+  order: 4;
+  flex: 0 0 100%;
+  margin: 3px 0 0;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-row b {
+  color: var(--dream-accent, #6850BC);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-track {
+  height: 5px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__goal-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8B7ED8, #A88BF7);
+}
+
+/* Actions -------------------------------------------------- */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  box-sizing: border-box;
+  width: auto;
+  margin: 0;
+  padding: 8px 15px 14px;
+
+  border: 0;
+  border-top: 1px solid rgba(104, 80, 188, .08);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mini,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  height: 36px;
+  margin: 0;
+  padding: 0 11px;
+
+  border-radius: 11px;
+
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* UX-03 — ONE primary action per card.
+   v17 filled the whole first row with a solid accent "Xem chi tiết", and
+   "Mở nơi bán" (the same outline as every peer) sat under it. Two purple
+   shapes with different weights read as two competing CTAs, and the solid
+   one looked like the purchase button. The card's own primary job is to
+   open the thing the user saved; the secondary jobs are quiet outlines.
+   The layers this overrides (immersive-v8-gallery / premium-v9) use
+   `!important`-free gradients at equal specificity, so the declared
+   properties are restated with the weight they need. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .product-card__view {
+  flex: 0 0 100% !important;
+  border: 1px solid transparent;
+  background: var(--dream-accent, #6850BC) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px -12px rgba(84, 63, 158, .7);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .product-card__view:hover {
+  background: var(--dream-accent-hover, #543F9E) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy {
+  flex: 1 1 auto;
+  border: 1px solid rgba(104, 80, 188, .22);
+  background: #fff !important;
+  box-shadow: none;
+  color: var(--dream-accent, #6850BC) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy:hover {
+  background: rgba(104, 80, 188, .06) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mark-purchased {
+  flex: 1 1 auto;
+  border: 1px solid rgba(104, 80, 188, .14);
+  background: #F4F0FF;
+  color: #5B45A8;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mark-purchased:hover {
+  background: rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+
+  border: 1px solid rgba(104, 80, 188, .18);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--dream-accent, #6850BC);
+}
+
+/* Purchased items read as a quiet archive row, not a dead card. */
+body.dreamscape-v5 .v11-workspace #grid > .wishlist-card.is-purchased .product-media__image {
+  filter: saturate(.55) brightness(1.02);
+}
+
+/* ------------------------------------------------------------
+   8. Focus view — keep the hero, align it with the new language
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card {
+  border: 1px solid rgba(104, 80, 188, .12);
+  border-radius: 22px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -40px rgba(15, 23, 42, .5);
+}
+
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__title {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--dream-ink, #19152C);
+}
+
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__plaque,
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .v12-stage-caption {
+  display: none;
+}
+
+/* The old hairline above the price read as a link underline; drop it in the
+   focus exhibit too, not only in the four-up gallery. */
+body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__price {
+  border: 0 !important;
+  text-decoration: none !important;
+}
+
+/* UX-03 — Focus is the "examine one product" view: artwork on the left, the
+   full record on the right, actions under the details. interactive-v13
+   already builds that split surface; these rules only give the text side
+   the editorial rhythm the brief asks for (no 1080px-wide empty card). */
+@media (min-width: 768px) {
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .wishlist-card__surface {
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
+    min-height: 400px;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .thumb.product-media {
+    min-height: 400px;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content {
+    align-content: center;
+    gap: 10px;
+    padding: 30px 32px 8px;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__title {
+    flex: 0 0 100%;
+    margin: 0;
+    font-size: clamp(22px, 1.9vw, 30px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__price {
+    flex: 0 0 100%;
+    margin: 2px 0 0;
+    font-size: 26px;
+    font-weight: 800;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__badges {
+    position: static;
+    flex: 0 0 100%;
+    justify-content: flex-start;
+    margin: 2px 0 0;
+  }
+
+  /* status + priority are dark-glass chips on a photo; on the paper side
+     they need their own contrast. */
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__badges .badge {
+    background: rgba(104, 80, 188, .10);
+    color: #4A3691;
+    box-shadow: none;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .cat,
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .note,
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .meta {
+    flex: 0 0 100%;
+    max-width: none;
+    margin: 0;
+    white-space: normal;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .note {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__goal {
+    flex: 0 0 100%;
+    margin-top: 8px;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 32px 26px;
+    border-top: 0;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions > .product-card__view {
+    flex: 1 1 auto;
+    height: 46px;
+    font-size: 13px;
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions > .buy,
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions > .mark-purchased {
+    flex: 1 1 auto;
+    height: 46px;
+    font-size: 13px;
+    background: #fff !important;
+    color: var(--dream-accent, #6850BC) !important;
+    border: 1px solid rgba(104, 80, 188, .24);
+  }
+
+  body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions .card-more__trigger {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* ------------------------------------------------------------
+   9. Empty state — same voice as the head
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 #empty .empty__title,
+body.dreamscape-v5 #empty h2,
+body.dreamscape-v5 #empty h3 {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -.015em;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__title {
+  max-width: 30ch;
+  margin: 0;
+  text-align: center;
+
+  color: var(--dream-ink, #19152C);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__eyebrow {
+  margin: 0;
+
+  color: var(--dream-accent, #6850BC);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 #empty.wishlist-empty .wishlist-empty__description {
+  max-width: 44ch;
+  margin: 0;
+  text-align: center;
+
+  color: var(--dream-muted, #625979);
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ------------------------------------------------------------
+   10. Phones — compact head, disclosure kept, one card per row
+   ------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__heading {
+    margin-bottom: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail h2#collection-controls-title {
+    font-size: 27px;
+    margin: 8px 0 4px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-panel__description {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Search horizontal on phones too: label left of the field (owner
+     request — the vertical stack read as two disconnected rows). */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search > label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar .field.search .collection-search__input-wrap {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 12px 14px;
+    border-radius: 18px;
+  }
+
+  /* Search spans the first strip line: its own internal row (label left,
+       input right) with the whole width of the panel. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search {
+    flex: 1 1 100%;
+  }
+
+  /* The filter toggle joins the strip as an inline element and only takes
+       the room its label needs; the facets wrap below it in two columns
+       when the disclosure opens. */
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters__toggle {
+    flex: 1 1 auto;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-filters.is-open {
+    flex: 1 1 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+    padding-top: 2px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar__footer {
+    flex: 1 1 100%;
+    justify-content: stretch;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-clear {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-summary strong {
+    font-size: 13px;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .dv-tabs {
+    margin: 2px 0 10px;
+  }
+
+  body.dreamscape-v5 .v11-canvas > .v13-viewbar {
+    padding: 0 0 12px;
+    gap: 8px;
+  }
+
+
+  body.dreamscape-v5 .v13-viewbar__label {
+    display: none;
+  }
+
+  body.dreamscape-v5 .v13-viewbar__switch {
+    width: 100%;
+  }
+
+  body.dreamscape-v5 .v13-viewbar__button {
+    flex: 1 1 0;
+    min-height: 44px;
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mini,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy {
+    height: 44px;
+    font-size: 12.5px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
+    width: 44px;
+    height: 44px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content {
+    padding: 12px 14px 4px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions {
+    padding: 8px 14px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card {
+    transition: none;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:hover {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   11. Last mile — properties several legacy sheets still raise
+   ------------------------------------------------------------
+   The card typography (title/price) and the decorative index/plaque
+   are set by compound selectors such as
+   `#grid.gallery--v2.gallery--v4.gallery--v6 .wishlist-card .product-card__title`.
+   Those layers belong to the showroom card this milestone replaces, so the
+   final values are asserted here. Only the contested properties are marked
+   important; everything else stays cascade-driven. */
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content {
+  position: static !important;
+  /* The showroom pushed the body onto its own 3D layer. That transform
+     creates a containing block, which dragged the status chips down from
+     the image to the first text line. */
+  transform: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame {
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__plaque,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .v12-stage-caption,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__index,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame::before,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__frame::after,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media::after {
+  display: none !important;
+}
+
+/* The purchase celebration paints .thumb::after and the runtime removes the
+   class on animationend. The gallery cleanup above must not silence it. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card.is-purchase-celebrating .thumb.product-media::after {
+  display: block !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__title {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -.01em !important;
+  color: var(--dream-ink, #19152C) !important;
+}
+
+/* A legacy rule underlines text inside the old card markup. The redesigned
+   card has no underlined text, so this is a bounded reset scoped to the
+   gallery card; action labels keep an explicit `text-decoration: none`. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card * {
+  text-decoration: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__price {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.01em !important;
+  color: var(--dream-accent, #6850BC) !important;
+  text-decoration: none !important;
+  border: 0 !important;
+  width: auto !important;
+  flex: 0 1 auto !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__price::after {
+  display: none !important;
+}
+
+/* The decorative wall-text tile was sized for the old showroom grid; with
+   four columns it manufactures an extra empty row. */
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"]::after {
+  content: none !important;
+  display: none !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .cat,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .note,
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .meta {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .cat {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: .07em !important;
+  color: var(--dream-muted, #625979) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .note {
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  color: var(--dream-muted, #625979) !important;
+}
+
+body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__content .meta {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: .05em !important;
+  color: #9A90B4 !important;
+}
+
+/* Coarse pointers keep the 44px target contract that FUSION-04 owns, even
+   where the redesign makes a control visually smaller on a mouse. */
+@media (pointer: coarse) {
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search__input-wrap,
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-search input,
+  body.dreamscape-v5 .v11-workspace #collection.v11-rail .collection-toolbar select {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .mini,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions > .buy,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .badge,
+  body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__actions .card-more__trigger {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

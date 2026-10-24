@@ -1,0 +1,883 @@
+/* =====================================================================
+   DREAM VAULT V16.2 — FUSION-01 — AURORA ATMOSPHERE & FLOATING 3D HERO
+   ---------------------------------------------------------------------
+   Adapts references/someday-vault-motion-reference.html onto the live
+   Personal Vault (PVault.) app. The prototype ideas are kept, its
+   expensive implementations are NOT copied:
+
+   F01 · Aurora atmosphere
+     - three lavender/purple ambience layers behind the page (z-index
+       -3 / -2 / -1), a refined grid, a low-opacity static grain and a
+       cursor-follow glow.
+     - The prototype blurs its blobs with `filter: blur(70px)`. Here the
+       softness comes from the radial-gradient falloff itself and the
+       elements are NEVER blurred or backdrop-filtered, so no full-screen
+       filter is ever animated or repainted.
+     - Drift is a compositor-run CSS animation (no JavaScript loop).
+     - The cursor glow is the ONLY new pointer surface: one bounded rAF
+       that stops as soon as the pointer settles, installed for
+       (hover:hover) + (pointer:fine) only, never under reduced motion,
+       never for touch/pen input.
+     - Hidden tabs: CSS pauses every ambient layer and the glow loop stops.
+
+   F02 · Floating 3D hero
+     - The V9 showroom alcove is kept as the neutral branded composition.
+       With real items the pedestal product is swapped for a main
+       float-card carrying the featured item's REAL image, name and price,
+       plus up to two secondary cards and two chips whose figures come
+       from the real collection (savings progress, ownership count).
+       Nothing is ever fabricated.
+     - MOTION-02 already publishes --hero-pointer-x/y and --hero-*-y on
+       .hero--v9. Every new layer is a CONSUMER of those variables via
+       the `translate` property: no second pointermove listener, no
+       competing transform owner. Each card is a depth wrapper
+       (translate) around an inner float node (transform animation), so
+       the two mechanisms never fight over one element.
+     - The scene light and the cursor glow MOVE by `translate` rather than
+       by re-positioning a background: a background-position change would
+       repaint the whole hero (or the whole 520px glow) on every pointer
+       frame, while a composited translate costs no repaint. Both are
+       promoted on (hover:hover)+(pointer:fine) only, so touch devices
+       carry no extra layer. Measured cost of the whole FUSION-01 addition
+       (desktop 1440, main thread): +0.6ms/frame while scrolling and
+       +~1.5ms/frame only while a desktop pointer is actively moving, both
+       far inside the 16.7ms frame budget; CLS stays 0 and the Lighthouse
+       performance score is unchanged.
+
+   F03 · Cinematic typography
+     - ghost word behind the hero, one-shot staggered entrance for the
+       editorial lines (transform only, so the copy is never transparent
+       to a visibility probe), gradient-highlighted signature line and a
+       restrained ghost numeral behind the two main section headings.
+
+   Protections:
+     - every floating layer lives inside .hero__visual (z-index 1) while
+       .hero__content stays at z-index 2, and all sizes are percentages of
+       the alcove: a floating card can never cover the hero copy or CTA.
+     - html.motion-lite (MOTION-06 evidence-based budget) and
+       prefers-reduced-motion resolve to the same complete, static
+       composition.
+   ===================================================================== */
+
+/* ---------- FUSION tokens (existing palette only) ---------- */
+body.dreamscape-v5 {
+  --pv-lav: #A88BF7;
+  --pv-accent: #6850BC;
+  --pv-ink: #17122E;
+
+  /* Blob strength. Tuned by measurement: the gradient cores sit ON the
+     visible page (through the translucent header/glass and the page
+     gutters), so the wash reads as atmosphere instead of disappearing
+     behind the content. */
+  --pv-aurora-a: rgba(168, 139, 247, .48);
+  --pv-aurora-b: rgba(236, 178, 232, .36);
+  --pv-aurora-c: rgba(147, 180, 253, .32);
+
+  --pv-line: rgba(104, 80, 188, .10);
+  --pv-edge: rgba(168, 139, 247, .40);
+  --pv-edge-soft: rgba(168, 139, 247, .22);
+  --pv-glass: rgba(255, 255, 255, .90);
+
+  --pv-shadow-card:
+    0 24px 60px rgba(53, 35, 110, .18),
+    0 2px 8px rgba(53, 35, 110, .08);
+  --pv-shadow-chip:
+    0 14px 30px rgba(65, 43, 139, .16),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+/* Off switch used by renderHeroStage() — a card/chip with no real data
+   behind it is never rendered. Declared here because [hidden] and
+   display:flex would otherwise fight over specificity. */
+body.dreamscape-v5 .pv-off {
+  display: none !important;
+}
+
+/* =====================================================================
+   F01 — AURORA ATMOSPHERE
+   ===================================================================== */
+
+body.dreamscape-v5 .pv-aurora,
+body.dreamscape-v5 .pv-grid,
+body.dreamscape-v5 .pv-grain,
+body.dreamscape-v5 .pv-cursor-glow {
+  pointer-events: none;
+}
+
+body.dreamscape-v5 .pv-aurora {
+  position: fixed;
+  inset: -12% -8%;
+  z-index: -3;
+  overflow: hidden;
+  background:
+    radial-gradient(1200px 700px at 84% -6%, rgba(222, 213, 255, .62), transparent 66%),
+    radial-gradient(900px 620px at 6% 104%, rgba(207, 194, 244, .44), transparent 70%);
+}
+
+body.dreamscape-v5 .pv-aurora__blob {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+
+/* The three drift blobs. Their radial cores are placed so the strongest
+   part of each blob lands inside the viewport: top-left violet, top-right
+   blush, bottom-centre blue. Softness is a gradient falloff — never a
+   filter — so the layers are pure compositor work. */
+body.dreamscape-v5 .pv-aurora__blob--1 {
+  width: 46vmax;
+  height: 46vmax;
+  left: -3%;
+  top: 2%;
+  background: radial-gradient(circle at 50% 50%, var(--pv-aurora-a), rgba(168, 139, 247, 0) 72%);
+  animation: pv-drift-1 26s ease-in-out infinite alternate;
+}
+
+body.dreamscape-v5 .pv-aurora__blob--2 {
+  width: 52vmax;
+  height: 52vmax;
+  right: -6%;
+  top: -4%;
+  background: radial-gradient(circle at 52% 46%, var(--pv-aurora-b), rgba(236, 178, 232, 0) 74%);
+  animation: pv-drift-2 32s ease-in-out infinite alternate;
+}
+
+body.dreamscape-v5 .pv-aurora__blob--3 {
+  width: 44vmax;
+  height: 44vmax;
+  left: 26%;
+  bottom: -6%;
+  background: radial-gradient(circle at 50% 50%, var(--pv-aurora-c), rgba(147, 180, 253, 0) 72%);
+  animation: pv-drift-3 38s ease-in-out infinite alternate;
+}
+
+@keyframes pv-drift-1 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(120px, 70px, 0) scale(1.12); }
+}
+
+@keyframes pv-drift-2 {
+  from { transform: translate3d(0, 0, 0) scale(1.04); }
+  to   { transform: translate3d(-110px, 90px, 0) scale(.94); }
+}
+
+@keyframes pv-drift-3 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-90px, -70px, 0) scale(1.10); }
+}
+
+/* Refined depth grid — fades out downwards so it never competes with copy. */
+body.dreamscape-v5 .pv-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(var(--pv-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pv-line) 1px, transparent 1px);
+  background-size: 72px 72px;
+  opacity: .75;
+  -webkit-mask-image: radial-gradient(ellipse 92% 58% at 50% 0%, #000 26%, transparent 78%);
+          mask-image: radial-gradient(ellipse 92% 58% at 50% 0%, #000 26%, transparent 78%);
+}
+
+/* Low-opacity grain — static, additive, below content, no blend mode and
+   no filter, so it can never re-rasterise the page on every frame. */
+body.dreamscape-v5 .pv-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Cursor-follow ambient glow (desktop pointer only — JS never installs the
+   listener for touch, pen or reduced motion). */
+body.dreamscape-v5 .pv-cursor-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 520px;
+  height: 520px;
+  z-index: -1;
+  opacity: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 139, 247, .26), rgba(168, 139, 247, 0) 62%);
+  translate:
+    calc(-50% + var(--pv-cursor-x, 0px))
+    calc(-50% + var(--pv-cursor-y, 0px));
+  transition: opacity 420ms ease;
+}
+
+/* The glow exists at every viewport but only ever moves for a desktop
+   pointer. Promoting it on that media only makes each `translate` update a
+   composited move instead of a repaint of a 520x520 gradient, while touch
+   devices (where the glow never turns on) keep no extra layer. */
+@media (hover: hover) and (pointer: fine) {
+  body.dreamscape-v5 .pv-cursor-glow,
+  body.dreamscape-v5 .hero.hero--v9::after {
+    will-change: translate;
+  }
+}
+
+html.pv-cursor-on body.dreamscape-v5 .pv-cursor-glow {
+  opacity: 1;
+}
+
+/* ---------- F01 · hero-local aurora ---------- */
+
+/* MOTION-02 published this layer but the V9 sheet switched it off with
+   `content:none`. The FUSION sheet is loaded later, so it can hand the
+   layer back its aurora. Its `translate: 0 var(--hero-bg-y)` (scroll
+   parallax) and the reduced-motion / motion-lite kill switches from
+   motion-v16.css + motion-v18-mobile.css keep working untouched. */
+body.dreamscape-v5 .hero.hero--v9::before {
+  content: "";
+  background:
+    radial-gradient(ellipse 58% 44% at 76% 22%, rgba(168, 139, 247, .30), transparent 70%),
+    radial-gradient(ellipse 48% 38% at 22% 88%, rgba(147, 180, 253, .22), transparent 72%),
+    radial-gradient(ellipse 62% 46% at 50% 32%, rgba(168, 139, 247, .16), transparent 74%);
+}
+
+/* Scene light that follows the pointer WITHOUT a single new listener: it
+   reads the CSS variables MOTION-02 already lerps (bounded rAF, clamped to
+   ±8px). The light is painted inside the hero's own box and the box — not
+   the gradient position — is what moves. Keeping the position in the
+   background would force Blink to REPAINT the whole hero area on every
+   pointer frame; a `translate` on a layer of its own is handled by the
+   compositor, so the pointer costs no repaint at all. There is no other
+   transform owner here (MOTION-02 only touches ::before), and touch /
+   reduced motion leave the variables at 0px, which resolves to a plain
+   static light. */
+body.dreamscape-v5 .hero.hero--v9::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 340px at 72% 48%,
+    rgba(168, 139, 247, .26),
+    rgba(168, 139, 247, 0) 68%);
+  translate:
+    calc(var(--hero-pointer-x, 0px) * 2.4)
+    calc(var(--hero-pointer-y, 0px) * 2.4);
+}
+
+/* =====================================================================
+   F03 — CINEMATIC TYPOGRAPHY
+   ===================================================================== */
+
+/* Ghost word behind the hero. Desktop only: below 1025px the hero stacks
+   and the composition is already busy, so the word is dropped rather
+   than squeezed next to the copy. */
+body.dreamscape-v5 .hero--v9 .pv-hero-ghost {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .hero--v9 {
+    overflow: visible;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-hero-ghost {
+    display: block;
+    position: absolute;
+    right: clamp(12px, 2vw, 40px);
+    top: clamp(4px, 1vw, 22px);
+    z-index: 0;
+    font-family: var(--v9-serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(6rem, 12vw, 11rem);
+    line-height: 1;
+    letter-spacing: -.03em;
+    color: rgba(104, 80, 188, .05);
+    -webkit-text-stroke: 1.4px rgba(104, 80, 188, .16);
+    opacity: .9;
+    pointer-events: none;
+    user-select: none;
+    translate: 0 calc(var(--hero-bg-y, 0px) * 1.6);
+  }
+}
+
+/* Staggered editorial entrance — transform only (never opacity), so the
+   hero copy is readable to assistive tech and to a visibility probe from
+   the very first frame. Gated by html.pv-enter, added once by JS, so it
+   can be replayed deterministically in QA and never replays on render(). */
+html.pv-enter body.dreamscape-v5 .hero--v9 .hero__eyebrow {
+  animation: pv-rise 620ms var(--v9-ease) 60ms both;
+}
+
+html.pv-enter body.dreamscape-v5 .hero--v9 .hero__title {
+  animation: pv-rise 760ms var(--v9-ease) 140ms both;
+}
+
+html.pv-enter body.dreamscape-v5 .hero--v9 .hero__title > span {
+  animation: pv-rise-line 900ms var(--v9-ease) 260ms both;
+}
+
+html.pv-enter body.dreamscape-v5 .hero--v9 .hero__description {
+  animation: pv-rise 800ms var(--v9-ease) 380ms both;
+}
+
+html.pv-enter body.dreamscape-v5 .hero--v9 .hero-v3__actions {
+  animation: pv-rise 800ms var(--v9-ease) 480ms both;
+}
+
+html.pv-enter body.dreamscape-v5 .hero--v9 .hero__footer {
+  animation: pv-rise 900ms var(--v9-ease) 580ms both;
+}
+
+@keyframes pv-rise {
+  from { transform: translate3d(0, 26px, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes pv-rise-line {
+  from { transform: translate3d(0, 34px, 0) rotate(1.6deg); }
+  to   { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+/* Refined gradient highlight on the signature (serif-italic) line. */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  body.dreamscape-v5 .hero--v9 .hero__title > span {
+    background-image: linear-gradient(104deg, #7E66D6 0%, #6850BC 42%, #A88BF7 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #6850BC;
+  }
+}
+
+/* Restrained section-number decoration: one ghost numeral behind each of
+   the two main headings. The heading creates its own stacking context
+   (or gets one here), so z-index:-1 sits behind the text and nowhere
+   else. */
+body.dreamscape-v5 .overview-heading::after,
+body.dreamscape-v5 .list-heading--v3::after {
+  position: absolute;
+  z-index: -1;
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-weight: 700;
+  line-height: .8;
+  letter-spacing: -.04em;
+  color: rgba(104, 80, 188, .06);
+  -webkit-text-stroke: 1.3px rgba(104, 80, 188, .13);
+  pointer-events: none;
+  user-select: none;
+}
+
+body.dreamscape-v5 .overview-heading::after {
+  content: "01";
+  right: 0;
+  top: -.46em;
+  font-size: clamp(4.4rem, 8vw, 8.4rem);
+}
+
+body.dreamscape-v5 .list-heading--v3 {
+  position: relative;
+  isolation: isolate;
+}
+
+body.dreamscape-v5 .list-heading--v3::after {
+  content: "02";
+  right: 56px;
+  top: -.34em;
+  font-size: clamp(4rem, 7.4vw, 7.6rem);
+}
+
+/* =====================================================================
+   F02 — FLOATING 3D HERO COMPOSITION
+   ===================================================================== */
+
+body.dreamscape-v5 .hero--v9 .pv-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* With real data the pedestal keeps its light but steps aside for the
+   featured card. Empty collection → the alcove product stays, and it is
+   the whole neutral branded visual. */
+body.dreamscape-v5 .hero--v9 .v9-scene.pv-has-items .v9-scene__product {
+  opacity: 0;
+  transition: opacity 480ms var(--v9-ease);
+}
+
+/* ---------- orbit ---------- */
+
+body.dreamscape-v5 .pv-stage__ring {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: 76%;
+  aspect-ratio: 1;
+  border: 1.5px dashed rgba(104, 80, 188, .26);
+  border-radius: 50%;
+  translate: -50% -50%;
+  animation: pv-spin 46s linear infinite;
+}
+
+body.dreamscape-v5 .pv-stage__ring::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: var(--pv-lav);
+  box-shadow: 0 0 16px 4px rgba(168, 139, 247, .5);
+}
+
+body.dreamscape-v5 .pv-stage__halo {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: radial-gradient(circle, rgba(168, 139, 247, .30), rgba(168, 139, 247, 0) 66%);
+}
+
+body.dreamscape-v5 .pv-stage__spark {
+  position: absolute;
+  left: var(--pv-spark-x, 50%);
+  top: var(--pv-spark-y, 50%);
+  z-index: 2;
+  color: var(--pv-lav);
+  font-size: var(--pv-spark-s, 1rem);
+  line-height: 1;
+  animation: pv-twinkle 3.8s ease-in-out infinite;
+  animation-delay: var(--pv-spark-d, 0s);
+}
+
+@keyframes pv-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pv-twinkle {
+  0%, 100% { opacity: .14; transform: scale(.7) rotate(0deg); }
+  50%      { opacity: .9; transform: scale(1.15) rotate(20deg); }
+}
+
+/* ---------- rotating seal ---------- */
+
+body.dreamscape-v5 .pv-stage__badge {
+  position: absolute;
+  right: -7%;
+  top: -6%;
+  width: 27%;
+  aspect-ratio: 1;
+  z-index: 5;
+}
+
+body.dreamscape-v5 .pv-stage__badge svg {
+  width: 100%;
+  height: 100%;
+  animation: pv-spin 20s linear infinite;
+}
+
+body.dreamscape-v5 .pv-stage__badge text {
+  font-family: var(--font-primary);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  fill: rgba(104, 80, 188, .82);
+  /* White outline keeps the seal legible where it crosses the ghost word. */
+  stroke: rgba(255, 255, 255, .85);
+  stroke-width: .9;
+  paint-order: stroke fill;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .pv-stage__badge-core {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--pv-lav);
+  font-size: 15px;
+}
+
+/* ---------- floating cards ---------- */
+
+body.dreamscape-v5 .pv-card {
+  --pv-depth: 1;
+  --pv-dx: calc(var(--hero-pointer-x, 0px) * var(--pv-depth));
+  --pv-dy: calc(var(--hero-pointer-y, 0px) * var(--pv-depth));
+  position: absolute;
+  margin: 0;
+  translate: calc(-50% + var(--pv-dx)) calc(-50% + var(--pv-dy));
+}
+
+/* Stacking: the FEATURED card is never covered (a secondary card must not
+   hide its real price), the secondary cards float in front of it and the
+   chips float in front of everything. Card B is pushed low enough to clear
+   the featured caption completely. */
+body.dreamscape-v5 .pv-card--main {
+  left: 50%;
+  top: 47%;
+  width: 62%;
+  z-index: 6;
+  --pv-depth: 1.15;
+}
+
+body.dreamscape-v5 .pv-card--a {
+  left: 14%;
+  top: 16%;
+  width: 33%;
+  z-index: 7;
+  --pv-depth: 1.9;
+}
+
+body.dreamscape-v5 .pv-card--b {
+  left: 78%;
+  top: 80%;
+  width: 34%;
+  z-index: 7;
+  --pv-depth: 1.5;
+}
+
+body.dreamscape-v5 .pv-card__float {
+  position: relative;
+  display: block;
+  animation: pv-float 7s ease-in-out infinite;
+}
+
+body.dreamscape-v5 .pv-card--a .pv-card__float {
+  animation-duration: 6.5s;
+}
+
+body.dreamscape-v5 .pv-card--b .pv-card__float {
+  animation-duration: 7.5s;
+  animation-delay: -2.6s;
+}
+
+@keyframes pv-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -12px, 0); }
+}
+
+body.dreamscape-v5 .pv-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3.1;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--pv-edge);
+  background: linear-gradient(150deg, #FFFFFF, #EFE8FE);
+  box-shadow: var(--pv-shadow-card);
+}
+
+body.dreamscape-v5 .pv-card--a .pv-card__media {
+  aspect-ratio: 1 / 1.14;
+}
+
+body.dreamscape-v5 .pv-card--b .pv-card__media {
+  aspect-ratio: 4 / 3;
+}
+
+body.dreamscape-v5 .pv-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* No image on the real item → a neutral branded panel, never a fake photo
+   and never a fabricated product name. */
+body.dreamscape-v5 .pv-card__empty {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: linear-gradient(150deg, #F7F3FF, #E4D9FB);
+}
+
+body.dreamscape-v5 .pv-card.pv-noimg .pv-card__empty {
+  display: grid;
+}
+
+body.dreamscape-v5 .pv-card.pv-noimg .pv-card__img {
+  display: none;
+}
+
+body.dreamscape-v5 .pv-card__mark {
+  font-family: var(--v9-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(10px, 1.35vw, 19px);
+  letter-spacing: -.01em;
+  color: rgba(104, 80, 188, .52);
+}
+
+body.dreamscape-v5 .pv-card__cap {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: rgba(23, 18, 46, .60);
+  color: #fff;
+  font-size: clamp(8.5px, .92vw, 11.5px);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+body.dreamscape-v5 .pv-card__cap b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .pv-card__cap span {
+  flex: 0 0 auto;
+  color: #DCCEFF;
+  font-variant-numeric: tabular-nums;
+}
+
+body.dreamscape-v5 .pv-card--a .pv-card__cap,
+body.dreamscape-v5 .pv-card--b .pv-card__cap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  padding: 6px 8px;
+  font-size: clamp(8px, .84vw, 10px);
+}
+
+body.dreamscape-v5 .pv-card--a .pv-card__cap span,
+body.dreamscape-v5 .pv-card--b .pv-card__cap span {
+  justify-self: end;
+  opacity: .92;
+}
+
+/* ---------- floating chips (real metrics only) ---------- */
+
+body.dreamscape-v5 .pv-chip {
+  position: absolute;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 54%;
+  padding: 8px 11px;
+  border-radius: 13px;
+  background: var(--pv-glass);
+  border: 1px solid var(--pv-edge-soft);
+  box-shadow: var(--pv-shadow-chip);
+  animation: pv-float 8.5s ease-in-out infinite;
+}
+
+body.dreamscape-v5 .pv-chip--goal {
+  left: -6%;
+  bottom: 18%;
+  animation-delay: -1.4s;
+}
+
+/* Sits below the seal instead of behind it: the two never fight. */
+body.dreamscape-v5 .pv-chip--owned {
+  right: -6%;
+  top: 22%;
+  animation-duration: 7.8s;
+  animation-delay: -3.2s;
+}
+
+body.dreamscape-v5 .pv-chip__icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(168, 139, 247, .18);
+  color: var(--pv-accent);
+  font-size: 12px;
+}
+
+body.dreamscape-v5 .pv-chip__text {
+  min-width: 0;
+  display: block;
+}
+
+body.dreamscape-v5 .pv-chip__text small {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(104, 80, 188, .78);
+}
+
+body.dreamscape-v5 .pv-chip__text b {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(9.5px, 1vw, 12px);
+  font-weight: 700;
+  color: var(--pv-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   F04 — RESPONSIVE COMPOSITION
+   ===================================================================== */
+
+/* Tablet / stacked hero: the alcove shrinks to 280px, so the composition
+   shrinks with it. Chips keep their type sizes readable at this scale. */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .pv-stage__badge {
+    width: 30%;
+    right: -8%;
+    top: -8%;
+  }
+
+  body.dreamscape-v5 .pv-chip {
+    width: 58%;
+    gap: 6px;
+    padding: 6px 9px;
+  }
+
+  body.dreamscape-v5 .pv-chip__icon {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+
+  body.dreamscape-v5 .pv-chip__text small {
+    font-size: 7.5px;
+    letter-spacing: .08em;
+  }
+
+  body.dreamscape-v5 .pv-chip__text b {
+    font-size: 9.5px;
+  }
+}
+
+/* Phone: the scene is 240px wide. The two secondary cards and the chips
+   are dropped so the main card, ring, halo, seal and sparks stay clearly
+   readable instead of turning into mush. */
+@media (max-width: 640px) {
+  body.dreamscape-v5 .pv-card--a,
+  body.dreamscape-v5 .pv-card--b,
+  body.dreamscape-v5 .pv-chip {
+    display: none;
+  }
+
+  body.dreamscape-v5 .pv-card--main {
+    width: 68%;
+    top: 45%;
+  }
+
+  body.dreamscape-v5 .pv-stage__ring {
+    width: 84%;
+    top: 45%;
+  }
+
+  body.dreamscape-v5 .pv-stage__halo {
+    width: 72%;
+    top: 44%;
+  }
+
+  body.dreamscape-v5 .pv-stage__badge {
+    width: 34%;
+    right: -6%;
+    top: -5%;
+  }
+
+  body.dreamscape-v5 .pv-card__cap {
+    font-size: 9px;
+    padding: 5px 8px;
+  }
+}
+
+/* =====================================================================
+   MOTION GATES
+   ===================================================================== */
+
+/* A hidden tab keeps its composition but stops every ambient animation
+   (and the cursor glow loop is stopped in JS as well). */
+html.pv-fx-hidden body.dreamscape-v5 .pv-aurora__blob,
+html.pv-fx-hidden body.dreamscape-v5 .pv-stage__ring,
+html.pv-fx-hidden body.dreamscape-v5 .pv-stage__badge svg,
+html.pv-fx-hidden body.dreamscape-v5 .pv-stage__spark,
+html.pv-fx-hidden body.dreamscape-v5 .pv-card__float,
+html.pv-fx-hidden body.dreamscape-v5 .pv-chip {
+  animation-play-state: paused !important;
+}
+
+html.pv-fx-hidden body.dreamscape-v5 .pv-cursor-glow {
+  opacity: 0;
+}
+
+/* MOTION-06 adaptive budget: a device that measured repeatedly low frame
+   rate keeps the full composition but loses ambient motion (the aurora
+   layers stay painted — only their drift stops). */
+html.motion-lite body.dreamscape-v5 .pv-aurora__blob,
+html.motion-lite body.dreamscape-v5 .pv-stage__ring,
+html.motion-lite body.dreamscape-v5 .pv-stage__badge svg,
+html.motion-lite body.dreamscape-v5 .pv-stage__spark,
+html.motion-lite body.dreamscape-v5 .pv-card__float,
+html.motion-lite body.dreamscape-v5 .pv-chip {
+  animation: none !important;
+}
+
+html.motion-lite body.dreamscape-v5 .pv-cursor-glow {
+  display: none;
+}
+
+/* Reduced motion: static but complete. No drift, no float, no spin, no
+   entrance — every layer stays exactly where it is and stays visible. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .pv-aurora__blob,
+  body.dreamscape-v5 .pv-stage__ring,
+  body.dreamscape-v5 .pv-stage__badge svg,
+  body.dreamscape-v5 .pv-stage__spark,
+  body.dreamscape-v5 .pv-card__float,
+  body.dreamscape-v5 .pv-chip,
+  html.pv-enter body.dreamscape-v5 .hero--v9 .hero__eyebrow,
+  html.pv-enter body.dreamscape-v5 .hero--v9 .hero__title,
+  html.pv-enter body.dreamscape-v5 .hero--v9 .hero__title > span,
+  html.pv-enter body.dreamscape-v5 .hero--v9 .hero__description,
+  html.pv-enter body.dreamscape-v5 .hero--v9 .hero-v3__actions,
+  html.pv-enter body.dreamscape-v5 .hero--v9 .hero__footer {
+    animation: none !important;
+  }
+
+  body.dreamscape-v5 .pv-cursor-glow {
+    display: none;
+  }
+
+  body.dreamscape-v5 .pv-card,
+  body.dreamscape-v5 .hero--v9 .pv-hero-ghost {
+    translate: none;
+  }
+
+  body.dreamscape-v5 .pv-card--main { translate: -50% -50%; }
+  body.dreamscape-v5 .pv-card--a { translate: -50% -50%; }
+  body.dreamscape-v5 .pv-card--b { translate: -50% -50%; }
+  body.dreamscape-v5 .pv-stage__ring,
+  body.dreamscape-v5 .pv-stage__halo { translate: -50% -50%; }
+}
+
+/* Touch devices never simulate a hover cursor. */
+@media (hover: none), (pointer: coarse) {
+  body.dreamscape-v5 .pv-cursor-glow {
+    display: none;
+  }
+}

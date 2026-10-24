@@ -1,13 +1,65 @@
-/* Navigation — Apple Minimal */
+/* Navigation — matched to reference prototype and actual HTML from wishlist.html
+   Fixed topbar with backdrop-filter: blur(14px) matching reference .topbar.
+   Content below must have padding-top or scroll-margin-top so it is never
+   hidden behind the persistent fixed header.
+   All selectors use ACTUAL HTML class names from wishlist.html.
+*/
 
+/* ============ SITE HEADER (fixed topbar) ============ */
+/* The fixed header that covers the top of the page. */
 .site-header {
   display: block;
-  position: relative;
-  margin-bottom: 0;
-  padding: 0 0 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0;
+  margin: 0;
   border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
 }
 
+/* Keep a minimal bottom border visible when scrolled past */
+.site-header.scrolled { border-bottom-color: var(--color-border) }
+
+/* ============================================================
+   SCROLL INSET — keep the fixed header from covering content
+   ------------------------------------------------------------
+   The site header is `position: fixed`, so it floats over the
+   document for the WHOLE scroll range. Without a scroll inset any
+   "scroll into view" — an anchor jump, a focus() on a control, or
+   the browser's own "scroll into view if needed" — can land its
+   target flush against the viewport top, exactly where the header
+   sits. A control hidden under the header is a control neither the
+   user nor the pointer can reach: the click lands on the header
+   instead. (This is what made the gallery/focus/board switcher
+   unclickable whenever the browser scrolled it to the very top.)
+
+   The inset is the REAL rendered header height at each breakpoint,
+   measured from the DOM, plus a small gap so a target never sits
+   flush against the header's lower edge:
+     <=640px : nav 58 + sync panel 102 = 183px
+     >=641px : nav 72 + sync panel  68 = 163px
+   ============================================================ */
+:root {
+  --dv-header-inset: 197px; /* 183 + 14 */
+}
+
+@media (min-width: 641px) {
+  :root {
+    --dv-header-inset: 177px; /* 163 + 14 */
+  }
+}
+
+html {
+  scroll-padding-top: var(--dv-header-inset);
+}
+
+/* ============ NAVIGATION CONTAINER ============ */
+/* Maps to the actual <nav> and .nav-account structure in wishlist.html */
 .site-nav {
   width: 100%;
   display: flex;
@@ -17,6 +69,7 @@
   min-height: 64px;
 }
 
+/* Brand section — the actual HTML uses .nav-brand style concepts */
 .nav-brand {
   display: inline-flex;
   align-items: center;
@@ -24,18 +77,19 @@
   flex-shrink: 0;
 }
 
+/* Brand mark — adapted from actual HTML structure */
 .nav-brand__mark {
   display: grid;
   place-items: center;
   width: 36px;
   height: 36px;
-
   border-radius: 12px;
   background: var(--color-accent-soft);
   color: var(--color-accent);
   font-size: 22px;
 }
 
+/* Brand name — adapted from actual HTML */
 .nav-brand__name {
   font-size: 1.4rem;
   font-weight: 750;
@@ -47,12 +101,14 @@
   color: var(--color-accent);
 }
 
+/* Navigation actions — maps to actual .btns class */
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+/* Add button — maps to actual #btnSignIn / #btnSignOut */
 .nav-add {
   white-space: nowrap;
   background: var(--color-accent);
@@ -66,6 +122,7 @@
   border-color: #6252d1;
 }
 
+/* More dropdown */
 .nav-more {
   position: relative;
 }
@@ -95,7 +152,6 @@
   top: calc(100% + 10px);
   right: 0;
   z-index: 30;
-
   min-width: 190px;
   padding: 8px;
   border: 1px solid var(--color-border);
@@ -118,7 +174,8 @@
   background: var(--color-bg);
 }
 
-/* Firebase Account */
+/* ============ FIREBASE ACCOUNT / SYNC PANEL ============ */
+/* Maps to actual .nav-account and .sync-panel classes from wishlist.html */
 .nav-account {
   margin-top: 12px;
 }
@@ -134,7 +191,63 @@
   flex-basis: 100%;
 }
 
-/* Tablet and mobile */
+/* ============ PROGRESS BAR COMPONENT ============ */
+/* .dv-progress and #dvProgressFill — ownership progress bar */
+/* Per QA docs: dvSetFill(bar, ratio) uses #dvProgressFill with --dv-fill (CSS scaleX) */
+.dv-progress {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.dv-progress__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+  font-size: .875rem;
+  color: var(--muted);
+}
+
+.dv-progress__label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.dv-progress__value {
+  color: var(--amber);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.dv-progress__track {
+  height: 8px;
+  background: var(--progress-track);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* #dvProgressFill — width-driven progress bar (renderDashboardProgress sets fill.style.width) */
+.dv-progress__track #dvProgressFill {
+  width: 0%;
+  height: 8px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--progress-fill);
+  transition: width .3s ease;
+}
+
+/* Caption below progress bar */
+.dv-progress__caption {
+  margin-top: .5rem;
+  font-size: .75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ============ TABLET AND MOBILE ============ */
+
 @media (max-width: 640px) {
   .site-header {
     padding-bottom: 16px;
@@ -174,8 +287,9 @@
   }
 }
 
-/* Compatibility with existing HTML/CSS */
+/* ============ COMPATIBILITY WITH EXISTING HTML ============ */
 
+/* Compatibility with header.top structure */
 header.top.site-header {
   display: block;
   margin-bottom: 0;

@@ -1,0 +1,171 @@
+{
+ "generatedAt": "2026-10-17T07:30:31.416Z",
+ "repo": "E:\\Buying Checklist",
+ "note": "F4.1 interaction audit, A/B-ed F4 f22401d vs F5 on both trees, same fixture (the app's own 12 sample items, none carrying a savings goal). Full per-element dumps (with the CSS/JS coverage tables) stay in the QA directory. Scanner: v16_4-f4-audit.js.",
+ "audits": {
+  "375": {
+   "F4": {
+    "counts": {
+     "interactive": 615,
+     "visible": 467,
+     "tiny": 0,
+     "unnamed": 0,
+     "divButton": 0
+    },
+    "surfacesBase": 153,
+    "geom": {
+     "base": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     },
+     "quickview": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     },
+     "form": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     },
+     "purchase": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     }
+    },
+    "errors": [],
+    "nativeDialogs": [],
+    "sheets": 52,
+    "metrics": {
+     "Nodes": 2310,
+     "JSEventListeners": 165,
+     "JSHeapUsedSize": 1263524
+    }
+   },
+   "F5": {
+    "counts": {
+     "interactive": 659,
+     "visible": 488,
+     "tiny": 0,
+     "unnamed": 0,
+     "divButton": 0
+    },
+    "surfacesBase": 164,
+    "geom": {
+     "base": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     },
+     "quickview": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     },
+     "form": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     },
+     "purchase": {
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "bodyScrollWidth": 375
+     }
+    },
+    "errors": [],
+    "nativeDialogs": [],
+    "sheets": 53,
+    "metrics": {
+     "Nodes": 2579,
+     "JSEventListeners": 172,
+     "JSHeapUsedSize": 1450832
+    }
+   }
+  },
+  "1440": {
+   "F4": {
+    "counts": {
+     "interactive": 615,
+     "visible": 483,
+     "tiny": 0,
+     "unnamed": 0,
+     "divButton": 0
+    },
+    "surfacesBase": 153,
+    "geom": {
+     "base": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     },
+     "quickview": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     },
+     "form": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     },
+     "purchase": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     }
+    },
+    "errors": [],
+    "nativeDialogs": [],
+    "sheets": 52,
+    "metrics": {
+     "Nodes": 2811,
+     "JSEventListeners": 201,
+     "JSHeapUsedSize": 1272180
+    }
+   },
+   "F5": {
+    "counts": {
+     "interactive": 659,
+     "visible": 508,
+     "tiny": 0,
+     "unnamed": 0,
+     "divButton": 0
+    },
+    "surfacesBase": 164,
+    "geom": {
+     "base": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     },
+     "quickview": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     },
+     "form": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     },
+     "purchase": {
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "bodyScrollWidth": 1440
+     }
+    },
+    "errors": [],
+    "nativeDialogs": [],
+    "sheets": 53,
+    "metrics": {
+     "Nodes": 2580,
+     "JSEventListeners": 172,
+     "JSHeapUsedSize": 1457612
+    }
+   }
+  }
+ }
+}

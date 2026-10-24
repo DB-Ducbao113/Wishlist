@@ -1,0 +1,100 @@
+/* =====================================================================
+   UX-01 / UX-02 — COMPACT FIRST SCREEN & ADAPTIVE EMPTY DASHBOARD
+   ---------------------------------------------------------------------
+   These rules were added to css/fusion-04-mobile.css by the UX-01/UX-02
+   milestone. That file owns ONE thing: the coarse-pointer gate. Its
+   contract (FUSION-04 F04-A02 / F04-A03) is that it declares only
+   `min-width` / `min-height` / `will-change`, and that every rule sits
+   inside `@media (hover: none), (pointer: coarse)`. Adding a desktop
+   hero compaction and an empty-dashboard layout to it broke that
+   contract — the sheet was measured to leak layout, colour and typography
+   rules onto fine pointers.
+
+   The rules live here instead, in the sheet that owns them, at the SAME
+   position in the cascade (linked immediately before fusion-04-mobile.css),
+   so not one pixel changes. Only the ownership is corrected.
+
+   Cascade note: fusion-04-mobile.css is still the LAST sheet, and it only
+   declares will-change / min-width / min-height on selectors that do not
+   overlap anything below, so moving these rules one position earlier
+   changes no computed style.
+   ===================================================================== */
+
+/* Desktop: a tighter first screen so the collection is closer to the fold. */
+@media (min-width: 1025px) {
+  body.dreamscape-v5 .hero.hero--v9 {
+    padding-top: clamp(96px, 8vw, 122px);
+    padding-bottom: 20px;
+    min-height: 0;
+    gap: clamp(22px, 3vw, 46px);
+  }
+  body.dreamscape-v5 .hero--v9 .hero__title {
+    font-size: clamp(3rem, 4.3vw, 5rem);
+    line-height: 1.04;
+  }
+  body.dreamscape-v5 .hero--v9 .hero__description {
+    margin-block: 20px;
+    max-width: 33rem;
+  }
+  body.dreamscape-v5 .hero--v9 .hero__visual,
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    max-height: 450px;
+  }
+  body.dreamscape-v5 .pv-marquee {
+    margin-top: 12px;
+  }
+}
+
+/* The account strip sits tight under the nav on every width. */
+body.dreamscape-v5 .site-header .nav-account {
+  margin-top: 0;
+}
+body.dreamscape-v5 .site-header .sync-panel {
+  min-height: 52px;
+  padding-block: 8px;
+}
+
+/* An anchor jump must clear the fixed header, not disappear under it. */
+body.dreamscape-v5 #collection,
+body.dreamscape-v5 .dashboard-panel {
+  scroll-margin-top: 125px;
+}
+
+/* A truly empty library needs one next action, not an entire analytics wall.
+   We hide presentation only. Figures remain rendered and accurate and will
+   reappear immediately when a real item is created or imported. */
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .total.stats-dashboard,
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash #dvMetrics,
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .dv-grid,
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash #dvActions {
+  display: none;
+}
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash {
+  margin-block: 16px 28px;
+  padding: clamp(16px, 2vw, 24px);
+}
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .overview-heading {
+  margin-bottom: 0;
+}
+body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash .overview-heading__title {
+  max-width: 24ch;
+}
+
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .hero.hero--v9 {
+    min-height: 0;
+    padding-bottom: 16px;
+  }
+  body.dreamscape-v5 .pv-marquee {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  body.dreamscape-v5 .site-header .sync-panel {
+    min-height: 44px;
+  }
+  body.dreamscape-v5.dv-library-empty .dashboard-panel.dv-dash {
+    margin-block: 12px 24px;
+  }
+}

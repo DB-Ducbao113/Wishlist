@@ -459,6 +459,12 @@ body.dreamscape-v5 #qv::backdrop {
        đảm nhiệm. Tránh dùng margin âm lớn ở sticky khiến flex chỉ "đặt chỗ"
        phần margin box → tiêu đề bị thanh dính đè lên (lỗi tồn tại trước). */
     padding: 0 clamp(26px, 2.6vw, 40px) clamp(26px, 2.6vw, 40px);
+    /* UX-04.3 — the sticky top row is ~86px tall. Without a scroll inset a
+       scrollIntoView inside the sheet lands its target UNDER that row, so
+       the price or a section heading is half hidden by the bar that owns
+       the close button. The inset keeps every scrolled-to line readable
+       while the bar stays exactly where it is. */
+    scroll-padding-top: 96px;
   }
 
   body.dreamscape-v5 #qv .quick-view__top {
@@ -472,9 +478,10 @@ body.dreamscape-v5 #qv::backdrop {
   }
 
   body.dreamscape-v5 #qv .quick-view__close {
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
+    /* Accessible target stays >=44px across desktop and mobile. */
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
     font-size: 20px;
   }
 
@@ -558,14 +565,25 @@ body.dreamscape-v5 #qv::backdrop {
     margin-top: auto;
     padding-top: 14px;
     padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    /* Nền đục thật: nội dung cuộn phía sau không lòi qua/không bị "Đè"
-       heading story (gradient mờ ở bản trước gây text xuyên). */
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, .97) 0%,
-      #fff 26%
-    );
+    /* UX-04.3 — OPAQUE band. The old gradient started at 97% white, so the
+       title and price scrolled UNDER the action bar and ghosted through it
+       (visible as pale text behind the buttons). The band is now solid and
+       the soft transition lives in a separate fade strip ABOVE it, so no
+       content can ever show through an action. */
+    background: #fff;
     border-top: 1px solid rgba(104, 80, 188, .12);
+  }
+
+  /* The fade that melts the scrolling content into the action bar. */
+  body.dreamscape-v5 #qv .quick-view__cta::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 26px;
+    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.9));
+    pointer-events: none;
   }
 
   body.dreamscape-v5 #qv .quick-view__btn {
@@ -624,5 +642,30 @@ body.dreamscape-v5 #qv :focus-visible {
   body.dreamscape-v5 #qv .quick-view__close,
   body.dreamscape-v5 #qv .quick-view__btn {
     transition: none;
+  }
+}
+
+
+/* Reference polish: gallery-to-detail presentation, no event/state changes. */
+body.dreamscape-v5 dialog#qv[open] {
+  border: 1px solid rgba(104, 80, 188, .16);
+}
+body.dreamscape-v5 #qv .quick-view__close:focus-visible,
+body.dreamscape-v5 #qv .quick-view__btn:focus-visible {
+  outline: 3px solid #6850bc;
+  outline-offset: 3px;
+}
+body.dreamscape-v5 #qv .quick-view__panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(104, 80, 188, .35) transparent;
+}
+@media (max-width: 640px) {
+  body.dreamscape-v5 dialog#qv[open] {
+    max-height: min(92dvh, 920px);
+    max-height: min(92svh, 920px);
+  }
+  body.dreamscape-v5 #qv .quick-view__close {
+    min-width: 44px;
+    min-height: 44px;
   }
 }

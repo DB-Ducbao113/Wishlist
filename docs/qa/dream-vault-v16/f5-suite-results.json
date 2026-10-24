@@ -1,0 +1,882 @@
+{
+ "generatedAt": "2026-10-17T07:17:21.094Z",
+ "repo": "E:\\Buying Checklist",
+ "pass": 97,
+ "fail": 0,
+ "total": 97,
+ "results": [
+  {
+   "id": "F5-1-01",
+   "section": "A F5.1 DATA MODEL",
+   "area": "validators",
+   "entry": "validSavingGoal",
+   "expected": "goal must be a finite safe integer > 0; 0, negatives, NaN, Infinity, junk and 1e30 are all rejected",
+   "pass": true,
+   "actual": "[[\"0\",null],[\"-1\",null],[\"-0.4\",null],[\"NaN\",null],[\"Infinity\",null],[\"-Infinity\",null],[\"abc\",null],[\"\",null],[\"null\",null],[\"undefined\",null],[\"1e+30\",null],[\"1500.4\",1500],[\"2500\",2500]]"
+  },
+  {
+   "id": "F5-1-02",
+   "section": "A F5.1 DATA MODEL",
+   "area": "validators",
+   "entry": "validSavedAmount",
+   "expected": "saved must be a finite safe integer >= 0; negative, NaN, Infinity, junk and 1e30 are rejected; an explicit 0 is kept",
+   "pass": true,
+   "actual": "[[\"0\",0],[\"-1\",null],[\"NaN\",null],[\"Infinity\",null],[\"abc\",null],[\"\",null],[\"null\",null],[\"undefined\",null],[\"1e+30\",null],[\"1500.4\",1500],[\"2500\",2500]]"
+  },
+  {
+   "id": "F5-1-03",
+   "section": "A F5.1 DATA MODEL",
+   "area": "readers",
+   "entry": "a row with no savings fields",
+   "expected": "reads as \"no goal\", saved 0, not reached, remaining/progress null — never NaN",
+   "pass": true,
+   "actual": "[null,null,0,false,false,null,null]"
+  },
+  {
+   "id": "F5-1-04",
+   "section": "A F5.1 DATA MODEL",
+   "area": "savingsReached",
+   "entry": "saved below / equal / above the goal",
+   "expected": "below = false, equal = true, above = true",
+   "pass": true,
+   "actual": "[false,true,true]"
+  },
+  {
+   "id": "F5-1-05",
+   "section": "A F5.1 DATA MODEL",
+   "area": "savingsReached",
+   "entry": "savedAmount ABOVE savingGoal",
+   "expected": "the data is never clamped: remaining floors at 0 and progress caps at 1 for display only",
+   "pass": true,
+   "actual": "{\"remainingOver\":0,\"progressOver\":1}"
+  },
+  {
+   "id": "F5-1-06",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "a row carrying valid savings",
+   "expected": "goal and saved survive the round-trip verbatim",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-93svm\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161,\"savingGoal\":500000,\"savedAmount\":120000}"
+  },
+  {
+   "id": "F5-1-07",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "a legacy row without the fields",
+   "expected": "no savingGoal / savedAmount is invented",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-oaoar\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161}"
+  },
+  {
+   "id": "F5-1-08",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "negative savings values",
+   "expected": "dropped entirely instead of stored as a negative number",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-q54z5\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161}"
+  },
+  {
+   "id": "F5-1-09",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "numeric strings",
+   "expected": "coerced to safe integers, rounded, and nothing fake appears",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-wevji\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161,\"savingGoal\":700000,\"savedAmount\":251}"
+  },
+  {
+   "id": "F5-1-10",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "NaN / Infinity",
+   "expected": "both removed; the item is still imported",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-y69bn\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161}"
+  },
+  {
+   "id": "F5-1-11",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "saved greater than the goal",
+   "expected": "kept as-is — the over-saved value is real user data, not an error to trim",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-v6it8\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161,\"savingGoal\":100,\"savedAmount\":900}"
+  },
+  {
+   "id": "F5-1-12",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "savings on a PURCHASED row",
+   "expected": "kept (unlike the purchase fields, savings are not tied to the status)",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-ndj74\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"purchased\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161,\"savingGoal\":1000,\"savedAmount\":500}"
+  },
+  {
+   "id": "F5-1-13",
+   "section": "A F5.1 DATA MODEL",
+   "area": "normalizeItem",
+   "entry": "goal 0 with a recorded amount",
+   "expected": "goal 0 is not a goal and is dropped; the recorded amount is still kept",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221403161-i6mj9\",\"name\":\"X\",\"price\":1000,\"image\":\"\",\"link\":\"\",\"status\":\"wish\",\"priority\":\"medium\",\"category\":\"\",\"note\":\"\",\"createdAt\":1792221403161,\"savedAmount\":250}"
+  },
+  {
+   "id": "F5-1-14",
+   "section": "A F5.1 DATA MODEL",
+   "area": "computeSavings",
+   "entry": "goals on unpurchased rows only",
+   "expected": "goalCount 5, goalTotal 4,800,000, savedTotal 1,350,000, remainingTotal 3,600,000, readyCount 3",
+   "pass": true,
+   "actual": "{\"goalCount\":5,\"goalTotal\":4800000,\"savedTotal\":1350000,\"remainingTotal\":3600000,\"readyCount\":3,\"progress\":0.28125}"
+  },
+  {
+   "id": "F5-1-15",
+   "section": "A F5.1 DATA MODEL",
+   "area": "computeSavings",
+   "entry": "the purchased row is excluded",
+   "expected": "g7 (purchased, goal fully saved) contributes to no figure",
+   "pass": true,
+   "actual": "{\"goalCount\":5,\"savedTotal\":1350000}"
+  },
+  {
+   "id": "F5-1-16",
+   "section": "A F5.1 DATA MODEL",
+   "area": "computeSavings",
+   "entry": "over-saving does not cancel another gap",
+   "expected": "remainingTotal stays the SUM of each item's own gap (3,000,000 + 600,000)",
+   "pass": true,
+   "actual": "{\"remainingTotal\":3600000}"
+  },
+  {
+   "id": "F5-1-17",
+   "section": "A F5.1 DATA MODEL",
+   "area": "computeSavings",
+   "entry": "empty list",
+   "expected": "all figures 0, progress 0, no NaN",
+   "pass": true,
+   "actual": "{\"goalCount\":0,\"goalTotal\":0,\"savedTotal\":0,\"remainingTotal\":0,\"readyCount\":0,\"progress\":0}"
+  },
+  {
+   "id": "F5-1-18",
+   "section": "A F5.1 DATA MODEL",
+   "area": "computeSavings",
+   "entry": "a list of purchased rows only",
+   "expected": "nothing is counted — buying leaves the savings loop",
+   "pass": true,
+   "actual": "{\"goalCount\":0,\"goalTotal\":0,\"savedTotal\":0,\"remainingTotal\":0,\"readyCount\":0,\"progress\":0}"
+  },
+  {
+   "id": "F5-1-19",
+   "section": "A F5.1 DATA MODEL",
+   "area": "purchase",
+   "entry": "marking an item as bought",
+   "expected": "status changes to purchased and BOTH savings fields are untouched",
+   "pass": true,
+   "actual": "{\"before\":{\"goal\":1000000,\"saved\":400000,\"status\":\"saving\"},\"afterBuy\":{\"goal\":1000000,\"saved\":400000,\"status\":\"purchased\",\"prev\":\"saving\"}}"
+  },
+  {
+   "id": "F5-1-20",
+   "section": "A F5.1 DATA MODEL",
+   "area": "undo",
+   "entry": "undoing the purchase",
+   "expected": "the status comes back and the savings are still exactly as recorded",
+   "pass": true,
+   "actual": "{\"before\":{\"goal\":1000000,\"saved\":400000,\"status\":\"saving\"},\"afterUndo\":{\"goal\":1000000,\"saved\":400000,\"status\":\"saving\"}}"
+  },
+  {
+   "id": "F5-1-21",
+   "section": "A F5.1 DATA MODEL",
+   "area": "status",
+   "entry": "a fully-saved item is not \"đã mua\"",
+   "expected": "g4/g5/g8 are reached but still unpurchased",
+   "pass": true,
+   "actual": ""
+  },
+  {
+   "id": "F5-1-22",
+   "section": "A F5.1 DATA MODEL",
+   "area": "localStorage",
+   "entry": "savings survive a write",
+   "expected": "g3 in storage carries savingGoal 1000000 and savedAmount 400000",
+   "pass": true,
+   "actual": "{\"id\":\"g3\",\"name\":\"Món để dành dở\",\"price\":500000,\"image\":\"\",\"link\":\"\",\"status\":\"saving\",\"priority\":\"medium\",\"category\":\"A\",\"note\":\"\",\"createdAt\":1700000000003,\"savingGoal\":1000000,\"savedAmount\":400000}"
+  },
+  {
+   "id": "F5-1-23",
+   "section": "A F5.1 DATA MODEL",
+   "area": "accounts",
+   "entry": "switching to an account",
+   "expected": "the account list (with its own savings) replaces the guest list entirely",
+   "pass": true,
+   "actual": "[{\"id\":\"a1\",\"goal\":900000,\"saved\":100000}]"
+  },
+  {
+   "id": "F5-1-24",
+   "section": "A F5.1 DATA MODEL",
+   "area": "accounts",
+   "entry": "switching back to guest",
+   "expected": "the guest savings come back unchanged — no leak from the account",
+   "pass": true,
+   "actual": "[{\"id\":\"g1\"},{\"id\":\"g2\",\"goal\":3000000},{\"id\":\"g3\",\"goal\":1000000},{\"id\":\"g4\",\"goal\":500000},{\"id\":\"g5\",\"goal\":100000},{\"id\":\"g6\"},{\"id\":\"g7\",\"goal\":700000},{\"id\":\"g8\",\"goal\":200000}]"
+  },
+  {
+   "id": "F5-1-25",
+   "section": "A F5.1 DATA MODEL",
+   "area": "errors",
+   "entry": "console",
+   "expected": "no page or console errors in the data-model scenario",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+   "id": "F5-2-01",
+   "section": "B F5.2 FORM",
+   "area": "markup",
+   "entry": "the form has a labelled savings section",
+   "expected": "two named number inputs with an explicit <label for>, plus a preview block",
+   "pass": true,
+   "actual": "{\"hasSection\":true,\"goalLabel\":true,\"savedLabel\":true,\"goalType\":\"number\",\"savedType\":\"number\",\"previewTag\":\"DIV\"}"
+  },
+  {
+   "id": "F5-2-02",
+   "section": "B F5.2 FORM",
+   "area": "prefill",
+   "entry": "editing an item that already has a goal",
+   "expected": "inputs show 1000000 / 400000 and the preview reports the 600,000 still missing",
+   "pass": true,
+   "actual": "{\"goal\":\"1000000\",\"saved\":\"400000\",\"previewHidden\":false,\"text\":\"Còn thiếu 600.000 ₫ để đạt 1.000.000 ₫.\",\"now\":\"40\"}"
+  },
+  {
+   "id": "F5-2-03",
+   "section": "B F5.2 FORM",
+   "area": "prefill",
+   "entry": "editing an item with no goal",
+   "expected": "inputs are empty and the progress preview stays hidden (no 0/0 bar)",
+   "pass": true,
+   "actual": "{\"goal\":\"\",\"saved\":\"\",\"previewHidden\":true}"
+  },
+  {
+   "id": "F5-2-04",
+   "section": "B F5.2 FORM",
+   "area": "preview",
+   "entry": "typing a goal without a saved amount",
+   "expected": "the preview appears immediately and asks for the full 200,000",
+   "pass": true,
+   "actual": "{\"hidden\":false,\"text\":\"Còn thiếu 200.000 ₫ để đạt 200.000 ₫.\",\"now\":\"0\"}"
+  },
+  {
+   "id": "F5-2-05",
+   "section": "B F5.2 FORM",
+   "area": "preview",
+   "entry": "a negative goal in the field",
+   "expected": "treated as \"no goal\": the preview hides instead of printing NaN or -50/0",
+   "pass": true,
+   "actual": "{\"hidden\":true,\"text\":\"Còn thiếu 200.000 ₫ để đạt 200.000 ₫.\"}"
+  },
+  {
+   "id": "F5-2-06",
+   "section": "B F5.2 FORM",
+   "area": "preview",
+   "entry": "saving more than the goal",
+   "expected": "reports the goal as reached and caps the bar at 100%",
+   "pass": true,
+   "actual": "{\"text\":\"Đã đạt mục tiêu tiết kiệm (150.000 ₫ trên 100.000 ₫).\",\"now\":\"100\"}"
+  },
+  {
+   "id": "F5-2-07",
+   "section": "B F5.2 FORM",
+   "area": "create",
+   "entry": "a new item with a goal and a recorded amount",
+   "expected": "both fields are written and the list price is NOT used as the saved amount",
+   "pass": true,
+   "actual": "{\"id\":\"it-1792221407089-0qlln\",\"goal\":900000,\"saved\":300000,\"price\":1200000,\"status\":\"wish\",\"keys\":[\"id\",\"createdAt\",\"name\",\"price\",\"image\",\"link\",\"status\",\"priority\",\"category\",\"note\",\"savingGoal\",\"savedAmount\"]}"
+  },
+  {
+   "id": "F5-2-08",
+   "section": "B F5.2 FORM",
+   "area": "create",
+   "entry": "a new item with both fields left empty",
+   "expected": "no savings key is written at all — not 0, and definitely not the price",
+   "pass": true,
+   "actual": "{\"hasGoal\":false,\"hasSaved\":false}"
+  },
+  {
+   "id": "F5-2-09",
+   "section": "B F5.2 FORM",
+   "area": "create",
+   "entry": "a goal of 0",
+   "expected": "rejected as a goal (no key) while the recorded 200,000 is kept",
+   "pass": true,
+   "actual": "{\"hasGoal\":false,\"saved\":200000}"
+  },
+  {
+   "id": "F5-2-10",
+   "section": "B F5.2 FORM",
+   "area": "validation",
+   "entry": "a negative goal",
+   "expected": "the save is refused, the dialog stays open and nothing is written",
+   "pass": true,
+   "actual": "{\"stillOpen\":true,\"wroteIt\":false,\"toast\":\"Mục tiêu tiết kiệm phải là số lớn hơn 0 và không quá lớn. Nhập 0 nghĩa là không đặt mục tiêu.\"}"
+  },
+  {
+   "id": "F5-2-11",
+   "section": "B F5.2 FORM",
+   "area": "edit",
+   "entry": "changing the recorded amount",
+   "expected": "goal 3000000 kept, saved updated to 1500000",
+   "pass": true,
+   "actual": "{\"goal\":3000000,\"saved\":1500000}"
+  },
+  {
+   "id": "F5-2-12",
+   "section": "B F5.2 FORM",
+   "area": "edit",
+   "entry": "clearing both fields and saving",
+   "expected": "both keys are removed from the row — the form is the explicit reset path",
+   "pass": true,
+   "actual": "{\"hasGoal\":false,\"hasSaved\":false}"
+  },
+  {
+   "id": "F5-2-13",
+   "section": "B F5.2 FORM",
+   "area": "errors",
+   "entry": "console",
+   "expected": "no page or console errors in the form scenario",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+   "id": "F5-2-14",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "an item with a partly-funded goal",
+   "expected": "summary visible, empty copy hidden, heading present, inputs prefilled, badge hidden",
+   "pass": true,
+   "actual": "{\"open\":true,\"id\":\"g3\",\"heading\":\"Mục tiêu tiết kiệm\",\"summary\":{\"hidden\":false,\"w\":412,\"h\":67},\"empty\":{\"hidden\":true,\"w\":0,\"h\":0},\"badgeHidden\":true,\"badge\":\"Đã đạt mục tiêu\",\"saved\":\"400.000 ₫\",\"goal\":\"1.000.000 ₫\",\"remaining\":\"Còn thiếu 600.000 ₫ tới mục tiêu.\",\"barNow\":\"40\",\"barText\":\"40% — 400.000 ₫ trên 1.000.000 ₫\",\"goalInput\":\"1000000\",\"savedInput\":\"400000\",\"resetHidden\":false,\"status\":\"Đang để dành\"}"
+  },
+  {
+   "id": "F5-2-15",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "the progress read-out",
+   "expected": "400.000 ₫ / 1.000.000 ₫, 40%, còn thiếu 600.000 ₫, reset offered",
+   "pass": true,
+   "actual": "{\"open\":true,\"id\":\"g3\",\"heading\":\"Mục tiêu tiết kiệm\",\"summary\":{\"hidden\":false,\"w\":412,\"h\":67},\"empty\":{\"hidden\":true,\"w\":0,\"h\":0},\"badgeHidden\":true,\"badge\":\"Đã đạt mục tiêu\",\"saved\":\"400.000 ₫\",\"goal\":\"1.000.000 ₫\",\"remaining\":\"Còn thiếu 600.000 ₫ tới mục tiêu.\",\"barNow\":\"40\",\"barText\":\"40% — 400.000 ₫ trên 1.000.000 ₫\",\"goalInput\":\"1000000\",\"savedInput\":\"400000\",\"resetHidden\":false,\"status\":\"Đang để dành\"}"
+  },
+  {
+   "id": "F5-2-16",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "an item with no goal",
+   "expected": "empty copy shown, summary hidden, reset not offered",
+   "pass": true,
+   "actual": "{\"open\":true,\"id\":\"g1\",\"heading\":\"Mục tiêu tiết kiệm\",\"summary\":{\"hidden\":true,\"w\":0,\"h\":0},\"empty\":{\"hidden\":false,\"w\":412,\"h\":19},\"badgeHidden\":true,\"badge\":\"Đã đạt mục tiêu\",\"saved\":\"400.000 ₫\",\"goal\":\"1.000.000 ₫\",\"remaining\":\"Còn thiếu 600.000 ₫ tới mục tiêu.\",\"barNow\":\"40\",\"barText\":\"40% — 400.000 ₫ trên 1.000.000 ₫\",\"goalInput\":\"\",\"savedInput\":\"\",\"resetHidden\":true,\"status\":\"Muốn mua\"}"
+  },
+  {
+   "id": "F5-2-17",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "setting a goal from the QV",
+   "expected": "the row is written (2500000 / 1000000) and the QV stays open on the same item",
+   "pass": true,
+   "actual": "{\"qv3\":{\"open\":true,\"id\":\"g1\",\"heading\":\"Mục tiêu tiết kiệm\",\"summary\":{\"hidden\":false,\"w\":412,\"h\":67},\"empty\":{\"hidden\":true,\"w\":0,\"h\":0},\"badgeHidden\":true,\"badge\":\"Đã đạt mục tiêu\",\"saved\":\"1.000.000 ₫\",\"goal\":\"2.500.000 ₫\",\"remaining\":\"Còn thiếu 1.500.000 ₫ tới mục tiêu.\",\"barNow\":\"40\",\"barText\":\"40% — 1.000.000 ₫ trên 2.500.000 ₫\",\"goalInput\":\"2500000\",\"savedInput\":\"1000000\",\"resetHidden\":false,\"status\":\"Muốn mua\"},\"stored3\":{\"goal\":2500000,\"saved\":1000000,\"status\":\"wish\"}}"
+  },
+  {
+   "id": "F5-2-18",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "status",
+   "entry": "recording savings never buys the item",
+   "expected": "the status is still not \"purchased\" and the QV status line is unchanged",
+   "pass": true,
+   "actual": "{\"status\":\"wish\",\"qvStatus\":\"Muốn mua\"}"
+  },
+  {
+   "id": "F5-2-19",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "saving MORE than the goal from the QV",
+   "expected": "the \"Đã đạt mục tiêu\" badge appears, the bar caps at 100%, and the copy says it is still not bought",
+   "pass": true,
+   "actual": "{\"open\":true,\"id\":\"g1\",\"heading\":\"Mục tiêu tiết kiệm\",\"summary\":{\"hidden\":false,\"w\":412,\"h\":89},\"empty\":{\"hidden\":true,\"w\":0,\"h\":0},\"badgeHidden\":false,\"badge\":\"Đã đạt mục tiêu\",\"saved\":\"3.000.000 ₫\",\"goal\":\"2.500.000 ₫\",\"remaining\":\"Bạn đã để dành đủ 2.500.000 ₫. Món này vẫn chưa được đánh dấu là đã mua.\",\"barNow\":\"100\",\"barText\":\"100% — 3.000.000 ₫ trên 2.500.000 ₫\",\"goalInput\":\"2500000\",\"savedInput\":\"3000000\",\"resetHidden\":false,\"status\":\"Muốn mua\"}"
+  },
+  {
+   "id": "F5-2-20",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "the over-saved value is stored intact",
+   "expected": "3000000 is NOT clamped down to the 2500000 goal",
+   "pass": true,
+   "actual": "{\"goal\":2500000,\"saved\":3000000}"
+  },
+  {
+   "id": "F5-2-21",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "an invalid amount in the QV",
+   "expected": "refused with a message, nothing written, the QV stays open",
+   "pass": true,
+   "actual": "{\"saved\":3000000,\"open\":true}"
+  },
+  {
+   "id": "F5-2-22",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "quick view",
+   "entry": "a goal of 0 in the QV",
+   "expected": "the goal is dropped, the amount is kept, and the summary falls back to the empty copy",
+   "pass": true,
+   "actual": "{\"qvZero\":{\"hasGoal\":false,\"saved\":150000},\"summaryHidden\":true}"
+  },
+  {
+   "id": "F5-2-23",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "reset",
+   "entry": "dismissing the confirmation",
+   "expected": "nothing is deleted (goal 500000 / saved 500000 intact)",
+   "pass": true,
+   "actual": "{\"goal\":500000,\"saved\":500000}"
+  },
+  {
+   "id": "F5-2-24",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "reset",
+   "entry": "accepting the confirmation",
+   "expected": "both fields are removed, the QV falls back to the empty copy, the status is untouched",
+   "pass": true,
+   "actual": "{\"afterAccept\":{\"hasGoal\":false,\"hasSaved\":false,\"status\":\"wish\"},\"resetHidden\":true}"
+  },
+  {
+   "id": "F5-2-25",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "dialogs",
+   "entry": "the reset confirmation",
+   "expected": "the user is asked exactly once, in Vietnamese, naming the item",
+   "pass": true,
+   "actual": "{\"dialogs\":[\"Xóa mục tiêu tiết kiệm của \\\"Món đạt mục tiêu\\\"? Số tiền đã để dành cũng sẽ bị xóa.\",\"Xóa mục tiêu tiết kiệm của \\\"Món đạt mục tiêu\\\"? Số tiền đã để dành cũng sẽ bị xóa.\"]}"
+  },
+  {
+   "id": "F5-2-26",
+   "section": "C F5.2 QUICK VIEW",
+   "area": "errors",
+   "entry": "console",
+   "expected": "no page or console errors in the Quick View scenario",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+   "id": "F5-3-01",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "widget",
+   "entry": "four figures, one per row",
+   "expected": "Mục tiêu đang theo dõi / Đã tích lũy / Còn thiếu / Đủ tiền, chưa mua",
+   "pass": true,
+   "actual": "[\"Mục tiêu đang theo dõi\",\"Đã tích lũy\",\"Còn thiếu\",\"Đủ tiền, chưa mua\"]"
+  },
+  {
+   "id": "F5-3-02",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "widget",
+   "entry": "the four values",
+   "expected": "4.800.000 ₫ / 1.350.000 ₫ / 3.600.000 ₫ / 3 món",
+   "pass": true,
+   "actual": "[\"4.800.000 ₫\",\"1.350.000 ₫\",\"3.600.000 ₫\",\"3 món\"]"
+  },
+  {
+   "id": "F5-3-03",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "widget",
+   "entry": "the aggregate progressbar",
+   "expected": "aria-valuenow 28% and a readable aria-valuetext, never NaN",
+   "pass": true,
+   "actual": "{\"barNow\":\"28\",\"barText\":\"28% — đã để dành 1.350.000 ₫ trên 4.800.000 ₫\"}"
+  },
+  {
+   "id": "F5-3-04",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "widget",
+   "entry": "each row is a real button",
+   "expected": "four <button> rows carrying their own filter value and a full aria-label",
+   "pass": true,
+   "actual": "[[\"BUTTON\",\"goal\",\"Mục tiêu đang theo dõi: 4.800.000 ₫. 5 món có mục tiêu\"],[\"BUTTON\",\"saving\",\"Đã tích lũy: 1.350.000 ₫. Do bạn tự ghi nhận\"],[\"BUTTON\",\"short\",\"Còn thiếu: 3.600.000 ₫. Tổng khoảng cách tới mục tiêu\"],[\"BUTTON\",\"ready\",\"Đủ tiền, chưa mua: 3 món. Đã đạt mục tiêu tiết kiệm\"]]"
+  },
+  {
+   "id": "F5-3-05",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "widget",
+   "entry": "the purchased row is excluded",
+   "expected": "g7 is not part of any figure: goalTotal is 4,800,000, not 5,500,000",
+   "pass": true,
+   "actual": "\"4.800.000 ₫\""
+  },
+  {
+   "id": "F5-3-06",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "empty",
+   "entry": "no item has a goal",
+   "expected": "the whole savings card is removed (display:none), not left as a shell of zeros",
+   "pass": true,
+   "actual": "{\"hidden\":true,\"display\":\"none\"}"
+  },
+  {
+   "id": "F5-3-07",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "empty",
+   "entry": "only a PURCHASED item has a goal",
+   "expected": "still removed — a bought item has left the savings loop",
+   "pass": true,
+   "actual": "{\"hidden\":true}"
+  },
+  {
+   "id": "F5-3-08",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "clicking \"Mục tiêu đang theo dõi\"",
+   "expected": "#fSavings = goal, the tab is \"Chưa mua\", and the grid holds the 5 goal-bearing unpurchased items",
+   "pass": true,
+   "actual": "{\"savings\":\"goal\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\",\"query\":\"\",\"activeTab\":[\"pending\"],\"cards\":[\"g8\",\"g5\",\"g4\",\"g3\",\"g2\"],\"resultStatus\":\"Đang hiển thị 5 trên 8 món.\",\"filterCount\":\"1\",\"filterCountHidden\":false}"
+  },
+  {
+   "id": "F5-3-09",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "the landing count matches the widget figure",
+   "expected": "\"Đủ tiền, chưa mua\" says 3 món and exactly 3 cards land",
+   "pass": true,
+   "actual": "[\"g4\",\"g5\",\"g8\"]"
+  },
+  {
+   "id": "F5-3-10",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "\"Đã tích lũy\" lands on the rows that contribute",
+   "expected": "saving + pending holds the 4 goal-bearing rows with a recorded amount",
+   "pass": true,
+   "actual": "[\"g3\",\"g4\",\"g5\",\"g8\"]"
+  },
+  {
+   "id": "F5-3-11",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "\"Còn thiếu\" lands on the unfinished goals",
+   "expected": "short + pending holds g2 and g3 only",
+   "pass": true,
+   "actual": "[\"g2\",\"g3\"]"
+  },
+  {
+   "id": "F5-3-12",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "the shortcut resets the other facets",
+   "expected": "status / priority / category / search are cleared, only the savings facet survives",
+   "pass": true,
+   "actual": "{\"savings\":\"goal\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\",\"query\":\"\",\"activeTab\":[\"pending\"],\"cards\":[\"g8\",\"g5\",\"g4\",\"g3\",\"g2\"],\"resultStatus\":\"Đang hiển thị 5 trên 8 món.\",\"filterCount\":\"1\",\"filterCountHidden\":false}"
+  },
+  {
+   "id": "F5-3-13",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "the collapsed-filter badge counts the facet",
+   "expected": "the phone badge reports one active filter",
+   "pass": true,
+   "actual": "{\"count\":\"1\",\"hidden\":false}"
+  },
+  {
+   "id": "F5-3-14",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "link",
+   "entry": "one control resets the savings facet",
+   "expected": "\"Xóa bộ lọc\" clears #fSavings, the tab and the badge",
+   "pass": true,
+   "actual": "{\"savings\":\"\",\"status\":\"\",\"priority\":\"\",\"category\":\"\",\"sort\":\"newest\",\"query\":\"\",\"activeTab\":[\"all\"],\"cards\":[\"g8\",\"g7\",\"g6\",\"g5\",\"g4\",\"g3\",\"g2\",\"g1\"],\"resultStatus\":\"Đang hiển thị 8 trên 8 món.\",\"filterCount\":\"0\",\"filterCountHidden\":true}"
+  },
+  {
+   "id": "F5-3-15",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "layout",
+   "entry": "the dashboard widget and its shortcut",
+   "expected": "filtering / clearing from the widget keeps cumulative layout shift at 0",
+   "pass": true,
+   "actual": "{\"shifts\":[],\"cls\":0}"
+  },
+  {
+   "id": "F5-3-16",
+   "section": "D F5.3 SAVINGS OVERVIEW",
+   "area": "errors",
+   "entry": "console",
+   "expected": "no page or console errors in the dashboard scenario",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+   "id": "F5-4-01",
+   "section": "E F5.4 INSIGHTS",
+   "area": "widget",
+   "entry": "the shortlist order",
+   "expected": "rank1 high priority (g6, g8) then rank2 reached (g4, g5); the 4-item cap applies",
+   "pass": true,
+   "actual": "[\"g6\",\"g8\",\"g4\",\"g5\"]"
+  },
+  {
+   "id": "F5-4-02",
+   "section": "E F5.4 INSIGHTS",
+   "area": "widget",
+   "entry": "every suggestion explains itself",
+   "expected": "g6 \"Ưu tiên cao\", g8 both reasons, g4/g5 \"Đã đạt mục tiêu tiết kiệm\"",
+   "pass": true,
+   "actual": "[\"Ưu tiên cao\",\"Ưu tiên cao · đã đạt mục tiêu tiết kiệm\",\"Đã đạt mục tiêu tiết kiệm\",\"Đã đạt mục tiêu tiết kiệm\"]"
+  },
+  {
+   "id": "F5-4-03",
+   "section": "E F5.4 INSIGHTS",
+   "area": "widget",
+   "entry": "a real name, a real price and an explicit \"Xem món\"",
+   "expected": "each row is a button showing the name, the list price and the action label",
+   "pass": true,
+   "actual": "[[\"Món ưu tiên cao\",\"400.000 ₫\",\"Xem món\"],[\"Món đủ tiền ưu tiên cao\",\"700.000 ₫\",\"Xem món\"],[\"Món đạt mục tiêu\",\"800.000 ₫\",\"Xem món\"],[\"Món vượt mục tiêu\",\"900.000 ₫\",\"Xem món\"]]"
+  },
+  {
+   "id": "F5-4-04",
+   "section": "E F5.4 INSIGHTS",
+   "area": "rules",
+   "entry": "the \"small gap\" rule",
+   "expected": "among goals still short, the smallest gap ranks first (g3 600,000 before g2 3,000,000)",
+   "pass": true,
+   "actual": "{\"picked\":[\"g6\",\"g8\",\"g4\",\"g5\"],\"g3\":\"Còn thiếu 600.000 ₫ tới mục tiêu\",\"g2\":\"Còn thiếu 3.000.000 ₫ tới mục tiêu\",\"g1\":\"Chưa mua\",\"rank3order\":[\"g3\",\"g2\"]}"
+  },
+  {
+   "id": "F5-4-05",
+   "section": "E F5.4 INSIGHTS",
+   "area": "rules",
+   "entry": "the catch-all rule",
+   "expected": "an unpurchased item with no goal and no high priority is still suggested, as \"Chưa mua\"",
+   "pass": true,
+   "actual": "{\"g1\":\"Chưa mua\"}"
+  },
+  {
+   "id": "F5-4-06",
+   "section": "E F5.4 INSIGHTS",
+   "area": "rules",
+   "entry": "a purchased item is never suggested",
+   "expected": "savingsRank returns null for it and the shortlist is empty",
+   "pass": true,
+   "actual": "{\"picks\":[],\"ranks\":[null]}"
+  },
+  {
+   "id": "F5-4-07",
+   "section": "E F5.4 INSIGHTS",
+   "area": "rules",
+   "entry": "exact ties",
+   "expected": "ordered by createdAt then id, so the result does not depend on array order",
+   "pass": true,
+   "actual": "{\"forward\":[\"c0\",\"a2\",\"b1\"],\"reversed\":[\"c0\",\"a2\",\"b1\"]}"
+  },
+  {
+   "id": "F5-4-08",
+   "section": "E F5.4 INSIGHTS",
+   "area": "rules",
+   "entry": "the widget stays short",
+   "expected": "at most 4 suggestions, so the dashboard cannot grow into a second collection list",
+   "pass": true,
+   "actual": "{\"count\":4}"
+  },
+  {
+   "id": "F5-4-09",
+   "section": "E F5.4 INSIGHTS",
+   "area": "action",
+   "entry": "\"Xem\" opens the Quick View for that item",
+   "expected": "the QV is open on g6 with its own savings fields loaded",
+   "pass": true,
+   "actual": "{\"open\":true,\"id\":\"g6\",\"title\":\"Món ưu tiên cao\",\"goalInput\":\"\",\"savedInput\":\"\"}"
+  },
+  {
+   "id": "F5-4-10",
+   "section": "E F5.4 INSIGHTS",
+   "area": "action",
+   "entry": "opening a suggestion changes nothing",
+   "expected": "no status changed and no purchase was recorded",
+   "pass": true,
+   "actual": "{\"changed\":[]}"
+  },
+  {
+   "id": "F5-4-11",
+   "section": "E F5.4 INSIGHTS",
+   "area": "copy",
+   "entry": "the wording",
+   "expected": "no sentence claims the user can afford anything or should buy — reasons are facts about the data",
+   "pass": true,
+   "actual": "{\"text\":\"Món ưu tiên cao400.000 ₫Ưu tiên caoXem món Món đủ tiền ưu tiên cao700.000 ₫Ưu tiên cao · đã đạt mục tiêu tiết kiệmXem món Món đạt mục tiêu800.000 ₫Đã đạt mục tiêu tiết kiệmXem món Món vượt mục tiêu900.000 ₫Đã đạt mục tiêu tiết kiệmXem món\",\"hasBadWords\":false}"
+  },
+  {
+   "id": "F5-4-15",
+   "section": "E F5.4 INSIGHTS",
+   "area": "a11y",
+   "entry": "the accessible name of a suggestion",
+   "expected": "the aria-label repeats the action, the item and its reason, so the reason is not lost to a screen reader",
+   "pass": true,
+   "actual": "[\"Xem món Món ưu tiên cao — Ưu tiên cao. Giá ghi nhận 400.000 ₫\",\"Xem món Món đủ tiền ưu tiên cao — Ưu tiên cao · đã đạt mục tiêu tiết kiệm. Giá ghi nhận 700.000 ₫\",\"Xem món Món đạt mục tiêu — Đã đạt mục tiêu tiết kiệm. Giá ghi nhận 800.000 ₫\",\"Xem món Món vượt mục tiêu — Đã đạt mục tiêu tiết kiệm. Giá ghi nhận 900.000 ₫\"]"
+  },
+  {
+   "id": "F5-4-12",
+   "section": "E F5.4 INSIGHTS",
+   "area": "empty",
+   "entry": "everything is bought",
+   "expected": "the insights widget removes itself",
+   "pass": true,
+   "actual": "{\"hidden\":true}"
+  },
+  {
+   "id": "F5-4-13",
+   "section": "E F5.4 INSIGHTS",
+   "area": "motion",
+   "entry": "prefers-reduced-motion: reduce",
+   "expected": "the widget still renders its figures (motion is the only thing dropped)",
+   "pass": true,
+   "actual": "{\"hidden\":false}"
+  },
+  {
+   "id": "F5-4-14",
+   "section": "E F5.4 INSIGHTS",
+   "area": "errors",
+   "entry": "console",
+   "expected": "no page or console errors in the insights scenario",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+   "id": "F5-5-01-320",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "responsive",
+   "entry": "phone 320px",
+   "expected": "the document never widens and both F5 widgets fit inside it",
+   "pass": true,
+   "actual": "{\"scrollW\":320,\"clientW\":320,\"savings\":{\"right\":290,\"left\":30,\"w\":260},\"insights\":{\"right\":290,\"left\":30,\"w\":260},\"gridCols\":\"260px\"}"
+  },
+  {
+   "id": "F5-5-01-390",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "responsive",
+   "entry": "phone 390px",
+   "expected": "the document never widens and both F5 widgets fit inside it",
+   "pass": true,
+   "actual": "{\"scrollW\":390,\"clientW\":390,\"savings\":{\"right\":360,\"left\":30,\"w\":330},\"insights\":{\"right\":360,\"left\":30,\"w\":330},\"gridCols\":\"330px\"}"
+  },
+  {
+   "id": "F5-5-01-430",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "responsive",
+   "entry": "phone 430px",
+   "expected": "the document never widens and both F5 widgets fit inside it",
+   "pass": true,
+   "actual": "{\"scrollW\":430,\"clientW\":430,\"savings\":{\"right\":400,\"left\":30,\"w\":370},\"insights\":{\"right\":400,\"left\":30,\"w\":370},\"gridCols\":\"370px\"}"
+  },
+  {
+   "id": "F5-5-02",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "responsive",
+   "entry": "desktop 1440px",
+   "expected": "both widgets are visible and sit side by side in one two-column row",
+   "pass": true,
+   "actual": "{\"columns\":3,\"visible\":2,\"sameRow\":true}"
+  },
+  {
+   "id": "F5-5-03",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "responsive",
+   "entry": "only one widget has something to say",
+   "expected": "it stretches across the whole row instead of leaving an empty column (savings hidden, insights shown)",
+   "pass": true,
+   "actual": "{\"visible\":1,\"gridW\":1192,\"childW\":1192}"
+  },
+  {
+   "id": "F5-5-04",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "payload",
+   "entry": "the new stylesheet and nothing else",
+   "expected": "exactly one new local request (f5-savings-v16.css), served from the app origin, and no third-party script or stylesheet",
+   "pass": true,
+   "actual": "{\"f5Css\":1,\"localCss\":52,\"libs\":[]}"
+  },
+  {
+   "id": "F5-5-05",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "payload",
+   "entry": "no new runtime dependency",
+   "expected": "the F5 code is inline in wishlist.html plus one stylesheet — nothing else to load",
+   "pass": true,
+   "actual": ""
+  },
+  {
+   "id": "F5-5-06",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "non-regression",
+   "entry": "the F4.4 phone disclosure",
+   "expected": "still collapses the panel on a phone with all five selects in the DOM",
+   "pass": true,
+   "actual": "{\"toggleShown\":true,\"panelClosed\":true,\"selects\":4,\"savingsSelectPresent\":true,\"badgeHidden\":true}"
+  },
+  {
+   "id": "F5-5-07",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "non-regression",
+   "entry": "expanding the panel on a phone",
+   "expected": "the new savings select is revealed with the other four",
+   "pass": true,
+   "actual": "{\"expanded\":\"true\",\"panelOpen\":true,\"savingsVisible\":true}"
+  },
+  {
+   "id": "F5-5-08",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "non-regression",
+   "entry": "the F4.2 card menu",
+   "expected": "the ⋯ panel still opens with its relocated legacy controls",
+   "pass": true,
+   "actual": "{\"hasTrigger\":true,\"open\":\"true\",\"items\":3}"
+  },
+  {
+   "id": "F5-5-09",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "data",
+   "entry": "the guest list after an F5 session",
+   "expected": "still a plain array of item objects — no wrapper, no schema change",
+   "pass": true,
+   "actual": "{\"count\":8,\"allObjects\":true}"
+  },
+  {
+   "id": "F5-5-10",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "errors",
+   "entry": "console",
+   "expected": "no page or console errors in the responsive scenario",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  },
+  {
+   "id": "F5-5-11",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "scale",
+   "entry": "40 items, most of them carrying a goal",
+   "expected": "the aggregates still match a recomputation and the insight list is still capped",
+   "pass": true,
+   "actual": "{\"scrollW\":390,\"clientW\":390,\"goalCount\":22,\"goalTotal\":231000000,\"savedTotal\":168000000,\"expectedGoal\":231000000,\"expectedSaved\":168000000,\"expectedCount\":22,\"savingsRows\":4,\"insightsRows\":4,\"widgetW\":330,\"stillFits\":true}"
+  },
+  {
+   "id": "F5-5-12",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "scale",
+   "entry": "the dashboard at 390px with 40 items",
+   "expected": "no horizontal overflow and both widgets stay inside the viewport",
+   "pass": true,
+   "actual": "{\"scrollW\":390,\"clientW\":390,\"stillFits\":true}"
+  },
+  {
+   "id": "F5-5-13",
+   "section": "F F5.5 RESPONSIVE + NON-REGRESSION",
+   "area": "scale",
+   "entry": "console",
+   "expected": "no page or console errors at 40 items",
+   "pass": true,
+   "actual": "{\"pageErrors\":[],\"errors\":[]}"
+  }
+ ]
+}

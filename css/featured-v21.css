@@ -1,0 +1,1818 @@
+/* ============================================================
+   Featured preview + dashboard v21 — Phase 4C
+   ------------------------------------------------------------
+   The owner's latest review asked for two things:
+
+     FEATURED PREVIEW
+     The hero's alcove was decorative rather than useful: three
+     floating photos, a large "001", a caption and two chips all
+     competed inside one 330px column. It becomes a real FEATURED
+     WISH preview — one elevated product card (image, name, price,
+     status, priority, savings progress) with the vault illustration
+     demoted to a soft background support. Empty collections get a
+     structured placeholder instead of an empty ornament.
+
+     DASHBOARD
+     Four calm bands still read as six boxes stacked in a list.
+     This sheet turns the panel into ONE surface with three
+     readable levels, using the SAME DOM (no id, renderer, tally or
+     data contract changes):
+
+       A  summary   the three KPIs + ownership progress in one row,
+                    with the two secondary facts as one quiet line;
+       B  insights  status distribution, strongest categories and
+                    priority side by side, then savings + next-up;
+       C  actions   one primary add, the two view filters, and a
+                    utility tail (clear / import / export) that no
+                    longer competes for attention.
+
+   The grid is pure CSS. `.stats-dashboard`, `.dv-grid--split` and
+   `.dv-grid--insight` keep their children exactly where they are in
+   the DOM; the two wrappers are made `display:contents` so their
+   children become grid items of the panel. Reading order is unchanged
+   (the only reordered item is the non-interactive metrics line).
+
+   OWNERSHIP
+   ---------
+   Owned here      hero featured-card composition + empty preview,
+                   dashboard grid placement, section rhythm, the
+                   compact KPI/progress/progress-fact treatments,
+                   the action-zone hierarchy.
+   Kept elsewhere  every id, every renderer, the F3 charts and their
+                   colours, the F5 savings/insight rows, the V19
+                   tokens, pv-float / pointer depth, the header.
+   ============================================================ */
+
+/* ============================================================
+   1. FEATURED WISH PREVIEW
+   ============================================================ */
+
+/* The stage is a product-preview surface now, not a 3:4 vitrine.
+   Wider than tall, so the card has room for real information. */
+body.dreamscape-v5 .hero--v9 .v9-scene {
+  width: 100%;
+  max-width: 440px;
+  height: clamp(360px, 31vw, 430px);
+  aspect-ratio: auto;
+  margin-inline: auto;
+}
+
+/* The alcove is hidden so there is no distracting arch frame behind the product */
+body.dreamscape-v5 .hero--v9 .v9-scene__alcove {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene.pv-has-items .v9-scene__alcove {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* The oversized "001" and the redundant caption are gone */
+body.dreamscape-v5 .hero--v9 .v9-scene__no,
+body.dreamscape-v5 .hero--v9 .v9-scene__caption {
+  display: none !important;
+}
+
+/* Main featured item: Clean, floating hero object without rectangular card borders */
+body.dreamscape-v5 .hero--v9 .pv-card--main {
+  left: 50% !important;
+  top: 48% !important;
+  width: min(85%, 340px) !important;
+  max-width: 100% !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__float {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  overflow: visible !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__media {
+  aspect-ratio: auto !important;
+  height: auto !important;
+  width: 100% !important;
+  min-width: 200px !important;
+  min-height: 190px !important;
+  max-height: 240px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__img {
+  width: 250px !important;
+  height: 250px !important;
+  max-height: 250px !important;
+  max-width: 95% !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 28px !important;
+  object-fit: cover !important;
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, .75) !important;
+  box-shadow: 0 24px 50px -10px rgba(84, 53, 168, .36), 0 10px 24px rgba(45, 31, 97, .18) !important;
+  transition: transform .4s cubic-bezier(.2, .8, .2, 1), box-shadow .4s ease !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main:hover .pv-card__img {
+  transform: scale(1.03) translateY(-4px) !important;
+  box-shadow: 0 28px 60px -10px rgba(84, 53, 168, .45), 0 12px 30px rgba(45, 31, 97, .22) !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main.pv-noimg .pv-card__empty {
+  display: none !important;
+}
+
+/* Pin button and user product facts hidden on hero */
+.pv-card__pin-btn,
+body.dreamscape-v5 .hero--v9 .pv-card__facts,
+body.dreamscape-v5 .hero--v9 .pv-card__progress {
+  display: none !important;
+}
+
+/* Caption: Centered elegant typography without card box */
+body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap {
+  position: static !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 8px 10px 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  color: var(--v19-ink, #19152C);
+  width: 100% !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap b {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -.02em;
+  font-size: clamp(16px, 1.4vw, 19px) !important;
+  font-weight: 850 !important;
+  color: #19152C !important;
+  max-width: 100%;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--main .pv-card__cap span {
+  display: block;
+  margin-top: 2px;
+  color: #6454A6 !important;
+  font-size: clamp(13px, 1.1vw, 15px) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Real status + priority of the featured item. */
+body.dreamscape-v5 .hero--v9 .pv-card__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px 14px 0;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 1px solid rgba(104, 80, 188, .12);
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .055);
+  color: #5F5099;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7E66D6;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__tag[data-status="saving"] i { background: #9A7BE8; }
+body.dreamscape-v5 .hero--v9 .pv-card__tag[data-status="ordered"] i { background: #6F8CD6; }
+body.dreamscape-v5 .hero--v9 .pv-card__tag[data-status="purchased"] i { background: #2E7D5B; }
+
+body.dreamscape-v5 .hero--v9 .pv-card__tag--priority {
+  border-color: transparent;
+  background: none;
+  color: #6E6584;
+  padding-inline: 2px;
+}
+
+/* Savings progress: only rendered when the featured row has a goal. */
+body.dreamscape-v5 .hero--v9 .pv-card__progress {
+  display: block;
+  padding: 9px 14px 14px;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__progress.pv-progress--off {
+  display: none;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__progress-track {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .12);
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__progress-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9B82EA, #6E57CB);
+  transition: width .45s cubic-bezier(.2, .7, .3, 1);
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card__progress small {
+  display: block;
+  margin-top: 6px;
+  color: #6E6584;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+/* Secondary wishes: visually hidden so ONLY the main chosen product shines */
+body.dreamscape-v5 .hero--v9 .pv-card--a,
+body.dreamscape-v5 .hero--v9 .pv-card--b {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--a .pv-card__cap,
+body.dreamscape-v5 .hero--v9 .pv-card--b .pv-card__cap {
+  display: none !important;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-card--a .pv-card__media,
+body.dreamscape-v5 .hero--v9 .pv-card--b .pv-card__media {
+  border-radius: 12px;
+}
+
+/* Chips keep their real figures (F02-14/15) but become quiet corner
+   annotations instead of 54%-wide plates. */
+body.dreamscape-v5 .hero--v9 .pv-chip {
+  width: auto;
+  max-width: 46%;
+  padding: 5px 8px;
+  gap: 6px;
+  border-radius: 10px;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-chip--goal {
+  left: 0;
+  right: auto;
+  top: auto;
+  bottom: 0;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-chip--owned {
+  right: 0;
+  left: auto;
+  top: 0;
+  bottom: auto;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-chip__icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  font-size: 9px;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-chip__text small {
+  font-size: 7.5px;
+  letter-spacing: .1em;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-chip__text b {
+  font-size: 10px;
+}
+
+/* Orbit rings, halo, and seal are hidden to remove distracting lines behind the product */
+body.dreamscape-v5 .hero--v9 .pv-stage__badge,
+body.dreamscape-v5 .hero--v9 .pv-stage__ring,
+body.dreamscape-v5 .hero--v9 .pv-stage__halo {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Empty collection: a structured placeholder, still anchored in the
+   same lavender alcove. Shown by the absence of .pv-has-items. */
+body.dreamscape-v5 .hero--v9 .pv-feature-empty {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 9;
+  display: none;
+  width: min(78%, 268px);
+  padding: 18px 18px 16px;
+  translate: -50% -50%;
+  border: 1px dashed rgba(104, 80, 188, .30);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .84);
+  text-align: center;
+  color: var(--v19-ink, #19152C);
+  box-shadow: 0 24px 50px -34px rgba(45, 31, 97, .45);
+}
+
+body.dreamscape-v5 .hero--v9 .v9-scene:not(.pv-has-items) .pv-feature-empty {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-feature-empty__mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 2px;
+  border-radius: 10px;
+  background: rgba(104, 80, 188, .10);
+  color: #6E57CB;
+  font-size: 14px;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-feature-empty b {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+body.dreamscape-v5 .hero--v9 .pv-feature-empty > span:last-child {
+  max-width: 24ch;
+  color: #625979;
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.45;
+}
+
+/* Phone / stacked hero: one card, full width of the stage. */
+@media (max-width: 1024px) {
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    width: min(100%, 400px);
+    height: clamp(300px, 46vw, 360px);
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main {
+    width: min(76%, 320px);
+  }
+}
+
+@media (max-width: 640px) {
+  body.dreamscape-v5 .hero--v9 .v9-scene {
+    height: 318px;
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card--main {
+    width: min(82%, 300px);
+  }
+
+  body.dreamscape-v5 .hero--v9 .pv-card__facts,
+  body.dreamscape-v5 .hero--v9 .pv-card__progress {
+    padding-inline: 12px;
+  }
+}
+
+/* The one transition this section adds is the progress fill; drop it
+   for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  body.dreamscape-v5 .hero--v9 .pv-card__progress-track i {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   2. DASHBOARD — Modern Bento Grid Architecture (Robust & Scannable)
+   ============================================================ */
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(14px, 1.5vw, 18px);
+  row-gap: clamp(14px, 1.5vw, 18px);
+  align-items: stretch;
+  padding: clamp(18px, 2.2vw, 28px);
+  border: 1px solid rgba(104, 80, 188, .16);
+  border-radius: 26px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF8FE 100%);
+  box-shadow:
+    0 20px 50px -24px rgba(45, 31, 97, .08),
+    0 2px 6px rgba(45, 31, 97, .02);
+  scroll-margin-top: 88px;
+}
+
+/* Children that were wrapped in helper grids participate in the panel grid */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--split,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--insight {
+  display: contents;
+}
+
+/* ------------------------------------------------------------
+   2.1. Overview Heading (Row 1)
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading {
+  order: 1;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: 2px;
+  padding-bottom: 4px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .08);
+  color: var(--dream-accent, #6850BC);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading__no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--dream-accent, #6850BC);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading__title {
+  margin: 0;
+  color: var(--v19-ink, #19152C);
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-weight: 850;
+  letter-spacing: -.03em;
+  line-height: 1.18;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading .dv-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid rgba(104, 80, 188, .22);
+  border-radius: 999px;
+  background: #FFFFFF;
+  box-shadow: 0 4px 14px -3px rgba(104, 80, 188, .12);
+  color: var(--dream-accent, #6850BC);
+  font-size: 12.5px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading .dv-add:hover {
+  border-color: var(--dream-accent, #6850BC);
+  background: rgba(104, 80, 188, .08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px -4px rgba(104, 80, 188, .22);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading .dv-add__mark {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* ------------------------------------------------------------
+   2.2. Row 2: KPI Grid (8 cols) + Ownership Progress (4 cols)
+   ------------------------------------------------------------ */
+
+/* The 3 KPI cards live in their own robust 3-column subgrid */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stats-dashboard {
+  order: 2;
+  grid-column: 1 / 9;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+  margin: 0;
+  width: 100%;
+}
+
+/* Common Bento card look */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--progress,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--dist,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights {
+  position: relative;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid rgba(104, 80, 188, .14);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow:
+    0 4px 18px -6px rgba(45, 31, 97, .04),
+    0 1px 2px rgba(45, 31, 97, .02);
+  transition:
+    transform .22s cubic-bezier(.2, .8, .2, 1),
+    box-shadow .22s cubic-bezier(.2, .8, .2, 1),
+    border-color .22s cubic-bezier(.2, .8, .2, 1);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--progress:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--dist:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights:hover {
+  transform: translateY(-2px);
+  border-color: rgba(104, 80, 188, .28);
+  box-shadow:
+    0 12px 28px -8px rgba(104, 80, 188, .12),
+    0 2px 4px rgba(45, 31, 97, .03);
+}
+
+/* Individual Stat Cards */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 142px;
+  padding: clamp(14px, 1.4vw, 18px);
+  gap: 6px;
+  overflow: hidden;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card__label {
+  color: var(--v19-muted, #625979);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: rgba(104, 80, 188, .10);
+  color: var(--dream-accent, #6850BC);
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Never allow numerals to wrap into vertical character strips */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card .stat-card__value {
+  margin: 6px 0 2px;
+  color: var(--v19-ink, #19152C);
+  font-size: clamp(1.4rem, 1.8vw, 1.7rem);
+  font-weight: 850;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card__description {
+  margin: 0;
+  color: var(--v19-muted, #625979);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* First KPI: Hero Card (Cần chi / Chưa mua) */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card:first-child {
+  border: 1px solid rgba(104, 80, 188, .22);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F7F3FF 52%, #EDE5FC 100%);
+  box-shadow:
+    0 8px 24px -10px rgba(104, 80, 188, .14),
+    0 1px 3px rgba(45, 31, 97, .03);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card:first-child .stat-card__value {
+  font-size: clamp(1.8rem, 2.3vw, 2.35rem);
+  color: var(--dream-accent, #6850BC);
+  letter-spacing: -.035em;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card:first-child .stat-card__icon {
+  background: linear-gradient(135deg, rgba(104, 80, 188, .16), rgba(168, 139, 247, .24));
+  color: #5925DC;
+}
+
+/* Third KPI: Icon amber */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stat-card:nth-child(3) .stat-card__icon {
+  background: rgba(245, 158, 11, .12);
+  color: #D97706;
+}
+
+/* Bento Card: Tiến độ mua sắm (Col 9 / 13) */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--progress {
+  order: 3;
+  grid-column: 9 / 13;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 142px;
+  padding: clamp(14px, 1.4vw, 18px);
+  border: 1px solid rgba(104, 80, 188, .20);
+  background: linear-gradient(140deg, #FFFFFF 0%, #F5EEFF 100%);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  margin: 0;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress__label {
+  color: var(--v19-muted, #625979);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress__value {
+  color: #543F9E;
+  font-size: clamp(1.8rem, 2.3vw, 2.35rem);
+  font-weight: 850;
+  letter-spacing: -.03em;
+  line-height: 1;
+  white-space: nowrap !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress__track {
+  height: 9px;
+  margin: 12px 0 8px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .12);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(45, 31, 97, .06);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9B82EA 0%, #6850BC 100%);
+  box-shadow: 0 0 10px rgba(104, 80, 188, .35);
+  transition: width .4s cubic-bezier(.2, .8, .2, 1);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-progress__caption {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin: 2px 0 0;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .09);
+  color: #543F9E;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   2.3. Row 3: Chi tiêu thực tế — Ẩn theo yêu cầu người dùng
+   ------------------------------------------------------------ */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics {
+  display: none !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:first-child {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:first-child .dv-metrics__label {
+  color: #047857;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:first-child .dv-metrics__value {
+  color: #059669;
+  font-size: clamp(1.4rem, 1.8vw, 1.7rem);
+  font-weight: 850;
+  letter-spacing: -.03em;
+  line-height: 1;
+  white-space: nowrap !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:first-child .dv-metrics__hint {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  color: #4B5563;
+  font-size: 11px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:last-child .dv-metrics__label {
+  color: #6B7280;
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:last-child .dv-metrics__value {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, .14);
+  color: #B45309;
+  font-size: 11.5px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics__item:last-child .dv-metrics__hint {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   2.4. Row 4: Insights Bento Grid (3 x 4 cols)
+   - Trạng thái món đồ (4 cols)
+   - Danh mục (4 cols)
+   - Mức ưu tiên (4 cols)
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--dist {
+  order: 5;
+  grid-column: 1 / 5;
+  grid-row: 4;
+  padding: clamp(15px, 1.5vw, 20px);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown {
+  order: 6;
+  grid-column: 5 / 9;
+  grid-row: 4;
+  padding: clamp(15px, 1.5vw, 20px);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority {
+  order: 7;
+  grid-column: 9 / 13;
+  grid-row: 4;
+  padding: clamp(15px, 1.5vw, 20px);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__head,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__head,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__title,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__title,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__title {
+  color: var(--v19-ink, #19152C);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__total,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__hint,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__hint {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .08);
+  color: var(--dream-accent, #6850BC);
+  font-size: 10.5px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+/* Status Distribution Bar & Legend */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__bar {
+  height: 9px;
+  margin: 0 0 12px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .1);
+  overflow: hidden;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #FAF8FE;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__item:hover {
+  background: rgba(104, 80, 188, .09);
+  border-color: rgba(104, 80, 188, .2);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-dist__name {
+  white-space: nowrap !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+}
+
+/* Category Breakdown Row — preserve 2-row layout */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "name value"
+    "bar bar" !important;
+  gap: 5px 8px !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 8px 10px !important;
+  border: 1px solid rgba(104, 80, 188, .08) !important;
+  border-radius: 12px !important;
+  background: #FAF8FE !important;
+  cursor: pointer !important;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1) !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__row:hover {
+  background: rgba(104, 80, 188, .09) !important;
+  border-color: rgba(104, 80, 188, .22) !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__name {
+  grid-area: name !important;
+  font-size: 13px !important;
+  font-weight: 750 !important;
+  color: var(--v19-ink, #19152C) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__value {
+  grid-area: value !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  color: var(--v19-muted, #625979) !important;
+  white-space: nowrap !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown__bar {
+  grid-area: bar !important;
+  display: block !important;
+  width: 100% !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: rgba(104, 80, 188, .1) !important;
+  overflow: hidden !important;
+}
+
+/* Priority Items — preserve 3-row layout */
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__item {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "name count"
+    "bar bar"
+    "value value" !important;
+  gap: 5px 8px !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 8px 10px !important;
+  border: 1px solid rgba(104, 80, 188, .08) !important;
+  border-radius: 12px !important;
+  background: #FAF8FE !important;
+  cursor: pointer !important;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1) !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__item:hover {
+  background: rgba(104, 80, 188, .09) !important;
+  border-color: rgba(104, 80, 188, .22) !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__name {
+  grid-area: name !important;
+  font-size: 13px !important;
+  font-weight: 750 !important;
+  color: var(--v19-ink, #19152C) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__count {
+  grid-area: count !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  color: var(--v19-muted, #625979) !important;
+  white-space: nowrap !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__bar {
+  grid-area: bar !important;
+  display: block !important;
+  width: 100% !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: rgba(104, 80, 188, .1) !important;
+  overflow: hidden !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority__value {
+  grid-area: value !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: var(--v19-muted, #625979) !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+}
+
+/* ------------------------------------------------------------
+   2.5. Row 5: Kế hoạch tiết kiệm (Gợi ý cho bạn ẩn theo yêu cầu)
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--f5 {
+  order: 8;
+  grid-column: 1 / -1;
+  grid-row: 5;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: clamp(14px, 1.5vw, 18px);
+  margin: 0;
+  padding: 0;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights {
+  display: none !important;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings {
+  padding: clamp(16px, 1.6vw, 22px);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__head,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__title,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights__title {
+  color: var(--v19-ink, #19152C);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__hint,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights__hint {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .08);
+  color: var(--dream-accent, #6850BC);
+  font-size: 10.5px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__bar {
+  height: 8px;
+  margin: 0 0 12px;
+  border-radius: 999px;
+  background: rgba(104, 80, 188, .1);
+  overflow: hidden;
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #10B981, #059669);
+  transition: width .4s cubic-bezier(.2, .8, .2, 1);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__row,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  margin-bottom: 6px;
+  padding: 6px 12px;
+  border: 1px solid rgba(104, 80, 188, .08);
+  border-radius: 12px;
+  background: #FAF8FE;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-savings__row:hover,
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights__row:hover {
+  background: rgba(104, 80, 188, .09);
+  border-color: rgba(104, 80, 188, .24);
+  transform: translateY(-1px);
+}
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-insights__name {
+  color: var(--v19-ink, #19152C);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------
+   2.6. Thao tác nhanh (Quick Actions) — Ẩn theo yêu cầu người dùng
+   ------------------------------------------------------------ */
+
+body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-actions {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   2.7. Empty Library Guidance
+   ------------------------------------------------------------ */
+body.dreamscape-v5.dv-library-empty .panel.dashboard-panel--v2.dv-dash .dv-empty-guide {
+  order: 2;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin: 8px 0;
+  padding: 28px 24px;
+  border: 1px dashed rgba(104, 80, 188, .25);
+  border-radius: 22px;
+  background: rgba(248, 246, 255, .7);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------
+   2.8. Responsive Breakpoints
+   ------------------------------------------------------------ */
+
+/* Tablet & medium screens */
+@media (max-width: 1180px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .overview-heading {
+    grid-column: 1 / -1;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stats-dashboard {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--progress {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--dist {
+    grid-column: span 3;
+    grid-row: auto;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown {
+    grid-column: span 3;
+    grid-row: auto;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-grid--f5 {
+    grid-template-columns: minmax(0, 1fr);
+    grid-row: auto;
+  }
+}
+
+/* Small tablet & mobile */
+@media (max-width: 820px) {
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .stats-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-metrics {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-col--dist,
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-breakdown,
+  body.dreamscape-v5 .panel.dashboard-panel--v2.dv-dash .dv-priority {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ============================================================
+   3. PRODUCT CARDS & ACTIONS REDESIGN
+   ============================================================ */
+
+/* Product card thumb: image is a clean click target for full details */
+body.dreamscape-v5 #grid > .wishlist-card .thumb.product-media {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Streamlined 1-row product card action bar */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-top: 14px !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Default / No-buy card: .product-card__view is the primary button in the 1-row action bar */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions > .product-card__view {
+  position: static !important;
+  transform: none !important;
+  display: inline-flex !important;
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 8px !important;
+  border-radius: 12px !important;
+  background: var(--dream-accent, #6850BC) !important;
+  border: 1px solid var(--dream-accent, #6850BC) !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(104, 80, 188, .22) !important;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1) !important;
+  cursor: pointer !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions > .product-card__view:hover {
+  background: #5841A8 !important;
+  border-color: #5841A8 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(104, 80, 188, .32) !important;
+}
+
+/* On cards with a store link (.buy), hide .product-card__view from bottom row so only [ Mở nơi bán ↗ ] [ Đã mua ] [ ⋯ ] show */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card:has(.buy) .product-card__actions > .product-card__view {
+  display: none !important;
+}
+
+body.dreamscape-v5 #grid > .wishlist-card .product-card__title {
+  cursor: pointer;
+  transition: color .18s;
+}
+
+body.dreamscape-v5 #grid > .wishlist-card .product-card__title:hover {
+  color: #6850BC;
+}
+
+/* Mở nơi bán */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions > .buy {
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 8px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(104, 80, 188, .22) !important;
+  background: #FAF8FE !important;
+  color: #6850BC !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1) !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions > .buy:hover {
+  background: rgba(104, 80, 188, .10) !important;
+  border-color: #6850BC !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Đánh dấu đã mua / Hoàn tác */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions > .mark-purchased {
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(104, 80, 188, .16) !important;
+  background: #F4F0FF !important;
+  color: #5B45A8 !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1) !important;
+  cursor: pointer !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions > .mark-purchased:hover {
+  background: rgba(104, 80, 188, .15) !important;
+  border-color: rgba(104, 80, 188, .30) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Menu ⋯ trigger (must be at least 44x44 for touch & QA contract) */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions .card-more__trigger {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  min-width: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(104, 80, 188, .16) !important;
+  background: #FAF8FE !important;
+  color: #625979 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1) !important;
+  cursor: pointer !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view] > .wishlist-card .product-card__actions .card-more__trigger:hover {
+  background: rgba(104, 80, 188, .10) !important;
+  color: #19152C !important;
+  border-color: rgba(104, 80, 188, .3) !important;
+}
+
+/* ============================================================
+   4. CARD MORE MENU: STRICTLY TIED TO 3-DOTS BUTTON CLICK
+   NEVER reveal on hover anywhere on the card!
+   Eliminate 3D transform bleed-through so badges NEVER overlap menu.
+   ============================================================ */
+
+/* Reset 3D stacking contexts on card components so actions/menu always layer on top */
+html body.dreamscape-v5 #grid .wishlist-card .card-body,
+html body.dreamscape-v5 #grid .wishlist-card .product-card__content {
+  transform: none !important;
+  z-index: 1 !important;
+}
+
+html body.dreamscape-v5 #grid .wishlist-card .card-actions,
+html body.dreamscape-v5 #grid .wishlist-card .product-card__actions {
+  transform: none !important;
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+html body.dreamscape-v5 #grid .wishlist-card .card-more {
+  position: static !important;
+}
+
+/* Badges in card body: always low z-index in normal flow */
+html body.dreamscape-v5 #grid .wishlist-card .badges,
+html body.dreamscape-v5 #grid .wishlist-card .product-card__badges,
+html body.dreamscape-v5 #grid .wishlist-card .product-card__badges .badge {
+  z-index: 1 !important;
+}
+
+/* Menu panel: solid opaque white surface, high elevation, crisp padding */
+html body.dreamscape-v5 #grid .product-card__actions .card-more__menu,
+html body.dreamscape-v5 .card-more__menu {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: calc(100% + 8px) !important;
+  z-index: 100 !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 1px solid rgba(104, 80, 188, .22) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 48px -4px rgba(45, 31, 97, .25), 0 4px 14px rgba(45, 31, 97, .10) !important;
+  padding: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+}
+
+/* Individual items in the menu: opaque background, clean spacing */
+html body.dreamscape-v5 #grid .card-more__menu .card-more__item {
+  position: relative !important;
+  z-index: 2 !important;
+  background: #FAF8FF !important;
+  border: 1px solid rgba(104, 80, 188, .12) !important;
+  border-radius: 10px !important;
+  min-height: 44px !important;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  color: #19152C !important;
+  padding: 0 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  cursor: pointer !important;
+  transition: background .15s ease, border-color .15s ease !important;
+}
+
+html body.dreamscape-v5 #grid .card-more__menu .card-more__item:hover {
+  background: #F1ECFE !important;
+  border-color: rgba(104, 80, 188, .28) !important;
+}
+
+html body.dreamscape-v5 #grid .card-more__menu .card-more__item.mini.danger {
+  background: #FFF5F5 !important;
+  border-color: #F8D7DA !important;
+  color: #C5221F !important;
+}
+
+html body.dreamscape-v5 #grid .card-more__menu .card-more__item.mini.danger:hover {
+  background: #FEECEE !important;
+  border-color: #F5C2C7 !important;
+}
+
+html body.dreamscape-v5 #grid .card-more__menu .status-chip {
+  background: #F5F1FF !important;
+  border-color: rgba(104, 80, 188, .22) !important;
+  color: #4A3691 !important;
+  font-weight: 700 !important;
+  justify-content: space-between !important;
+}
+
+/* CLOSED STATE: ALWAYS fully hidden, zero opacity, no pointer events */
+#grid.gallery--v2.gallery--v4.gallery--v6 .wishlist-card:hover .product-card__actions .card-more__menu:not([data-open="true"]),
+#grid .wishlist-card:hover .product-card__actions .card-more__menu:not([data-open="true"]),
+#grid .card-more:hover .card-more__menu:not([data-open="true"]),
+#grid .card-more__menu:not([data-open="true"]),
+.card-more__menu:not([data-open="true"]) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  transition: none !important;
+}
+
+/* OPEN STATE: strictly when data-open="true" */
+#grid .product-card__actions .card-more__menu[data-open="true"],
+.card-more__menu[data-open="true"] {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+  transition: opacity 140ms ease !important;
+}
+
+/* ============================================================
+   5. CLEAN PRODUCT MEDIA: NO BACKGROUND FRAMES, WATERMARKS OR CLIPPING
+   ============================================================ */
+
+/* Hide all decorative watermark numbers, ghost 01, plaques, captions, and sheens in all views */
+html body.dreamscape-v5 .v11-canvas #grid .product-card__plaque,
+html body.dreamscape-v5 .v11-canvas #grid .v12-stage-caption,
+html body.dreamscape-v5 .v11-canvas #grid .pv-sheen,
+html body.dreamscape-v5 .v11-canvas #grid .product-card__peek-hint,
+html body.dreamscape-v5 #grid .product-media__frame::after,
+html body.dreamscape-v5 #grid .product-media__frame::before,
+html body.dreamscape-v5 #grid .thumb.product-media::after,
+html body.dreamscape-v5 #grid .thumb.product-media::before,
+html body.dreamscape-v5 #grid .wishlist-card::after,
+html body.dreamscape-v5 #grid .wishlist-card::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Reset media frame: no inset margin, no drop shadows, no white inner box */
+html body.dreamscape-v5 .v11-canvas #grid .product-media__frame {
+  position: absolute !important;
+  inset: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* GALLERY VIEW PRODUCT MEDIA */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .thumb.product-media {
+  position: relative !important;
+  width: 100% !important;
+  height: 220px !important;
+  aspect-ratio: auto !important;
+  min-height: 200px !important;
+  max-height: 240px !important;
+  background: #FAF9FE !important;
+  border-radius: 20px 20px 0 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-media__image {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 14px !important;
+  margin: 0 auto !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: block !important;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1) !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card:hover .product-media__image {
+  transform: scale(1.04) !important;
+}
+
+/* Badges in Gallery view: placed in normal document flow inside card body, NEVER covering product */
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .badges.product-card__badges {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  margin: 6px 0 2px !important;
+  width: 100% !important;
+  pointer-events: auto !important;
+}
+
+html body.dreamscape-v5 .v11-workspace #grid[data-v13-view="gallery"] > .wishlist-card .product-card__badges .badge {
+  background: rgba(104, 80, 188, .09) !important;
+  color: #4A3691 !important;
+  border: 1px solid rgba(104, 80, 188, .12) !important;
+  box-shadow: none !important;
+}
+
+/* ============================================================
+   6. FOCUS VIEW (DẠNG TẬP TRUNG) COMPLETE LAYOUT REPAIR
+   ============================================================ */
+
+/* Surface: 2 columns, left is product media, right is editorial content */
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .wishlist-card__surface {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.25fr) !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+  min-height: 380px !important;
+  align-items: stretch !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(104, 80, 188, .14) !important;
+  box-shadow: 0 12px 36px -12px rgba(45, 31, 97, .10) !important;
+}
+
+/* Left column: Full bleed product photo container */
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .thumb.product-media {
+  grid-column: 1 !important;
+  grid-row: 1 / 3 !important;
+  min-height: 380px !important;
+  height: 100% !important;
+  width: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #FAF9FE !important;
+  overflow: hidden !important;
+  border-radius: 24px 0 0 24px !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+/* Product image in Focus view: NEVER cut off, object-fit contain */
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-media__image {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 360px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  padding: 18px !important;
+  margin: 0 auto !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1) !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card:hover .product-media__image {
+  transform: scale(1.03) !important;
+}
+
+/* Right column, Row 1: Content body */
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  padding: 32px 36px 16px !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* Reset all flex: 0 0 100% overrides from collection-v17 that broke Focus view */
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content > * {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__index {
+  display: inline-flex !important;
+  margin: 0 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: .15em !important;
+  text-transform: uppercase !important;
+  color: var(--dream-accent, #6850BC) !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__title {
+  margin: 2px 0 0 !important;
+  font-size: clamp(22px, 2.3vw, 32px) !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -.025em !important;
+  color: var(--v19-ink, #19152C) !important;
+  cursor: pointer !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__title:hover {
+  color: var(--dream-accent, #6850BC) !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__price {
+  margin: 4px 0 0 !important;
+  font-size: clamp(22px, 2vw, 28px) !important;
+  font-weight: 850 !important;
+  color: var(--dream-accent, #6850BC) !important;
+  letter-spacing: -.02em !important;
+  line-height: 1.15 !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__badges {
+  position: static !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin: 8px 0 2px !important;
+  width: auto !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__badges .badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  font-size: 11.5px !important;
+  font-weight: 750 !important;
+  background: rgba(104, 80, 188, .09) !important;
+  color: #4A3691 !important;
+  box-shadow: none !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .cat,
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .note,
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .meta {
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .cat {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: #7B68BA !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .note {
+  margin-top: 4px !important;
+  font-size: 14px !important;
+  color: var(--dream-muted, #5E5678) !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content .meta {
+  font-size: 12px !important;
+  color: #8E86A6 !important;
+  margin-top: 2px !important;
+}
+
+/* Right column, Row 2: Actions Bar */
+html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 16px 36px 32px !important;
+  margin: 0 !important;
+  border-top: 1px solid rgba(104, 80, 188, .08) !important;
+  background: transparent !important;
+  width: auto !important;
+}
+
+/* Mobile & tablet responsiveness for Focus View */
+@media (max-width: 767px) {
+  html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .wishlist-card__surface {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+  }
+
+  html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .thumb.product-media {
+    min-height: 240px !important;
+    max-height: 280px !important;
+    aspect-ratio: 16 / 10 !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+
+  html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__content {
+    padding: 20px 20px 12px !important;
+  }
+
+  html body.dreamscape-v5 .v11-canvas #grid[data-v13-view="focus"] > .wishlist-card .product-card__actions {
+    padding: 12px 20px 24px !important;
+  }
+}
+
+
+
+
+
+
+

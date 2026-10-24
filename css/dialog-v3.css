@@ -98,6 +98,131 @@ dialog.product-dialog.product-dialog--v3 {
   font-size: 13px;
 }
 
+/* ============================================================
+   UX-04.1 — inline field messages + progressive disclosure
+   ------------------------------------------------------------
+   A toast is transient and floats away from the control it is about.
+   These two helpers put the message where the eye already is, and tie
+   it to the control for assistive tech (aria-invalid + aria-describedby).
+   ============================================================ */
+
+/* A short, quiet hint under a field (used for the optional price). */
+.product-dialog--v3 .field-hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #8a839b;
+}
+
+/* An error that belongs to one field. role="alert" makes it announced.
+   The `display` is only applied when the element is NOT hidden: an author
+   `display` beats the UA `[hidden] { display: none }` rule, so a plain
+   `display: flex` here would leave an empty "!" badge on every field. */
+.product-dialog--v3 .field-error {
+  margin: 7px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #a8322a;
+}
+
+.product-dialog--v3 .field-error:not([hidden]) {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.product-dialog--v3 .field-error[hidden] {
+  display: none;
+}
+
+.product-dialog--v3 .field-error::before {
+  content: "!";
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background: #a8322a;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 15px;
+  text-align: center;
+}
+
+/* The invalid control itself — the ring, not just the message. */
+.product-dialog--v3 :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: #c9584f;
+  background: #fffafa;
+}
+
+.product-dialog--v3 :is(input, select, textarea)[aria-invalid="true"]:focus {
+  border-color: #c9584f;
+  box-shadow: 0 0 0 4px rgba(201, 88, 79, .13);
+}
+
+/* The "Thêm chi tiết" disclosure. A real <button> with aria-expanded and
+   aria-controls, so it is reachable and announced like any other control. */
+.product-dialog--v3 .product-dialog__more-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  margin: 22px 0 4px;
+  padding: 0 18px;
+  border: 1px solid #e4def3;
+  border-radius: 16px;
+  background: #faf9ff;
+  color: #4b3f6b;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.product-dialog--v3 .product-dialog__more-toggle:hover {
+  border-color: #cfc4ee;
+  background: #f5f2ff;
+}
+
+.product-dialog--v3 .product-dialog__more-toggle:focus-visible {
+  outline: 3px solid #7565e8;
+  outline-offset: 2px;
+}
+
+.product-dialog--v3 .product-dialog__more-toggle-icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(117, 101, 232, .12);
+  color: #5b44ae;
+  font-size: 13px;
+  line-height: 22px;
+  text-align: center;
+}
+
+.product-dialog--v3 .product-dialog__more-toggle-text {
+  flex: 0 0 auto;
+}
+
+.product-dialog--v3 .product-dialog__more-toggle-hint {
+  flex: 1 1 auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: #8a839b;
+  text-align: right;
+}
+
+/* The optional group the disclosure reveals. */
+.product-dialog--v3 .product-dialog__more {
+  border-top: 1px solid #eeeaf8;
+}
+
 /* Premium inputs */
 
 .product-dialog--v3

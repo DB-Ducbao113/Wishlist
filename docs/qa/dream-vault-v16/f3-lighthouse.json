@@ -1,0 +1,54 @@
+{
+  "note": "Lighthouse 12.x, identical flags for both sides in one sitting (throttlingMethod=simulate, headless Chrome new, categories performance/accessibility/best-practices/seo). Both sides served as plain static files over http://127.0.0.1 so the Firebase SDK never loads. The baseline side is `git archive 332258f` (F2); the F3 side is the working tree at commit bfd6cc0 plus the F3.6 changes. Two full A/B runs were executed back to back; the numbers below are the second run, and the first run differed by at most 3 ms on LCP.",
+  "flags": {
+    "lighthouse": "12.x",
+    "categories": ["performance", "accessibility", "best-practices", "seo"],
+    "throttlingMethod": "simulate",
+    "desktop": "preset=desktop, screenEmulation 1440x900 dsf1",
+    "mobile": "formFactor=mobile, screenEmulation 390x844 dsf2",
+    "chromeFlags": "--headless=new --no-sandbox"
+  },
+  "runs": [
+    { "label": "F2 desktop", "formFactor": "desktop", "performance": 61, "accessibility": 96, "bestPractices": 100, "seo": 100, "fcp": "3927 ms", "lcp": "3927 ms", "cls": "0", "tbt": "0 ms", "speedIndex": "3927 ms", "bytes": "440 KB" },
+    { "label": "F3 desktop", "formFactor": "desktop", "performance": 59, "accessibility": 100, "bestPractices": 100, "seo": 100, "fcp": "4360 ms", "lcp": "4360 ms", "cls": "0", "tbt": "0 ms", "speedIndex": "4360 ms", "bytes": "489 KB" },
+    { "label": "F2 mobile", "formFactor": "mobile", "performance": 79, "accessibility": 96, "bestPractices": 100, "seo": 100, "fcp": "3912 ms", "lcp": "3912 ms", "cls": "0", "tbt": "0 ms", "speedIndex": "3912 ms", "bytes": "440 KB" },
+    { "label": "F3 mobile", "formFactor": "mobile", "performance": 74, "accessibility": 100, "bestPractices": 100, "seo": 100, "fcp": "4362 ms", "lcp": "4362 ms", "cls": "0", "tbt": "0 ms", "speedIndex": "4362 ms", "bytes": "489 KB" }
+  ],
+  "delta": {
+    "desktopPerformance": -2,
+    "mobilePerformance": -5,
+    "desktopAccessibility": 4,
+    "mobileAccessibility": 4,
+    "bestPractices": 0,
+    "seo": 0,
+    "cls": 0,
+    "tbt": 0,
+    "desktopLcpMs": 433,
+    "mobileLcpMs": 450,
+    "transferBytes": 50231
+  },
+  "whyThePerfDelta": {
+    "cause": "payload only",
+    "detail": "wishlist.html +33729 bytes (the F3 markup and the inline render code) and the css total +16692 bytes (css/dashboard-v16.css alone 9393 -> 32573 bytes). Total +50231 bytes, matching the +49 KB transfer. The transfer is uncompressed: the harness serves raw files over a local static server with no gzip. This app is one render-blocking HTML file plus CSS, and FCP == LCP in every run, so extra render-blocking bytes move LCP almost 1:1 under simulated throttling.",
+    "notTheCause": "No new origin, no new font, no new image, no new third-party script, no blocking work: TBT is 0 ms on both sides in both form factors, and CLS is 0.",
+    "unchanged": "Accessibility went 96 -> 100 on both form factors (the two contrast fixes below)."
+  },
+  "accessibilityFindingsFixedInF3": [
+    {
+      "id": "color-contrast",
+      "node": "#emptyAction (button.primary.wishlist-empty__action)",
+      "before": "4.39:1 (15px/400 dark text on #7565e8) - the pre-existing P2-2 that F1 and F2 both reported",
+      "after": "6.07:1 (white on #6850BC, hover #543F9E 8.13:1)",
+      "status": "fixed"
+    },
+    {
+      "id": "color-contrast",
+      "node": "the dominant gradient KPI card (.stat-card:first-child .stat-card__label / __description)",
+      "before": "2.09:1 worst case (measured across every gradient stop composited with the .28 white glow)",
+      "after": "4.88:1 worst case",
+      "status": "fixed"
+    }
+  ],
+  "remainingAccessibilityFindings": [],
+  "noFpsClaims": "No frame-rate figure is claimed anywhere in this report. The motion work is described by what is measurable: which properties animate (opacity/transform only), that reduced-motion removes it, and that TBT stays 0 ms and CLS stays 0."
+}
