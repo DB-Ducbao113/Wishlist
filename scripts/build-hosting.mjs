@@ -21,6 +21,7 @@ const OUT = join(ROOT, 'dist');
 const ALLOW = [
   'wishlist.html',
   'wishlist-cloud.js',
+  'image',
 ];
 
 // Never allow these to slip in, even if someone adds them to ALLOW by mistake.
@@ -81,7 +82,8 @@ if (found.length !== order.length) {
   process.exit(1);
 }
 htmlOut = htmlOut.replace(linkRe, '');
-htmlOut = htmlOut.replace('<head>', '<head>\n<link rel="stylesheet" href="css/app.css">');
+const version = Date.now();
+htmlOut = htmlOut.replace('<head>', `<head>\n<link rel="stylesheet" href="css/app.css?v=${version}">`);
 writeFileSync(join(OUT, 'wishlist.html'), htmlOut);
 
 // Cloudflare Pages platform files (ignored by Firebase Hosting; harmless there).

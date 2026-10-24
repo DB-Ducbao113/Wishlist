@@ -158,9 +158,10 @@
 #grid.gallery--v2.gallery--v4.gallery--v6
 .wishlist-card:hover .product-card__actions
 .card-more__menu:not([data-open="true"]) {
-  opacity: 1;
-  pointer-events: auto;
-  transition-delay: 260ms;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition-delay: 0ms;
 }
 
 #grid.gallery--v2.gallery--v4.gallery--v6

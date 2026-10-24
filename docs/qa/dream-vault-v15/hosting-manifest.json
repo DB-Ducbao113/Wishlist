@@ -2,12 +2,13 @@
  "generatedBy": "scripts/build-hosting.mjs",
  "allowlist": [
   "wishlist.html",
-  "wishlist-cloud.js"
+  "wishlist-cloud.js",
+  "image"
  ],
  "generated": [
   "css/app.css"
  ],
- "stylesheetSourceCount": 59,
+ "stylesheetSourceCount": 66,
  "stylesheetOrder": [
   "css/legacy.css",
   "css/tokens.css",
@@ -67,19 +68,33 @@
   "css/fusion-02-cinematic-scroll.css",
   "css/fusion-03-gallery-board.css",
   "css/ux-01-02-compact.css",
-  "css/fusion-04-mobile.css"
+  "css/hero-dashboard-v19.css",
+  "css/header-v20.css",
+  "css/hero-v20.css",
+  "css/dashboard-v20.css",
+  "css/featured-v21.css",
+  "css/fusion-04-mobile.css",
+  "css/collection-v17.css",
+  "css/dialogs-v18.css"
  ],
- "fileCount": 5,
- "assetCount": 3,
+ "fileCount": 12,
+ "assetCount": 10,
  "platformFiles": [
   "_headers",
   "_redirects"
  ],
- "totalBytes": 804036,
+ "totalBytes": 1996718,
  "files": [
   "_headers",
   "_redirects",
   "css/app.css",
+  "image/After Shave.webp",
+  "image/HI75C Pro.webp",
+  "image/M650 Mouse.webp",
+  "image/Macbook.jpg",
+  "image/PreStyling-CLMenstore.jfif",
+  "image/Trị Thâm mụn.webp",
+  "image/hero-dream-vault-3d.jpg",
   "wishlist-cloud.js",
   "wishlist.html"
  ]

@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-19T09:41:31.313Z",
+ "generatedAt": "2026-10-24T10:40:31.276Z",
  "old": {
   "config": "public: \".\" with ignore [firebase.json, FIREBASE_SETUP.md, firestore.rules, **/.*, **/node_modules/**]",
-  "publishedFileCount": 3029,
-  "leakCount": 2397,
+  "publishedFileCount": 1021,
+  "leakCount": 812,
   "leakedSamples": [
    "docs/design/dream-vault-v11-sprint.md",
    "docs/design/dream-vault-v5-design.md",
@@ -22,6 +22,9 @@
    "docs/design/img/v8-concept/gallery-desktop-1440.png",
    "docs/design/img/v8-concept/product-detail-desktop-1440.png",
    "docs/design/img/v8-concept/product-detail-mobile-375.png",
+   "docs/design/pvault-redesign/01-gap-analysis.md",
+   "docs/design/pvault-redesign/02-gap-analysis.md",
+   "docs/design/pvault-redesign/03-gap-analysis.md",
    "docs/design/v8-prototype/gallery-desktop-1440.html",
    "docs/design/v8-prototype/product-detail-desktop-1440.html",
    "docs/design/v8-prototype/product-detail-mobile-375.html",
@@ -33,35 +36,32 @@
    "docs/performance-12b1-after.md",
    "docs/performance-12c-real-device.md",
    "docs/performance-baseline-v2.md",
+   "docs/qa/dream-vault-ux04/known-issues.md",
+   "docs/qa/dream-vault-ux04/ux04-report.md",
+   "docs/qa/dream-vault-ux04/ux05-report.md",
    "docs/qa/dream-vault-v10/browser-qa.json",
    "docs/qa/dream-vault-v10/final-report.md",
    "docs/qa/dream-vault-v10/img/v10-collection-1024.jpg",
    "docs/qa/dream-vault-v10/img/v10-collection-1440.jpg",
    "docs/qa/dream-vault-v10/img/v10-collection-768.jpg",
-   "docs/qa/dream-vault-v10/img/v10-collection-empty.jpg",
-   "docs/qa/dream-vault-v10/img/v10-collection-single.jpg",
-   "docs/qa/dream-vault-v10/img/v10-dashboard-1024.jpg",
-   "docs/qa/dream-vault-v10/img/v10-dashboard-12.jpg",
-   "docs/qa/dream-vault-v10/img/v10-dashboard-1440.jpg",
-   "docs/qa/dream-vault-v10/img/v10-dashboard-768.jpg",
-   "docs/qa/dream-vault-v10/img/v10-dashboard-empty.jpg"
+   "docs/qa/dream-vault-v10/img/v10-collection-empty.jpg"
   ],
   "leakedCategories": {
-   "docs": 806,
-   "config": 6
+   "docs": 812,
+   "config": 0
   }
  },
  "new": {
   "config": "public: \"dist\" built by scripts/build-hosting.mjs (explicit allowlist + generated css/app.css)",
   "distExists": true,
-  "publishedFileCount": 5,
+  "publishedFileCount": 12,
   "cssCount": 1,
   "missingRuntime": [],
   "leakCount": 0,
   "leaks": [],
   "cssInvariant": {
-   "repoStylesheetCount": 58,
-   "linkedStylesheetCount": 58,
+   "repoStylesheetCount": 66,
+   "linkedStylesheetCount": 66,
    "everyRepoSheetLinked": true,
    "appCssExists": true,
    "appCssByteIdenticalToSourceConcatenation": true,

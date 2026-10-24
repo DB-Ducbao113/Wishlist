@@ -186,6 +186,14 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 <link rel="stylesheet" href="./css/hero-v20.css">
 <link rel="stylesheet" href="./css/dashboard-v20.css">
 
+<!-- Phase 4C — featured wish preview + three-level dashboard. Turns the
+     decorative hero alcove into a real product highlight (image, name,
+     price, status, priority, savings) and reorganises the dashboard into
+     summary / insight / action levels. Same DOM, same ids, same renderers.
+     Loaded before fusion-04-mobile so that sheet stays last, and before
+     dialogs-v18, which stays the final sheet. -->
+<link rel="stylesheet" href="./css/featured-v21.css">
+
 <link rel="stylesheet" href="./css/fusion-04-mobile.css">
 <link rel="stylesheet" href="./css/collection-v17.css">
 <!-- Reference-first redesign · milestone 2 — Quick View + Add/Edit.
@@ -754,13 +762,33 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
           </span>
         </div>
 
-        <figure class="pv-card pv-card--main pv-off" data-pv-card="main">
+        <figure class="pv-card pv-card--main" data-pv-card="main">
           <span class="pv-card__float">
             <span class="pv-card__media">
-              <img class="pv-card__img" alt="" decoding="async">
+              <img class="pv-card__img" alt="Kho báu ước mơ • Dream Vault 3D" src="image/hero-dream-vault-3d.jpg" decoding="async">
               <span class="pv-card__empty"><span class="pv-card__mark">PVault.</span></span>
             </span>
-            <span class="pv-card__cap"><b data-pv-card-title></b><span data-pv-card-meta></span></span>
+            <span class="pv-card__cap"><b data-pv-card-title>Kho báu ước mơ</b><span data-pv-card-meta>Không gian ước mơ · Dream Vault</span></span>
+            <!-- V21 featured wish: the real status, priority and savings
+                 progress of the SAME item the caption already shows. Filled
+                 by renderHeroStage(); no new data source, no invented figure.
+                 Kept out of [data-pv-card-meta] so the caption contract
+                 (name + price) stays byte-exact. -->
+            <span class="pv-card__facts">
+              <span class="pv-card__tag pv-card__tag--status" data-pv-card-status="wish">
+                <i aria-hidden="true"></i>
+                <span data-pv-card-status-label></span>
+              </span>
+              <span class="pv-card__tag pv-card__tag--priority" data-pv-card-priority="medium">
+                <span data-pv-card-priority-label></span>
+              </span>
+            </span>
+            <span class="pv-card__progress" data-pv-card-progress>
+              <span class="pv-card__progress-track">
+                <i data-pv-card-progress-fill></i>
+              </span>
+              <small data-pv-card-progress-text></small>
+            </span>
           </span>
         </figure>
 
@@ -783,6 +811,16 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
             <span class="pv-card__cap"><b data-pv-card-title></b><span data-pv-card-meta></span></span>
           </span>
         </figure>
+      </div>
+
+      <!-- V21 — empty featured preview. Visible only while the collection
+           is empty (the stage has no pv-has-items class). Pure presentation:
+           it never adds a second add-flow; the hero's own Add button above
+           remains the one action. -->
+      <div class="pv-feature-empty">
+        <span class="pv-feature-empty__mark" aria-hidden="true">✦</span>
+        <b>Chưa có món nào</b>
+        <span>Thêm món đầu tiên để bắt đầu bộ sưu tập của bạn.</span>
       </div>
 
     </div>
@@ -833,22 +871,19 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   <!-- Statistics: independent section -->
 <section class="panel dashboard-panel dashboard-panel--v2 dv-dash" data-dv-section
-         aria-label="Tổng quan wishlist">
+         aria-label="Tổng quan danh sách ước">
 
-  <!-- V10 — Editorial overview heading. V16.1 F3 adds the dashboard's own
-       "Thêm món" action so the command center can create without leaving. -->
+  <!-- Overview heading -->
   <div class="overview-heading">
-    <!-- FUSION-02 — decorative ghost word (no text duplication for AT: the
-         real heading below is unchanged and still the accessible name). -->
-    <span class="pv-ghost pv-ghost--dash" aria-hidden="true">Giấc mơ</span>
+    <span class="pv-ghost pv-ghost--dash" aria-hidden="true">Tổng quan</span>
 
     <p class="overview-heading__eyebrow">
       <span class="overview-heading__no">01</span>
-      Toàn cảnh bộ sưu tập
+      Tổng quan danh sách
     </p>
 
     <h2 class="overview-heading__title">
-      Giá trị những giấc mơ của bạn
+      Thống kê chi tiêu &amp; tiến độ
     </h2>
 
     <button type="button" class="dv-add" id="dvAddItem">
@@ -860,13 +895,13 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   <!-- Dashboard Statistics -->
 <div class="total stats-dashboard"
      role="group"
-     aria-label="Thống kê wishlist">
+     aria-label="Thống kê danh sách ước">
 
-  <!-- Value not yet owned: every item whose status is not "purchased" -->
+  <!-- Value not yet owned -->
   <div class="stat-card">
     <div class="stat-card__header">
       <span class="stat-card__label">
-        Giá trị chưa mua
+        Cần chi (Chưa mua)
       </span>
       <span class="stat-card__icon" aria-hidden="true">
         ◇
@@ -876,15 +911,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumTotal">0</b>
 
     <p class="stat-card__description">
-      Tổng giá của tất cả món chưa mua
+      Tổng tiền dự kiến của các món chưa mua
     </p>
   </div>
 
-  <!-- Value already owned: recorded price of purchased items only -->
+  <!-- Value already owned -->
   <div class="stat-card">
     <div class="stat-card__header">
       <span class="stat-card__label">
-        Giá trị đã sở hữu
+        Đã mua (Sở hữu)
       </span>
       <span class="stat-card__icon" aria-hidden="true">
         ✓
@@ -894,15 +929,15 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumSpent">0</b>
 
     <p class="stat-card__description">
-      Tổng giá ghi nhận của món đã mua — chưa phải chi tiêu thực tế
+      Tổng giá niêm yết của các món đã mua
     </p>
   </div>
 
-  <!-- Total items, always the whole collection -->
+  <!-- Total items -->
   <div class="stat-card">
     <div class="stat-card__header">
       <span class="stat-card__label">
-        Bộ sưu tập
+        Tổng số món
       </span>
       <span class="stat-card__icon" aria-hidden="true">
         ✦
@@ -912,52 +947,42 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
     <b class="stat-card__value" id="sumCount">0 món</b>
 
     <p class="stat-card__description">
-      Tổng số món trong bộ sưu tập
+      Số lượng món đang có trong danh sách
     </p>
   </div>
 
 </div>
 
-<!-- V16.1 F2 — secondary KPIs. "Giá trị đã sở hữu" above is the recorded list
-     price; these two are what was ACTUALLY recorded as paid. They are kept
-     apart on purpose: the two figures are never merged into one "spending"
-     number. Both are computed over the whole collection, so search, filter,
-     sort and the quick tabs cannot move them. -->
-<dl class="dv-metrics" id="dvMetrics">
+<!-- Secondary KPIs: Actual spent & unpriced items (Hidden per user request) -->
+<dl class="dv-metrics" id="dvMetrics" hidden style="display: none !important;">
   <div class="dv-metrics__item">
-    <dt class="dv-metrics__label">Chi tiêu thực tế đã ghi nhận</dt>
+    <dt class="dv-metrics__label">Chi tiêu thực tế</dt>
     <dd class="dv-metrics__value" id="dvActualSpent">0</dd>
-    <dd class="dv-metrics__hint">Chỉ cộng những món bạn đã nhập giá thực tế.</dd>
+    <dd class="dv-metrics__hint">Số tiền thực tế bạn đã thanh toán khi mua.</dd>
   </div>
 
   <div class="dv-metrics__item">
-    <dt class="dv-metrics__label">Món đã mua chưa nhập giá thực tế</dt>
+    <dt class="dv-metrics__label">Chưa cập nhật giá thực tế</dt>
     <dd class="dv-metrics__value" id="dvUnpriced">0 món</dd>
-    <dd class="dv-metrics__hint">Đã mua nhưng chưa ghi giá thực tế.</dd>
+    <dd class="dv-metrics__hint">Các món đã mua nhưng chưa nhập giá thực tế.</dd>
   </div>
 </dl>
 
-<!-- V16.1 F3 — Ownership Progress and Status Distribution share one row:
-     both answer "where does the collection stand", so they are read
-     together. Under 1200px the grid collapses and they stack in source
-     order, which keeps the reading order correct for assistive tech. -->
+<!-- Ownership Progress and Status Distribution -->
 <div class="dv-grid dv-grid--split">
 
   <div class="dv-col dv-col--progress">
 
-<!-- V16.1 — Ownership progress: purchasedCount / totalCount.
-     Zero items resolves to 0%, never NaN. The track is a real
-     progressbar so assistive tech can read the same number. -->
 <div class="dv-progress" id="dvProgress">
   <div class="dv-progress__head">
-    <span class="dv-progress__label">Tiến độ sở hữu</span>
+    <span class="dv-progress__label">Tiến độ mua sắm</span>
     <span class="dv-progress__value" id="dvProgressValue">0%</span>
   </div>
 
   <div class="dv-progress__track"
        id="dvProgressTrack"
        role="progressbar"
-       aria-label="Tiến độ sở hữu bộ sưu tập"
+       aria-label="Tiến độ mua sắm danh sách"
        aria-valuemin="0"
        aria-valuemax="100"
        aria-valuenow="0"
@@ -974,20 +999,14 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   <div class="dv-col dv-col--dist">
 
-    <!-- V16.1 F3.3 — Status distribution. Built from the same `items` array as
-         every other number here; there is no second tally anywhere.
-         Each legend row is a real <button> that only SETS the existing status
-         filter — it never edits an item. Colour is never the only signal: the
-         row carries its label, its count and its share as text, and the
-         selected state is carried by aria-pressed as well. -->
     <section class="dv-dist" id="dvDist" aria-labelledby="dvDistTitle">
       <div class="dv-dist__head">
-        <h3 class="dv-dist__title" id="dvDistTitle">Phân bố trạng thái</h3>
+        <h3 class="dv-dist__title" id="dvDistTitle">Trạng thái món đồ</h3>
         <span class="dv-dist__total" id="dvDistTotal">0 món</span>
       </div>
 
       <div class="dv-dist__bar" id="dvDistBar" role="img"
-           aria-label="Phân bố trạng thái: chưa có món nào"></div>
+           aria-label="Trạng thái món đồ: chưa có món nào"></div>
 
       <ul class="dv-dist__legend" id="dvDistLegend"></ul>
 
@@ -1000,11 +1019,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </div><!-- /.dv-grid--split -->
 
-<!-- V16.1 F3.4 — Category breakdown + priority widget. Both read the one
-     `items` array; neither keeps a tally of its own. Each row of the
-     breakdown is a real <button> that only sets the existing #fCategoryFilter
-     (which is why "Chưa phân loại" is a real option in that select), and each
-     priority chip only sets #fPriority. Neither can touch an item. -->
+<!-- Category breakdown + priority widget -->
 <div class="dv-grid dv-grid--insight">
 
   <section class="dv-breakdown" id="dvBreakdown" aria-labelledby="dvBreakdownTitle">
@@ -1019,7 +1034,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
   <section class="dv-priority" id="dvPriority" aria-labelledby="dvPriorityTitle">
     <div class="dv-priority__head">
       <h3 class="dv-priority__title" id="dvPriorityTitle">Mức ưu tiên</h3>
-      <span class="dv-priority__hint">Theo giá trị chưa mua</span>
+      <span class="dv-priority__hint">Theo giá trị</span>
     </div>
 
     <div class="dv-priority__rows" id="dvPriorityRows"></div>
@@ -1027,18 +1042,12 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
 </div><!-- /.dv-grid--insight -->
 
-  <!-- V16.1 F5.3 / F5.4 — Savings overview and "what to look at next". Both
-       read the one `items` array and keep no tally of their own. Every savings
-       figure is a real <button> that only SETS the filters the toolbar already
-       has (through applyDashboardFilter), and the suggestion button only opens
-       the Quick View — neither can edit an item, change a status or mark
-       anything as bought. Both widgets hide themselves entirely when they have
-       nothing to say, so the dashboard never grows an empty shell. -->
+  <!-- Savings overview and Next-up suggestions -->
   <div class="dv-grid dv-grid--f5">
 
     <section class="dv-savings" id="dvSavings" aria-labelledby="dvSavingsTitle">
       <div class="dv-savings__head">
-        <h3 class="dv-savings__title" id="dvSavingsTitle">Mục tiêu tiết kiệm</h3>
+        <h3 class="dv-savings__title" id="dvSavingsTitle">Kế hoạch tiết kiệm</h3>
         <span class="dv-savings__hint">Món chưa mua</span>
       </div>
 
@@ -1057,10 +1066,11 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       </p>
     </section>
 
-    <section class="dv-insights" id="dvInsights" aria-labelledby="dvInsightsTitle">
+    <!-- Next-up suggestions (Hidden per user request) -->
+    <section class="dv-insights" id="dvInsights" aria-labelledby="dvInsightsTitle" hidden style="display: none !important;">
       <div class="dv-insights__head">
-        <h3 class="dv-insights__title" id="dvInsightsTitle">Nên xem tiếp</h3>
-        <span class="dv-insights__hint">Từ dữ liệu của bạn</span>
+        <h3 class="dv-insights__title" id="dvInsightsTitle">Gợi ý cho bạn</h3>
+        <span class="dv-insights__hint">Đề xuất cho bạn</span>
       </div>
 
       <div class="dv-insights__rows" id="dvInsightsRows"></div>
@@ -1072,10 +1082,7 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
 
   </div><!-- /.dv-grid--f5 -->
 
-  <!-- V19 — Empty-collection guidance. Display is owned by CSS only:
-       hidden by default, shown under body.dv-library-empty (set by
-       render()) so the zero-stat sections stay hidden and this one
-       focused guide takes the space. No second tallies, no new state. -->
+  <!-- Empty-collection guidance -->
   <div class="dv-empty-guide" id="dvEmptyGuide" aria-labelledby="dvEmptyGuideTitle">
     <p class="dv-empty-guide__kicker">Bắt đầu từ đây</p>
     <h3 class="dv-empty-guide__title" id="dvEmptyGuideTitle">
@@ -1100,21 +1107,16 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       Thêm món đầu tiên
     </button>
     <p class="dv-empty-guide__hint">
-      Dùng đúng form thêm món hiện có — không có luồng nào khác thay thế.
+      Dùng form thêm món để lưu món đồ yêu thích của bạn.
     </p>
   </div>
 
-  <!-- V16.1 F3.5 — Quick Actions. Pure navigation: every button either sets a
-       filter the toolbar already has, opens the one existing form, or
-       delegates to the existing export/import handlers. Nothing here copies
-       CRUD or import/export code, and nothing here can edit an item. The one
-       purchase shortcut deliberately opens the F2 confirmation dialog —
-       there is no one-click purchase on this dashboard. -->
-  <section class="dv-actions" id="dvActions" aria-labelledby="dvActionsTitle">
+  <!-- Quick Actions (Hidden per user request) -->
+  <section class="dv-actions" id="dvActions" aria-labelledby="dvActionsTitle" hidden>
     <div class="dv-actions__head">
-      <h3 class="dv-actions__title" id="dvActionsTitle">Những gì nên làm tiếp</h3>
+      <h3 class="dv-actions__title" id="dvActionsTitle">Thao tác nhanh</h3>
       <p class="dv-actions__lead">
-        Lọc nhanh bộ sưu tập, thêm món mới hoặc sao lưu dữ liệu.
+        Lọc nhanh danh sách, thêm món mới hoặc sao lưu dữ liệu.
       </p>
     </div>
 
@@ -1815,12 +1817,25 @@ PHASE 1 - THIET KE DA CHOT (tat ca gia tri & gia dinh nam o day)
       <button type="button" id="qvPurchase"
               class="quick-view__btn quick-view__btn--primary qv-purchase">Đánh dấu đã mua</button>
       <div class="quick-view__cta-row">
+        <button type="button" id="qvFeature" class="quick-view__btn quick-view__btn--glass">⭐ Đặt làm tâm điểm</button>
         <button type="button" id="qvEdit" class="quick-view__btn quick-view__btn--glass">Sửa món này</button>
         <button type="button" id="qvBack" class="quick-view__btn quick-view__btn--ghost">Quay lại thư viện</button>
       </div>
       <p class="quick-view__hint" aria-hidden="true">ESC để đóng · TAB để di chuyển</p>
     </div>
   </div>
+</dialog>
+
+<!-- Dialog: Chọn món tâm điểm Hero -->
+<dialog id="dlgFeaturedPicker" class="quick-view" aria-labelledby="dlgFeaturedPickerTitle" style="max-width: 540px; width: 92vw; padding: 22px; border-radius: 24px; border: 1px solid rgba(104, 80, 188, .22); background: rgba(255, 255, 255, .98); box-shadow: 0 24px 60px rgba(45, 31, 97, .25);">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+    <div>
+      <h3 id="dlgFeaturedPickerTitle" style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #19152C;">Chọn món tâm điểm</h3>
+      <p style="margin: 3px 0 0; font-size: 12px; color: #625979;">Món được chọn sẽ xuất hiện ở vị trí nổi bật nhất trên đầu trang (Hero).</p>
+    </div>
+    <button type="button" id="dlgFeaturedPickerClose" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(104, 80, 188, .15); background: transparent; font-size: 15px; cursor: pointer; color: #625979;">✕</button>
+  </div>
+  <div id="dlgFeaturedPickerList" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
 </dialog>
 
 <!-- ============================================================
@@ -4147,6 +4162,11 @@ function card(it){
   exhibitCaption.textContent = "BỘ SƯU TẬP RIÊNG";
   thumb.appendChild(exhibitCaption);
 
+  // Cho phep bam truc tiep vao anh de xem details toan bo
+  thumb.dataset.cardAction = "view";
+  thumb.setAttribute("role", "button");
+  thumb.setAttribute("aria-label", "Xem chi tiết " + it.name);
+
   const body = document.createElement("div");
   body.className = "card-body product-card__content";
   // V8: chỉ số OBJECT 00X — dòng đầu của nội dung, trang trí
@@ -4163,6 +4183,9 @@ function card(it){
 
   const h3 = document.createElement("h3"); h3.textContent = it.name;
   h3.className = "product-card__title";
+  h3.dataset.cardAction = "view";
+  h3.setAttribute("role", "button");
+  h3.setAttribute("aria-label", "Xem chi tiết " + it.name);
   const price = document.createElement("div"); price.className = "price product-card__price";
   price.textContent = fmtMoney(it.price);
 
@@ -6774,6 +6797,30 @@ function init(){
   $("qvClose").addEventListener("click", closeQuickView);
   $("qvBack").addEventListener("click", closeQuickView);
   $("qvEdit").addEventListener("click", editFromQuickView);
+  const qvFeatureBtn = $("qvFeature");
+  if(qvFeatureBtn){
+    qvFeatureBtn.addEventListener("click", () => {
+      const id = $("qv").dataset.id;
+      if(id){
+        setFeaturedItem(id);
+        closeQuickView();
+      }
+    });
+  }
+  const heroPinBtn = $("pvHeroPinBtn");
+  if(heroPinBtn){
+    heroPinBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openFeaturedPicker();
+    });
+  }
+  const dlgFeaturedPickerClose = $("dlgFeaturedPickerClose");
+  if(dlgFeaturedPickerClose){
+    dlgFeaturedPickerClose.addEventListener("click", () => {
+      const dlg = $("dlgFeaturedPicker");
+      if(dlg) dlg.close();
+    });
+  }
   // V16.1 F5 — quản lý tiết kiệm ngay trong Quick View (không mở dialog chồng).
   $("qvSavingsSave").addEventListener("click", saveQuickViewSavings);
   $("qvSavingsReset").addEventListener("click", resetQuickViewSavings);
@@ -7507,9 +7554,42 @@ function renderHeroStage(){
     }
   }
 
+  // Ưu tiên món người dùng đã chọn làm tâm điểm
+  const userFeaturedId = localStorage.getItem("pv_featured_id");
+  if(userFeaturedId){
+    const featItem = items.find(x => x && String(x.id) === String(userFeaturedId));
+    if(featItem){
+      const featCand = {
+        item: featItem,
+        purchased: featItem.status === "purchased",
+        rank: findPriority(featItem.priority).rank,
+        price: itemPrice(featItem)
+      };
+      const existIdx = top.findIndex(c => c.item && String(c.item.id) === String(featItem.id));
+      if(existIdx !== -1) top.splice(existIdx, 1);
+      top.unshift(featCand);
+    }
+  }
+
   PV_CARD_SLOTS.forEach((slot, index) => {
     const cardEl = stage.querySelector('[data-pv-card="' + slot + '"]');
     if(!cardEl) return;
+
+    if(slot === "main"){
+      cardEl.classList.remove("pv-off");
+      cardEl.classList.remove("pv-noimg");
+      const img = cardEl.querySelector(".pv-card__img");
+      if(img){
+        img.src = "image/hero-dream-vault-3d.jpg";
+        img.alt = "Kho báu ước mơ • Dream Vault 3D";
+      }
+      pvSetText(cardEl.querySelector("[data-pv-card-title]"), "Kho báu ước mơ");
+      pvSetText(cardEl.querySelector("[data-pv-card-meta]"), "Không gian ước mơ · Dream Vault");
+      cardEl.style.cursor = "default";
+      cardEl.onclick = null;
+      return;
+    }
+
     const pick = top[index];
     if(!pick){
       cardEl.classList.add("pv-off");
@@ -7548,6 +7628,44 @@ function renderHeroStage(){
         ? fmtMoney(it.price)
         : (progress === null ? findStatus(it.status).label : Math.round(progress * 100) + "%")
     );
+
+    // V21 — the featured preview carries the same real item's status,
+    // priority and savings progress. Presentation only: every value is
+    // read from the row the caption already describes.
+    if(slot === "main"){
+      cardEl.style.cursor = "pointer";
+      cardEl.onclick = (e) => {
+        if(e.target && e.target.closest("#pvHeroPinBtn")) return;
+        openQuickView(it.id, cardEl);
+      };
+
+      const status = findStatus(it.status);
+      const priority = findPriority(it.priority);
+
+      const statusTag = cardEl.querySelector("[data-pv-card-status]");
+      if(statusTag){
+        statusTag.setAttribute("data-status", it.status || DEFAULT_STATUS);
+        pvSetText(statusTag.querySelector("[data-pv-card-status-label]"), status.label);
+      }
+
+      const priorityTag = cardEl.querySelector("[data-pv-card-priority]");
+      if(priorityTag){
+        priorityTag.setAttribute("data-priority", it.priority || DEFAULT_PRIORITY);
+        pvSetText(priorityTag.querySelector("[data-pv-card-priority-label]"), "Ưu tiên " + priority.label.toLowerCase());
+      }
+
+      const progressEl = cardEl.querySelector("[data-pv-card-progress]");
+      if(progressEl){
+        const hasProgress = progress !== null;
+        progressEl.classList.toggle("pv-progress--off", !hasProgress);
+        const fillEl = progressEl.querySelector("[data-pv-card-progress-fill]");
+        if(fillEl) fillEl.style.width = hasProgress ? Math.round(progress * 100) + "%" : "0%";
+        pvSetText(
+          progressEl.querySelector("[data-pv-card-progress-text]"),
+          hasProgress ? Math.round(progress * 100) + "% mục tiêu tiết kiệm" : ""
+        );
+      }
+    }
   });
 
   pvSyncChip(stage, "owned", items.length > 0, owned + " / " + items.length + " món");
@@ -7555,6 +7673,68 @@ function renderHeroStage(){
     bestGoal
       ? (bestGoal.name || "Món yêu thích") + " · " + Math.round(bestProgress * 100) + "%"
       : "");
+}
+
+function setFeaturedItem(id){
+  if(!id) return;
+  localStorage.setItem("pv_featured_id", id);
+  renderHeroStage();
+  const it = items.find(x => String(x.id) === String(id));
+  if(it && typeof showToast === "function"){
+    showToast('Đã đặt "' + it.name + '" làm tâm điểm trên đầu trang ⭐');
+  }
+}
+
+function openFeaturedPicker(){
+  const dlg = $("dlgFeaturedPicker");
+  const list = $("dlgFeaturedPickerList");
+  if(!dlg || !list) return;
+  list.innerHTML = "";
+  const curFeatId = localStorage.getItem("pv_featured_id");
+  if(!items || items.length === 0){
+    list.innerHTML = '<p style="text-align: center; color: #625979; padding: 20px 0; margin: 0;">Chưa có món nào trong danh sách. Hãy thêm món trước!</p>';
+  } else {
+    items.forEach(it => {
+      const isSelected = String(it.id) === String(curFeatId);
+      const row = document.createElement("div");
+      row.className = "picker-item" + (isSelected ? " picker-item--active" : "");
+      row.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 14px; border: 1px solid " + (isSelected ? "#6850BC" : "rgba(104,80,188,.12)") + "; background: " + (isSelected ? "#F5EEFF" : "#FAF8FE") + "; cursor: pointer; transition: all .2s;";
+      
+      const left = document.createElement("div");
+      left.style.cssText = "display: flex; align-items: center; gap: 10px; min-width: 0;";
+      
+      const src = validImageSrc(it.image);
+      if(src){
+        const thumb = document.createElement("img");
+        thumb.src = src;
+        thumb.style.cssText = "width: 44px; height: 44px; object-fit: contain; border-radius: 8px; flex-shrink: 0; background: #fff; padding: 2px; border: 1px solid rgba(104,80,188,.1);";
+        left.appendChild(thumb);
+      }
+      
+      const info = document.createElement("div");
+      info.style.cssText = "min-width: 0;";
+      const name = document.createElement("div");
+      name.textContent = it.name;
+      name.style.cssText = "font-weight: 750; font-size: 13.5px; color: #19152C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
+      const price = document.createElement("div");
+      price.textContent = fmtMoney(it.price);
+      price.style.cssText = "font-size: 12px; color: #6850BC; font-weight: 700;";
+      info.append(name, price);
+      left.appendChild(info);
+
+      const right = document.createElement("span");
+      right.style.cssText = "font-size: 12px; font-weight: 750; padding: 4px 10px; border-radius: 999px; " + (isSelected ? "background: #6850BC; color: #fff;" : "background: rgba(104,80,188,.08); color: #6850BC;");
+      right.textContent = isSelected ? "✓ Đang chọn" : "Chọn làm tâm điểm";
+
+      row.append(left, right);
+      row.onclick = () => {
+        setFeaturedItem(it.id);
+        dlg.close();
+      };
+      list.appendChild(row);
+    });
+  }
+  if(typeof dlg.showModal === "function") dlg.showModal();
 }
 
 let pvGlowEl = null;

@@ -545,18 +545,20 @@ const DISCLOSURE = () => {
       await page.evaluate(() => JSON.parse(localStorage.getItem('wishlist.guest.items')).find(x => x.id === 'w1').status) === 'saving',
       { before: before.chipText, after: after.chipText });
 
-    // REAL mouse click through the hover reveal (the harness contract)
+    // REAL mouse click through the ⋯ disclosure (menu belongs strictly to 3-dots button)
     await page.evaluate(() => document.querySelector('#grid > .wishlist-card[data-id="w2"]').scrollIntoView({ block: 'center' }));
     await sleep(400);
     let realClick = { thrown: '', text: null };
     try {
+      await page.click('#grid > .wishlist-card[data-id="w2"] .card-more__trigger');
+      await sleep(200);
       await page.click('#grid > .wishlist-card[data-id="w2"] .status-chip');
       await sleep(350);
       realClick.text = await page.evaluate(() =>
         document.querySelector('#grid > .wishlist-card[data-id="w2"] .status-chip').textContent.trim());
     } catch (e) { realClick.thrown = String(e && e.message || e); }
     c('F4-2-24', 'CARD', 'real mouse click on the chip',
-      'the hover reveal makes the chip reachable by a genuine mouse click',
+      'the ⋯ disclosure makes the chip reachable by a genuine mouse click',
       realClick.thrown === '' && realClick.text === 'Đang để dành',
       realClick);
 
